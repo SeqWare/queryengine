@@ -3,42 +3,34 @@
     <display-name>seqware-queryengine</display-name>
     
     <servlet>
-        <servlet-name>Bootstrap</servlet-name>
-        <servlet-class>com.github.seqware.queryengine.system.rest.Bootstrap</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-  
-    <servlet>
-        <servlet-name>query-engine</servlet-name>
+        <servlet-name>seqware-queryengine</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer
         </servlet-class>
         <init-param>
-            <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
-            <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
-        </init-param>
-        <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.github.seqware.queryengine.system.rest;com.wordnik.swagger.jaxrs</param-value>
-        </init-param>
-        <!-- we cannot hard code this like in the wordnik documentation 
-        <init-param>
-            <param-name>swagger.api.basepath</param-name>
-            <param-value>http://localhost:8080/seqware-queryengine/api</param-value>
-        </init-param>
-            this following swagger.config.reader provides a way of reading this information instead
-        -->
-        <init-param>
-            <param-name>swagger.config.reader</param-name>
-            <param-value>com.github.seqware.queryengine.system.rest.QueryEngineServiceConfigReader</param-value>
+            <param-value>com.github.seqware.queryengine.system.rest;com.wordnik.swagger.jersey.listing</param-value>
         </init-param>
         <init-param>
             <param-name>api.version</param-name>
             <param-value>1.0</param-value>
         </init-param>
     </servlet>      
-    
     <servlet-mapping>
-        <servlet-name>query-engine</servlet-name>
+        <servlet-name>seqware-queryengine</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>DefaultJaxrsConfig</servlet-name>
+        <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+        <init-param>
+            <param-name>api.version</param-name>
+            <param-value>1.0.0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>swagger.api.basepath</param-name>
+            <param-value>http://localhost:8889/seqware-queryengine/api</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
 </web-app>  

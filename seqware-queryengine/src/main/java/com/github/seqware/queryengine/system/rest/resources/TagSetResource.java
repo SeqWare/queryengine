@@ -20,10 +20,10 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
  * @author dyuen
  */
 @Path("/tagset")
-@Api(value = "/tagset", description = "Operations about tagsets", listingPath="/resources.json/tagset")
+@Api(value = "/tagset", description = "Operations about tagsets"/*, listingPath="/resources.json/tagset"*/)
 @Produces({"application/json"})
 public class TagSetResource extends GenericMutableSetResource<TagSet> {
 
@@ -64,8 +64,8 @@ public class TagSetResource extends GenericMutableSetResource<TagSet> {
      */
     @POST
     @ApiOperation(value = "Create new ontology from an OBO file", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = RESOURCE_EXISTS, reason = "Resource already exists")})
+    @ApiResponses(value = {
+        @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.TEXT_PLAIN)
     public Response uploadOBO(
             @ApiParam(value = "rowkey that needs to be updated", required = true) 

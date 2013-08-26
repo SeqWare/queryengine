@@ -29,7 +29,7 @@ import javax.ws.rs.Produces;
  * @author dyuen
  */
 @Path("/group")
-@Api(value = "/group", description = "Operations about groups", listingPath="/resources/group")
+@Api(value = "/group", description = "Operations about groups" /*, listingPath="/resources/group"*/)
 @Produces({"application/json"})
 public class GroupResource extends GenericMutableSetResource<Group> {
 

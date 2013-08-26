@@ -17,10 +17,10 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.model.Atom;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
@@ -41,8 +41,8 @@ public abstract class GenericSetResource<T extends Atom> extends GenericElementR
      */
     @POST
     @ApiOperation(value = "Create a totally new set by JSON" , notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_INPUT, reason = "Invalid input")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
     public final Response addSet(
             @ApiParam(value = "Set that needs to be added to the store", required = true) Atom set) {
