@@ -30,7 +30,7 @@ import javax.ws.rs.Produces;
  * @author dyuen
  */
 @Path("/tag")
-@Api(value = "/tag", description = "Operations about tags"/*, listingPath="/resources/tag"*/)
+@Api(value = "/tag", description = "Operations about tags", listingPath="/resources/tag")
 @Produces({"application/json"})
 public class TagResource extends GenericElementResource<User> {
 

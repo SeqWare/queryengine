@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/referenceset")
 @Api(value = "/referenceset",
-  description = "Operations about referencesets"/*,
+  description = "Operations about referencesets",
   listingPath = "/resources.json/referenceset",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.ReferenceSetResource"*/)
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.ReferenceSetResource")
 @Produces({"application/json"})
 public class ReferenceSetListingResource extends JavaHelp{
     

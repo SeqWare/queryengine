@@ -48,7 +48,7 @@ import javax.ws.rs.core.Response;
  * @author dyuen
  */
 @Path("/plugin")
-@Api(value = "/plugin", description = "Operations about plugins"/*, listingPath="/resources/plugin"*/)
+@Api(value = "/plugin", description = "Operations about plugins", listingPath="/resources/plugin")
 @Produces({"application/json"})
 public class PluginResource extends GenericSetResource<Plugin> {
 
@@ -93,7 +93,7 @@ public class PluginResource extends GenericSetResource<Plugin> {
      */
     @POST
     @Path(value = "/{sgid}/run")
-    @ApiOperation(value = "Run a specific plugin by rowkey with JSON parameters", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Run a specific plugin by rowkey with JSON parameters", notes = "Add extra notes here", responseClass = "com.github.seqware.queryengine.model.Atom")
     @ApiErrors(value = {
         @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
         @ApiError(code = INVALID_SET, reason = "set not found")})

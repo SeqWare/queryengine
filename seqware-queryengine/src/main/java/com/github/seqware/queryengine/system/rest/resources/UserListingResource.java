@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/user")
 @Api(value = "/user",
-  description = "Operations about users"/*,
+  description = "Operations about users",
   listingPath = "/resources.json/user",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.UserResource"*/)
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.UserResource")
 @Produces({"application/json"})
 public class UserListingResource extends JavaHelp{
     

@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/pluginrun")
 @Api(value = "/pluginrun",
-  description = "Operations about pluginruns"/*,
+  description = "Operations about pluginruns",
   listingPath = "/resources.json/pluginrun",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.PluginRunResource"*/)
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.PluginRunResource")
 @Produces({"application/json"})
 public class PluginRunListingResource extends JavaHelp{
     

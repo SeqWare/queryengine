@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
  * @author dyuen
  */
 @Path("/tagset")
-@Api(value = "/tagset", description = "Operations about tagsets"/*, listingPath="/resources.json/tagset"*/)
+@Api(value = "/tagset", description = "Operations about tagsets", listingPath="/resources.json/tagset")
 @Produces({"application/json"})
 public class TagSetResource extends GenericMutableSetResource<TagSet> {
 
