@@ -42,7 +42,7 @@ public class QueryEngineServiceConfigReader extends ConfigReader {
         try {
             Socket s = new Socket("www.google.com", 80);
             // TODO: this path has a hard-coded port and path, we should somehow detect this 
-            String result = "http://" + s.getLocalAddress().getHostAddress() + ":8080/seqware-queryengine/api";
+            String result = "http://" + s.getLocalAddress().getHostAddress() + ":8889/seqware-queryengine/api";
             s.close();
             return result;
         } catch (IOException ex) {
