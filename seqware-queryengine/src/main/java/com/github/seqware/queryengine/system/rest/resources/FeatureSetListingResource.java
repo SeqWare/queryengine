@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/featureset")
 @Api(value = "/featureset",
-  description = "Operations about featuresets",
-  listingPath = "/resources.json/featureset",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.FeatureSetResource")
+  description = "Operations about featuresets"
+  /* listingPath = "/resources.json/featureset", */
+  /* listingClass = "com.github.seqware.queryengine.system.rest.resources.FeatureSetResource" */ )
 @Produces({"application/json"})
 public class FeatureSetListingResource extends JavaHelp{
     

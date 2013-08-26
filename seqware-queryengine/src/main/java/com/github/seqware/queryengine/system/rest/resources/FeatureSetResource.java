@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
  * @author dyuen
  */
 @Path("/featureset")
-@Api(value = "/featureset", description = "Operations about featuresets", listingPath = "/resources/featureset")
+@Api(value = "/featureset", description = "Operations about featuresets"/*, listingPath = "/resources/featureset"*/)
 @Produces({"application/json"})
 public class FeatureSetResource extends GenericSetResource<FeatureSet> {
 

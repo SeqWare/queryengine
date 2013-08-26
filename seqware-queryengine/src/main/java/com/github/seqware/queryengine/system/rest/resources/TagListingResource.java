@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/tag")
 @Api(value = "/tag",
-  description = "Operations about tags",
+  description = "Operations about tags"/*,
   listingPath = "/resources.json/tag",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.TagResource")
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.TagResource"*/)
 @Produces({"application/json"})
 public class TagListingResource extends JavaHelp{
     

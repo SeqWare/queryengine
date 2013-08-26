@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/group")
 @Api(value = "/group",
-  description = "Operations about groups",
+  description = "Operations about groups"/*,
   listingPath = "/resources.json/group",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.GroupResource")
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.GroupResource"*/)
 @Produces({"application/json"})
 public class GroupListingResource extends JavaHelp{
     

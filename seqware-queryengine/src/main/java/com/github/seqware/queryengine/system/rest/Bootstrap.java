@@ -26,6 +26,6 @@ import javax.servlet.http.HttpServlet;
  */
 public class Bootstrap extends HttpServlet {
   static {
-	  JaxrsApiReader.setFormatString("");
+	  //JaxrsApiReader.setFormatString("");
   }
 }

@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/plugin")
 @Api(value = "/plugin",
-  description = "Operations about plugins",
+  description = "Operations about plugins"/*,
   listingPath = "/resources.json/plugin",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.PluginResource")
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.PluginResource"*/)
 @Produces({"application/json"})
 public class PluginListingResource extends JavaHelp{
     

@@ -27,9 +27,9 @@ import javax.ws.rs.Produces;
  */
 @Path("/resources.json/reference")
 @Api(value = "/reference",
-  description = "Operations about references",
+  description = "Operations about references"/*,
   listingPath = "/resources.json/reference",
-  listingClass = "com.github.seqware.queryengine.system.rest.resources.ReferenceResource")
+  listingClass = "com.github.seqware.queryengine.system.rest.resources.ReferenceResource"*/)
 @Produces({"application/json"})
 public class ReferenceListingResource extends JavaHelp{
     
