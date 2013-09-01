@@ -29,10 +29,10 @@ import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.google.gson.Gson;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +89,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @GET
     @Path(value = "/{sgid}")
     @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     @Produces(MediaType.APPLICATION_JSON)
     public final Response featureByIDRequest(
             @ApiParam(value = "id of set to be fetched", required = true)
@@ -130,9 +130,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @GET
     @Path(value = "/tags")
     @ApiOperation(value = "List available elements filtered by a tagset and tag key", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     public final Response taggedRequest(
             @ApiParam(value = "rowkey of tagset to restrict matches to", required = true)
             @QueryParam(value = "tagset_id") String tagset_id,
@@ -151,9 +151,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @GET
     @Path(value = "/{sgid}/tags")
     @ApiOperation(value = "Find a specific element by rowkey and list its tags ", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     public final Response tagsOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
@@ -188,9 +188,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @GET
     @Path(value = "/{sgid}/version")
     @ApiOperation(value = "Find a specific element by rowkey and list its version information", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     public final Response versioningOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
@@ -232,9 +232,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @GET
     @Path(value = "/{sgid}/permissions")
     @ApiOperation(value = "Find a specific element by rowkey and list its permissions ", notes = "Add extra notes here"/*, responseClass = " com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     public final Response permissionsOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
@@ -271,9 +271,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @PUT
     @Path("/{sgid}/permissions")
     @ApiOperation(value = "Update permissions for a particular element", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response updateElementPermissions(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) {
@@ -292,9 +292,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @PUT
     @Path("/{sgid}/tag")
     @ApiOperation(value = "Tag an existing element", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response tagElement(
             @ApiParam(value = "rowkey that needs to be tagged", required = true)
             @PathParam("sgid") String sgid,
@@ -321,9 +321,9 @@ public abstract class GenericElementResource<T extends Atom> {
     @PUT
     @Path("/{sgid}")
     @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response updateElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
             @ApiParam(value = "Updated user object", required = true) Atom user) {

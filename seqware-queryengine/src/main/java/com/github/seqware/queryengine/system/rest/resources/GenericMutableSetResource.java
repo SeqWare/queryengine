@@ -17,10 +17,10 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.model.Atom;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,8 +42,8 @@ public abstract class GenericMutableSetResource<T extends Atom> extends GenericS
     @POST
     @Path("/{sgid}")
     @ApiOperation(value = "Create an element in the set" , notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_INPUT, reason = "Invalid input")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     public final Response addElement(
             @ApiParam(value = "set to add an element to", required = true) 
             @PathParam("sgid") String sgid,

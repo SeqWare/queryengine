@@ -25,10 +25,10 @@ import com.github.seqware.queryengine.model.Plugin;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,8 +73,8 @@ public class PluginResource extends GenericSetResource<Plugin> {
      */
     @POST
     @ApiOperation(value = "Create new plugin from jarfile", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = RESOURCE_EXISTS, reason = "Resource already exists")})
+    @ApiResponses(value = {
+        @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     public Response uploadOBO(
             @ApiParam(value = "rowkey that needs to be updated", required = false) 
@@ -94,9 +94,9 @@ public class PluginResource extends GenericSetResource<Plugin> {
     @POST
     @Path(value = "/{sgid}/run")
     @ApiOperation(value = "Run a specific plugin by rowkey with JSON parameters", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid ID supplied"),
-        @ApiError(code = INVALID_SET, reason = "set not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public final Response runPlugin(

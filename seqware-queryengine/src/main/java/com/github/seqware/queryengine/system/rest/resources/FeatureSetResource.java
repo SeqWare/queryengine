@@ -20,10 +20,10 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiError;
-import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
  * @author dyuen
  */
 @Path("/featureset")
-@Api(value = "/featureset", description = "Operations about featuresets"/*, listingPath = "/resources/featureset"*/)
+@Api(value = "/featureset", description = "Operations about featuresets"/**, listingPath = "/resources/featureset"*/)
 @Produces({"application/json"})
 public class FeatureSetResource extends GenericSetResource<FeatureSet> {
 
@@ -72,9 +72,9 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
     @POST
     @Path("/{sgid}/query")
     @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response runQuery(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid,
@@ -97,9 +97,9 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
     @GET
     @Path("/{sgid}")
     @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     @Produces(MediaType.TEXT_PLAIN)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
@@ -118,9 +118,9 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
     @GET
     @Path("/{sgid}/{fsgid}")
     @ApiOperation(value = "Get a specific feature in a featureset in JSON", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = INVALID_ID, reason = "Invalid element supplied"),
-        @ApiError(code = INVALID_SET, reason = "Element not found")})
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJSONFeature(
             @ApiParam(value = "rowkey of featureset to find feature in", required = true)
@@ -140,8 +140,8 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
      */
     @POST
     @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.")
-    @ApiErrors(value = {
-        @ApiError(code = RESOURCE_EXISTS, reason = "Resource already exists")})
+    @ApiResponses(value = {
+        @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.TEXT_PLAIN)
     public Response uploadRawVCFfile(
             @ApiParam(value = "tagset rowkey that needs to be updated", required = false)
