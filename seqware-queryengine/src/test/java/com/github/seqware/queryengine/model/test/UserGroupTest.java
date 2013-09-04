@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Group;
@@ -91,14 +92,18 @@ public class UserGroupTest {
         Assert.assertTrue(n1.checkPassword(password1));  
         String password2 = "2046";
         n1 = n1.toBuilder().setPassword(password2).build();
-        n1.setPrecedingVersion(oldUser);
+        if (Constants.TRACK_VERSIONING){
+            n1.setPrecedingVersion(oldUser);
+        }
         mManager.flush();
         // check new current User's password
         Assert.assertTrue(n1.checkPassword(password2));  
-        // check old User's password via Versionable interface
-        Assert.assertTrue(n1.getPrecedingVersion().checkPassword(password1));  
-        // check old User's password by re-retrieving it
-        User oldN1 = SWQEFactory.getQueryInterface().getAtomBySGID(User.class, oldUser.getSGID());
-        Assert.assertTrue(oldN1.checkPassword(password1));  
+        if (Constants.TRACK_VERSIONING){
+            // check old User's password via Versionable interface
+            Assert.assertTrue(n1.getPrecedingVersion().checkPassword(password1));  
+            // check old User's password by re-retrieving it
+            User oldN1 = SWQEFactory.getQueryInterface().getAtomBySGID(User.class, oldUser.getSGID());
+            Assert.assertTrue(oldN1.checkPassword(password1));  
+        }
     }
 }

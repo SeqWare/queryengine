@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl.protobufIO;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QESupporting;
 import com.github.seqware.queryengine.dto.QESupporting.AtomPB;
 import com.github.seqware.queryengine.dto.QESupporting.FeatureAtomPB;
@@ -73,8 +74,10 @@ public class UtilIO {
         }
         builder.setSgid(SGIDIO.m2pb(atomImpl.getSGID()));
         //builder.setDate(atomImpl.getTimestamp().getTime());
-        if (atomImpl.getPrecedingSGID() != null) {
-            builder.setPrecedingID(SGIDIO.m2pb(atomImpl.getPrecedingSGID()));
+        if (Constants.TRACK_VERSIONING){
+            if (atomImpl.getPrecedingSGID() != null) {
+                builder.setPrecedingID(SGIDIO.m2pb(atomImpl.getPrecedingSGID()));
+            }
         }
         return builder.build();
     }
@@ -113,8 +116,10 @@ public class UtilIO {
         assert(feature.getSGID() instanceof FSGID);
         builder.setSgid(FSGIDIO.m2pb((FSGID) feature.getSGID()));
         //builder.setDate(feature.getTimestamp().getTime());
-        if (feature.getPrecedingSGID() != null) {
-            builder.setPrecedingID(FSGIDIO.m2pb((FSGID) feature.getPrecedingSGID()));
+        if (Constants.TRACK_VERSIONING){
+            if (feature.getPrecedingSGID() != null) {
+                builder.setPrecedingID(FSGIDIO.m2pb((FSGID) feature.getPrecedingSGID()));
+            }
         }
         return builder.build();
     }

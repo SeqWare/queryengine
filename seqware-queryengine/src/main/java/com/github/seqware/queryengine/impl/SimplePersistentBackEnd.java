@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.backInterfaces.BackEndInterface;
 import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.factory.SWQEFactory;
@@ -75,7 +76,9 @@ public class SimplePersistentBackEnd implements BackEndInterface {
             storeAtom[i] = (Atom) obj.copy(false);
             // need to set preceding ID for new copy
             assert (!storeAtom[i].getSGID().equals(obj.getSGID()));
-            ((AtomImpl) storeAtom[i]).setPrecedingSGID(obj.getSGID());
+            if (Constants.TRACK_VERSIONING){
+                ((AtomImpl) storeAtom[i]).setPrecedingSGID(obj.getSGID());
+            }
         }
         store(storeAtom);
         // change the obj we are working with to look like the new object that was created

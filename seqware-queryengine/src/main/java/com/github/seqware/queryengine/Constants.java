@@ -55,6 +55,9 @@ import org.apache.log4j.Logger;
  * @version $Id: $Id
  */
 public class Constants {
+    
+    /** Compile time constants to turn on and off specific features */
+    public static final boolean TRACK_VERSIONING = false;
 
     /**
      * Regular Expression for suitable rowKeys

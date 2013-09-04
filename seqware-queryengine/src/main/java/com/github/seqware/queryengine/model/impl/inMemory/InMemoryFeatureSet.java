@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
@@ -73,7 +74,7 @@ public class InMemoryFeatureSet extends FeatureSet {
             // as a convenience, we should have Features in a FeatureSet and the associated FeatureLists take on the time
             // of the FeatureSet
             fsgid.setBackendTimestamp(this.getTimestamp());
-            feature.impersonate(fsgid, feature.getPrecedingSGID());
+            feature.impersonate(fsgid, Constants.TRACK_VERSIONING ? feature.getPrecedingSGID() : null);
         }
     }
 

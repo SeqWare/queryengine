@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.*;
@@ -84,14 +85,17 @@ public class ACLTest {
         FeatureSet targetSet = (FeatureSet) SWQEFactory.getQueryInterface().getAtomBySGID(FeatureSet.class, fSet.getSGID());
         // check some versioning while we are at it
         Assert.assertTrue("wrong owner", targetSet.getPermissions().getOwner().equals(marshmallowUser));
-        Assert.assertTrue("wrong owner for old version", targetSet.getPrecedingVersion().getPermissions().getOwner().equals(titanicUser));
-        Assert.assertTrue("wrong owner for old old version", targetSet.getPrecedingVersion().getPrecedingVersion().getPermissions().getOwner().equals(marshmallowUser));
+        if (Constants.TRACK_VERSIONING){
+            Assert.assertTrue("wrong owner for old version", targetSet.getPrecedingVersion().getPermissions().getOwner().equals(titanicUser));
+            Assert.assertTrue("wrong owner for old old version", targetSet.getPrecedingVersion().getPrecedingVersion().getPermissions().getOwner().equals(marshmallowUser));
+        }
         List<Boolean> userpermissions = targetSet.getPermissions().getAccess();
         // why oh why doesn't JUnit assertArrayEquals support boolean?
         Assert.assertTrue("permissions", userpermissions.get(0) == true && userpermissions.get(1) == true && userpermissions.get(2) == true && userpermissions.get(3) == true && userpermissions.get(4) == true && userpermissions.get(5) == true);
-        userpermissions = targetSet.getPrecedingVersion().getPermissions().getAccess();
-        Assert.assertTrue("permissions", userpermissions.get(0) == false && userpermissions.get(1) == false && userpermissions.get(2) == false && userpermissions.get(3) == false && userpermissions.get(4) == false && userpermissions.get(5) == false);
-        
+        if (Constants.TRACK_VERSIONING){
+            userpermissions = targetSet.getPrecedingVersion().getPermissions().getAccess();
+            Assert.assertTrue("permissions", userpermissions.get(0) == false && userpermissions.get(1) == false && userpermissions.get(2) == false && userpermissions.get(3) == false && userpermissions.get(4) == false && userpermissions.get(5) == false);
+        }
     }
 
     /**
@@ -130,8 +134,10 @@ public class ACLTest {
             Molecule molFromBackEnd = (Molecule) SWQEFactory.getQueryInterface().getAtomBySGID(((MoleculeImpl)mol).getHBaseClass(), mol.getSGID());
             Assert.assertTrue(molFromBackEnd.getPermissions().getOwner().equals(newUser2));
             // TODO: not sure why we need the cast here when it works for the subclasses, something has gone awry in template classes land?
-            Assert.assertTrue(((Molecule)molFromBackEnd.getPrecedingVersion()).getPermissions().getOwner().equals(newUser));
-            Assert.assertTrue(molFromBackEnd.getPermissions().getGroup().equals(newGroup));
+            if (Constants.TRACK_VERSIONING){
+                Assert.assertTrue(((Molecule)molFromBackEnd.getPrecedingVersion()).getPermissions().getOwner().equals(newUser));
+                Assert.assertTrue(molFromBackEnd.getPermissions().getGroup().equals(newGroup));
+            }
         }
         mManager.close();
     }

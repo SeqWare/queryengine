@@ -1,6 +1,7 @@
 package com.github.seqware.queryengine.model.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QESupporting.TagPB;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
@@ -65,7 +66,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      * Map from rowkey for tagSet => name for tag => value
      */
     private Map<String, Map<String, Tag>> tags = new HashMap<String, Map<String, Tag>>();
-    private LazyReference<T> precedingVersion = new LazyReference<T>(this.getHBaseClass());
+    private LazyReference<T> precedingVersion = Constants.TRACK_VERSIONING ? new LazyReference<T>(this.getHBaseClass()) : null;
 
     /**
      * <p>Constructor for AtomImpl.</p>
@@ -113,9 +114,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 //        // copy over the transient properties for now
 //        ((AtomImpl) newAtom).setManager(this.manager);
 //        this.sgid = oldUUID;
-//
-        if (newSGID) {
-            ((AtomImpl) newAtom).setPrecedingSGID(this.sgid);
+        if (Constants.TRACK_VERSIONING){
+            if (newSGID) {
+                ((AtomImpl) newAtom).setPrecedingSGID(this.sgid);
+            }
         }
 
         return (T) newAtom;
@@ -248,7 +250,9 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     public void impersonate(SGID sgid, SGID oldSGID) {
         this.impersonate(sgid);
         //this.setTimestamp(creationTimeStamp);
-        this.precedingVersion.setSGID(oldSGID);
+        if (Constants.TRACK_VERSIONING){
+            this.precedingVersion.setSGID(oldSGID);
+        }
     }
 
     /** {@inheritDoc} */
@@ -307,7 +311,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public long getVersion() {
-        if (this.precedingVersion.get() == null) {
+        if (this.precedingVersion == null || this.precedingVersion.get() == null) {
             return 1;
         } else {
             return 1 + this.precedingVersion.get().getVersion();

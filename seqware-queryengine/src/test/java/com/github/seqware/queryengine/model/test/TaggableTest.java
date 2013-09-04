@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.*;
@@ -130,13 +131,17 @@ public class TaggableTest {
         mManager.flush();
         testSet = (TagSet) SWQEFactory.getQueryInterface().getAtomBySGID(TagSet.class, tSet2.getSGID());
         Assert.assertTrue(testSet.getCount() == 3);
-        Assert.assertTrue(testSet.getPrecedingVersion().getCount() == 2);
+        if (Constants.TRACK_VERSIONING){
+            Assert.assertTrue(testSet.getPrecedingVersion().getCount() == 2);
+        }
         // and then remove them
         tSet2.remove(ts3).remove(ts2);
         mManager.flush();
         testSet = (TagSet) SWQEFactory.getQueryInterface().getAtomBySGID(TagSet.class, tSet2.getSGID());
         Assert.assertTrue(testSet.getCount() == 1);
-        Assert.assertTrue(testSet.getPrecedingVersion().getCount() == 3);
+        if (Constants.TRACK_VERSIONING){
+            Assert.assertTrue(testSet.getPrecedingVersion().getCount() == 3);
+        }
     }
 
     /**

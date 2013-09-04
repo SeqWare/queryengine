@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.backInterfaces.SerializationInterface;
 import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.model.Atom;
@@ -60,8 +61,10 @@ public class NonPersistentStorage extends StorageInterface {
     public void serializeAtomToTarget(Atom obj) {
         AtomImpl objImpl = (AtomImpl) obj;
         Class cl = objImpl.getHBaseClass();
-        if (objImpl.getPrecedingSGID() != null) {
-            assert (!(objImpl.getPrecedingSGID().equals(objImpl.getSGID())));
+        if (Constants.TRACK_VERSIONING){
+            if (objImpl.getPrecedingSGID() != null) {
+                assert (!(objImpl.getPrecedingSGID().equals(objImpl.getSGID())));
+            }
         }
         ByteTypePair pair = new ByteTypePair(serializer.serialize(obj), cl);
         map.put(createKey(obj), pair);
