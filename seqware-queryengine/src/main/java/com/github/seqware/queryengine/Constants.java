@@ -57,7 +57,11 @@ import org.apache.log4j.Logger;
 public class Constants {
     
     /** Compile time constants to turn on and off specific features */
+    
+    // implement the Versionable interface allowing the user access past versions of entities
     public static final boolean TRACK_VERSIONING = false;
+    // implement TagSet tracking on import of VCF data
+    public static final boolean TRACK_TAGSET = false;
 
     /**
      * Regular Expression for suitable rowKeys

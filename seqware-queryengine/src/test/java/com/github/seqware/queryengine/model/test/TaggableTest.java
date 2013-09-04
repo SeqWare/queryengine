@@ -7,8 +7,6 @@ import com.github.seqware.queryengine.model.*;
 import com.github.seqware.queryengine.model.interfaces.Taggable;
 import com.github.seqware.queryengine.model.interfaces.Taggable.NestedLevel;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
-import com.github.seqware.queryengine.plugins.plugins.FeaturesAllPlugin;
 import java.util.*;
 import junit.framework.Assert;
 import static org.junit.Assert.fail;
@@ -272,9 +270,11 @@ public class TaggableTest {
         u.associateTag(humanTag2);
         mManager.flush();
         
+        int expectedNumber = Constants.TRACK_TAGSET ? 6 : 3;
+        
         User u2 = SWQEFactory.getQueryInterface().getAtomBySGID(User.class, u.getSGID());
-        Assert.assertTrue("expected 6 tags, found " + u.getTags().getCount(), u.getTags().getCount() == 6);
-        Assert.assertTrue("expected 6 tags, found " + u2.getTags().getCount(), u2.getTags().getCount() == 6);
+        Assert.assertTrue("expected "+expectedNumber+" tags, found " + u.getTags().getCount(), u.getTags().getCount() == expectedNumber);
+        Assert.assertTrue("expected "+expectedNumber+" tags, found " + u2.getTags().getCount(), u2.getTags().getCount() == expectedNumber);
         Assert.assertTrue("could not find dwarf tag ", u.getTagByKey(tolkienSet, "dwarf") != null);
         Assert.assertTrue("could not find dwarf tag ", u2.getTagByKey(elderSet, "dwarf") != null);
         Assert.assertTrue("could not find elven tag ", u.getTagByKey(tolkienSet, "elven") != null);
@@ -356,14 +356,16 @@ public class TaggableTest {
         Assert.assertTrue("fe2 count", fe2.getTags().getCount() == 0);
         Assert.assertTrue("fe1 tag count", fe1.getTags().getCount() == 3);
         // check parents
-        boolean correctParent = true;
-        for (Tag t : fset.getTags()) {
-            correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+        if (Constants.TRACK_TAGSET) {
+            boolean correctParent = true;
+            for (Tag t : fset.getTags()) {
+                correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+            }
+            for (Tag t : fe1.getTags()) {
+                correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+            }
+            Assert.assertTrue("tags do not have proper parents", correctParent);
         }
-        for (Tag t : fe1.getTags()) {
-            correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
-        }
-        Assert.assertTrue("tags do not have proper parents", correctParent);
         mManager.flush();
 
         // try it again for persisted tags
@@ -373,15 +375,17 @@ public class TaggableTest {
         Assert.assertTrue("persisted feature set does not have proper number of tags", fset.getTags().getCount() == 3);
         Assert.assertTrue("persisted fe2 count", fe2.getTags().getCount() == 0);
         Assert.assertTrue("persisted fe1 tag count", fe1.getTags().getCount() == 3);
-        // check parents
-        correctParent = true;
-        for (Tag t : fset.getTags()) {
-            correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+        if (Constants.TRACK_TAGSET) {
+            // check parents
+            boolean correctParent = true;
+            for (Tag t : fset.getTags()) {
+                correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+            }
+            for (Tag t : fe1.getTags()) {
+                correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
+            }
+            Assert.assertTrue("persisted tags do not have proper parents", correctParent);
         }
-        for (Tag t : fe1.getTags()) {
-            correctParent = t.getTagSet().getSGID().equals(tagset.getSGID());
-        }
-        Assert.assertTrue("persisted tags do not have proper parents", correctParent);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Tag;
@@ -33,7 +34,9 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         super.add(element);
         map.put(element.getKey(), element);
         assert (this.getSGID().getBackendTimestamp() != null);
-        element.setTagSet(this);
+        if (Constants.TRACK_TAGSET){
+            element.setTagSet(this);
+        }
         return this;
     }
 
@@ -50,8 +53,10 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         
         super.add(newCol);
         assert (this.getSGID().getBackendTimestamp() != null);
-        for (Tag e : newCol) {
-            e.setTagSet(this);
+        if (Constants.TRACK_TAGSET){
+            for (Tag e : newCol) {
+                e.setTagSet(this);
+            }
         }
         return this;
     }

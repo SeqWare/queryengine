@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.kernel;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.kernel.output.SeqWareQueryLanguageParser;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.Tag;
@@ -132,7 +133,7 @@ public class RPNStack implements Serializable {
 
         public TagOccurrence(String tagSetRowKey, String key) {
             super(key);
-            this.tagSetRowKey = tagSetRowKey;
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
         }
 
         public String getTagSetRowKey() {
@@ -149,7 +150,7 @@ public class RPNStack implements Serializable {
 
         public TagValue(String tagSetRowKey, String key) {
             super(key);
-            this.tagSetRowKey = tagSetRowKey;
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
         }
 
         public String getTagSetRowKey() {
@@ -167,7 +168,7 @@ public class RPNStack implements Serializable {
 
         public TagHierarchicalOccurrence(String tagSetRowKey, String name) {
             super(name);
-            this.tagSetRowKey = tagSetRowKey;
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
         }
 
         public String getTagSetRowKey() {
@@ -186,7 +187,7 @@ public class RPNStack implements Serializable {
 
         public TagValuePresence(String tagSetRowKey, String name, Tag.ValueType type, Object value) {
             super(name);
-            this.tagSetRowKey = tagSetRowKey;
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
             this.type = type;
             this.value = value;
         }

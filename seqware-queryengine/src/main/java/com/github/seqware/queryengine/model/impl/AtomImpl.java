@@ -126,7 +126,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public  NestedLevel getNestedTags(TagSet tagSet) {
-        return getNestedTags(tagSet.getSGID().getRowKey());
+        return getNestedTags(Constants.TRACK_TAGSET ? tagSet.getSGID().getRowKey() : null);
     }
 
     /** {@inheritDoc} */
@@ -258,12 +258,15 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public boolean associateTag(Tag tag) {
-        if (tag.getTagSetSGID() == null) {
+        if (Constants.TRACK_TAGSET && tag.getTagSetSGID() == null) {
             Logger.getLogger(TagIO.class.getName()).fatal("Tag " + tag.getKey() + " is not owned by a tagset");
             throw new RuntimeException("Tag cannot be associated without a TagSet");
+        } else if (!Constants.TRACK_TAGSET && tag.getTagSetSGID() != null){
+            Logger.getLogger(TagIO.class.getName()).fatal("Tag " + tag.getKey() + " must not be owned by a tagset");
+            throw new RuntimeException("Tag cannot be associated with a TagSet");
         }
 
-        String rowKey = tag.getTagSetSGID().getRowKey();
+        String rowKey = Constants.TRACK_TAGSET ? tag.getTagSetSGID().getRowKey() : null;
         if (!tags.containsKey(rowKey)) {
             tags.put(rowKey, new HashMap<String, Tag>());
         }
@@ -279,7 +282,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public boolean dissociateTag(Tag tag) {
-        tags.get(tag.getTagSetSGID().getRowKey()).remove(tag.getKey());
+        tags.get(Constants.TRACK_TAGSET ? tag.getTagSetSGID().getRowKey() : null).remove(tag.getKey());
         if (this.getManager() != null) {
             this.getManager().atomStateChange(this, CreateUpdateManager.State.NEW_VERSION);
         }
@@ -296,7 +299,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public Tag getTagByKey(TagSet tagSet, String key) {
-        return getTagByKey(tagSet.getSGID().getRowKey(), key);
+        return getTagByKey(Constants.TRACK_TAGSET ? tagSet.getSGID().getRowKey() : null, key);
     }
 
     /** {@inheritDoc} */
