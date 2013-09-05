@@ -1,6 +1,7 @@
 package com.github.seqware.queryengine.model.test;
 
 import com.github.seqware.queryengine.Benchmarking;
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBasePersistentBackEnd;
@@ -307,6 +308,7 @@ public class QueryInterfaceTest implements Benchmarking {
          * * HARDCODING OF THE OBO HIERARCHY FOR ONE TEST-CASE FOR
          * QUERYINTERFACETEST **
          */
+        if (Constants.TRACK_TAGSET){
         String key2 = Compression.getSequenceOntologyAccessionSurrogate("SO:0000110")
                 + " "
                 + Compression.getSequenceOntologyAccessionSurrogate("SO:0000001").replaceFirst("^SO:", "")
@@ -332,6 +334,7 @@ public class QueryInterfaceTest implements Benchmarking {
         resultSet = queryFuture.get();
         count = (int) resultSet.getCount();
         Assert.assertTrue("Setting a query constraints over one feature attribute and for a (possibly parent) term in a tree hierarchy failed, expected 2 and found " + count, count == 2);
+        }
     }
 
     /**

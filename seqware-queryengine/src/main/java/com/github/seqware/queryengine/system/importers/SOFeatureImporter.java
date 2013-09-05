@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.system.importers;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
@@ -119,7 +120,7 @@ public class SOFeatureImporter extends Importer {
             }
             
             List<SGID> tagSetSGIDs = new ArrayList<SGID>();
-            if (cmd.hasOption(TAGSETS_PARAM)) {
+            if (Constants.TRACK_TAGSET && cmd.hasOption(TAGSETS_PARAM)) {
                 List<String> tagSetIDs = new ArrayList<String>();
                 tagSetIDs.addAll(Arrays.asList(cmd.getOptionValues(TAGSETS_PARAM)));
                 for (String ID : tagSetIDs) {

@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
@@ -59,6 +60,9 @@ public class FeatureSetTest {
      */
     @Test
     public void testVersioningAndFeatureSets() {
+        if (!Constants.TRACK_VERSIONING){
+            return;
+        }
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
         FeatureSet aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
 
@@ -120,7 +124,9 @@ public class FeatureSetTest {
         mManager.flush();
         // expect 3 features after a flush
         Assert.assertTrue("FeatureSet size wrong, expected 3 and found " + aSet.getCount(), aSet.getCount() == 3);
-        Assert.assertTrue("preceding FeatureSet size wrong, expected 0 and found " + aSet.getPrecedingVersion().getCount(), aSet.getPrecedingVersion().getCount() == 0);
+        if (Constants.TRACK_VERSIONING){
+            Assert.assertTrue("preceding FeatureSet size wrong, expected 0 and found " + aSet.getPrecedingVersion().getCount(), aSet.getPrecedingVersion().getCount() == 0);
+        }
         // try to delete features
         for(Feature f : arr){
             aSet.remove(f);

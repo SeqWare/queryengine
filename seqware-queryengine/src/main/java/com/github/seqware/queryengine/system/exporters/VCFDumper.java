@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.exporters;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
@@ -47,7 +48,7 @@ import org.apache.log4j.Logger;
  */
 public class VCFDumper {
     /** Constant <code>VCF="VCFVariantImportWorker.VCF"</code> */
-    public static final String VCF = VCFVariantImportWorker.VCF;
+    public static final String VCF = Constants.TRACK_TAGSET ? VCFVariantImportWorker.VCF : null;
 
     private String[] args;
 

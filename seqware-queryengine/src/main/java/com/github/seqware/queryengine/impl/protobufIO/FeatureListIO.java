@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl.protobufIO;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QueryEngine;
 import com.github.seqware.queryengine.dto.QueryEngine.FeatureListPB;
 import com.github.seqware.queryengine.dto.QueryEngine.FeaturePB;
@@ -51,7 +52,7 @@ public class FeatureListIO implements ProtobufTransferInterface<FeatureListPB, F
         // upgrade SGID on the way out based on the first feature, this is an optimization to save space
         // so that the FeatureList does not have to store a full FSGID, just a SGID
         FSGID fsgid = new FSGID(fMesg.getSGID(), (FSGID)fMesg.getFeatures().get(0).getSGID());
-        fMesg.impersonate(fsgid, fMesg.getPrecedingSGID());
+        fMesg.impersonate(fsgid, Constants.TRACK_VERSIONING ? fMesg.getPrecedingSGID() : null);
         return fMesg;
     }
 

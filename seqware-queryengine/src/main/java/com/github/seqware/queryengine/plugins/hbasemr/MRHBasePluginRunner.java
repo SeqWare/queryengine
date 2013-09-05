@@ -244,7 +244,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         FeatureSet build = latestAtomBySGID.toBuilder().build();
 
         build.impersonate(sgid, latestAtomBySGID.getSGID());
-        build.setPrecedingVersion(build);
+        if (Constants.TRACK_VERSIONING){
+            build.setPrecedingVersion(build);
+        }
 
         modelManager.persist(build);
 

@@ -73,13 +73,16 @@ public class FeatureImporter extends Importer {
             featureSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(existingfeatureSet, FeatureSet.class);
             Logger.getLogger(FeatureImporter.class.getName()).info("Appending to existing FeatureSet: " + featureSet.getSGID().getRowKey());
         }
-        
+
         TagSet adHocSet;
-        // process ad hoc set if given, create a new one if there is not
-        if (adhocTagSetID != null){
-            adHocSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(adhocTagSetID, TagSet.class);
-        } else{
-            adHocSet = modelManager.buildTagSet().setName("ad hoc tag set for FeatureSet " + featureSet.getSGID().getRowKey()).build();
+        if (Constants.TRACK_TAGSET) {
+
+            // process ad hoc set if given, create a new one if there is not
+            if (adhocTagSetID != null) {
+                adHocSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(adhocTagSetID, TagSet.class);
+            } else {
+                adHocSet = modelManager.buildTagSet().setName("ad hoc tag set for FeatureSet " + featureSet.getSGID().getRowKey()).build();
+            }
         }
         // we don't really need the central model manager past this point 
         modelManager.close();
@@ -127,7 +130,7 @@ public class FeatureImporter extends Importer {
 //                    workerArray[index].setStore(modelManager);
                     workerArray[index].setInput(input);
                     workerArray[index].setFeatureSetID(featureSet.getSGID());
-                    workerArray[index].setAdhoctagset(adHocSet.getSGID());
+                    workerArray[index].setAdhoctagset(Constants.TRACK_TAGSET ? adHocSet.getSGID() : null);
                     workerArray[index].setTagSetIDs(tagSetSGIDs);
                     workerArray[index].setBatch_size(batch_size);
                     workerArray[index].setKeyIndex(secondaryIndex);
@@ -187,7 +190,7 @@ public class FeatureImporter extends Importer {
         System.out.println(outputID);
         Map<String, String> keyValues = new HashMap<String, String>();
         keyValues.put(FEATURE_SET_ID, outputID);
-        if (adhocTagSetID == null){
+        if (Constants.TRACK_TAGSET && adhocTagSetID == null){
             // we created a tag set on the fly
             System.out.println("adHocTagSetID written with an ID of:");
             String aoutputID = adHocSet.getSGID().getUuid().toString();

@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
@@ -63,25 +64,26 @@ public class OBOParserTest {
         Assert.assertTrue("whole-arm translocations not found in TagSet", tagSet.containsKey("SO:1000043::whole-arm translocations"));
 
 
-        // check that the tags are linked properly back to their tag set
-        Tag tandem_repeat = tagSet.get("SO:0000705::tandem_repeat");
-        Tag upstream_variant = tagSet.get("SO:0001635::5KB_upstream_variant");
-        Tag intergenic_variant = tagSet.get("SO:0001628::intergenic_variant");
-        Tag downstream_variant = tagSet.get("SO:0001634::500B_downstream_variant");
-        Assert.assertTrue(tandem_repeat.getTagSet().equals(tagSet));
-        Assert.assertTrue(upstream_variant.getTagSet().equals(tagSet));
-        Assert.assertTrue(intergenic_variant.getTagSet().equals(tagSet));
-        Assert.assertTrue(downstream_variant.getTagSet().equals(tagSet));
-        // check that tags built from these specifications are linked properly back to their tag set
-        Tag build1 = tandem_repeat.toBuilder().build();
-        //Tag build2 = tandem_repeat.toBuilder().setKey("new key").build(); // we do not allow changing keys
-        Tag build3 = tandem_repeat.toBuilder().setPredicate("!=").build();
-        Tag build4 = tandem_repeat.toBuilder().setValue("SO:00000000").build();
+        if (Constants.TRACK_TAGSET) {
+            // check that the tags are linked properly back to their tag set
+            Tag tandem_repeat = tagSet.get("SO:0000705::tandem_repeat");
+            Tag upstream_variant = tagSet.get("SO:0001635::5KB_upstream_variant");
+            Tag intergenic_variant = tagSet.get("SO:0001628::intergenic_variant");
+            Tag downstream_variant = tagSet.get("SO:0001634::500B_downstream_variant");
+            Assert.assertTrue(tandem_repeat.getTagSet().equals(tagSet));
+            Assert.assertTrue(upstream_variant.getTagSet().equals(tagSet));
+            Assert.assertTrue(intergenic_variant.getTagSet().equals(tagSet));
+            Assert.assertTrue(downstream_variant.getTagSet().equals(tagSet));
+            // check that tags built from these specifications are linked properly back to their tag set
+            Tag build1 = tandem_repeat.toBuilder().build();
+            //Tag build2 = tandem_repeat.toBuilder().setKey("new key").build(); // we do not allow changing keys
+            Tag build3 = tandem_repeat.toBuilder().setPredicate("!=").build();
+            Tag build4 = tandem_repeat.toBuilder().setValue("SO:00000000").build();
 
-        Assert.assertTrue(build1.getTagSet().equals(tagSet));
-        //Assert.assertTrue(build2.getTagSet().equals(tagSet));
-        Assert.assertTrue(build3.getTagSet().equals(tagSet));
-        Assert.assertTrue(build4.getTagSet().equals(tagSet));
-
+            Assert.assertTrue(build1.getTagSet().equals(tagSet));
+            //Assert.assertTrue(build2.getTagSet().equals(tagSet));
+            Assert.assertTrue(build3.getTagSet().equals(tagSet));
+            Assert.assertTrue(build4.getTagSet().equals(tagSet));
+        }
     }
 }
