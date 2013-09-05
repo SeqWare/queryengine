@@ -77,7 +77,7 @@ public class VCFVariantImportWorker extends ImportWorker {
      */
     public Tag getTagSpec(String key) {
         if (!Constants.TRACK_TAGSET){
-            Tag build = modelManager.buildTag().setKey(key).build();
+            Tag build = Tag.newBuilder().setKey(key).build();
             return build;
         }
         
@@ -125,7 +125,7 @@ public class VCFVariantImportWorker extends ImportWorker {
      */
     public static Tag processVCFTagSpec(String key, TagSet tagset, CreateUpdateManager modelManager) {
         if (!Constants.TRACK_TAGSET){
-            Tag build = modelManager.buildTag().setKey(key).build();
+            Tag build = Tag.newBuilder().setKey(key).build();
             return build;
         }
         
@@ -202,7 +202,9 @@ public class VCFVariantImportWorker extends ImportWorker {
                 if (count % this.getBatch_size() == 0) {
                     modelManager.flush();
                     modelManager.clear();
-                    modelManager.persist(adHocSet);
+                    if (!Constants.TRACK_TAGSET){
+                        modelManager.persist(adHocSet);
+                    }
                     modelManager.persist(fSet);
                 }
 
@@ -339,7 +341,8 @@ public class VCFVariantImportWorker extends ImportWorker {
                     setOfTags.add(processVCFTagSpec(ImportConstants.VCF_FILTER).toBuilder().setValue(t[6]).build());
                     //m.addTag(t[6], null);
                     // added to prototype, record the info field
-                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_INFO).toBuilder().setValue(t[7]).build());
+                    // don't record the field as a whole, this is useless and big
+                    //setOfTags.add(processVCFTagSpec(ImportConstants.VCF_INFO).toBuilder().setValue(t[7]).build());
 
                     // if FQ is < 0 and AF1 < 0.5 then the algorithm is calling homozygous reference so skip
                     boolean af1LtHalf = false;
