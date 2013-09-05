@@ -124,7 +124,9 @@ public class HBaseStorage extends StorageInterface {
         // Create a fresh table, i.e. delete an existing table if it exists:
         HTableDescriptor ht = new HTableDescriptor(tableName);
         HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(TEST_COLUMN);
-        hColumnDescriptor.setMaxVersions(Integer.MAX_VALUE);
+        if (Constants.TRACK_VERSIONING){
+            hColumnDescriptor.setMaxVersions(Integer.MAX_VALUE);
+        }
         ht.addFamily(hColumnDescriptor);
         // make a persistent store exists already, otherwise try to retrieve existing items
         if (!hba.isTableAvailable(tableName)) {
