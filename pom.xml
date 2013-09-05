@@ -145,7 +145,7 @@
         <module>seqware-common</module>
     <module>seqware-queryengine</module> 
     <module>seqware-queryengine-legacy</module> 
-        <module>seqware-meta-db</module>
+<!--        <module>seqware-meta-db</module>
         <module>seqware-pipeline</module>
         <module>seqware-webservice-dto</module>
         <module>seqware-webservice</module>
@@ -153,8 +153,9 @@
         <module>seqware-archetypes/seqware-archetype-decider</module>
         <module>seqware-archetypes/seqware-archetype-java-workflow</module>
         <module>seqware-archetypes/seqware-archetype-module</module>
+-->
         <module>seqware-distribution</module>
-        <module>seqware-ext-testing</module>
+<!--        <module>seqware-ext-testing</module> -->
     </modules>
 
 
