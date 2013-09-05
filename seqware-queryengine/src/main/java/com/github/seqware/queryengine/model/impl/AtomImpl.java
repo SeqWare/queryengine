@@ -265,6 +265,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
             Logger.getLogger(TagIO.class.getName()).fatal("Tag " + tag.getKey() + " must not be owned by a tagset");
             throw new RuntimeException("Tag cannot be associated with a TagSet");
         }
+        
+        // strip out identifying information for Tag when it gets attached to an entity
+        tag = tag.toBuilder().build();
+        tag.impersonate(null);
 
         String rowKey = Constants.TRACK_TAGSET ? tag.getTagSetSGID().getRowKey() : null;
         if (!tags.containsKey(rowKey)) {

@@ -72,7 +72,9 @@ public class UtilIO {
             Tag t = (Tag) it.next();
             builder.addTags(tagIO.m2pb(t));
         }
-        builder.setSgid(SGIDIO.m2pb(atomImpl.getSGID()));
+        if (atomImpl.getSGID() != null){
+            builder.setSgid(SGIDIO.m2pb(atomImpl.getSGID()));
+        }
         //builder.setDate(atomImpl.getTimestamp().getTime());
         if (Constants.TRACK_VERSIONING){
             if (atomImpl.getPrecedingSGID() != null) {
@@ -111,6 +113,8 @@ public class UtilIO {
         for (Iterator it = feature.getTags().iterator(); it.hasNext();) {
             //TODO: weird, we shouldn't have to cast here
             Tag t = (Tag) it.next();
+            // ensure that tags attached to entities are stripped of identifying information to reduce storage size
+            assert(t.getSGID() == null);
             builder.addTags(tagIO.m2pb(t));
         }
         assert(feature.getSGID() instanceof FSGID);
