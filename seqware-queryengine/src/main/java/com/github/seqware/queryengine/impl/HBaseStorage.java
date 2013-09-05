@@ -38,6 +38,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.io.hfile.Compression;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
@@ -124,6 +125,8 @@ public class HBaseStorage extends StorageInterface {
         // Create a fresh table, i.e. delete an existing table if it exists:
         HTableDescriptor ht = new HTableDescriptor(tableName);
         HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(TEST_COLUMN);
+        hColumnDescriptor.setCompactionCompressionType(Compression.Algorithm.GZ);
+        hColumnDescriptor.setCompressionType(Compression.Algorithm.GZ);
         if (Constants.TRACK_VERSIONING){
             hColumnDescriptor.setMaxVersions(Integer.MAX_VALUE);
         }
