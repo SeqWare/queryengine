@@ -202,7 +202,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                 if (count % this.getBatch_size() == 0) {
                     modelManager.flush();
                     modelManager.clear();
-                    if (!Constants.TRACK_TAGSET){
+                    if (Constants.TRACK_TAGSET){
                         modelManager.persist(adHocSet);
                     }
                     modelManager.persist(fSet);
