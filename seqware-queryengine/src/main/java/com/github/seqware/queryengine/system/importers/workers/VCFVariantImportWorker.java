@@ -4,6 +4,7 @@ import com.esotericsoftware.minlog.Log;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
@@ -211,6 +212,9 @@ public class VCFVariantImportWorker extends ImportWorker {
                 // ignore commented lines
                 if (!l.startsWith("#")) {
 
+                    if (Constants.OUTPUT_METRICS){
+                        Logger.getLogger(HBaseStorage.class.getName()).info("Line " + count + " is " + l.getBytes().length + " bytes long");
+                    }
                     // pileup string
                     String[] t = l.split("\t+");
 

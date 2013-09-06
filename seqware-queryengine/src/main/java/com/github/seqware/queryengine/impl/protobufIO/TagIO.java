@@ -19,6 +19,7 @@ package com.github.seqware.queryengine.impl.protobufIO;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QESupporting;
 import com.github.seqware.queryengine.dto.QESupporting.TagPB;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.protobuf.ByteString;
@@ -99,6 +100,9 @@ public class TagIO implements ProtobufTransferInterface<TagPB, Tag> {
             builder.setTagSet(SGIDIO.m2pb(tag.getTagSetSGID()));
         }
         builder.setAtom(UtilIO.handleAtom2PB(builder.getAtom(), tag));
+        if (Constants.OUTPUT_METRICS) {
+            Logger.getLogger(HBaseStorage.class.getName()).info("Tag atom serialized to " + builder.getAtom().toByteArray().length + " bytes");
+        }
         if (ProtobufTransferInterface.PERSIST_VERSION_CHAINS && tag.getPrecedingVersion() != null) {
             builder.setPrecedingVersion(m2pb(tag.getPrecedingVersion()));
         }
