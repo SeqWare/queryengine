@@ -115,10 +115,10 @@ public class VCFDumper {
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString()).append("\t");
             buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_INFO).getValue().toString());
+            //buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_INFO).getValue().toString());
         } catch (NullPointerException npe) {
             if (!caughtNonVCF) {
-                Logger.getLogger(VCFDumper.class.getName()).info("VCF exporting non-VCF feature");
+                Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");
 
             }
             // this may occur when exporting Features that were not originally VCF files
@@ -172,7 +172,7 @@ public class VCFDumper {
                     Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
                     System.exit(-1);
                 } catch(Exception e){
-                    Logger.getLogger(VCFDumper.class.getName()).info("MapReduce exporting failed, falling-through to normal exporting to file");
+                    Logger.getLogger(VCFDumper.class.getName()).fatal("MapReduce exporting failed, falling-through to normal exporting to file");
                     // fall-through and do normal exporting if Map Reduce exporting fails
                 }
             } // TODO: clearly this should be expanded to include closing database etc 
