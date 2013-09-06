@@ -15,10 +15,10 @@
     <url>https://github.com/SeqWare/seqware</url>
 
     <dependencies>
-   <!-- <dependency>
+        <dependency>
             <groupId>com.github.seqware</groupId>
             <artifactId>seqware-queryengine</artifactId>
-        </dependency> -->
+        </dependency>
         <dependency>
             <groupId>com.github.seqware</groupId>
             <artifactId>seqware-pipeline</artifactId>
@@ -114,7 +114,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-               <!-- <execution>
+                    <execution>
                         <id>executable-queryengine-jar-assembly</id>
                         <phase>package</phase>
                         <goals>
@@ -134,7 +134,7 @@
                                 <descriptor>src/assemble/seqware-queryengine.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution> -->
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -155,7 +155,7 @@
                             <ignorePathsToDelete>
                                 <ignorePathToDelete>javadoc</ignorePathToDelete>
                                 <ignorePathToDelete>manuals</ignorePathToDelete>
-                           <!-- <ignorePathToDelete>queryengine-api</ignorePathToDelete> -->
+                                <ignorePathToDelete>queryengine-api</ignorePathToDelete>
                                 <ignorePathToDelete>webservice-api</ignorePathToDelete>
                                 <ignorePathToDelete>pictures</ignorePathToDelete>
                             </ignorePathsToDelete>
