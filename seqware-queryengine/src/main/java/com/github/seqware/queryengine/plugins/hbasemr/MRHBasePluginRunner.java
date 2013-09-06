@@ -34,6 +34,7 @@ import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByFilterPlugin;
 import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
+import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +152,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
                     job);
-            job.setOutputFormatClass(mapReducePlugin.getOutputClass());   // because we aren't emitting anything from mapper
+            if (!(mapReducePlugin instanceof VCFDumperPlugin)){
+                job.setOutputFormatClass(mapReducePlugin.getOutputClass());   // because we aren't emitting anything from mapper
+            }
             job.setReducerClass(MRHBasePluginRunner.PluginRunnerReducer.class);    // reducer class
             job.setNumReduceTasks(mapReducePlugin.getNumReduceTasks());
 

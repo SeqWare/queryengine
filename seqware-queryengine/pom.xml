@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <protobuf.version>2.5.0</protobuf.version>
+        <protobuf.version>2.4.1</protobuf.version>
         <jersey-version>1.14</jersey-version>
     </properties>
     <parent>
