@@ -267,8 +267,14 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
         }
         
         // strip out identifying information for Tag when it gets attached to an entity
-        tag = tag.toBuilder().build();
-        tag.impersonate(null);
+        if (Constants.TRACK_TAGSET){
+            tag = tag.toBuilder().build();
+            tag.impersonate(null);
+        } else{
+            tag = Tag.newBuilder().setKey(tag.getKey()).setValue(tag.getValue()).build();
+            tag.impersonate(null);
+        }
+        
 
         String rowKey = Constants.TRACK_TAGSET ? tag.getTagSetSGID().getRowKey() : null;
         if (!tags.containsKey(rowKey)) {

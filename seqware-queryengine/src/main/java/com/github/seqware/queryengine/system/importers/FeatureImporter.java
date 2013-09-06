@@ -153,7 +153,7 @@ public class FeatureImporter extends Importer {
                         @Override
                         public void uncaughtException(Thread thread, Throwable thrwbl) {
                             pmi.failedWorkers.add((ImportWorker) thread);
-                            throw new RuntimeException("Error in VCRVariantImportWorker");
+                            throw new RuntimeException("Error in VCRVariantImportWorker", thrwbl);
                         }
                     });
 

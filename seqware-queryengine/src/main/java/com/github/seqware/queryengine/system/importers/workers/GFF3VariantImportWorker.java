@@ -160,8 +160,12 @@ public class GFF3VariantImportWorker extends ImportWorker {
     public GFF3VariantImportWorker() {
     }
     
+    private Tag processVCFTagSpec(String key, String value){
+        return VCFVariantImportWorker.processVCFTagSpec(key, value, this.gff3TagSet, this.mManager);
+    }
+    
     private Tag processVCFTagSpec(String key){
-        return VCFVariantImportWorker.processVCFTagSpec(key, this.gff3TagSet, this.mManager);
+        return VCFVariantImportWorker.processVCFTagSpec(key, null, this.gff3TagSet, this.mManager);
     }
     
     /** {@inheritDoc} */

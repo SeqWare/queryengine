@@ -38,6 +38,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.io.hfile.Compression;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
@@ -61,8 +62,6 @@ public class HBaseStorage extends StorageInterface {
     private Configuration config;
     private SerializationInterface serializer;
     private Map<String, HTable> tableMap = new HashMap<String, HTable>();
-    /** Constant <code>DEBUG=true</code> */
-    public final static boolean DEBUG = true;
     private Map<String, Integer> minMap = null;
     private Map<String, Integer> maxMap = null;
     private Map<String, Long> countMap = null;
@@ -73,7 +72,7 @@ public class HBaseStorage extends StorageInterface {
      * @param i a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      */
     public HBaseStorage(SerializationInterface i) {
-        if (DEBUG) {
+        if (Constants.OUTPUT_METRICS) {
             minMap = new HashMap<String, Integer>();
             maxMap = new HashMap<String, Integer>();
             countMap = new HashMap<String, Long>();
@@ -124,7 +123,11 @@ public class HBaseStorage extends StorageInterface {
         // Create a fresh table, i.e. delete an existing table if it exists:
         HTableDescriptor ht = new HTableDescriptor(tableName);
         HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(TEST_COLUMN);
-        hColumnDescriptor.setMaxVersions(Integer.MAX_VALUE);
+        hColumnDescriptor.setCompactionCompressionType(Compression.Algorithm.GZ);
+        hColumnDescriptor.setCompressionType(Compression.Algorithm.GZ);
+        if (Constants.TRACK_VERSIONING){
+            hColumnDescriptor.setMaxVersions(Integer.MAX_VALUE);
+        }
         ht.addFamily(hColumnDescriptor);
         // make a persistent store exists already, otherwise try to retrieve existing items
         if (!hba.isTableAvailable(tableName)) {
@@ -177,7 +180,7 @@ public class HBaseStorage extends StorageInterface {
                 assert (prefix.equals(((AtomImpl) objArr[0]).getHBasePrefix()));
                 byte[] featureBytes = serializer.serialize(obj);
 
-                if (DEBUG) {
+                if (Constants.OUTPUT_METRICS) {
                     maxSize = Math.max(maxSize, featureBytes.length);
                     minSize = Math.min(minSize, featureBytes.length);
                 }
@@ -195,7 +198,7 @@ public class HBaseStorage extends StorageInterface {
                 }
                 putList.add(p);
             }
-            if (DEBUG) {
+            if (Constants.OUTPUT_METRICS) {
                 if (!this.minMap.containsKey(prefix)) {
                     this.minMap.put(prefix, Integer.MAX_VALUE);
                 }
@@ -397,7 +400,7 @@ public class HBaseStorage extends StorageInterface {
             Scan s = new Scan();
             s.setMaxVersions();
             // is caching causing us the timeout to UnknownScannerExceptions?
-            // s.setCaching(500);
+            s.setCaching(500);
             // we need the actual values if we do not store SGID in row key for debugging
             //s.setFilter(new KeyOnlyFilter());
             ResultScanner scanner = table.getScanner(s);
@@ -518,7 +521,7 @@ public class HBaseStorage extends StorageInterface {
         }
         Logger.getLogger(HBaseStorage.class.getName()).info("closing HBaseStorage tables");
         tableMap.clear();
-        if (DEBUG) {
+        if (Constants.OUTPUT_METRICS) {
             for (Entry<String, Integer> e : maxMap.entrySet()) {
                 int maxValue = e.getValue();
                 int minValue = minMap.get(e.getKey());

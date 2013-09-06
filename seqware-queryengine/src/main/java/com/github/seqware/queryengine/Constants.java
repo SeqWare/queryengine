@@ -59,9 +59,16 @@ public class Constants {
     /** Compile time constants to turn on and off specific features */
     
     // implement the Versionable interface allowing the user access past versions of entities
+    // this will have a performance hit since HTables with be created with the maximum number of versions
+    // also our code will have to scan through timestamps in order to determine the state of a featrueset at a given time
     public static final boolean TRACK_VERSIONING = false;
     // implement TagSet tracking on import of VCF data
+    // this means that we will record possible tags for tagsets and tags added to features will record which tagset they belong to
+    // this currently uses a lot (too much) of memory
     public static final boolean TRACK_TAGSET = false;
+    // this outputs all sorts of metrics about the byte sizes of lines and serialized objects to log4j
+    public static final boolean OUTPUT_METRICS = false;
+    
 
     /**
      * Regular Expression for suitable rowKeys

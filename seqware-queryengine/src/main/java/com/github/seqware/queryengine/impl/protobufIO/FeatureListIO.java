@@ -20,6 +20,7 @@ import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QueryEngine;
 import com.github.seqware.queryengine.dto.QueryEngine.FeatureListPB;
 import com.github.seqware.queryengine.dto.QueryEngine.FeaturePB;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.util.FSGID;
@@ -62,9 +63,16 @@ public class FeatureListIO implements ProtobufTransferInterface<FeatureListPB, F
         assert(featureList.getSGID() instanceof FSGID);
         QueryEngine.FeatureListPB.Builder builder = QueryEngine.FeatureListPB.newBuilder();
         builder.setAtom(UtilIO.handleAtom2PB(builder.getAtom(), featureList));
+        if (Constants.OUTPUT_METRICS) {
+            Logger.getLogger(HBaseStorage.class.getName()).info("FeatureList atom serialized to " + builder.getAtom().toByteArray().length + " bytes");
+        }
         assert(featureList.getFeatures().size() > 0);
         for(Feature fpb: featureList.getFeatures()){
-            builder.addFeatures(featureIO.m2pb(fpb));
+            FeaturePB m2pb = featureIO.m2pb(fpb);
+            if (Constants.OUTPUT_METRICS) {
+                Logger.getLogger(HBaseStorage.class.getName()).info("Feature serialized to " + m2pb.toByteArray().length + " bytes");
+            }
+            builder.addFeatures(m2pb);
         }
         FeatureListPB fMesg = builder.build();
         return fMesg;
