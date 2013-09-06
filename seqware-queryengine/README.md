@@ -103,3 +103,15 @@ If you run into the following error when the hbase-plugin starts up, please chec
 
 In particular, the latest (v. 13) version of Linux Mint has on the second line <code>127.0.1.1  \<your hostname\></code> which should be modified to <code>127.0.0.1  \<your hostname\></code>  
 
+## Web Service (And Associated Swagger Documentation)
+
+The web service can be started by running 
+
+    mvn tomcat6:run
+
+Then access the root of the Swagger documentation [here](http://localhost:8889/seqware-queryengine/api/api-docs)
+This json file describes all the available web resources. 
+However, you will probably be more interested in the Swagger UI which presents this in human readable form 
+[here](http://localhost:8889/seqware-queryengine/ui/)
+
+For update purposes (and credit), this is a copy of [swagger-ui](https://github.com/wordnik/swagger-ui).

@@ -29,7 +29,7 @@ import javax.ws.rs.Produces;
  * @author dyuen
  */
 @Path("/user")
-@Api(value = "/user", description = "Operations about users", listingPath="/resources/user")
+@Api(value = "/user", description = "Operations about users"/*, listingPath="/resources/user"*/)
 @Produces({"application/json"})
 public class UserResource extends GenericElementResource<User> {
 

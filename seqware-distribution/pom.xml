@@ -159,7 +159,7 @@
                             <ignorePathsToDelete>
                                 <ignorePathToDelete>javadoc</ignorePathToDelete>
                                 <ignorePathToDelete>manuals</ignorePathToDelete>
-                           <!-- <ignorePathToDelete>queryengine-api</ignorePathToDelete> -->
+                                <ignorePathToDelete>queryengine-api</ignorePathToDelete>
                                 <ignorePathToDelete>webservice-api</ignorePathToDelete>
                                 <ignorePathToDelete>pictures</ignorePathToDelete>
                             </ignorePathsToDelete>

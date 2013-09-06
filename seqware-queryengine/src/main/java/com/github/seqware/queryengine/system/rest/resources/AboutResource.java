@@ -21,7 +21,6 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.jaxrs.JavaHelp;
 import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -37,7 +36,7 @@ import javax.ws.rs.core.Response;
 @Path("/about")
 @Api(value = "/about", description = "Metadata about this service"/*, listingPath="/resources.json/referenceset"*/)
 @Produces({"application/json"})
-public class AboutResource extends JavaHelp {
+public class AboutResource  {
 
     public class BagOfVersionInfo {
 
