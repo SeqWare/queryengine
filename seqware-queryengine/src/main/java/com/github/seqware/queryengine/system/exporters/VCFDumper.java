@@ -115,7 +115,7 @@ public class VCFDumper {
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString()).append("\t");
             buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
-            //buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_INFO).getValue().toString());
+            // for some actually useful output, you'll probably want to output specific tags here
         } catch (NullPointerException npe) {
             if (!caughtNonVCF) {
                 Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");

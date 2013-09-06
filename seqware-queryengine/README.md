@@ -30,26 +30,29 @@ However, if you wish to do some development or run the integration tests, there 
 
 For our tutorial, use the following values in your ~/.seqware/settings
 
-	#
-	# SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS
-	#
-	HBASE.ZOOKEEPER.QUORUM=localhost
-	HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
-	HBASE.MASTER=localhost:60000
-	MAPRED.JOB.TRACKER=localhost:8021
-	FS.DEFAULT.NAME=hdfs://localhost:8020
-	FS.DEFAULTFS=hdfs://localhost:8020
-	FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
+    #
+    # SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS
+    #
+    HBASE.ZOOKEEPER.QUORUM=localhost
+    HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
+    HBASE.MASTER=localhost:60000
+    MAPRED.JOB.TRACKER=localhost:8021
+    FS.DEFAULT.NAME=hdfs://localhost:8020
+    FS.DEFAULTFS=hdfs://localhost:8020
+    FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
 
-	# SEQWARE QUERY ENGINE SETTINGS
-	QE_NAMESPACE=BATMAN
-	QE_DEVELOPMENT_DEPENDENCY=file:/home/seqware/Development/gitroot/seqware-github/seqware-distribution/target/seqware-distribution-<%= seqware_release_version %>-qe-full.jar
-	QE_PERSIST=true
-	QE_HBASE_REMOTE_TESTING=false
-	QE_HBASE_PROPERTIES=LOCAL
+    #
+    # SEQWARE QUERY ENGINE SETTINGS
+    #
+    QE_NAMESPACE=BATMAN
+    QE_DEVELOPMENT_DEPENDENCY=file:/home/dyuen/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
+    QE_PERSIST=true
+    QE_HBASE_REMOTE_TESTING=false
+    # Connect to either HBOOT, SQWDEV, or an implicit localhost
+    QE_HBASE_PROPERTIES=localhost
 	
 
-1. 	Refresh the code for the query engine by doing a <code>git fetch</code> and <code>git pull</code> in the seqware_github directory. On the VM, you may need to merge changes or simply discard changes with a command such as <code>git checkout seqware-queryengine/src/main/java/com/github/seqware/queryengine/Constants.java</code>
+1. 	Refresh the code for the query engine by doing a <code>git pull</code> in the seqware_github directory. On the VM, you may need to merge changes or simply discard changes with a command such as <code>git checkout seqware-queryengine/src/main/java/com/github/seqware/queryengine/Constants.java</code>
 2. 	If the [web interface](http://localhost:60010/master-status) for HBase stalls or is inactive, you may need to restart the HBase processes. This can be done by the following commands:
 	<pre title="Title of the snippet">
 	sudo - root (or sudo bash)
@@ -103,15 +106,26 @@ If you run into the following error when the hbase-plugin starts up, please chec
 
 In particular, the latest (v. 13) version of Linux Mint has on the second line <code>127.0.1.1  \<your hostname\></code> which should be modified to <code>127.0.0.1  \<your hostname\></code>  
 
-## Web Service (And Associated Swagger Documentation)
 
-The web service can be started by running 
+## Performance Toggles
 
-    mvn tomcat6:run
+You will find several performance and metic related toggles in com.github.seqware.queryengine.Constants which allow you to turn on and off versioning, tracking of tagsets, and output various metrics on the size of serialized objects. 
 
-Then access the root of the Swagger documentation [here](http://localhost:8889/seqware-queryengine/api/api-docs)
-This json file describes all the available web resources. 
-However, you will probably be more interested in the Swagger UI which presents this in human readable form 
-[here](http://localhost:8889/seqware-queryengine/ui/)
+## Basic Commands
 
-For update purposes (and credit), this is a copy of [swagger-ui](https://github.com/wordnik/swagger-ui).
+For a full tutorial, please see http://seqware.github.io/docs/8-query-engine/
+
+However, some basic commands to get you started follow:
+
+Create a reference: 
+
+    java -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19 keyValue_ref.out
+
+Import a VCF file:
+
+    java -Xmx2048m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.FeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
+    
+Dump a feature set to VCF file:
+
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.VCFDumper 91583362-9d4d-4040-bc36-e2b457ed883e test_out.vcf
+
