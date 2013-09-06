@@ -66,6 +66,10 @@ public class VCFVariantImportWorker extends ImportWorker {
             }
         }
     }
+    
+    public Tag getTagSpec(String key){
+        return getTagSpec(key, null);
+    }
 
     /**
      * Given a key, locate a potential match inside a list of tag sets,
@@ -76,10 +80,13 @@ public class VCFVariantImportWorker extends ImportWorker {
      * @param key a {@link java.lang.String} object.
      * @return a {@link com.github.seqware.queryengine.model.Tag} object.
      */
-    public Tag getTagSpec(String key) {
+    public Tag getTagSpec(String key, String value) {
         if (!Constants.TRACK_TAGSET){
-            Tag build = Tag.newBuilder().setKey(key).build();
-            return build;
+            Tag.Builder builder = Tag.newBuilder().setKey(key);
+            if (value != null){
+                builder.setValue(value);
+            }
+            return builder.build();
         }
         
         Logger.getLogger(VCFVariantImportWorker.class.getName()).trace("getTagSpec() called on " + key);
@@ -113,7 +120,11 @@ public class VCFVariantImportWorker extends ImportWorker {
     }
 
     private Tag processVCFTagSpec(String key){
-        return processVCFTagSpec(key, this.vcfTagSet, this.modelManager);
+        return processVCFTagSpec(key, null, this.vcfTagSet, this.modelManager);
+    }
+    
+    private Tag processVCFTagSpec(String key, String value){
+        return processVCFTagSpec(key, value, this.vcfTagSet, this.modelManager);
     }
     
     /**
@@ -124,10 +135,13 @@ public class VCFVariantImportWorker extends ImportWorker {
      * @param modelManager a {@link com.github.seqware.queryengine.factory.CreateUpdateManager} object.
      * @return a {@link com.github.seqware.queryengine.model.Tag} object.
      */
-    public static Tag processVCFTagSpec(String key, TagSet tagset, CreateUpdateManager modelManager) {
+    public static Tag processVCFTagSpec(String key, String value, TagSet tagset, CreateUpdateManager modelManager) {
         if (!Constants.TRACK_TAGSET){
-            Tag build = Tag.newBuilder().setKey(key).build();
-            return build;
+            Tag.Builder builder = Tag.newBuilder().setKey(key);
+            if (value != null) {
+                builder.setValue(value);
+            }
+            return builder.build();
         }
         
         Logger.getLogger(VCFVariantImportWorker.class.getName()).trace("processVCFTagSpec() called on " + key);
@@ -138,7 +152,7 @@ public class VCFVariantImportWorker extends ImportWorker {
             return tagByKey;
         }
         Logger.getLogger(VCFVariantImportWorker.class.getName()).trace(key + " not found in potential tag sets, adding to VCF tag set");
-        Tag build = modelManager.buildTag().setKey(key).build();
+        Tag build = modelManager.buildTag().setKey(key).setValue(value).build();
         tagset.add(build);
         return build;
     }
@@ -235,9 +249,9 @@ public class VCFVariantImportWorker extends ImportWorker {
                     setOfTags.add(getTagSpec(t[0]));
                     //m.addTag(t[0], null);
                     // referenceBase, consensusBase, and calledBase can be ad hoc tags for now
-                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_REFERENCE_BASE).toBuilder().setValue(t[3].toUpperCase()).build());
-                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_CONSENSUS_BASE).toBuilder().setValue(t[4].toUpperCase()).build());
-                    Tag calledTag = processVCFTagSpec(ImportConstants.VCF_CALLED_BASE).toBuilder().setValue(t[4].toUpperCase()).build();
+                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_REFERENCE_BASE, t[3].toUpperCase()));
+                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_CONSENSUS_BASE, t[4].toUpperCase()));
+                    Tag calledTag = processVCFTagSpec(ImportConstants.VCF_CALLED_BASE,t[4].toUpperCase());
                     setOfTags.add(calledTag);
                     //m.setReferenceBase(t[3].toUpperCase());
                     //m.setConsensusBase(t[4].toUpperCase());
@@ -251,7 +265,7 @@ public class VCFVariantImportWorker extends ImportWorker {
 
                     // parse ID
                     if (!".".equals(t[2])) {
-                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_SECOND_ID).toBuilder().setValue(t[2]).build());
+                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_SECOND_ID,t[2]));
                         //m.addTag("ID", t[2]);
                     }
 // This had to be removed when adding tag support, adding every ID field as a tag would effectviely blow out our ad hoc tag sets to the size of a FeatureSet which 
@@ -286,7 +300,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                             // TGCACGTCA,TAA 
                             //throw new Exception("Don't know what "+m.getReferenceBase()+"->"+m.getConsensusBase()+" is!!!");
                         }
-                        calledTag = processVCFTagSpec(ImportConstants.VCF_CALLED_BASE).toBuilder().setValue(calledBase).build();
+                        calledTag = processVCFTagSpec(ImportConstants.VCF_CALLED_BASE, calledBase);
                         setOfTags.add(calledTag);
                         //m.setCalledBase(calledBase);
                         // leave the consensus base as the original call syntax from the VCF file
@@ -331,7 +345,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                     fBuilder.setType(ImportConstants.VCF_SNV);
                     //m.setType(Variant.SNV);
                     // always save a tag
-                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_SNV).toBuilder().build());
+                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_SNV));
                     //m.addTag("SNV", null);
                     if (!".".equals(t[1])) {
                         Integer pos = Integer.parseInt(t[1]);
@@ -342,7 +356,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                     //m.setStopPosition(pos);
 
                     // now parse field 6
-                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_FILTER).toBuilder().setValue(t[6]).build());
+                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_FILTER,t[6]));
                     //m.addTag(t[6], null);
                     // added to prototype, record the info field
                     // don't record the field as a whole, this is useless and big
@@ -356,22 +370,22 @@ public class VCFVariantImportWorker extends ImportWorker {
                     for (String tag : tags) {
                         if (tag.contains("=")) {
                             String[] kv = tag.split("=");
-                            setOfTags.add(getTagSpec(kv[0]).toBuilder().setValue(kv[1]).build());
+                            setOfTags.add(getTagSpec(kv[0],kv[1]));
                             //m.addTag(kv[0], kv[1]);
                             if ("DP".equals(kv[0])) {
-                                setOfTags.add(processVCFTagSpec(ImportConstants.VCF_READ_COUNTS).toBuilder().setValue(kv[1]).build());
+                                setOfTags.add(processVCFTagSpec(ImportConstants.VCF_READ_COUNTS,kv[1]));
                                 //m.setReadCount(Integer.parseInt(kv[1]));
                             }
                             // see above
                             if ("FQ".equals(kv[0])) {
                                 float fq = Float.parseFloat(kv[1]);
                                 if (fq < 0) {
-                                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HOMOZYGOUS).toBuilder().build());
+                                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HOMOZYGOUS));
                                     //m.setZygosity(m.VCF_HOMOZYGOUS);
                                     //m.getTags().put("homozygous", null);
                                     fqLt0 = true;
                                 } else {
-                                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HETEROZYGOUS).toBuilder().build());
+                                    setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HETEROZYGOUS));
                                     //m.setZygosity(m.VCF_HETEROZYGOUS);
                                     //m.getTags().put("heterozygous", null);
                                 }
@@ -393,7 +407,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                             } else {
                                 // this is dangerous because it could add an arbitrary number of additional Tags,
                                 // but we need it for testing dbSNP
-                                setOfTags.add(getTagSpec(tag).toBuilder().build());
+                                setOfTags.add(getTagSpec(tag));
                                 //m.addTag(tag, null);
                             }
                         }
@@ -402,11 +416,11 @@ public class VCFVariantImportWorker extends ImportWorker {
                     // yet another way to encode hom/het
                     // FIXME: this doesn't conform to the standard
                     if (t.length > 9 && t[8].contains("GT") && t[9].contains("het")) {
-                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HETEROZYGOUS).toBuilder().build());
+                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HETEROZYGOUS));
                         //m.setZygosity(m.VCF_HETEROZYGOUS);
                         //m.getTags().put("heterozygous", null);
                     } else if (t.length > 9 && t[8].contains("GT") && t[9].contains("hom")) {
-                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HOMOZYGOUS).toBuilder().build());
+                        setOfTags.add(processVCFTagSpec(ImportConstants.VCF_HOMOZYGOUS));
                         //m.setZygosity(m.VCF_HOMOZYGOUS);
                         //m.getTags().put("homozygous", null);
                     }
