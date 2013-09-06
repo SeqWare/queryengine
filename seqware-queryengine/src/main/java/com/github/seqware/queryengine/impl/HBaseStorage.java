@@ -400,7 +400,7 @@ public class HBaseStorage extends StorageInterface {
             Scan s = new Scan();
             s.setMaxVersions();
             // is caching causing us the timeout to UnknownScannerExceptions?
-            // s.setCaching(500);
+            s.setCaching(500);
             // we need the actual values if we do not store SGID in row key for debugging
             //s.setFilter(new KeyOnlyFilter());
             ResultScanner scanner = table.getScanner(s);
