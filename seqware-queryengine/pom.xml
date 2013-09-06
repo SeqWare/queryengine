@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>seqware-queryengine</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>seqware-queryengine</name>
     <description>SeqWare Query Backend</description>
@@ -252,6 +252,27 @@ never
                 <configuration>
                     <targetJdk>1.6</targetJdk>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId> 
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <packaging>jar</packaging>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}.jar
+                            </file>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

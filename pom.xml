@@ -144,6 +144,7 @@
     <modules>
         <module>seqware-common</module>
     <module>seqware-queryengine</module> 
+    <module>seqware-queryengine-webservice</module> 
     <module>seqware-queryengine-legacy</module> 
 <!--        <module>seqware-meta-db</module>
         <module>seqware-pipeline</module>

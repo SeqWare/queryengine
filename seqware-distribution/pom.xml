@@ -127,7 +127,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>net.sourceforge.seqware.pipeline.runner.PluginRunner</mainClass>
+                                    <mainClass>com.github.seqware.queryengine.system.importers.SOFeatureImporter</mainClass>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
