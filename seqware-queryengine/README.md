@@ -134,7 +134,7 @@ Create a reference:
 
 Import a VCF file:
 
-    java -Xmx2048m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.FeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
     
 Dump a feature set to VCF file:
 
