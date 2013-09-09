@@ -45,12 +45,23 @@ For our tutorial, use the following values in your ~/.seqware/settings
     # SEQWARE QUERY ENGINE SETTINGS
     #
     QE_NAMESPACE=BATMAN
-    QE_DEVELOPMENT_DEPENDENCY=file:/home/dyuen/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
+    QE_DEVELOPMENT_DEPENDENCY=file:/home/<your user>/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
     QE_PERSIST=true
     QE_HBASE_REMOTE_TESTING=false
     # Connect to either HBOOT, SQWDEV, or an implicit localhost
     QE_HBASE_PROPERTIES=localhost
-	
+
+Note that since QE_HBASE_REMOTE_TESTING is set to false, the variables under the heading SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS will be used. If QE_REMOTE_TESTING is set to true and QE_HBASE_PROPERTIES is set to something different, then corresponding families of these variables have to be setup in your .seqware/settings file in order to connect to a different server. For example, if it was set to SQWDEV then you require the following:
+
+    QE_SQWDEV_HBASE_ZOOKEEPER_QUORUM=sqwdev.res.oicr.on.ca
+    QE_SQWDEV_HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT=2181
+    QE_SQWDEV_HBASE_MASTER=sqwdev.res.oicr.on.ca:60000
+    QE_SQWDEV_MAPRED_JOB_TRACKER=sqwdev.res.oicr.on.ca:8021
+    QE_SQWDEV_FS_DEFAULT_NAME=hdfs://sqwdev.res.oicr.on.ca:8020
+    QE_SQWDEV_FS_DEFAULTFS=hdfs://sqwdev.res.oicr.on.ca:8020
+    QE_SQWDEV_FS_HDFS_IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
+
+The QE_DEVELOPMENT_DEPENDENCY variable is used for development time. When running map/reduce tasks, we need to upload our code to the Hadoop cluster. When running from a jar, we simply have the jar upload itself. However, when running in an IDE, we need to specify a (up-to-date) jar file for upload that contains the code for M/R. Normally, we upload the full jar. 
 
 1. 	Refresh the code for the query engine by doing a <code>git pull</code> in the seqware_github directory. On the VM, you may need to merge changes or simply discard changes with a command such as <code>git checkout seqware-queryengine/src/main/java/com/github/seqware/queryengine/Constants.java</code>
 2. 	If the [web interface](http://localhost:60010/master-status) for HBase stalls or is inactive, you may need to restart the HBase processes. This can be done by the following commands:

@@ -206,18 +206,6 @@ public class FeatureImporter extends Importer {
     private List<ImportWorker> failedWorkers = new ArrayList<ImportWorker>();
 
     /**
-     * <p>main.</p>
-     *
-     * @param args an array of {@link java.lang.String} objects.
-     */
-    public static void main(String[] args) {
-        SGID mainMethod = FeatureImporter.naiveRun(args);
-        if (mainMethod == null) {
-            System.exit(EXIT_CODE_INVALID_FILE);
-        }
-    }
-
-    /**
      * Import a set of Features into a particular specified reference. The ID
      * for the FeatureSet we use is returned.
      *
