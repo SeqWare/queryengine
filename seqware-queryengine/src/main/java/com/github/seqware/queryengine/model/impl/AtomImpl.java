@@ -265,7 +265,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     }
     
     public boolean fastAssociateTag(String key, String value) {
-      Tag tag = Tag.newBuilder().setKey(key).setValue(value).build();
+      Tag tag = Tag.newLightWeightBuilder().setKey(key).setValue(value).build();
       if (!tags.containsKey(null)) {
             tags.put(null, new HashMap<String, Tag>());
       }

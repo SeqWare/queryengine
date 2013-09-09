@@ -114,7 +114,6 @@ public class UtilIO {
         builder.setSerializationConstant(feature.getExternalSerializationVersion());
         int allTagsSize = 0;
         for (Tag t : feature.getTags()) {
-            assert(t.getSGID() == null);
             QESupporting.TagPB m2pb = tagIO.m2pb(t);
             builder.addTags(m2pb);
             if (Constants.OUTPUT_METRICS) {

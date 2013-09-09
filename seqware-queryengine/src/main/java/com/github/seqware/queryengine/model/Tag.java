@@ -56,7 +56,14 @@ public class Tag extends AtomImpl<Tag> {
      * Create a new tag
      */
     private Tag() {
-        // HACK: not tracking so doesn't get a unique ID
+        vType = ValueType.STRING;
+    }
+    
+    /**
+     * Constructor for light-weight tags. 
+     * (i.e. without identifying information)
+     */
+    private Tag(String sgid){
         super("");
         vType = ValueType.STRING;
     }
@@ -204,18 +211,27 @@ public class Tag extends AtomImpl<Tag> {
     }
 
     /**
-     * Create a new ACL builder
+     * Create a new Tag builder
      *
      * @return a {@link com.github.seqware.queryengine.model.Tag.Builder} object.
      */
     public static Tag.Builder newBuilder() {
         return new Tag.Builder();
     }
+    
+    /**
+     * Create a new Tag builder
+     *
+     * @return a {@link com.github.seqware.queryengine.model.Tag.Builder} object.
+     */
+    public static Tag.Builder newLightWeightBuilder() {
+        return new Tag.Builder("");
+    }
 
     /**
      * {@inheritDoc}
      *
-     * Create an ACL builder started with a copy of this
+     * Create an Tag builder started with a copy of this
      */
     @Override
     public Tag.Builder toBuilder() {
@@ -259,7 +275,15 @@ public class Tag extends AtomImpl<Tag> {
 
     public static class Builder extends BaseBuilder {
 
-        private Tag tag = new Tag();
+        private Tag tag;
+        
+        public Builder(){
+            tag = new Tag();
+        }
+        
+        public Builder(String rowKey){
+            tag = new Tag(rowKey);
+        }
 
         /**
          * '
