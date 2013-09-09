@@ -45,8 +45,11 @@ public class SGIDIO {
      * @return a {@link com.github.seqware.queryengine.dto.QESupporting.SGIDPB} object.
      */
     public static SGIDPB m2pb(SGID sgid) {
-        QESupporting.SGIDPB.Builder builder = QESupporting.SGIDPB.newBuilder().setLeastSigBits(sgid.getUuid().getLeastSignificantBits());
-        builder.setMostSigBits(sgid.getUuid().getMostSignificantBits());
+        QESupporting.SGIDPB.Builder builder = QESupporting.SGIDPB.newBuilder();
+        if (sgid.getUuid() != null) {
+          builder.setLeastSigBits(sgid.getUuid().getLeastSignificantBits());
+          builder.setMostSigBits(sgid.getUuid().getMostSignificantBits());
+        }
         if (sgid.getBackendTimestamp() != null) {
             builder.setTimestamp(sgid.getBackendTimestamp().getTime());
         }

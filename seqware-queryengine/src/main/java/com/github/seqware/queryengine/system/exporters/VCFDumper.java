@@ -23,12 +23,14 @@ import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryFuture;
+import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import com.github.seqware.queryengine.util.SGID;
+import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -116,6 +118,12 @@ public class VCFDumper {
             buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
             // for some actually useful output, you'll probably want to output specific tags here
+            SeqWareIterable<Tag> tags = feature.getTags();
+            for (Tag tag : tags) {
+              buffer.append(tag.getKey());
+              if (tag.getValue() != null) { buffer.append("="+tag.getValue());}
+              buffer.append(";");
+            }
         } catch (NullPointerException npe) {
             if (!caughtNonVCF) {
                 Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");

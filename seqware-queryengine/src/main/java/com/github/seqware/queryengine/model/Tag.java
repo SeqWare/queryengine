@@ -56,7 +56,8 @@ public class Tag extends AtomImpl<Tag> {
      * Create a new tag
      */
     private Tag() {
-        super();
+        // HACK: not tracking so doesn't get a unique ID
+        super("");
         vType = ValueType.STRING;
     }
 
