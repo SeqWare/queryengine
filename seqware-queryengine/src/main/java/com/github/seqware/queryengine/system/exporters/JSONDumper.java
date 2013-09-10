@@ -31,6 +31,8 @@ import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,6 +40,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -48,7 +54,7 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-public class VCFDumper {
+public class JSONDumper {
     /** Constant <code>VCF="VCFVariantImportWorker.VCF"</code> */
     public static final String VCF = Constants.TRACK_TAGSET ? VCFVariantImportWorker.VCF : null;
 
@@ -60,7 +66,7 @@ public class VCFDumper {
      * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
-        VCFDumper dumper = new VCFDumper(args);
+        JSONDumper dumper = new JSONDumper(args);
         dumper.export();
     }
 
@@ -93,7 +99,7 @@ public class VCFDumper {
      *
      * @param args an array of {@link java.lang.String} objects.
      */
-    public VCFDumper(String[] args) {
+    public JSONDumper(String[] args) {
         this.args = args;
     }
 
@@ -105,34 +111,66 @@ public class VCFDumper {
      * @return a boolean.
      */
     
-    public static boolean outputFeatureInVCF(StringBuilder buffer, Feature feature) {
+    public static boolean outputFeatureInVCF(StringBuilder buffer, Feature feature, FeatureSet set) {
         boolean caughtNonVCF = false;
-        buffer.append(feature.getSeqid()).append("\t").append(feature.getStart() + 1).append("\t");
-        if (feature.getTagByKey(VCF, ImportConstants.VCF_SECOND_ID) == null) {
-            buffer.append(".\t");
-        } else {
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_SECOND_ID).getValue().toString()).append("\t");
-        }
-        try {
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_REFERENCE_BASE).getValue().toString()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString()).append("\t");
-            buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
-            // for some actually useful output, you'll probably want to output specific tags here
-            SeqWareIterable<Tag> tags = feature.getTags();
-            for (Tag tag : tags) {
-              buffer.append(tag.getKey());
-              if (tag.getValue() != null) { buffer.append("=").append(tag.getValue());}
-              buffer.append(";");
+         Gson gson = new GsonBuilder().create();
+         Map<String,Map<String,Object>> map = new HashMap<String,Map<String,Object>>();
+         Map<String,Object> innerMap = new HashMap<String, Object>();
+         innerMap.put("_index", "queryengine");
+         innerMap.put("_type", "features");
+         innerMap.put("_id", feature.getSGID().getRowKey());
+         map.put("index",innerMap);
+         
+         buffer.append(gson.toJson(map));
+         buffer.append("\n");
+         
+         Gson gson2 = new GsonBuilder().create();
+         innerMap.clear();
+         innerMap.put("id", feature.getSGID().getRowKey());
+         String title = "chr" + feature.getSeqid() + ":" + feature.getStart() + "-" + feature.getStop()+":" 
+                 + feature.getTagByKey(VCF,ImportConstants.VCF_REFERENCE_BASE).getValue().toString() 
+                 + "->" + feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString();
+         innerMap.put("title", title);
+         
+         String[] interestingTags = {"isCompleteGenomics","isDbSNP","isDGV", "isEvoFold", "isGenomicsSegmentalDups", "isGERP","isGWASCatalog",
+             "isLRT", "isMutationTaster", "isNHLBI","isPhastConsElements","isPhyloPConservationScore", "isPolyPhen", "isTargetScanS", "isTfbsConsSite"};
+         
+         // create clean tags
+         Map<String, String> cleanTags = new HashMap<String, String>();
+         for(String tag: interestingTags){
+             // take off the "is"
+             String cleanName = tag.substring(2);
+             cleanTags.put(tag, cleanName);
+         }
+         
+         List<String> databases = new ArrayList<String>();
+         
+         for(String tag : interestingTags){
+            Tag tagByKey = feature.getTagByKey(VCF, tag);
+            if (tagByKey != null){
+                databases.add(cleanTags.get(tag));
             }
-        } catch (NullPointerException npe) {
-            if (!caughtNonVCF) {
-                Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");
+         }
+         innerMap.put("databases",databases);
+         
+         // we'll take consequence type from SNPEFF_EFFECT
+         List<String> consequences = new ArrayList<String>();
+         if (feature.getTagByKey(VCF, "SNPEFF_EFFECT") != null){
+            String value = feature.getTagByKey(VCF, "SNPEFF_EFFECT").getValue().toString();
+            // clean up value
+            value = value.toLowerCase();
+            consequences.add(value);
+         }
+         if (consequences.isEmpty()){
+            consequences.add("none");
+         }
+         innerMap.put("consequences", consequences);
+         
+         innerMap.put("feature_set", set.getSGID().getRowKey().replaceAll("-", ""));
+         innerMap.put("variant_type",  feature.getTagByKey(VCF,"IndelType") != null ? "INDEL" :"SNV");
+         
+         buffer.append(gson2.toJson(innerMap));
 
-            }
-            // this may occur when exporting Features that were not originally VCF files
-            caughtNonVCF = true;
-        }
         return caughtNonVCF;
     }
 
@@ -151,58 +189,22 @@ public class VCFDumper {
             } else {
                 outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
             }
-            outputStream.append("#CHROM	POS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
         } catch (IOException e) {
-            Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
+            Logger.getLogger(JSONDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
             System.exit(-1);
         }
-
-        boolean caughtNonVCF = false;
-        boolean mrSuccess = false;
-        if (SWQEFactory.getQueryInterface() instanceof MRHBasePersistentBackEnd) {
-            // hack to use VCF MR
-            if (SWQEFactory.getModelManager() instanceof MRHBaseModelManager) {
-                try {
-                    // pretend that the included com.github.seqware.queryengine.plugins.hbasemr.MRFeaturesByAttributesPlugin is an external plug-in
-                    Class<? extends PluginInterface> arbitraryPlugin;
-                    arbitraryPlugin = VCFDumperPlugin.class;
-                    // get a FeatureSet from the back-end
-                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, fSet);
-                    File get = future.get();
-                    BufferedReader in = new BufferedReader(new FileReader(get));
-                    IOUtils.copy(in, outputStream);
-                    in.close();
-                    get.deleteOnExit();
-                    outputStream.flush();
-                    outputStream.close();
-                    mrSuccess = true;
-                } catch (IOException e) {
-                    // fail out on IO error
-                    Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
-                    System.exit(-1);
-                } catch(Exception e){
-                    Logger.getLogger(VCFDumper.class.getName()).fatal("MapReduce exporting failed, falling-through to normal exporting to file",e);
-                    // fall-through and do normal exporting if Map Reduce exporting fails
-                }
-            } // TODO: clearly this should be expanded to include closing database etc 
-        }
-        if (mrSuccess) {
-            return;
-        }
+        
         // fall-through if plugin-fails
         try {
             for (Feature feature : fSet) {
                 StringBuilder buffer = new StringBuilder();
-                boolean caught = outputFeatureInVCF(buffer, feature);
-                if (caught) {
-                    caughtNonVCF = true;
-                }
+                boolean caught = outputFeatureInVCF(buffer, feature,fSet);
                 outputStream.append(buffer);
                 outputStream.newLine();
             }
             outputStream.flush();
         } catch (IOException e) {
-            Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
+            Logger.getLogger(JSONDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
             System.exit(-1);
         } finally {
             IOUtils.closeQuietly(outputStream);

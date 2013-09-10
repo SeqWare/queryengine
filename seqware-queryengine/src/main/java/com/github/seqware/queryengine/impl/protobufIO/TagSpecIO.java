@@ -33,7 +33,7 @@ public class TagSpecIO implements ProtobufTransferInterface<TagPB, Tag> {
     /** {@inheritDoc} */
     @Override
     public Tag pb2m(TagPB tag) {
-        Tag.Builder builder = Tag.newBuilder().setKey(tag.getKey())
+        Tag.Builder builder = Tag.newLightWeightBuilder().setKey(tag.getKey())
                 .setPredicate(tag.getPredicate());
         
         Tag rTag = builder.build();

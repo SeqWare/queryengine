@@ -16,7 +16,7 @@ import java.util.List;
  * @author boconnor
  * @version $Id: $Id
  */
-public class ImportWorker extends Thread {
+public class ImportWorker implements Runnable {
 
     protected String workerName = null;
     protected Importer pmi = null;

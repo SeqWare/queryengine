@@ -37,7 +37,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /**
      * Unique identifier of this Atom
      */
-    private SGID sgid = new SGID();
+    private SGID sgid = null;
     /**
      * Exposed timestamp of this Atom
      */
@@ -72,7 +72,16 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      * <p>Constructor for AtomImpl.</p>
      */
     protected AtomImpl() {
-        //this.clientTimestamp = new Date();
+      this.sgid = new SGID();
+      //this.clientTimestamp = new Date();
+    }
+    
+    /**
+     * <p>Constructor for AtomImpl.</p>
+     */
+    protected AtomImpl(String sgid) {
+      this.sgid = new SGID(sgid);
+      //this.clientTimestamp = new Date();
     }
 
     /**
@@ -253,6 +262,16 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
         if (Constants.TRACK_VERSIONING){
             this.precedingVersion.setSGID(oldSGID);
         }
+    }
+    
+    public boolean fastAssociateTag(String key, String value) {
+      Tag tag = Tag.newLightWeightBuilder().setKey(key).setValue(value).build();
+      if (!tags.containsKey(null)) {
+            tags.put(null, new HashMap<String, Tag>());
+      }
+      tags.get(null).put(key, tag);
+      //System.err.println("KEY: "+key+" VALUE: "+tag.getValue());
+      return(true);
     }
 
     /** {@inheritDoc} */

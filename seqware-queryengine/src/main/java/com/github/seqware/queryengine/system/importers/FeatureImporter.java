@@ -12,14 +12,19 @@ import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import net.sourceforge.seqware.common.util.Log;
 import org.apache.log4j.Logger;
-
 
 /**
  * Port of the class from the original prototype, adapted to use the new classes
- * in the new API; command-line interface is the older one without support for SO.  In the old API, there was very little "management" code so
- * all of the workers shared a reference to the same Store class with a small
- * dab of synchronization. In the new API, we have to contend with the
+ * in the new API; command-line interface is the older one without support for
+ * SO. In the old API, there was very little "management" code so all of the
+ * workers shared a reference to the same Store class with a small dab of
+ * synchronization. In the new API, we have to contend with the
  * CreateUpdateManager, so I think it makes more sense to have one
  * CreateUpdateManager per thread rather than freeze all threads when one wants
  * to synchronize for example.
@@ -28,23 +33,35 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeatureImporter extends Importer {
-    
-    /** Constant <code>EXIT_CODE_INVALID_ARGS=1</code> */
+public class FeatureImporter {
+
+    /**
+     * Constant
+     * <code>EXIT_CODE_INVALID_ARGS=1</code>
+     */
     public final static int EXIT_CODE_INVALID_ARGS = 1;
-    /** Constant <code>EXIT_CODE_EXISTING_NAME=5</code> */
+    /**
+     * Constant
+     * <code>EXIT_CODE_EXISTING_NAME=5</code>
+     */
     public final static int EXIT_CODE_EXISTING_NAME = 5;
-    /** Constant <code>EXIT_CODE_INVALID_FILE=10</code> */
+    /**
+     * Constant
+     * <code>EXIT_CODE_INVALID_FILE=10</code>
+     */
     public final static int EXIT_CODE_INVALID_FILE = 10;
-    /** Constant <code>FEATURE_SET_ID="FeatureSetID"</code> */
+    /**
+     * Constant
+     * <code>FEATURE_SET_ID="FeatureSetID"</code>
+     */
     public final static String FEATURE_SET_ID = "FeatureSetID";
 
     /**
      * This method does the actual work of importing given properly parsed
      * parameters
      *
-     * @param referenceID a {@link com.github.seqware.queryengine.util.SGID} object.
-     * @param threadCount a int.
+     * @param referenceID a {@link com.github.seqware.queryengine.util.SGID}
+     * object.
      * @param inputFiles a {@link java.util.List} object.
      * @param workerModule a {@link java.lang.String} object.
      * @param compressed a boolean.
@@ -52,8 +69,10 @@ public class FeatureImporter extends Importer {
      * @param tagSetSGIDs a {@link java.util.List} object.
      * @param batch_size a int.
      * @return SGID if successful, null if not
-     * @param adhocTagSetID a {@link com.github.seqware.queryengine.util.SGID} object.
-     * @param existingfeatureSet a {@link com.github.seqware.queryengine.util.SGID} object.
+     * @param adhocTagSetID a {@link com.github.seqware.queryengine.util.SGID}
+     * object.
+     * @param existingfeatureSet a
+     * {@link com.github.seqware.queryengine.util.SGID} object.
      * @param secondaryIndex a {@link java.lang.String} object.
      */
     protected static SGID performImport(SGID referenceID, int threadCount, List<String> inputFiles, String workerModule, boolean compressed, 
@@ -66,10 +85,10 @@ public class FeatureImporter extends Importer {
         CreateUpdateManager modelManager = SWQEFactory.getModelManager();
         Reference ref = SWQEFactory.getQueryInterface().getLatestAtomBySGID(referenceID, Reference.class);
         // create a centralized FeatureSet
-        FeatureSet featureSet; 
-        if (existingfeatureSet == null){
+        FeatureSet featureSet;
+        if (existingfeatureSet == null) {
             featureSet = modelManager.buildFeatureSet().setReference(ref).build();
-        } else{
+        } else {
             featureSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(existingfeatureSet, FeatureSet.class);
             Logger.getLogger(FeatureImporter.class.getName()).info("Appending to existing FeatureSet: " + featureSet.getSGID().getRowKey());
         }
@@ -87,8 +106,8 @@ public class FeatureImporter extends Importer {
         // we don't really need the central model manager past this point 
         modelManager.close();
 
+        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
         // a pointer to this object (for thread coordination)
-        final FeatureImporter pmi = new FeatureImporter(threadCount);
 
         try {
 
@@ -108,80 +127,73 @@ public class FeatureImporter extends Importer {
             // store object
             // store = factory.getStore(settings);
 
-            if (modelManager /**
-                     * store
-                     */
-                    != null) {
+            List<Future<?>> futures = new ArrayList<Future<?>>(inputFiles.size());
 
-                Iterator<String> it = inputFiles.iterator();
-                ImportWorker[] workerArray = new ImportWorker[inputFiles.size()];
-                int index = 0;
-                while (it.hasNext()) {
 
-                    // print message
-                    String input = (String) it.next();
-                    Logger.getLogger(FeatureImporter.class.getName()).info("Starting worker thread to process file: " + input);
+            Iterator<String> it = inputFiles.iterator();
+            //ImportWorker[] workerArray = new ImportWorker[inputFiles.size()];
+            int index = 0;
+            while (it.hasNext()) {
 
-                    // make a worker and launch it
-                    Class processorClass = Class.forName("com.github.seqware.queryengine.system.importers.workers." + workerModule);
-                    workerArray[index] = (ImportWorker) processorClass.newInstance();
-                    workerArray[index].setWorkerName("PileupWorker" + index);
-                    workerArray[index].setPmi(pmi);
-//                    workerArray[index].setStore(modelManager);
-                    workerArray[index].setInput(input);
-                    workerArray[index].setFeatureSetID(featureSet.getSGID());
-                    workerArray[index].setAdhoctagset(Constants.TRACK_TAGSET ? adHocSet.getSGID() : null);
-                    workerArray[index].setTagSetIDs(tagSetSGIDs);
-                    workerArray[index].setBatch_size(batch_size);
-                    workerArray[index].setKeyIndex(secondaryIndex);
-                    
-                    // FIXME: most of the rest aren't used, I should consider cleaning this up
-                    workerArray[index].setCompressed(compressed);
-                    workerArray[index].setMinCoverage(0);
-                    workerArray[index].setMaxCoverage(0);
-                    workerArray[index].setMinSnpQuality(0);
-                    workerArray[index].setIncludeSNV(false);
-                    workerArray[index].setFastqConvNum(0);
-                    workerArray[index].setIncludeIndels(false);
-                    workerArray[index].setIncludeCoverage(false);
-                    workerArray[index].setBinSize(0);
-                    
+                // print message
+                String input = (String) it.next();
+                Logger.getLogger(FeatureImporter.class.getName()).info("Starting worker thread to process file: " + input);
 
-                    // set up exception handling
-                    workerArray[index].setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                // make a worker and launch it
+                Class processorClass = Class.forName("com.github.seqware.queryengine.system.importers.workers." + workerModule);
+                ImportWorker worker = (ImportWorker) processorClass.newInstance();
+                worker.setWorkerName("PileupWorker" + index);
+//                    worker.setPmi(pmi);
+//                    worker.setStore(modelManager);
+                worker.setInput(input);
+                worker.setFeatureSetID(featureSet.getSGID());
+                worker.setAdhoctagset(Constants.TRACK_TAGSET ? adHocSet.getSGID() : null);
+                worker.setTagSetIDs(tagSetSGIDs);
+                worker.setBatch_size(batch_size);
+                worker.setKeyIndex(secondaryIndex);
 
-                        @Override
-                        public void uncaughtException(Thread thread, Throwable thrwbl) {
-                            pmi.failedWorkers.add((ImportWorker) thread);
-                            throw new RuntimeException("Error in VCRVariantImportWorker", thrwbl);
-                        }
-                    });
+                // FIXME: most of the rest aren't used, I should consider cleaning this up
+                worker.setCompressed(compressed);
+                worker.setMinCoverage(0);
+                worker.setMaxCoverage(0);
+                worker.setMinSnpQuality(0);
+                worker.setIncludeSNV(false);
+                worker.setFastqConvNum(0);
+                worker.setIncludeIndels(false);
+                worker.setIncludeCoverage(false);
+                worker.setBinSize(0);
 
-                    workerArray[index].start();
-                    index++;
-
-                }
-                Logger.getLogger(FeatureImporter.class.getName()).info("Joining threads");
-                // join the threads, wait for each to finish
-                for (int i = 0; i < workerArray.length; i++) {
-                    workerArray[i].join();
-                }
-                Logger.getLogger(FeatureImporter.class.getName()).info("Threads finished");
-
-                // finally close, checkpoint is part of the process
-                // modelManager.close();
-                //store.close();
+                futures.add(pool.submit(worker));
+                index++;
 
             }
+
+            // finally close, checkpoint is part of the process
+            // modelManager.close();
+            //store.close();
+
+            Logger.getLogger(FeatureImporter.class.getName()).info("Joining threads");
+            // join the threads, wait for each to finish
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException ex) {
+                    Log.fatal(ex);
+                    throw new RuntimeException(ex);
+                } catch (ExecutionException ex) {
+                    Log.fatal(ex);
+                    throw new RuntimeException(ex);
+                }
+            }
+            Logger.getLogger(FeatureImporter.class.getName()).info("Threads finished");
+            pool.shutdown();
+
         } // TODO: clearly this should be expanded to include closing database etc 
         catch (Exception e) {
             Logger.getLogger(FeatureImporter.class.getName()).fatal("Exception thrown with file: \n", e);
             return null;
         }
-        // check for failed workers
-        if (pmi.failedWorkers.size() > 0) {
-            return null;
-        }
+
 
         // clean-up
         SWQEFactory.getStorage().closeStorage();
@@ -190,7 +202,7 @@ public class FeatureImporter extends Importer {
         System.out.println(outputID);
         Map<String, String> keyValues = new HashMap<String, String>();
         keyValues.put(FEATURE_SET_ID, outputID);
-        if (Constants.TRACK_TAGSET && adhocTagSetID == null){
+        if (Constants.TRACK_TAGSET && adhocTagSetID == null) {
             // we created a tag set on the fly
             System.out.println("adHocTagSetID written with an ID of:");
             String aoutputID = adHocSet.getSGID().getUuid().toString();
@@ -202,9 +214,7 @@ public class FeatureImporter extends Importer {
         return featureSet.getSGID();
     }
 
-    
-    private List<ImportWorker> failedWorkers = new ArrayList<ImportWorker>();
-
+    // private List<ImportWorker> failedWorkers = new ArrayList<ImportWorker>();
     /**
      * Import a set of Features into a particular specified reference. The ID
      * for the FeatureSet we use is returned.
@@ -231,7 +241,7 @@ public class FeatureImporter extends Importer {
 
         String referenceID = args[3];
         SGID referenceSGID = null;
-        
+
         for (Reference reference : SWQEFactory.getQueryInterface().getReferences()) {
             if (reference.getName().equals(referenceID)) {
                 referenceSGID = reference.getSGID();
@@ -245,7 +255,7 @@ public class FeatureImporter extends Importer {
             referenceSGID = ref.getSGID();
             modelManager.flush();
         }
-        
+
         ArrayList<String> inputFiles = new ArrayList<String>();
         inputFiles.addAll(Arrays.asList(args[4].split(",")));
 
@@ -258,27 +268,7 @@ public class FeatureImporter extends Importer {
                 System.exit(FeatureImporter.EXIT_CODE_INVALID_ARGS);
             }
         }
-        
+
         return performImport(referenceSGID, threadCount, inputFiles, workerModule, compressed, outputFile, null, null, SOFeatureImporter.BATCH_SIZE, null, null);
-    }
-
-    
-
-    /**
-     * <p>Constructor for FeatureImporter.</p>
-     *
-     * @param threadCount a int.
-     */
-    public FeatureImporter(int threadCount) {
-        super(threadCount);
-    }
-
-    /**
-     * <p>reportException.</p>
-     *
-     * @param aThis a {@link com.github.seqware.queryengine.system.importers.workers.ImportWorker} object.
-     */
-    public void reportException(ImportWorker aThis) {
-        this.failedWorkers.add(aThis);
     }
 }

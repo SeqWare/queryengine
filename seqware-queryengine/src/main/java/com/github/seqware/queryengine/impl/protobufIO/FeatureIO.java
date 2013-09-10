@@ -56,7 +56,9 @@ public class FeatureIO implements ProtobufTransferInterface<FeaturePB, Feature> 
         return fMesg;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     QUESTION: is this the location of all feature serializaiton? yep
+     */
     @Override
     public FeaturePB m2pb(Feature feature) {
         assert(feature.getSGID() instanceof FSGID);
@@ -69,6 +71,7 @@ public class FeatureIO implements ProtobufTransferInterface<FeaturePB, Feature> 
         builder = feature.getSeqid() != null ? builder.setId(feature.getSeqid()) : builder;
         builder.setStart(feature.getStart()).setStop(feature.getStop());
         builder.setStrand(FeaturePB.StrandPB.valueOf(feature.getStrand().name()));
+        // are these the tags??? yep, all atoms have tags
         builder.setAtom(UtilIO.handleAtom2PB(builder.getAtom(), feature));
         if (Constants.OUTPUT_METRICS) {
             Logger.getLogger(HBaseStorage.class.getName()).info("Feature atom serialized to " + builder.getAtom().toByteArray().length + " bytes");
