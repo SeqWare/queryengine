@@ -1,3 +1,4 @@
+HOSTNAME=master
 # OPEN STACK
 # can be found in env on Sullivan as $OS_PASSWORD
 OS_API_KEY=

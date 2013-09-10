@@ -30,8 +30,6 @@ my $skip_launch = 0;
 my $config_scripts = "templates/server_setup_scripts/ubuntu_12.04_master_script.sh";
 # allow the specification of a specific commit to build and use instead of using the latest from develop
 my $git_commit = 0;
-# allow the hostname to be specified
-my $custom_hostname = "master";
 
 GetOptions (
   "use-aws" => \$launch_aws,
@@ -43,14 +41,10 @@ GetOptions (
   "skip-it-tests" => \$skip_its,
   "skip-launch" => \$skip_launch,
   "git-commit=s" => \$git_commit,
-  "custom-hostname=s" => \$custom_hostname,
 );
 
 
 # MAIN
-
-# figure out the current seqware version based on the most-recently built jar
-$seqware_version = find_version();
 
 # make the target dir
 run("mkdir $work_dir");
@@ -60,15 +54,11 @@ my $configs = {};
 read_config($config_file, $configs);
 if (!defined($configs->{'%{SEQWARE_BUILD_CMD}'})) { $configs->{'%{SEQWARE_BUILD_CMD}'} = $default_seqware_build_cmd; }
 
-$configs->{'%{SEQWARE_VERSION}'} = $seqware_version;
-
 # for jenkins, override the branch command if required
 
 if ($git_commit){
   $configs->{'%{SEQWARE_BRANCH_CMD}'} = "git checkout $git_commit";
 }
-
-$configs->{'%{custom_hostname}'} = $custom_hostname;
 
 # make this explicit, one or the other, aws is given priority
 if ($launch_vb) {
@@ -128,17 +118,6 @@ sub read_config() {
 
 sub launch_instances {
   run("cd $work_dir; $launch_cmd");
-}
-
-sub find_version {
-  my $file = `ls ../seqware-distribution/target/seqware-distribution-*-full.jar | grep -v qe-full`;
-  chomp $file;
-  if ($file =~ /seqware-distribution-(\S+)-full.jar/) {
-   print "SEQWARE VERSION: $1\n";
-   return($1);
-  } else { 
-    die "ERROR: CAN'T FIGURE OUT VERSION FROM FILE: $file\n";
-  }
 }
 
 sub prepare_files {
