@@ -172,7 +172,7 @@ public class FeatureImporter {
             // modelManager.close();
             //store.close();
 
-            Logger.getLogger(FeatureImporter.class.getName()).fatal("Joining threads");
+            Logger.getLogger(FeatureImporter.class.getName()).info("Joining threads");
             // join the threads, wait for each to finish
             for (Future<?> future : futures) {
                 try {
@@ -185,7 +185,7 @@ public class FeatureImporter {
                     throw new RuntimeException(ex);
                 }
             }
-            Logger.getLogger(FeatureImporter.class.getName()).fatal("Threads finished");
+            Logger.getLogger(FeatureImporter.class.getName()).info("Threads finished");
             pool.shutdown();
 
         } // TODO: clearly this should be expanded to include closing database etc 
