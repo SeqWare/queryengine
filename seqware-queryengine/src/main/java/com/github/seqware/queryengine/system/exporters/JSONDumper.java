@@ -131,25 +131,43 @@ public class JSONDumper {
                  + feature.getTagByKey(VCF,ImportConstants.VCF_REFERENCE_BASE).getValue().toString() 
                  + "->" + feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString();
          innerMap.put("title", title);
+         
+         String[] interestingTags = {"isCompleteGenomics","isDbSNP","isDGV", "isEvoFold", "isGenomicsSegmentalDups", "isGERP","isGWASCatalog",
+             "isLRT", "isMutationTaster", "isNHLBI","isPhastConsElements","isPhyloPConservationScore", "isPolyPhen", "isTargetScanS", "isTfbsConsSite"};
+         
+         // create clean tags
+         Map<String, String> cleanTags = new HashMap<String, String>();
+         for(String tag: interestingTags){
+             // take off the "is"
+             String cleanName = tag.substring(2);
+             cleanTags.put(tag, cleanName);
+         }
+         
          List<String> databases = new ArrayList<String>();
-         if (feature.getTagByKey(VCF, "isDbSNP") != null){
-             databases.add("dbsnp");
-         } else if (feature.getTagByKey(VCF, "hasSift") != null){
-             databases.add("sift");
+         
+         for(String tag : interestingTags){
+            Tag tagByKey = feature.getTagByKey(VCF, tag);
+            if (tagByKey != null){
+                databases.add(cleanTags.get(tag));
+            }
          }
          innerMap.put("databases",databases);
+         
+         // we'll take consequence type from SNPEFF_EFFECT
          List<String> consequences = new ArrayList<String>();
-         if (feature.getTagByKey(VCF, "synonymous") != null){
-             consequences.add("synonymous");
-         } // which tag do we use for "coding"?
+         if (feature.getTagByKey(VCF, "SNPEFF_EFFECT") != null){
+            String value = feature.getTagByKey(VCF, "SNPEFF_EFFECT").getValue().toString();
+            // clean up value
+            value = value.toLowerCase();
+            consequences.add(value);
+         }
          if (consequences.isEmpty()){
             consequences.add("none");
          }
          innerMap.put("consequences", consequences);
          
          innerMap.put("feature_set", set.getSGID().getRowKey().replaceAll("-", ""));
-         // is this correct?
-         innerMap.put("variant_type", feature.getStop()-feature.getStart() == 1? "SNV" :"INDEL");
+         innerMap.put("variant_type",  feature.getTagByKey(VCF,"IndelType") != null ? "INDEL" :"SNV");
          
          buffer.append(gson2.toJson(innerMap));
 
