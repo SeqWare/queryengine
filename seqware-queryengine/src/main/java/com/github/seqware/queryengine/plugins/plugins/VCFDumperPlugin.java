@@ -68,7 +68,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     @Override
     public void map(Collection<Feature> collection, MapperInterface<SerializableText, SerializableText> mapperInterface) {
         for (Feature f : collection) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
             text.set(buffer.toString());     // we can only emit Writables...
             textKey.set(f.getSGID().getRowKey());

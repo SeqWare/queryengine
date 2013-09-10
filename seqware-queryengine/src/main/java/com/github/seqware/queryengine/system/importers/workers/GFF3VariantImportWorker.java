@@ -185,8 +185,6 @@ public class GFF3VariantImportWorker extends ImportWorker {
         }
         
         try {
-            // first ask for a token from semaphore
-            pmi.getLock();
 
             /*
              * if (compressed) { inputStream = new BufferedInputStream((new
@@ -443,8 +441,6 @@ public class GFF3VariantImportWorker extends ImportWorker {
             // new, this is needed to have the model manager write results to the DB in one big batch
             System.out.println("Closing in thread: " + Thread.currentThread().getName());
             mManager.close();
-            pmi.releaseLock();
-            System.out.println("Releasing lock in thread: " + Thread.currentThread().getName());
         }
     }
 

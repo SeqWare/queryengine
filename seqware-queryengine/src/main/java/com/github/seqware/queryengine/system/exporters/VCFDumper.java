@@ -104,7 +104,8 @@ public class VCFDumper {
      * @param feature a {@link com.github.seqware.queryengine.model.Feature} object.
      * @return a boolean.
      */
-    public static boolean outputFeatureInVCF(StringBuffer buffer, Feature feature) {
+    
+    public static boolean outputFeatureInVCF(StringBuilder buffer, Feature feature) {
         boolean caughtNonVCF = false;
         buffer.append(feature.getSeqid()).append("\t").append(feature.getStart() + 1).append("\t");
         if (feature.getTagByKey(VCF, ImportConstants.VCF_SECOND_ID) == null) {
@@ -121,7 +122,7 @@ public class VCFDumper {
             SeqWareIterable<Tag> tags = feature.getTags();
             for (Tag tag : tags) {
               buffer.append(tag.getKey());
-              if (tag.getValue() != null) { buffer.append("="+tag.getValue());}
+              if (tag.getValue() != null) { buffer.append("=").append(tag.getValue());}
               buffer.append(";");
             }
         } catch (NullPointerException npe) {
@@ -191,7 +192,7 @@ public class VCFDumper {
         // fall-through if plugin-fails
         try {
             for (Feature feature : fSet) {
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 boolean caught = outputFeatureInVCF(buffer, feature);
                 if (caught) {
                     caughtNonVCF = true;

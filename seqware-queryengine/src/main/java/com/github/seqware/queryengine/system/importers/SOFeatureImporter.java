@@ -4,13 +4,18 @@ import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sourceforge.seqware.common.util.Log;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 
 /**
  * Importer using a new interface to the parameters in order to support SO
@@ -63,6 +68,21 @@ public class SOFeatureImporter extends Importer {
             System.exit(FeatureImporter.EXIT_CODE_INVALID_FILE);
         }
     }
+    
+    public static int countLines(File aFile) throws IOException {
+        LineNumberReader reader = null;
+        try {
+            reader = new LineNumberReader(new FileReader(aFile));
+            while ((reader.readLine()) != null);
+            return reader.getLineNumber();
+        } catch (Exception ex) {
+            return -1;
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
 
     /**
      * Interface for mock-testing
@@ -81,7 +101,7 @@ public class SOFeatureImporter extends Importer {
         options.addOption(option3);
         Option option4 = OptionBuilder.withArgName("reference").withDescription("(required) the reference ID to attach our FeatureSet to").isRequired().hasArgs(1).create(REFERENCE_ID_PARAM);
         options.addOption(option4);
-        Option option5 = OptionBuilder.withArgName("inputFile").withDescription("(required) comma separated input files").hasArgs().withValueSeparator(VALUE_SEPARATOR_PARAM).isRequired().create(INPUT_FILES_PARAM);
+        Option option5 = OptionBuilder.withArgName("inputFile").withDescription("(required) input file").hasArg().isRequired().create(INPUT_FILES_PARAM);
         options.addOption(option5);
         Option option6 = OptionBuilder.withArgName("outputFile").withDescription("(optional) output file with our resulting key values").hasArgs(1).create(OUTPUT_FILE_PARAM);
         options.addOption(option6);
@@ -109,9 +129,42 @@ public class SOFeatureImporter extends Importer {
             SGID referenceSGID = Utility.parseSGID(cmd.getOptionValue(REFERENCE_ID_PARAM));
             
             int batch_size = Integer.valueOf(cmd.getOptionValue(BATCH_SIZE_PARAM, String.valueOf(BATCH_SIZE)));
-
+            
+            String inputFile = cmd.getOptionValue(INPUT_FILES_PARAM);
             List<String> inputFiles = new ArrayList<String>();
-            inputFiles.addAll(Arrays.asList(cmd.getOptionValues(INPUT_FILES_PARAM)));
+            // number of lines per split file
+            if (threads > 1){
+                Log.info("splitting up file");
+                List<File> files = new ArrayList<File>();
+                File iFile = new File(inputFile);
+                int linesInFile = SOFeatureImporter.countLines(iFile);
+                int linesPerSegment = linesInFile/threads;
+                // split up file
+                LineIterator lineIterator = FileUtils.lineIterator(iFile);
+                
+                int lineCount = 0;
+                File tmpFile = File.createTempFile("segment", "vcf");
+                while(lineIterator.hasNext()){
+                    List<String> lines = new ArrayList<String>();
+                    while (lineCount++ < linesPerSegment && lineIterator.hasNext()){
+                        lines.add(lineIterator.next());
+                    }
+                    lineCount = 0;
+                    FileUtils.writeLines(tmpFile, lines);
+                    if (lineIterator.hasNext()){
+                        files.add(tmpFile);
+                        tmpFile = File.createTempFile("segment", "vcf");
+                    }
+                }
+                files.add(tmpFile);
+                
+                for(File f : files){
+                    inputFiles.add(f.getAbsolutePath());
+                    f.deleteOnExit();
+                }
+            } else{
+                inputFiles.add(inputFile);
+            }
 
             File outputFile = null;
             if (cmd.hasOption(OUTPUT_FILE_PARAM)){

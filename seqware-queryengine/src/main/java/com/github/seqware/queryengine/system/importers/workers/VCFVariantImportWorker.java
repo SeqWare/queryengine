@@ -118,14 +118,6 @@ public class VCFVariantImportWorker extends ImportWorker {
             return build;
         }
     }
-
-    private Tag processVCFTagSpec(String key){
-        return processVCFTagSpec(key, null, this.vcfTagSet, this.modelManager);
-    }
-    
-    private Tag processVCFTagSpec(String key, String value){
-        return processVCFTagSpec(key, value, this.vcfTagSet, this.modelManager);
-    }
     
     /**
      * <p>processVCFTagSpec.</p>
@@ -189,7 +181,7 @@ public class VCFVariantImportWorker extends ImportWorker {
         try {
 
             // first ask for a token from semaphore
-            pmi.getLock();
+            //pmi.getLock();
 
             // Attempting to guess the file format
             if (compressed) {
@@ -492,7 +484,7 @@ public class VCFVariantImportWorker extends ImportWorker {
         } finally {
             // new, this is needed to have the model manager write results to the DB in one big batch
             modelManager.close();
-            pmi.releaseLock();
+            //pmi.releaseLock();
         }
     }
 
