@@ -147,7 +147,7 @@ public class JSONDumper {
          }
          innerMap.put("consequences", consequences);
          
-         innerMap.put("feature_set", set.getSGID().getRowKey());
+         innerMap.put("feature_set", set.getSGID().getRowKey().replaceAll("-", ""));
          // is this correct?
          innerMap.put("variant_type", feature.getStop()-feature.getStart() == 1? "SNV" :"INDEL");
          
