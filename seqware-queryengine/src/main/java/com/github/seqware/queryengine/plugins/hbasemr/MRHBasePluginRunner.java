@@ -26,6 +26,7 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
+import com.github.seqware.queryengine.plugins.JobRunParameterInterface;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
@@ -66,7 +67,10 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 
@@ -112,7 +116,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // we need to pass the parameters for a featureset, maybe we can take advantage of our serializers
             byte[] sSet = SWQEFactory.getSerialization().serialize(inputSet);
             byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
-            
+
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
 
             File file = new File(new URI(Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class)));
@@ -128,6 +132,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             conf.set("mapreduce.reduce.memory.mb", "4096");
             conf.set("mapreduce.map.memory.physical.mb", "4096");
             conf.set("mapreduce.reduce.memory.physical.mb", "4096");
+
+            conf.set("mapred.job.map.memory.mb", "4096");
+            conf.set("mapred.job.reduce.memory.mb", "4096");
+
             // the above settings all seem to be ignored by hboot
             // TODO: only this one works, but as far I know, we're using mapreduce not mapred.
             // Strange
@@ -152,7 +160,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
                     job);
-            if (!(mapReducePlugin instanceof VCFDumperPlugin)){
+            TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
+
+            if (!(mapReducePlugin instanceof VCFDumperPlugin)) {
                 job.setOutputFormatClass(mapReducePlugin.getOutputClass());   // because we aren't emitting anything from mapper
             }
             job.setReducerClass(MRHBasePluginRunner.PluginRunnerReducer.class);    // reducer class
@@ -160,13 +170,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
                 FileContext fileContext = FileContext.getFileContext(this.job.getConfiguration());
-                Path path = new Path("/tmp/" + new BigInteger(20, new SecureRandom()).toString(32) + mapReducePlugin.toString());
+                File outputFile = File.createTempFile(mapReducePlugin.toString(), "out");
+                outputFile.delete();
+                Path path = new Path(outputFile.getAbsolutePath());
                 path = fileContext.makeQualified(path);
                 TextOutputFormat.setOutputPath(job, path);  // adjust directories as required
+                job.setOutputFormatClass(TextOutputFormat.class);
             }
 
-            TableMapReduceUtil.addDependencyJars(job);
             job.setJarByClass(MRHBasePluginRunner.class);
+            TableMapReduceUtil.addDependencyJars(job);
+            TableMapReduceUtil.addDependencyJars(conf, MRHBasePluginRunner.class, MRHBasePluginRunner.PluginRunnerMapper.class, MRHBasePluginRunner.PluginRunnerReducer.class);
             // submit the job, but do not block
             job.submit();
         } catch (URISyntaxException ex) {
@@ -177,6 +191,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            ((InstantiationException) cause).printStackTrace();
+            String localizedMessage = ((InstantiationException) cause).getLocalizedMessage();
+            System.out.println();
+            //Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
         }
     }
 
@@ -200,6 +220,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             } else if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.BATCHEDFEATURESET) {
                 FeatureSet build = updateAndGet(outputSet);
                 return (ReturnType) build;
+            } else if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
+                Path outputPath = TextOutputFormat.getOutputPath(job);
+                File outputFile = new File(outputPath.toUri());
+                return (ReturnType) outputFile;
             } else {
                 throw new UnsupportedOperationException();
 
@@ -247,7 +271,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         FeatureSet build = latestAtomBySGID.toBuilder().build();
 
         build.impersonate(sgid, latestAtomBySGID.getSGID());
-        if (Constants.TRACK_VERSIONING){
+        if (Constants.TRACK_VERSIONING) {
             build.setPrecedingVersion(build);
         }
 
@@ -272,8 +296,15 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
     public static class PluginRunnerReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends TableReducer<KEYIN, VALUEIN, KEYOUT> implements ReducerInterface<KEYOUT, VALUEOUT> {
 
+        public PluginRunnerReducer() {
+            super();
+        }
         private PluginRunnerReducer.Context context;
         private MapReducePlugin mapReducePlugin;
+        protected Object[] ext_parameters;
+        protected Object[] int_parameters;
+        protected FeatureSet sourceSet;
+        protected FeatureSet destSet;
 
         @Override
         protected void reduce(KEYIN key, Iterable<VALUEIN> values, Context context) throws IOException, InterruptedException {
@@ -291,12 +322,90 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 Logger.getLogger(MRHBasePluginRunner.class.getName()).error(null, ex);
             }
         }
+
+        @Override
+        public Object[] getExt_parameters() {
+            return ext_parameters;
+        }
+
+        @Override
+        public Object[] getInt_parameters() {
+            return int_parameters;
+        }
+
+        @Override
+        public FeatureSet getSourceSet() {
+            return sourceSet;
+        }
+
+        @Override
+        public FeatureSet getDestSet() {
+            return destSet;
+        }
+
+        @Override
+        public void setExt_parameters(Object[] params) {
+            this.ext_parameters = params;
+        }
+
+        @Override
+        public void setInt_parameters(Object[] params) {
+            this.int_parameters = params;
+        }
+
+        @Override
+        public void setSourceSet(FeatureSet set) {
+            this.sourceSet = set;
+        }
+
+        @Override
+        public void setDestSet(FeatureSet set) {
+            this.destSet = set;
+        }
+
+        @Override
+        protected void setup(Reducer.Context context) {
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Setting up reducer");
+            String pluginParameter = MRHBasePluginRunner.transferConfiguration(context, this);
+            if (pluginParameter != null && !pluginParameter.isEmpty()) {
+                Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
+                // yuck! I need a cleaner way to do this when done refactoring
+                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[0];
+            }
+            mapReducePlugin.reduceInit();
+        }
+
+        @Override
+        protected void cleanup(org.apache.hadoop.mapreduce.Reducer.Context context) throws IOException, InterruptedException {
+            mapReducePlugin.reduceCleanup();
+        }
     }
 
     public static class PluginRunnerMapper<KEYOUT, VALUEOUT> extends TableMapper<KEYOUT, VALUEOUT> implements MapperInterface<KEYOUT, VALUEOUT> {
 
+        public PluginRunnerMapper() {
+            super();
+        }
         private MapReducePlugin mapReducePlugin;
         private PluginRunnerMapper.Context context;
+        /**
+         * parameters that will be usable by the user (the writer of the
+         * queries)
+         */
+        protected Object[] ext_parameters;
+        /**
+         * parameters that will be handled by the plug-in developer but will not
+         * be available to the user of the plug-in
+         */
+        protected Object[] int_parameters;
+        /**
+         * the feature set that we will be reading
+         */
+        protected FeatureSet sourceSet;
+        /**
+         * the feature set that we will be writing to, may be null
+         */
+        protected FeatureSet destSet;
 
         @Override
         public void incrementCounter() {
@@ -319,9 +428,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             this.baseMapperSetup(context);
             mapReducePlugin.mapInit(this);
         }
-        
+
         @Override
-        protected void cleanup(org.apache.hadoop.mapreduce.Mapper.Context context) throws IOException, InterruptedException{
+        protected void cleanup(org.apache.hadoop.mapreduce.Mapper.Context context) throws IOException, InterruptedException {
             mapReducePlugin.mapCleanup();
         }
 
@@ -335,24 +444,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
             mapReducePlugin.map(consolidateRow, this);
         }
-        /**
-         * parameters that will be usable by the user (the writer of the
-         * queries)
-         */
-        protected Object[] ext_parameters;
-        /**
-         * parameters that will be handled by the plug-in developer but will not
-         * be available to the user of the plug-in
-         */
-        protected Object[] int_parameters;
-        /**
-         * the feature set that we will be reading
-         */
-        protected FeatureSet sourceSet;
-        /**
-         * the feature set that we will be writing to, may be null
-         */
-        protected FeatureSet destSet;
 
         @Override
         public Object[] getExt_parameters() {
@@ -376,93 +467,66 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
         private void baseMapperSetup(Context context) {
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Setting up mapper");
-            Configuration conf = context.getConfiguration();
-            String[] strings = conf.getStrings(MRHBasePluginRunner.EXT_PARAMETERS);
-            Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
-            final String mapParameter = strings[4];
-            if (mapParameter != null && !mapParameter.isEmpty()) {
-                Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[0];
-                if (settingsMap != null) {
-                    Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Settings map retrieved with " + settingsMap.size() + " entries");
-                    Constants.setSETTINGS_MAP(settingsMap);
-                }
-            }
-            Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
-            final String externalParameters = strings[0];
-            if (externalParameters != null && !externalParameters.isEmpty()) {
-                this.ext_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters));
-            }
-            final String internalParameters = strings[1];
-            if (internalParameters != null && !internalParameters.isEmpty()) {
-                this.int_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters));
-            }
-            final String sourceSetParameter = strings[2];
-            if (sourceSetParameter != null && !sourceSetParameter.isEmpty()) {
-                this.sourceSet = SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(sourceSetParameter), FeatureSet.class);
-            }
-            final String destSetParameter = strings[3];
-            if (destSetParameter != null && !destSetParameter.isEmpty()) {
-                this.destSet = SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class);
-            }
-            final String pluginParameter = strings[5];
+            String pluginParameter = MRHBasePluginRunner.transferConfiguration(context, this);
             if (pluginParameter != null && !pluginParameter.isEmpty()) {
                 Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
                 // yuck! I need a cleaner way to do this when done refactoring
-                mapReducePlugin = (MapReducePlugin)((Object[])deserialize)[0];
-            }
-        }
-    }
-
-    public File handleFileResult(Path path) {
-        FileSystem fs = null;
-        try {
-            Path outputPartPath = new Path(path, "part-r-00000");
-            // copy file from HDFS to local temporary file
-            Logger
-                    .getLogger(FeaturesByFilterPlugin.class
-                    .getName()).info("Source file is " + outputPartPath.toString());
-            Configuration conf = new Configuration();
-
-            HBaseStorage.configureHBaseConfig(conf);
-
-            HBaseConfiguration.addHbaseResources(conf);
-            fs = FileSystem.get(conf);
-            File createTempFile = File.createTempFile("vcf", "out");
-
-            createTempFile.delete();
-            Path outPath = new Path(createTempFile.toURI());
-            FileSystem localSystem = FileSystem.get(new Configuration());
-
-            Logger.getLogger(FeaturesByFilterPlugin.class
-                    .getName()).info("Destination file is " + outPath.toString());
-            if (!fs.exists(outputPartPath)) {
-                Logger.getLogger(FeaturesByFilterPlugin.class.getName()).fatal("Input file not found");
-            }
-
-            if (!fs.isFile(outputPartPath)) {
-                Logger.getLogger(FeaturesByFilterPlugin.class.getName()).fatal("Input should be a file");
-            }
-
-            if (localSystem.exists(outPath)) {
-                Logger.getLogger(FeaturesByFilterPlugin.class.getName()).fatal("Output already exists");
-            }
-            // doesn't quite work yet, no time to finish before poster, check results manually on hdfs
-
-            FileUtil.copy(fs, outputPartPath, localSystem, outPath,
-                    true, true, conf);
-            return new File(outPath.toUri());
-        } catch (IOException ex) {
-            Logger.getLogger(VCFDumperPlugin.class.getName()).fatal(null, ex);
-        } finally {
-            if (fs != null) {
-                try {
-                    fs.delete(path, true);
-                } catch (IOException ex) {
-                    Logger.getLogger(VCFDumperPlugin.class.getName()).warn("IOException when clearing after text output", ex);
-                }
+                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[0];
             }
         }
 
-        return null;
+        @Override
+        public void setExt_parameters(Object[] params) {
+            this.ext_parameters = params;
+        }
+
+        @Override
+        public void setInt_parameters(Object[] params) {
+            this.int_parameters = params;
+        }
+
+        @Override
+        public void setSourceSet(FeatureSet set) {
+            this.sourceSet = set;
+        }
+
+        @Override
+        public void setDestSet(FeatureSet set) {
+            this.destSet = set;
+        }
     }
+
+    public static String transferConfiguration(JobContext context, JobRunParameterInterface inter) {
+        Configuration conf = context.getConfiguration();
+        String[] strings = conf.getStrings(MRHBasePluginRunner.EXT_PARAMETERS);
+        Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
+        final String mapParameter = strings[4];
+        if (mapParameter != null && !mapParameter.isEmpty()) {
+            Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[0];
+            if (settingsMap != null) {
+                Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Settings map retrieved with " + settingsMap.size() + " entries");
+                Constants.setSETTINGS_MAP(settingsMap);
+            }
+        }
+        Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
+        final String externalParameters = strings[0];
+        if (externalParameters != null && !externalParameters.isEmpty()) {
+            inter.setExt_parameters((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)));
+        }
+        final String internalParameters = strings[1];
+        if (internalParameters != null && !internalParameters.isEmpty()) {
+            inter.setInt_parameters((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)));
+        }
+        final String sourceSetParameter = strings[2];
+        if (sourceSetParameter != null && !sourceSetParameter.isEmpty()) {
+            inter.setSourceSet(SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(sourceSetParameter), FeatureSet.class));
+        }
+        final String destSetParameter = strings[3];
+        if (destSetParameter != null && !destSetParameter.isEmpty()) {
+            inter.setDestSet(SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class));
+        }
+        final String pluginParameter = strings[5];
+        return pluginParameter;
+    }
+
 }

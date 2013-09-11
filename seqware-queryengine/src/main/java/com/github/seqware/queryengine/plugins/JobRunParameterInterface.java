@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 SeqWare
+ * Copyright (C) 2013 SeqWare
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,26 @@
  */
 package com.github.seqware.queryengine.plugins;
 
+import com.github.seqware.queryengine.model.FeatureSet;
 
 /**
  *
  * @author dyuen
  */
-public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterface {
+public interface JobRunParameterInterface {
+    public Object[] getExt_parameters();
 
-    public void write(KEYOUT textKey, VALUEOUT text);
+    public Object[] getInt_parameters();
 
-    /**
-     * Counter enumeration to count the actual rows.
-     */
-    public static enum Counters {
+    public FeatureSet getSourceSet();
 
-        ROWS
-    }
-
-    public void incrementCounter();
+    public FeatureSet getDestSet();
     
+    public void setExt_parameters(Object[] params);
 
+    public void setInt_parameters(Object[] params);
+
+    public void setSourceSet(FeatureSet set);
+
+    public void setDestSet(FeatureSet set);
 }

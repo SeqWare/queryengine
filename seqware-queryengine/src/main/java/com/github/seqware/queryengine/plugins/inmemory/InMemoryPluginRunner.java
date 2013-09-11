@@ -154,4 +154,26 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     public PluginInterface getPlugin() {
         return this.getPlugin();
     }
+
+    @Override
+    public void setExt_parameters(Object[] params) {
+        this.ext_parameters = params;
+    }
+
+    @Override
+    public void setInt_parameters(Object[] params) {
+        this.int_parameters = params;
+    }
+
+    @Override
+    public void setSourceSet(FeatureSet set) {
+        this.sourceSet = set;
+    }
+
+    @Override
+    public void setDestSet(FeatureSet set) {
+        this.destSet = set;
+    }
+
+
 }
