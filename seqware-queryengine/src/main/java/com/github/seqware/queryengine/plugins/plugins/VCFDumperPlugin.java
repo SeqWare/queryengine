@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * This plug-in implements a quick and dirty export using Map/Reduce
@@ -94,5 +96,10 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         public SerializableText(){
             super();
         }
+    }
+    
+    @Override
+    public Class<?> getOutputClass() {
+        return TextOutputFormat.class;
     }
 }

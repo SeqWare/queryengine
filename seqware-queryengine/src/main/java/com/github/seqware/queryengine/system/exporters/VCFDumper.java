@@ -41,6 +41,7 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 
@@ -172,7 +173,7 @@ public class VCFDumper {
                     // get a FeatureSet from the back-end
                     QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, fSet);
                     File get = future.get();
-                    Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), null);
+                    Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
                     for(File f : listFiles){
                         BufferedReader in = new BufferedReader(new FileReader(f));
                         IOUtils.copy(in, outputStream);

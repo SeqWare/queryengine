@@ -37,6 +37,7 @@ import com.github.seqware.queryengine.plugins.plugins.FeaturesByFilterPlugin;
 import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import com.github.seqware.queryengine.util.SGID;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -162,20 +163,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     job);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
-            if (!(mapReducePlugin instanceof VCFDumperPlugin)) {
-                job.setOutputFormatClass(mapReducePlugin.getOutputClass());   // because we aren't emitting anything from mapper
+            if (mapReducePlugin.getOutputClass() != null) {
+                job.setOutputFormatClass(mapReducePlugin.getOutputClass());
             }
             job.setReducerClass(MRHBasePluginRunner.PluginRunnerReducer.class);    // reducer class
             job.setNumReduceTasks(mapReducePlugin.getNumReduceTasks());
 
             if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
                 FileContext fileContext = FileContext.getFileContext(this.job.getConfiguration());
-                File outputFile = File.createTempFile(mapReducePlugin.toString(), "out");
-                outputFile.delete();
-                Path path = new Path(outputFile.getAbsolutePath());
+                FileSystem fs = FileSystem.get(job.getConfiguration());
+                Path path = new Path(fs.getHomeDirectory(), new BigInteger(20, new SecureRandom()).toString(32) + mapReducePlugin.toString());
                 path = fileContext.makeQualified(path);
                 TextOutputFormat.setOutputPath(job, path);  // adjust directories as required
-                job.setOutputFormatClass(TextOutputFormat.class);
             }
 
             job.setJarByClass(MRHBasePluginRunner.class);
@@ -191,12 +190,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
-        } catch (Exception ex) {
-            Throwable cause = ex.getCause();
-            ((InstantiationException) cause).printStackTrace();
-            String localizedMessage = ((InstantiationException) cause).getLocalizedMessage();
-            System.out.println();
-            //Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
         }
     }
 
@@ -222,7 +215,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 return (ReturnType) build;
             } else if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
                 Path outputPath = TextOutputFormat.getOutputPath(job);
-                File outputFile = new File(outputPath.toUri());
+                FileSystem fs = FileSystem.get(job.getConfiguration());
+                Path localPath = new Path(Files.createTempDir().toURI());
+                fs.copyToLocalFile(outputPath, localPath);
+                
+                File outputFile = new File(localPath.toUri());
                 return (ReturnType) outputFile;
             } else {
                 throw new UnsupportedOperationException();
