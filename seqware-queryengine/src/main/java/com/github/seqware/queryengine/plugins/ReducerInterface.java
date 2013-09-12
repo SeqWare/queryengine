@@ -20,7 +20,7 @@ package com.github.seqware.queryengine.plugins;
  *
  * @author dyuen
  */
-public interface ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> {
+public interface ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> extends JobRunParameterInterface {
 
     public void write(REDUCEKEYOUT val, REDUCEVALUEOUT text);
 

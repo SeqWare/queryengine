@@ -18,16 +18,15 @@ package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * This plug-in implements a quick and dirty export using Map/Reduce
@@ -93,7 +92,14 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         return File.class;
     }
     
-    public class SerializableText extends Text implements Serializable{
-        
+    public static class SerializableText extends Text implements Serializable{
+        public SerializableText(){
+            super();
+        }
+    }
+    
+    @Override
+    public Class<?> getOutputClass() {
+        return TextOutputFormat.class;
     }
 }
