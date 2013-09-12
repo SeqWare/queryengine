@@ -26,6 +26,14 @@ OOZIE_JOBTRACKER=localhost:8021
 OOZIE_NAMENODE=hdfs://localhost:8020
 OOZIE_QUEUENAME=default
 OOZIE_WORK_DIR=/usr/tmp/seqware-oozie
+HBASE.ZOOKEEPER.QUORUM=localhost
+HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
+HBASE.MASTER=localhost:60000
+MAPRED.JOB.TRACKER=localhost:8021
+FS.DEFAULT.NAME=hdfs://localhost:8020
+FS.DEFAULTFS=hdfs://localhost:8020
+FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
+
 #
 # OOZIE-SGE SETTINGS:
 # Format of qsub flag for specifying number of threads.
@@ -34,16 +42,11 @@ OOZIE_SGE_THREADS_PARAM_FORMAT=-pe serial ${threads}
 # Format of qsub flag for specifying the max memory.
 # If present, ${maxMemory} will be replaced with the job-specific value.
 OOZIE_SGE_MAX_MEMORY_PARAM_FORMAT=-l h_vmem=${maxMemory}M
+
+# 
+# Integration testing
+# These variables allow you to specify a specific database for testing against
 #
-# SEQWARE QUERY ENGINE (OPTIONAL)
-#    
-HBASE.ZOOKEEPER.QUORUM=localhost
-HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
-HBASE.MASTER=localhost:60000
-MAPRED.JOB.TRACKER=localhost:8021
-FS.DEFAULT.NAME=hdfs://localhost:8020
-FS.DEFAULTFS=hdfs://localhost:8020
-FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
 
 BASIC_TEST_DB_HOST=localhost
 BASIC_TEST_DB_NAME=seqware_meta_db

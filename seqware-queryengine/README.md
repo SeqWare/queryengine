@@ -31,17 +31,6 @@ However, if you wish to do some development or run the integration tests, there 
 For our tutorial, use the following values in your ~/.seqware/settings
 
     #
-    # SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS
-    #
-    HBASE.ZOOKEEPER.QUORUM=localhost
-    HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
-    HBASE.MASTER=localhost:60000
-    MAPRED.JOB.TRACKER=localhost:8021
-    FS.DEFAULT.NAME=hdfs://localhost:8020
-    FS.DEFAULTFS=hdfs://localhost:8020
-    FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
-
-    #
     # SEQWARE QUERY ENGINE SETTINGS
     #
     QE_NAMESPACE=BATMAN
