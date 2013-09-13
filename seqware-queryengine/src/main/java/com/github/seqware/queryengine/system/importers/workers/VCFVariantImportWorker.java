@@ -201,6 +201,16 @@ public class VCFVariantImportWorker extends ImportWorker {
 //            Pattern p = Pattern.compile("-([ATGCNatgcn]+)");
 
             while ((l = inputStream.readLine()) != null) {
+                
+                // try to tag our dataset with feature set wide tags
+                if (l.contains(SOFeatureImporter.PRAGMA_QE_TAG_FORMAT)){
+                    String[] parts = l.split(SOFeatureImporter.PRAGMA_QE_TAG_FORMAT);
+                    String tag = parts[parts.length-1];
+                    String[] tagParts = tag.split("=");
+                    assert(tagParts.length == 2);
+                    Tag featureTag = Tag.newBuilder().setKey(tagParts[0]).setValue(tagParts[1]).build();
+                    fSet.associateTag(featureTag);
+                }
 
                 // display progress
                 count++;

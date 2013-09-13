@@ -26,6 +26,8 @@ import org.apache.commons.io.LineIterator;
  */
 public class SOFeatureImporter extends Importer {
     
+    public static final String PRAGMA_QE_TAG_FORMAT = "seqware.queryengine.tag";
+    
     /** Constant <code>SECONDARY_INDEX_HACK=false</code> */
     public static final boolean SECONDARY_INDEX_HACK = false;
 
