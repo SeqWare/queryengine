@@ -204,7 +204,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                 
                 // try to tag our dataset with feature set wide tags
                 if (l.contains(SOFeatureImporter.PRAGMA_QE_TAG_FORMAT)){
-                    String[] parts = l.split(SOFeatureImporter.PRAGMA_QE_TAG_FORMAT);
+                    String[] parts = l.split(SOFeatureImporter.PRAGMA_QE_TAG_FORMAT+"=");
                     String tag = parts[parts.length-1];
                     String[] tagParts = tag.split("=");
                     assert(tagParts.length == 2);
