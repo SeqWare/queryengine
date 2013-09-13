@@ -33,7 +33,7 @@ For our tutorial, use the following values in your ~/.seqware/settings
     #
     # SEQWARE QUERY ENGINE SETTINGS
     #
-    QE_NAMESPACE=BATMAN
+    QE_NAMESPACE=batman
     QE_DEVELOPMENT_DEPENDENCY=file:/home/<your user>/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
     QE_PERSIST=true
     QE_HBASE_REMOTE_TESTING=false
@@ -106,7 +106,6 @@ If you run into the following error when the hbase-plugin starts up, please chec
 
 In particular, the latest (v. 13) version of Linux Mint has on the second line <code>127.0.1.1  \<your hostname\></code> which should be modified to <code>127.0.0.1  \<your hostname\></code>  
 
-
 ## Performance Toggles
 
 You will find several performance and metic related toggles in com.github.seqware.queryengine.Constants which allow you to turn on and off versioning, tracking of tagsets, and output various metrics on the size of serialized objects. 
@@ -115,7 +114,7 @@ You will find several performance and metic related toggles in com.github.seqwar
 
 For a full tutorial, please see http://seqware.github.io/docs/8-query-engine/
 
-However, some basic commands to get you started follow:
+However, some basic commands to get you started follow (replace UUID's with UUID's relevant to your run of the utilities):
 
 Create a reference: 
 
@@ -129,3 +128,6 @@ Dump a feature set to VCF file:
 
     java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.VCFDumper 91583362-9d4d-4040-bc36-e2b457ed883e test_out.vcf
 
+Dump a feature set to elastic search compatible JSON file:
+
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json
