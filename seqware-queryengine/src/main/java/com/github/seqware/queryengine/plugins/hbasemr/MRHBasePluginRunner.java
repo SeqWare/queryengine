@@ -144,6 +144,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
 
+            // HERE
+            
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs

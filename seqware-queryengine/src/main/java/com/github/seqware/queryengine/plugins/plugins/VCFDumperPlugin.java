@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
@@ -68,8 +69,16 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     public void map(Collection<Feature> collection, MapperInterface<SerializableText, SerializableText> mapperInterface) {
         for (Feature f : collection) {
             StringBuilder buffer = new StringBuilder();
-            VCFDumper.outputFeatureInVCF(buffer, f);
-            text.set(buffer.toString());     // we can only emit Writables...
+            //VCFDumper.outputFeatureInVCF(buffer, f);
+            // HACK
+            buffer.append(f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+" "+f.getHBasePrefix()+" ");
+            for(String s : f.getAdditionalAttributeNames()) {
+              buffer.append(s+"="+f.getAdditionalAttribute(s)+";");
+            }
+            for(Tag t : f.getTags()) {
+              buffer.append(t.getKey()+"="+t.getValue()+":");
+            }
+            //text.set(buffer.toString());     // we can only emit Writables...
             textKey.set(f.getSGID().getRowKey());
             mapperInterface.write(textKey, text);
         }
