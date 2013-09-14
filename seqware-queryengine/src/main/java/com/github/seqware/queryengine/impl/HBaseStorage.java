@@ -761,6 +761,39 @@ public class HBaseStorage extends StorageInterface {
         return cachedPayloads;
     }
     
+    //Map<FeatureSet, List<FeatureList>> map = HBaseStorage.grabFeatureMapGivenRow(values, SWQEFactory.getSerialization());
+    /**
+     * <p>grabFeatureListsGivenRow.</p>
+     *
+     * @param result a {@link org.apache.hadoop.hbase.client.Result} object.
+     * @param featureSetID a {@link com.github.seqware.queryengine.util.SGID} object.
+     * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
+     * @return a {@link java.util.List} object.
+     */
+    public static Map<FeatureSet, FeatureList> grabFeatureMapGivenRow(Result result, SerializationInterface serializer) {
+      // the output  
+      Map<FeatureSet, FeatureList> cachedPayloadsMap = new HashMap<FeatureSet, FeatureList>();
+      // pull back data from result object, this is the "d" column family, the byte array is a featureSet, the NavigableMap is features as keys (id) and values
+      // getMap() returns Map<family, Map<qualifier, Map<timestamp, value>>>
+      // aka Map<"d", Map<"featureset123", Map<timestamp_long, "featurelist">>>
+      NavigableMap<byte[], NavigableMap<Long, byte[]>> familyMap = result.getMap().get(TEST_FAMILY_INBYTES);
+      // so this is Map<"featureset123", Map<timestamp_long, "featurelist">>
+      // go through and convert to Map<FeatureSet, List<FeatureList>>
+      for(byte[] familyQual : familyMap.keySet()) {
+        FeatureSet fs = serializer.deserialize(familyQual, FeatureSet.class);
+        NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
+        long time = 0;
+        FeatureList featureList = null;
+        for(Long timestamp : familyQualTimestampMap.keySet()) {
+          if(time < timestamp) {
+            time = timestamp;
+            featureList = serializer.deserialize(familyQualTimestampMap.get(timestamp), FeatureList.class);
+          }
+        }
+        cachedPayloadsMap.put(fs, featureList);
+      }
+      return cachedPayloadsMap;
+    }
     
     /**
      * <p>getTEST_FAMILY_INBYTES.</p>

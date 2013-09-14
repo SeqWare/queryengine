@@ -44,8 +44,10 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -442,13 +444,24 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void map(ImmutableBytesWritable row, Result values, Mapper.Context context) throws IOException, InterruptedException {
             this.context = context;
-// HERE?
             //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
-            List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, null, SWQEFactory.getSerialization());
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
+            //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, null, SWQEFactory.getSerialization());
+            Map<FeatureSet, FeatureList> map = HBaseStorage.grabFeatureMapGivenRow(values, SWQEFactory.getSerialization());
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
+            Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
+            for(FeatureSet fs : map.keySet()) {
+              List<FeatureList> listFeatureList = new ArrayList<FeatureList>();
+              listFeatureList.add(map.get(fs));
+              Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(listFeatureList);
+              Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
+              consolidatedMap.put(fs, consolidateRow);
+            }
+            /*
+             * Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
             Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(list);
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-            mapReducePlugin.map(consolidateRow, this);
+             */
+            mapReducePlugin.map(consolidatedMap, this);
         }
 
         @Override

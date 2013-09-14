@@ -3,6 +3,7 @@ package com.github.seqware.queryengine.plugins;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;
 
 /**
@@ -26,6 +27,16 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      */
     public abstract void map(Collection<Feature> atom, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
 
+     /**
+     * HACK: the default implementation would just strip out FeatureSet info, override to use this info 
+     */
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface) {
+      for(FeatureSet fs : atoms.keySet()) {
+        // by default it just calls regular map and we drop info about the feature set
+        map(atoms.get(fs), mapperInterface);
+      }
+    }
+    
     /**
      * Reduce implementation that takes mapped atoms and processes them.
      *
