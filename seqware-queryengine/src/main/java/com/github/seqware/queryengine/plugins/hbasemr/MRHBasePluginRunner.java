@@ -109,6 +109,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // do setup for Map/Reduce from the HBase API
             String tableName = generateTableName(inputSet);
             String destTableName = generateTableName(outputSet);
+            
+            // HACK
+            System.out.println("TABLE NAME: "+tableName);
+            tableName = "batman.hbaseTestTable_v2.Feature.hg964568444";
 
             Configuration conf = new Configuration();
             HBaseStorage.configureHBaseConfig(conf);
@@ -152,7 +156,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
             // HACK
             //scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
-            scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
+            //scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
             //scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
