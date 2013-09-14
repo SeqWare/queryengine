@@ -90,7 +90,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         }
         text.set(buffer.toString());     // we can only emit Writables...
         //textKey.set(fs.getSGID().getRowKey());
-        textKey.set("bunny");
+        textKey.set(fs);
         mapperInterface.write(textKey, text);
       }
     }
