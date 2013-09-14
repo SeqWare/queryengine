@@ -747,7 +747,8 @@ public class HBaseStorage extends StorageInterface {
         // go through the possible qualifiers and break them down
         for (Entry<Long, byte[]> e : map.entrySet()) {
             long time = e.getKey();
-            if (time >= featureSetID.getBackendTimestamp().getTime()) {
+            // not sure what this check is testing for
+            if (featureSetID != null && time >= featureSetID.getBackendTimestamp().getTime()) {
                 continue;
             }
             FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
