@@ -97,12 +97,12 @@ public class BrianTest {
       SeqWareIterable<ReferenceSet> refSets = query.getReferenceSets();
       Log.stdout("TRYING TO LIST REF SETS");
       for(ReferenceSet refSet : refSets) {
-        Log.stdout(refSet.getName() + " " +refSet.getOrganism() + " " + refSet.getSGID());
+        Log.stdout("REFSET NAME: "+refSet.getName() + " ORGANISM: " +refSet.getOrganism() + " SGID: " + refSet.getSGID());
       }
       SeqWareIterable<Reference> refs = query.getReferences();
       Log.stdout("TRYING TO LIST REFS");
       for(Reference ref : refs) {
-        Log.stdout(ref.getName() + " " + ref.getSGID());
+        Log.stdout("REF: "+ref.getName() + " SGID: " + ref.getSGID());
       }
     }
     
@@ -111,7 +111,7 @@ public class BrianTest {
       SeqWareIterable<FeatureSet> featureSets = query.getFeatureSets();
       Log.stdout("TRYING TO LIST FEATURE SETS");
       for(FeatureSet fs : featureSets) {
-        Log.stdout(fs.getDescription() + " " + fs.getReferenceID() + " " + fs.getSGID());
+        Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
       }
     }
     
@@ -120,7 +120,7 @@ public class BrianTest {
       SeqWareIterable<TagSet> sets = query.getTagSets();
       Log.stdout("TRYING TO LIST TAG SETS");
       for(TagSet set : sets) {
-        Log.stdout(set.getName() + " " + set.getSGID());
+        Log.stdout("NAME: "+set.getName() + " SGID: " + set.getSGID());
       }
     }
 
