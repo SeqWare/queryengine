@@ -68,6 +68,9 @@ public class HBaseStorage extends StorageInterface {
     private Map<String, Integer> minMap = null;
     private Map<String, Integer> maxMap = null;
     private Map<String, Long> countMap = null;
+    
+    // helps with lookup of featureset from feature
+    private static Map<String, FeatureSet> grabFeatureMapGivenRowCache = new HashMap<String, FeatureSet>();
 
     /**
      * <p>Constructor for HBaseStorage.</p>
@@ -785,10 +788,13 @@ public class HBaseStorage extends StorageInterface {
       for(byte[] familyQual : familyMap.keySet()) {
         String featureSetName = familyQual.toString();
         FeatureSet selFs = null;
-        SeqWareIterable<FeatureSet> featureSets = SWQEFactory.getQueryInterface().getFeatureSets();
-        for(FeatureSet fs : featureSets) {
-          Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
-          if (fs.getSGID().getUuid().toString().equals(featureSetName)) { selFs = fs; }
+        if (grabFeatureMapGivenRowCache.get(featureSetName) != null) { selFs = grabFeatureMapGivenRowCache.get(featureSetName); }
+        else {
+          SeqWareIterable<FeatureSet> featureSets = SWQEFactory.getQueryInterface().getFeatureSets();
+          for(FeatureSet fs : featureSets) {
+            Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
+            if (fs.getSGID().getUuid().toString().equals(featureSetName)) { selFs = fs; grabFeatureMapGivenRowCache.put(featureSetName, selFs); }
+          }
         }
         System.out.println("FEATURE SET: "+selFs+" RAW: "+familyQual);
         NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
