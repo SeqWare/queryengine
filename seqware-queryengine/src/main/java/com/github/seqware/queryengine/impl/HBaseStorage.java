@@ -786,7 +786,7 @@ public class HBaseStorage extends StorageInterface {
       // so this is Map<"featureset123", Map<timestamp_long, "featurelist">>
       // go through and convert to Map<FeatureSet, List<FeatureList>>
       for(byte[] familyQual : familyMap.keySet()) {
-        String featureSetName = familyQual.toString();
+        String featureSetName = Bytes.toString(familyQual);
         NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
         long time = 0;
         FeatureList featureList = null;

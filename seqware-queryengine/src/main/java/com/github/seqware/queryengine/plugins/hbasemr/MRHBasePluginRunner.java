@@ -451,7 +451,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             System.out.println("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
             Map<String, Collection<Feature>> consolidatedMap = new HashMap<String, Collection<Feature>>();
             for(String fs : map.keySet()) {
-              
               List<FeatureList> listFeatureList = new ArrayList<FeatureList>();
               listFeatureList.add(map.get(fs));
               Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(listFeatureList);
