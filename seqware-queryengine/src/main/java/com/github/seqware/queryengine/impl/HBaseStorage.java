@@ -30,9 +30,11 @@ import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.SGID;
+import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+import net.sourceforge.seqware.common.util.Log;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -781,8 +783,14 @@ public class HBaseStorage extends StorageInterface {
       // so this is Map<"featureset123", Map<timestamp_long, "featurelist">>
       // go through and convert to Map<FeatureSet, List<FeatureList>>
       for(byte[] familyQual : familyMap.keySet()) {
-        MRLazyFeatureSet fs = serializer.deserialize(familyQual, MRLazyFeatureSet.class);
-        System.out.println("FEATURE SET: "+fs+" RAW: "+familyQual);
+        String featureSetName = familyQual.toString();
+        FeatureSet selFs = null;
+        SeqWareIterable<FeatureSet> featureSets = SWQEFactory.getQueryInterface().getFeatureSets();
+        for(FeatureSet fs : featureSets) {
+          Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
+          if (fs.getSGID().getUuid().toString().equals(featureSetName)) { selFs = fs; }
+        }
+        System.out.println("FEATURE SET: "+selFs+" RAW: "+familyQual);
         NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
         long time = 0;
         FeatureList featureList = null;
@@ -793,7 +801,7 @@ public class HBaseStorage extends StorageInterface {
             featureList = serializer.deserialize(familyQualTimestampMap.get(timestamp), FeatureList.class);
           }
         }
-        cachedPayloadsMap.put(fs, featureList);
+        cachedPayloadsMap.put(selFs, featureList);
       }
       return cachedPayloadsMap;
     }
