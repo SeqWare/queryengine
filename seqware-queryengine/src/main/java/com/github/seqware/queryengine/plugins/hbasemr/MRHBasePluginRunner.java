@@ -175,6 +175,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             }
             job.setReducerClass(MRHBasePluginRunner.PluginRunnerReducer.class);    // reducer class
             job.setNumReduceTasks(mapReducePlugin.getNumReduceTasks());
+            
 
             if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
                 FileContext fileContext = FileContext.getFileContext(this.job.getConfiguration());
