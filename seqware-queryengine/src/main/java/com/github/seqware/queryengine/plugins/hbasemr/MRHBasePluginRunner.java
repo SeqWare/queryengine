@@ -447,9 +447,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
             //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, null, SWQEFactory.getSerialization());
             Map<FeatureSet, FeatureList> map = HBaseStorage.grabFeatureMapGivenRow(values, SWQEFactory.getSerialization());
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).error("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
+            System.out.println("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
             Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(FeatureSet fs : map.keySet()) {
+              
               List<FeatureList> listFeatureList = new ArrayList<FeatureList>();
               listFeatureList.add(map.get(fs));
               Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(listFeatureList);
