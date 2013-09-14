@@ -152,6 +152,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
             // HACK
             //scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
+            scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
             //scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
