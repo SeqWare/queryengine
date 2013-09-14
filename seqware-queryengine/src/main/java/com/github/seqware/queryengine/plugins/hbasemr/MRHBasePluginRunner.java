@@ -150,13 +150,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             
             Scan scan = new Scan();
-            //scan.setMaxVersions();       // we need all version data
-            //scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
-            //scan.setCacheBlocks(false);  // don't set to true for MR jobs
+            scan.setMaxVersions();       // we need all version data
+            scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
+            scan.setCacheBlocks(false);  // don't set to true for MR jobs
             //byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
             // HACK
             //scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
-            //scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
+            scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
             //scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
