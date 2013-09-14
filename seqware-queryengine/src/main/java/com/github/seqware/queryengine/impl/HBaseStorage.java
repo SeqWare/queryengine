@@ -25,6 +25,7 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.impl.FeatureList;
+import com.github.seqware.queryengine.model.impl.hbasemrlazy.MRLazyFeatureSet;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.FSGID;
@@ -780,7 +781,7 @@ public class HBaseStorage extends StorageInterface {
       // so this is Map<"featureset123", Map<timestamp_long, "featurelist">>
       // go through and convert to Map<FeatureSet, List<FeatureList>>
       for(byte[] familyQual : familyMap.keySet()) {
-        LazyFeatureSet fs = serializer.deserialize(familyQual, LazyFeatureSet.class);
+        MRLazyFeatureSet fs = serializer.deserialize(familyQual, MRLazyFeatureSet.class);
         System.out.println("FEATURE SET: "+fs+" RAW: "+familyQual);
         NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
         long time = 0;
