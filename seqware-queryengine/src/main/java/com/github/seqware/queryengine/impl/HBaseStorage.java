@@ -793,7 +793,8 @@ public class HBaseStorage extends StorageInterface {
           SeqWareIterable<FeatureSet> featureSets = SWQEFactory.getQueryInterface().getFeatureSets();
           for(FeatureSet fs : featureSets) {
             Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
-            if (fs.getSGID().getUuid().toString().equals(featureSetName)) { selFs = fs; grabFeatureMapGivenRowCache.put(featureSetName, selFs); }
+            //if (fs.getSGID().getUuid().toString().equals(featureSetName)) { selFs = fs; grabFeatureMapGivenRowCache.put(featureSetName, selFs); }
+            if (true) { selFs = fs; grabFeatureMapGivenRowCache.put(featureSetName, selFs); }
           }
         }
         System.out.println("FEATURE SET: "+selFs+" RAW: "+familyQual);
