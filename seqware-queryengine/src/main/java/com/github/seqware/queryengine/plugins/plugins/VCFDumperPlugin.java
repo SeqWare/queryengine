@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
@@ -25,6 +26,7 @@ import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -65,10 +67,20 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         return new Object[0];
     }
 
+  @Override
+  public void map(Collection<Feature> atom, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+    //do nothing
+  }
+
     @Override
-    public void map(Collection<Feature> collection, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-        for (Feature f : collection) {
-            StringBuilder buffer = new StringBuilder();
+    public void map(Map<FeatureSet, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+      for(FeatureSet fs : collections.keySet()) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("featureset:"+fs.getSGID().toString()+" ");
+            for(Tag t : fs.getTags()) {
+              buffer.append(t.getKey()+"="+t.getValue()+":");
+            }
+        for (Feature f : collections.get(fs)) {
             //VCFDumper.outputFeatureInVCF(buffer, f);
             // HACK
             buffer.append(f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+" "+f.getHBasePrefix()+" ");
@@ -78,10 +90,11 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
             for(Tag t : f.getTags()) {
               buffer.append(t.getKey()+"="+t.getValue()+":");
             }
-            text.set(buffer.toString());     // we can only emit Writables...
-            textKey.set(f.getSGID().getRowKey());
-            mapperInterface.write(textKey, text);
         }
+        text.set(buffer.toString());     // we can only emit Writables...
+        textKey.set(fs.getSGID().getRowKey());
+        mapperInterface.write(textKey, text);
+      }
     }
 
     @Override

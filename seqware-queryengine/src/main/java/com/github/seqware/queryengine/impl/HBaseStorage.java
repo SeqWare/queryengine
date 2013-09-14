@@ -785,6 +785,7 @@ public class HBaseStorage extends StorageInterface {
         long time = 0;
         FeatureList featureList = null;
         for(Long timestamp : familyQualTimestampMap.keySet()) {
+          // FIXME: I'm pretty sure this is wrong, I'm dropping features that I think should be in there
           if(time < timestamp) {
             time = timestamp;
             featureList = serializer.deserialize(familyQualTimestampMap.get(timestamp), FeatureList.class);
