@@ -30,8 +30,8 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      /**
      * HACK: the default implementation would just strip out FeatureSet info, override to use this info 
      */
-    public void map(Map<String, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface) {
-      for(String fs : atoms.keySet()) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface) {
+      for(FeatureSet fs : atoms.keySet()) {
         // by default it just calls regular map and we drop info about the feature set
         map(atoms.get(fs), mapperInterface);
       }

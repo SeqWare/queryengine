@@ -43,7 +43,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
 
     private SerializableText text = new SerializableText();
     private SerializableText textKey = new SerializableText();
-
+    
     @Override
     public Class getMapOutputKeyClass() {
         return SerializableText.class;
@@ -73,8 +73,8 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
   }
 
     @Override
-    public void map(Map<String, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-      for(String fs : collections.keySet()) {
+    public void map(Map<FeatureSet, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+      for(FeatureSet fs : collections.keySet()) {
         StringBuilder buffer = new StringBuilder();
         buffer.append("featureset:"+fs+" ");
         for (Feature f : collections.get(fs)) {
@@ -90,7 +90,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         }
         text.set(buffer.toString());     // we can only emit Writables...
         //textKey.set(fs.getSGID().getRowKey());
-        textKey.set(fs);
+        textKey.set(fs.toString());
         mapperInterface.write(textKey, text);
       }
     }
