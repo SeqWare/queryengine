@@ -76,7 +76,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     public void map(Map<FeatureSet, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
       for(FeatureSet fs : collections.keySet()) {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("featureset:"+fs.getSGID().toString()+" ");
+        buffer.append("featureset:"+fs.getDescription()+" ");
             for(Tag t : fs.getTags()) {
               buffer.append(t.getKey()+"="+t.getValue()+":");
             }
