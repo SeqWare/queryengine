@@ -721,11 +721,25 @@ public class HBaseStorage extends StorageInterface {
      * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      * @return a {@link java.util.List} object.
      */
+    // HERE?
     public static List<FeatureList> grabFeatureListsGivenRow(Result result, SGID featureSetID, SerializationInterface serializer) {
-        byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
+        byte[] qualifier = null;
+        if (featureSetID != null) { qualifier = Bytes.toBytes(featureSetID.getUuid().toString()); }
         List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
         // map is time -> data
-        NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
+        // HACK
+        // so what I'm trying to do here is end up with either the features for a particular featureSet
+        // or all features if the featureSet was null
+        NavigableMap<Long, byte[]> map = null;
+        if (qualifier != null) { map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier); }
+        else {
+          NavigableMap<byte[], NavigableMap<Long, byte[]>> familyMap = result.getMap().get(TEST_FAMILY_INBYTES);
+          for(NavigableMap<Long, byte[]> familyColMap : familyMap.values()) {
+            if (map == null) { map = familyColMap; }
+            else { map.putAll(familyColMap); }
+          }
+        }
+        // LEFT OFF HERE
         if (map == null) {
             // column not present in this row
             return cachedPayloads;

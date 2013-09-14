@@ -112,7 +112,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             
             // HACK
             System.out.println("TABLE NAME: "+tableName);
-            tableName = "batman.hbaseTestTable_v2.Feature.hg964568444";
+            //tableName = "batman.hbaseTestTable_v2.Feature.hg964568444";
 
             Configuration conf = new Configuration();
             HBaseStorage.configureHBaseConfig(conf);
@@ -121,7 +121,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // we need to pass the parameters for a featureset, maybe we can take advantage of our serializers
             byte[] sSet = SWQEFactory.getSerialization().serialize(inputSet);
             byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
-
+//HERE
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
 
             File file = new File(new URI(Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class)));
@@ -150,10 +150,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             
             Scan scan = new Scan();
-            scan.setMaxVersions();       // we need all version data
-            scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
-            scan.setCacheBlocks(false);  // don't set to true for MR jobs
-            byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
+            //scan.setMaxVersions();       // we need all version data
+            //scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
+            //scan.setCacheBlocks(false);  // don't set to true for MR jobs
+            //byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
             // HACK
             //scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
             //scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
@@ -441,8 +441,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void map(ImmutableBytesWritable row, Result values, Mapper.Context context) throws IOException, InterruptedException {
             this.context = context;
-
-            List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
+// HERE?
+            //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
+            List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, null, SWQEFactory.getSerialization());
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
             Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(list);
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
