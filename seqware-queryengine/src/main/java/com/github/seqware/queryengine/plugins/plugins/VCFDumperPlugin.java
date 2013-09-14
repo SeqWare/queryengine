@@ -78,7 +78,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
             for(Tag t : f.getTags()) {
               buffer.append(t.getKey()+"="+t.getValue()+":");
             }
-            //text.set(buffer.toString());     // we can only emit Writables...
+            text.set(buffer.toString());     // we can only emit Writables...
             textKey.set(f.getSGID().getRowKey());
             mapperInterface.write(textKey, text);
         }
