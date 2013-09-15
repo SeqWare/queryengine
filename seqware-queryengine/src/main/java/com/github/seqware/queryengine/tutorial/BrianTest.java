@@ -25,7 +25,6 @@ import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
-import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
@@ -98,12 +97,12 @@ public class BrianTest {
       SeqWareIterable<ReferenceSet> refSets = query.getReferenceSets();
       Log.stdout("TRYING TO LIST REF SETS");
       for(ReferenceSet refSet : refSets) {
-        Log.stdout("REFSET NAME: "+refSet.getName() + " ORGANISM: " +refSet.getOrganism() + " SGID: " + refSet.getSGID());
+        Log.stdout(refSet.getName() + " " +refSet.getOrganism() + " " + refSet.getSGID());
       }
       SeqWareIterable<Reference> refs = query.getReferences();
       Log.stdout("TRYING TO LIST REFS");
       for(Reference ref : refs) {
-        Log.stdout("REF: "+ref.getName() + " SGID: " + ref.getSGID());
+        Log.stdout(ref.getName() + " " + ref.getSGID());
       }
     }
     
@@ -112,10 +111,7 @@ public class BrianTest {
       SeqWareIterable<FeatureSet> featureSets = query.getFeatureSets();
       Log.stdout("TRYING TO LIST FEATURE SETS");
       for(FeatureSet fs : featureSets) {
-        Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
-        for (Tag t : fs.getTags()) {
-          Log.stdout("  "+t.getKey()+"="+t.getValue());
-        }
+        Log.stdout(fs.getDescription() + " " + fs.getReferenceID() + " " + fs.getSGID());
       }
     }
     
@@ -124,7 +120,7 @@ public class BrianTest {
       SeqWareIterable<TagSet> sets = query.getTagSets();
       Log.stdout("TRYING TO LIST TAG SETS");
       for(TagSet set : sets) {
-        Log.stdout("NAME: "+set.getName() + " SGID: " + set.getSGID());
+        Log.stdout(set.getName() + " " + set.getSGID());
       }
     }
 

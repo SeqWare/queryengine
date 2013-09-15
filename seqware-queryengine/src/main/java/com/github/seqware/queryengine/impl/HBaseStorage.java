@@ -25,16 +25,13 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.impl.FeatureList;
-import com.github.seqware.queryengine.model.impl.hbasemrlazy.MRLazyFeatureSet;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.SGID;
-import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
-import net.sourceforge.seqware.common.util.Log;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -68,9 +65,6 @@ public class HBaseStorage extends StorageInterface {
     private Map<String, Integer> minMap = null;
     private Map<String, Integer> maxMap = null;
     private Map<String, Long> countMap = null;
-    
-    // helps with lookup of featureset from feature
-    private static Map<String, FeatureSet> grabFeatureMapGivenRowCache = new HashMap<String, FeatureSet>();
 
     /**
      * <p>Constructor for HBaseStorage.</p>
@@ -727,25 +721,11 @@ public class HBaseStorage extends StorageInterface {
      * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      * @return a {@link java.util.List} object.
      */
-    // HERE?
     public static List<FeatureList> grabFeatureListsGivenRow(Result result, SGID featureSetID, SerializationInterface serializer) {
-        byte[] qualifier = null;
-        if (featureSetID != null) { qualifier = Bytes.toBytes(featureSetID.getUuid().toString()); }
+        byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
         List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
         // map is time -> data
-        // HACK
-        // so what I'm trying to do here is end up with either the features for a particular featureSet
-        // or all features if the featureSet was null
-        NavigableMap<Long, byte[]> map = null;
-        if (qualifier != null) { map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier); }
-        else {
-          NavigableMap<byte[], NavigableMap<Long, byte[]>> familyMap = result.getMap().get(TEST_FAMILY_INBYTES);
-          for(NavigableMap<Long, byte[]> familyColMap : familyMap.values()) {
-            if (map == null) { map = familyColMap; }
-            else { map.putAll(familyColMap); }
-          }
-        }
-        // LEFT OFF HERE
+        NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
         if (map == null) {
             // column not present in this row
             return cachedPayloads;
@@ -753,8 +733,7 @@ public class HBaseStorage extends StorageInterface {
         // go through the possible qualifiers and break them down
         for (Entry<Long, byte[]> e : map.entrySet()) {
             long time = e.getKey();
-            // not sure what this check is testing for
-            if (featureSetID != null && time >= featureSetID.getBackendTimestamp().getTime()) {
+            if (time >= featureSetID.getBackendTimestamp().getTime()) {
                 continue;
             }
             FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
@@ -767,40 +746,6 @@ public class HBaseStorage extends StorageInterface {
         return cachedPayloads;
     }
     
-    //Map<FeatureSet, List<FeatureList>> map = HBaseStorage.grabFeatureMapGivenRow(values, SWQEFactory.getSerialization());
-    /**
-     * <p>grabFeatureListsGivenRow.</p>
-     *
-     * @param result a {@link org.apache.hadoop.hbase.client.Result} object.
-     * @param featureSetID a {@link com.github.seqware.queryengine.util.SGID} object.
-     * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
-     * @return a {@link java.util.List} object.
-     */
-    public static Map<String, FeatureList> grabFeatureMapGivenRow(Result result, SerializationInterface serializer) {
-      // the output  
-      Map<String, FeatureList> cachedPayloadsMap = new HashMap<String, FeatureList>();
-      // pull back data from result object, this is the "d" column family, the byte array is a featureSet, the NavigableMap is features as keys (id) and values
-      // getMap() returns Map<family, Map<qualifier, Map<timestamp, value>>>
-      // aka Map<"d", Map<"featureset123", Map<timestamp_long, "featurelist">>>
-      NavigableMap<byte[], NavigableMap<Long, byte[]>> familyMap = result.getMap().get(TEST_FAMILY_INBYTES);
-      // so this is Map<"featureset123", Map<timestamp_long, "featurelist">>
-      // go through and convert to Map<FeatureSet, List<FeatureList>>
-      for(byte[] familyQual : familyMap.keySet()) {
-        String featureSetName = Bytes.toString(familyQual);
-        NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
-        long time = 0;
-        FeatureList featureList = null;
-        for(Long timestamp : familyQualTimestampMap.keySet()) {
-          // FIXME: I'm pretty sure this is wrong, I'm dropping features that I think should be in there
-          if(time < timestamp) {
-            time = timestamp;
-            featureList = serializer.deserialize(familyQualTimestampMap.get(timestamp), FeatureList.class);
-          }
-        }
-        cachedPayloadsMap.put(featureSetName, featureList);
-      }
-      return cachedPayloadsMap;
-    }
     
     /**
      * <p>getTEST_FAMILY_INBYTES.</p>

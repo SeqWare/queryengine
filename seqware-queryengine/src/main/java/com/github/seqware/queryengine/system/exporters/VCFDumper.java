@@ -155,7 +155,7 @@ public class VCFDumper {
             } else {
                 outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
             }
-            outputStream.append("MUTATION\tMUTATION_ID\tPROJECTS_AFFECTED\n");
+            outputStream.append("#CHROM	POS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
         } catch (IOException e) {
             Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
             System.exit(-1);
@@ -194,26 +194,27 @@ public class VCFDumper {
                 }
             } // TODO: clearly this should be expanded to include closing database etc 
         }
-        if (!mrSuccess) {
-          // fall-through if plugin-fails
-          try {
-              assert(outputStream != null);
-              for (Feature feature : fSet) {
-                  StringBuilder buffer = new StringBuilder();
-                  boolean caught = outputFeatureInVCF(buffer, feature);
-                  if (caught) {
-                      caughtNonVCF = true;
-                  }
-                  outputStream.append(buffer);
-                  outputStream.newLine();
-              }
-              outputStream.flush();
-          } catch (IOException e) {
-              Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
-              System.exit(-1);
-          } finally {
-              IOUtils.closeQuietly(outputStream);
-          }
+        if (mrSuccess) {
+            return;
+        }
+        // fall-through if plugin-fails
+        try {
+            assert(outputStream != null);
+            for (Feature feature : fSet) {
+                StringBuilder buffer = new StringBuilder();
+                boolean caught = outputFeatureInVCF(buffer, feature);
+                if (caught) {
+                    caughtNonVCF = true;
+                }
+                outputStream.append(buffer);
+                outputStream.newLine();
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
+            System.exit(-1);
+        } finally {
+            IOUtils.closeQuietly(outputStream);
         }
     }
 }

@@ -16,22 +16,14 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
-import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.QueryInterface;
-import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
-import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -48,8 +40,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
 
     private SerializableText text = new SerializableText();
     private SerializableText textKey = new SerializableText();
-    private HashMap<String, String> featureSetMap = new HashMap<String, String>();
-    
+
     @Override
     public Class getMapOutputKeyClass() {
         return SerializableText.class;
@@ -73,82 +64,21 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         return new Object[0];
     }
 
-  @Override
-  public void map(Collection<Feature> atom, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-    //do nothing
-  }
-
     @Override
-    public void map(Map<String, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-      HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
-      for(String fs : collections.keySet()) {
-        for (Feature f : collections.get(fs)) {
-          String ref = null;
-          String var = null;
-          String id = null;
-          for(Tag t : f.getTags()) {
-              //buffer.append(t.getKey()+"="+t.getValue()+":");
-              if ("ref_base".equals(t.getKey())) { ref = t.getValue().toString(); }
-              if ("call_base".equals(t.getKey())) { var = t.getValue().toString(); }
-              if ("id".equals(t.getKey())) { id = t.getValue().toString(); }
-          }
-          String varID = f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"_"+ref+"->"+var+"\t"+id;
-          ArrayList otherFS = results.get(varID);
-          if (otherFS == null) { otherFS = new ArrayList<String>(); }
-          if (!otherFS.contains(f)) { otherFS.add(fs); }
-          results.put(varID, otherFS);
+    public void map(Collection<Feature> collection, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+        for (Feature f : collection) {
+            StringBuilder buffer = new StringBuilder();
+            VCFDumper.outputFeatureInVCF(buffer, f);
+            text.set(buffer.toString());     // we can only emit Writables...
+            textKey.set(f.getSGID().getRowKey());
+            mapperInterface.write(textKey, text);
         }
-      }
-      // now iterate and add to results
-      for (String currVar : results.keySet()) {
-        boolean first = true;
-        StringBuilder valueStr = new StringBuilder();
-        for (String currFS : results.get(currVar)) {
-          
-          if (first) { first=false; valueStr.append(currFS); }
-          else { valueStr.append(","+currFS); }
-        }
-        textKey.set(currVar);
-        text.set(currVar+"\t"+valueStr.toString());
-        mapperInterface.write(textKey, text); 
-      }
     }
-    
-    private String getFeatureSetDetails(String oldFS){
-      if (featureSetMap.size() == 0) {
-        QueryInterface query = SWQEFactory.getQueryInterface();
-          SeqWareIterable<FeatureSet> featureSets = query.getFeatureSets();
-          for (FeatureSet fs : featureSets) {
 
-                String donor = null;
-                String project = null;
-                for(Tag t : fs.getTags()) {
-                  if (t.getKey().equals("donor")) { donor = t.getValue().toString(); }
-                  if (t.getKey().equals("project")) { project = t.getValue().toString(); }
-                }
-                String[] uuid = fs.getSGID().toString().split("\\.");
-                featureSetMap.put(uuid[0], donor+"::"+project); 
-          }
-      }
-      return(featureSetMap.get(oldFS));
-    }
-    
     @Override
     public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
         for (SerializableText val : values) {
-          String[] valArr = val.toString().split("\t");
-          String[] fsArr = valArr[2].split(",");
-          String newFeatStr = "";
-          boolean first = true;
-          for(String currFS : fsArr) {
-            if (first) { first = false; newFeatStr += getFeatureSetDetails(currFS); }
-            else { newFeatStr += ","+getFeatureSetDetails(currFS); }
-          }
-          
-          // HELP, not sure what's going in here, why are you writing the text?
-          //reducerInterface.write(val, text);
-          val.set(valArr[0]+"\t"+valArr[1]+"\t"+newFeatStr);
-          reducerInterface.write(val, null);
+            reducerInterface.write(val, text);
         }
     }
 

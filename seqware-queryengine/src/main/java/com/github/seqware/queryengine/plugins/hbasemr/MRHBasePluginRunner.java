@@ -44,10 +44,8 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -111,10 +109,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // do setup for Map/Reduce from the HBase API
             String tableName = generateTableName(inputSet);
             String destTableName = generateTableName(outputSet);
-            
-            // HACK
-            System.out.println("TABLE NAME: "+tableName);
-            //tableName = "batman.hbaseTestTable_v2.Feature.hg964568444";
 
             Configuration conf = new Configuration();
             HBaseStorage.configureHBaseConfig(conf);
@@ -123,7 +117,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // we need to pass the parameters for a featureset, maybe we can take advantage of our serializers
             byte[] sSet = SWQEFactory.getSerialization().serialize(inputSet);
             byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
-//HERE
+
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
 
             File file = new File(new URI(Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class)));
@@ -150,16 +144,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
 
-            
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-            //byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
-            // HACK
-            //scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
-            scan.addFamily(HBaseStorage.getTEST_FAMILY_INBYTES());
-            //scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
+            byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
+            scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
+            scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
@@ -177,7 +168,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             }
             job.setReducerClass(MRHBasePluginRunner.PluginRunnerReducer.class);    // reducer class
             job.setNumReduceTasks(mapReducePlugin.getNumReduceTasks());
-            
 
             if (mapReducePlugin.getResultMechanism() == PluginInterface.ResultMechanism.FILE) {
                 FileContext fileContext = FileContext.getFileContext(this.job.getConfiguration());
@@ -444,25 +434,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void map(ImmutableBytesWritable row, Result values, Mapper.Context context) throws IOException, InterruptedException {
             this.context = context;
-            //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
-            //List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, null, SWQEFactory.getSerialization());
-            Map<String, FeatureList> map = HBaseStorage.grabFeatureMapGivenRow(values, SWQEFactory.getSerialization());
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
-            System.out.println("Counting " + sourceSet.getSGID() + " on row with " + map.keySet().size() + " lists");
-            Map<String, Collection<Feature>> consolidatedMap = new HashMap<String, Collection<Feature>>();
-            for(String fs : map.keySet()) {
-              List<FeatureList> listFeatureList = new ArrayList<FeatureList>();
-              listFeatureList.add(map.get(fs));
-              Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(listFeatureList);
-              Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-              consolidatedMap.put(fs, consolidateRow);
-            }
-            /*
-             * Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
+
+            List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
             Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(list);
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-             */
-            mapReducePlugin.map(consolidatedMap, this);
+            mapReducePlugin.map(consolidateRow, this);
         }
 
         @Override
