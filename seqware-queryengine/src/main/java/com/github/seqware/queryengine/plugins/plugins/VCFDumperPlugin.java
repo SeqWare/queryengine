@@ -48,6 +48,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
 
     private SerializableText text = new SerializableText();
     private SerializableText textKey = new SerializableText();
+    private HashMap<String, String> featureSetMap = new HashMap<String, String>();
     
     @Override
     public Class getMapOutputKeyClass() {
@@ -112,34 +113,38 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         mapperInterface.write(textKey, text); 
       }
     }
-
-    @Override
-    public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
-        for (SerializableText val : values) {
-          String[] valArr = val.toString().split("\t");
-          String[] fsArr = valArr[2].split(",");
-          QueryInterface query = SWQEFactory.getQueryInterface();
+    
+    private String getFeatureSetDetails(String oldFS){
+      if (featureSetMap.size() == 0) {
+        QueryInterface query = SWQEFactory.getQueryInterface();
           SeqWareIterable<FeatureSet> featureSets = query.getFeatureSets();
-          ArrayList<String> features = new ArrayList<String>();
           for (FeatureSet fs : featureSets) {
-            for (String fsStr : fsArr) {
-              if(fs.getSGID().toString().contains(fsStr)) { 
+
                 String donor = null;
                 String project = null;
                 for(Tag t : fs.getTags()) {
                   if (t.getKey().equals("donor")) { donor = t.getValue().toString(); }
                   if (t.getKey().equals("project")) { project = t.getValue().toString(); }
                 }
-                features.add(fsStr+"_"+donor+"_"+project); }
-            }
+                featureSetMap.put(fs.getSGID().toString(), fs.getSGID().toString()+"_"+donor+"_"+project); 
           }
-          String newVal = "";
-          for (String feat : features) {
-            newVal += feat+",";
+      }
+      return(featureSetMap.get(oldFS));
+    }
+    
+    @Override
+    public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
+        for (SerializableText val : values) {
+          String[] valArr = val.toString().split("\t");
+          String[] fsArr = valArr[2].split(",");
+          String newFeatStr = "";
+          for(String currFS : fsArr) {
+            newFeatStr += ","+getFeatureSetDetails(currFS);
           }
+          
           // HELP, not sure what's going in here, why are you writing the text?
           //reducerInterface.write(val, text);
-          val.set(valArr[0]+"\t"+valArr[1]+"\t"+newVal);
+          val.set(valArr[0]+"\t"+valArr[1]+"\t"+newFeatStr);
           reducerInterface.write(val, null);
         }
     }
