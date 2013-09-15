@@ -16,13 +16,16 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
+import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
+import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -113,8 +116,23 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     @Override
     public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
         for (SerializableText val : values) {
+          String[] valArr = val.toString().split("\t");
+          String[] fsArr = valArr[2].split(",");
+          QueryInterface query = SWQEFactory.getQueryInterface();
+          SeqWareIterable<FeatureSet> featureSets = query.getFeatureSets();
+          ArrayList<String> features = new ArrayList<String>();
+          for (FeatureSet fs : featureSets) {
+            for (String fsStr : fsArr) {
+              if(fs.getDescription().contains(fsStr)) { features.add(fs.getDescription()+"_"+fs.getTags().toString()); }
+            }
+          }
+          String newVal = "";
+          for (String feat : features) {
+            newVal += feat+",";
+          }
           // HELP, not sure what's going in here, why are you writing the text?
           //reducerInterface.write(val, text);
+          val.set(valArr[0]+"\t"+valArr[1]+"\t"+newVal);
           reducerInterface.write(val, null);
         }
     }
