@@ -2,9 +2,7 @@ package demo;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -91,26 +89,16 @@ public class VariantFreq {
 
   public static class VariantFreqMapper extends TableMapper<ImmutableBytesWritable, IntWritable> {
 
+    private final static IntWritable one = new IntWritable(1);
+
     @Override
     protected void map(ImmutableBytesWritable key, Result row, Context context) throws IOException, InterruptedException {
-
-      Map<byte[], Integer> freqs = new HashMap<byte[], Integer>();
-
       String family = context.getConfiguration().get(FEATURE_FAMILY);
-      NavigableMap<byte[], byte[]> cols = row.getFamilyMap(Bytes.toBytes(family));
+      Map<byte[], byte[]> cols = row.getFamilyMap(Bytes.toBytes(family));
       for (byte[] data : cols.values()) {
         Feature f = deserializeFeature(data);
         byte[] var = serialzeVariantKey(f);
-
-        if (freqs.containsKey(key)) {
-          freqs.put(var, freqs.get(var) + 1);
-        } else {
-          freqs.put(var, 1);
-        }
-      }
-
-      for (Map.Entry<byte[], Integer> e : freqs.entrySet()) {
-        context.write(new ImmutableBytesWritable(e.getKey()), new IntWritable(e.getValue()));
+        context.write(new ImmutableBytesWritable(var), one);
       }
     }
   }
