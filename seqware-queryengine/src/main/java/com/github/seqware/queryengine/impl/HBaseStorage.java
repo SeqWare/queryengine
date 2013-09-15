@@ -776,9 +776,9 @@ public class HBaseStorage extends StorageInterface {
      * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      * @return a {@link java.util.List} object.
      */
-    public static Map<FeatureSet, FeatureList> grabFeatureMapGivenRow(Result result, SerializationInterface serializer) {
+    public static Map<String, FeatureList> grabFeatureMapGivenRow(Result result, SerializationInterface serializer) {
       // the output  
-      Map<FeatureSet, FeatureList> cachedPayloadsMap = new HashMap<FeatureSet, FeatureList>();
+      Map<String, FeatureList> cachedPayloadsMap = new HashMap<String, FeatureList>();
       // pull back data from result object, this is the "d" column family, the byte array is a featureSet, the NavigableMap is features as keys (id) and values
       // getMap() returns Map<family, Map<qualifier, Map<timestamp, value>>>
       // aka Map<"d", Map<"featureset123", Map<timestamp_long, "featurelist">>>
@@ -787,14 +787,6 @@ public class HBaseStorage extends StorageInterface {
       // go through and convert to Map<FeatureSet, List<FeatureList>>
       for(byte[] familyQual : familyMap.keySet()) {
         String featureSetName = Bytes.toString(familyQual);
-        FeatureSet selFs = null;
-        if (grabFeatureMapGivenRowCache.get(featureSetName) != null) { selFs = grabFeatureMapGivenRowCache.get(featureSetName); }
-        else {
-          SeqWareIterable<FeatureSet> featureSets = SWQEFactory.getQueryInterface().getFeatureSets();
-          for(FeatureSet fs : featureSets) {
-            if (featureSetName.equals(fs.getSGID().getUuid().toString())) { selFs = fs; grabFeatureMapGivenRowCache.put(featureSetName, selFs); }
-          }
-        }
         NavigableMap<Long, byte[]> familyQualTimestampMap = familyMap.get(familyQual);
         long time = 0;
         FeatureList featureList = null;
@@ -805,7 +797,7 @@ public class HBaseStorage extends StorageInterface {
             featureList = serializer.deserialize(familyQualTimestampMap.get(timestamp), FeatureList.class);
           }
         }
-        cachedPayloadsMap.put(selFs, featureList);
+        cachedPayloadsMap.put(featureSetName, featureList);
       }
       return cachedPayloadsMap;
     }

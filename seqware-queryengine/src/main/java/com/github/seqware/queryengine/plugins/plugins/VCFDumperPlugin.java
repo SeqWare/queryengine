@@ -73,8 +73,8 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
   }
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-      for(FeatureSet fs : collections.keySet()) {
+    public void map(Map<String, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+      for(String fs : collections.keySet()) {
         StringBuilder buffer = new StringBuilder();
         buffer.append("featureset:"+fs+" ");
         for (Feature f : collections.get(fs)) {
