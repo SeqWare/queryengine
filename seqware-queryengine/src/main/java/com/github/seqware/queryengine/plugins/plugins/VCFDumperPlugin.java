@@ -127,7 +127,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
                   if (t.getKey().equals("project")) { project = t.getValue().toString(); }
                 }
                 String[] uuid = fs.getSGID().toString().split("\\.");
-                featureSetMap.put(uuid[0], fs.getSGID().toString()+"_"+donor+"_"+project); 
+                featureSetMap.put(uuid[0], donor+"::"+project); 
           }
       }
       return(featureSetMap.get(oldFS));
@@ -139,8 +139,10 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
           String[] valArr = val.toString().split("\t");
           String[] fsArr = valArr[2].split(",");
           String newFeatStr = "";
+          boolean first = true;
           for(String currFS : fsArr) {
-            newFeatStr += ","+getFeatureSetDetails(currFS);
+            if (first) { first = false; newFeatStr += getFeatureSetDetails(currFS); }
+            else { newFeatStr += ","+getFeatureSetDetails(currFS); }
           }
           
           // HELP, not sure what's going in here, why are you writing the text?

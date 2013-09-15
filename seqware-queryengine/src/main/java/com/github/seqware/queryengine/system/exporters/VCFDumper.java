@@ -155,7 +155,7 @@ public class VCFDumper {
             } else {
                 outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
             }
-            outputStream.append("#CHROM	POS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
+            outputStream.append("MUTATION\tMUTATION_ID\tPROJECTS_AFFECTED\n");
         } catch (IOException e) {
             Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
             System.exit(-1);
