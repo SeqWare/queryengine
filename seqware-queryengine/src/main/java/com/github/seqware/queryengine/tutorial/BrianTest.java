@@ -25,6 +25,7 @@ import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
+import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
@@ -112,6 +113,9 @@ public class BrianTest {
       Log.stdout("TRYING TO LIST FEATURE SETS");
       for(FeatureSet fs : featureSets) {
         Log.stdout("DESCRIPTION: "+fs.getDescription() + " REFID: " + fs.getReferenceID() + " SGID: " + fs.getSGID());
+        for (Tag t : fs.getTags()) {
+          Log.stdout("  "+t.getKey()+"="+t.getValue());
+        }
       }
     }
     
