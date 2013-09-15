@@ -102,7 +102,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
           else { valueStr.append(","+currFS); }
         }
         textKey.set(currVar);
-        text.set(valueStr.toString());
+        text.set(currVar+"\t"+valueStr.toString());
         mapperInterface.write(textKey, text); 
       }
     }
@@ -110,7 +110,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     @Override
     public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
         for (SerializableText val : values) {
-          // HELP, not sure what's going in here
+          // HELP, not sure what's going in here, why are you writing the text?
             reducerInterface.write(val, text);
         }
     }
