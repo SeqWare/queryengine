@@ -131,3 +131,17 @@ Dump a feature set to VCF file:
 Dump a feature set to elastic search compatible JSON file:
 
     java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json
+
+## In testing
+
+Run a count of all variants across all FeatureSets. Variants are identified with the tuple [chromosome, position, referenceBase, calledBase].
+Ensure there first exists a destination table/family for the results, e.g., `create 'variant_aggregates', {NAME=>'all_features', VERSIONS=>1}`.
+
+    java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreq \
+    ns.hbaseTestTable_v2.Feature d \
+    variant_aggregates all_features counts
+
+The above emits the results back into HBase.  To print the results to stdout:
+
+    java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
+    variant_aggregates all_features counts
