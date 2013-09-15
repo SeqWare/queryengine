@@ -81,12 +81,14 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         for (Feature f : collections.get(fs)) {
           String ref = null;
           String var = null;
+          String id = null;
           for(Tag t : f.getTags()) {
               //buffer.append(t.getKey()+"="+t.getValue()+":");
               if ("ref_base".equals(t.getKey())) { ref = t.getValue().toString(); }
               if ("call_base".equals(t.getKey())) { var = t.getValue().toString(); }
+              if ("id".equals(t.getKey())) { id = t.getValue().toString(); }
           }
-          String varID = f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"_"+ref+"->"+var;
+          String varID = f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"_"+ref+"->"+var+"\t"+id;
           ArrayList otherFS = results.get(varID);
           if (otherFS == null) { otherFS = new ArrayList<String>(); }
           if (!otherFS.contains(f)) { otherFS.add(fs); }
@@ -98,6 +100,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
         boolean first = true;
         StringBuilder valueStr = new StringBuilder();
         for (String currFS : results.get(currVar)) {
+          
           if (first) { first=false; valueStr.append(currFS); }
           else { valueStr.append(","+currFS); }
         }
@@ -111,7 +114,8 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
         for (SerializableText val : values) {
           // HELP, not sure what's going in here, why are you writing the text?
-            reducerInterface.write(val, text);
+          //reducerInterface.write(val, text);
+          reducerInterface.write(val, null);
         }
     }
 
