@@ -25,7 +25,9 @@ import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
@@ -74,30 +76,41 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
 
     @Override
     public void map(Map<String, Collection<Feature>> collections, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+      HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
       for(String fs : collections.keySet()) {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("featureset:"+fs+" ");
         for (Feature f : collections.get(fs)) {
-            //VCFDumper.outputFeatureInVCF(buffer, f);
-            // HACK
-            buffer.append(f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+" "+f.getHBasePrefix()+" ");
-            for(String s : f.getAdditionalAttributeNames()) {
-              buffer.append(s+"="+f.getAdditionalAttribute(s)+";");
-            }
-            for(Tag t : f.getTags()) {
-              buffer.append(t.getKey()+"="+t.getValue()+":");
-            }
+          String ref = null;
+          String var = null;
+          for(Tag t : f.getTags()) {
+              //buffer.append(t.getKey()+"="+t.getValue()+":");
+              if ("ref_base".equals(t.getKey())) { ref = t.getValue().toString(); }
+              if ("call_base".equals(t.getKey())) { var = t.getValue().toString(); }
+          }
+          String varID = f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"_"+ref+"->"+var;
+          ArrayList otherFS = results.get(varID);
+          if (otherFS == null) { otherFS = new ArrayList<String>(); }
+          if (!otherFS.contains(f)) { otherFS.add(fs); }
+          results.put(varID, otherFS);
         }
-        text.set(buffer.toString());     // we can only emit Writables...
-        //textKey.set(fs.getSGID().getRowKey());
-        textKey.set(fs.toString());
-        mapperInterface.write(textKey, text);
+      }
+      // now iterate and add to results
+      for (String currVar : results.keySet()) {
+        boolean first = true;
+        StringBuilder valueStr = new StringBuilder();
+        for (String currFS : results.get(currVar)) {
+          if (first) { first=false; valueStr.append(currFS); }
+          else { valueStr.append(","+currFS); }
+        }
+        textKey.set(currVar);
+        text.set(valueStr.toString());
+        mapperInterface.write(textKey, text); 
       }
     }
 
     @Override
     public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
         for (SerializableText val : values) {
+          // HELP, not sure what's going in here
             reducerInterface.write(val, text);
         }
     }
