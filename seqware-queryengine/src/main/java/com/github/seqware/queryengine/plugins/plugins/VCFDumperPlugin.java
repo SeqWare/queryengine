@@ -126,7 +126,8 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
                   if (t.getKey().equals("donor")) { donor = t.getValue().toString(); }
                   if (t.getKey().equals("project")) { project = t.getValue().toString(); }
                 }
-                featureSetMap.put(fs.getSGID().toString(), fs.getSGID().toString()+"_"+donor+"_"+project); 
+                String[] uuid = fs.getSGID().toString().split("\\.");
+                featureSetMap.put(uuid[0], fs.getSGID().toString()+"_"+donor+"_"+project); 
           }
       }
       return(featureSetMap.get(oldFS));
