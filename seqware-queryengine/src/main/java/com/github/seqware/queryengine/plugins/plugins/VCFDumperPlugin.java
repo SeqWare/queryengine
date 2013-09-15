@@ -123,7 +123,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
           ArrayList<String> features = new ArrayList<String>();
           for (FeatureSet fs : featureSets) {
             for (String fsStr : fsArr) {
-              if(fs.getSGID().getUuid().toString().contains(fsStr)) { 
+              if(fs.getSGID().toString().contains(fsStr)) { 
                 String donor = null;
                 String project = null;
                 for(Tag t : fs.getTags()) {
