@@ -17,7 +17,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 
+import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 
 public class VariantFreq {
@@ -82,11 +85,6 @@ public class VariantFreq {
     return ascii(key).split(_);
   }
 
-  public static Feature deserializeFeature(byte[] data) {
-    // TODO
-    throw new UnsupportedOperationException("Implement me!");
-  }
-
   public static class VariantFreqMapper extends TableMapper<ImmutableBytesWritable, IntWritable> {
 
     private final static IntWritable one = new IntWritable(1);
@@ -96,9 +94,11 @@ public class VariantFreq {
       String family = context.getConfiguration().get(FEATURE_FAMILY);
       Map<byte[], byte[]> cols = row.getFamilyMap(Bytes.toBytes(family));
       for (byte[] data : cols.values()) {
-        Feature f = deserializeFeature(data);
-        byte[] var = serialzeVariantKey(f);
-        context.write(new ImmutableBytesWritable(var), one);
+        FeatureList fl = SWQEFactory.getSerialization().deserialize(data, FeatureList.class);
+        for (Feature f : fl.getFeatures()){
+          byte[] var = serialzeVariantKey(f);
+          context.write(new ImmutableBytesWritable(var), one);
+        }
       }
     }
   }
@@ -127,10 +127,13 @@ public class VariantFreq {
   public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
     if (args.length != 5) {
       System.out.println("Usage: VariantFreq <feature-table> <feature-family> <freq-table> <freq-family> <freq-column>");
+      System.exit(1);
       // create 'variant_aggregates', {NAME=>'all_features', VERSIONS=>1}
     }
 
     Configuration conf = HBaseConfiguration.create();
+    HBaseStorage.configureHBaseConfig(conf);
+
     conf.set(FEATURE_TABLE, args[0]);
     conf.set(FEATURE_FAMILY, args[1]);
     conf.set(FREQ_TABLE, args[2]);

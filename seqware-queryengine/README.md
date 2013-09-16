@@ -134,8 +134,6 @@ Dump a feature set to elastic search compatible JSON file:
 
 ## In testing
 
-WARNING: demo.VariantFreq.deserializeFeature(byte[]) is not yet implemented.
-
 Run a count of all variants across all FeatureSets. Variants are identified with the tuple [chromosome, position, referenceBase, calledBase].
 Ensure there first exists a destination table/family for the results, e.g., `create 'variant_aggregates', {NAME=>'all_features', VERSIONS=>1}`.
 
