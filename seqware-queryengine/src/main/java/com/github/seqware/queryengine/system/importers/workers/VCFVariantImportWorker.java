@@ -356,8 +356,12 @@ public class VCFVariantImportWorker extends ImportWorker {
                     //m.addTag("SNV", null);
                     if (!".".equals(t[1])) {
                         Integer pos = Integer.parseInt(t[1]);
-                        fBuilder.setStart(pos - 1);
-                        fBuilder.setStop(pos);
+                        int start = pos - 1;
+                        fBuilder.setStart(start);
+                        // get the length of the reference in order to calculate the stop 
+                        String referenceSegment = t[3];
+                        int lengthOfMutation = referenceSegment.length();
+                        fBuilder.setStop(start + lengthOfMutation);
                     }
                     //m.setStartPosition(pos - 1);
                     //m.setStopPosition(pos);
@@ -378,7 +382,14 @@ public class VCFVariantImportWorker extends ImportWorker {
                     for (String tag : tags) {
                         if (tag.contains("=")) {
                             String[] kv = tag.split("=");
+                            if (kv.length == 1){
+                                // we have something of the form key=(blank)
+                              strTags.put(kv[0],null);
+                              continue;
+                            }
+                            assert(kv.length == 2);
                             strTags.put(kv[0],kv[1]);
+                            
                             //setOfTags.add(getTagSpec(kv[0],kv[1]));
                             //m.addTag(kv[0], kv[1]);
                             if ("DP".equals(kv[0])) {
