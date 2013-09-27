@@ -7,15 +7,15 @@
 
     <name>seqware-queryengine-webservice</name>
     <description>SeqWare Query WebService</description>
-    <url>https://github.com/SeqWare/seqware</url>
+    <url>https://github.com/SeqWare/queryengine</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jersey-version>1.14</jersey-version>
     </properties>
     <parent>
-        <groupId>com.github.seqware</groupId>
-        <artifactId>seqware</artifactId>
+        <groupId>io.seqware</groupId>
+        <artifactId>seqware-queryengine</artifactId>
         <version>1.0.5-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -153,8 +153,9 @@ never
 
     <dependencies>
          <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-queryengine</artifactId>
+            <groupId>io.seqware</groupId>
+            <artifactId>seqware-queryengine-backend</artifactId>
+            <version>${project.version}</version>
              <exclusions>
                  <exclusion>
                      <artifactId>servlet-api</artifactId>

@@ -9,8 +9,8 @@
     <url>http://seqware.sf.net</url>
 
     <parent>
-        <groupId>com.github.seqware</groupId>
-        <artifactId>seqware</artifactId>
+        <groupId>io.seqware</groupId>
+        <artifactId>seqware-queryengine</artifactId>
         <version>1.0.5-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

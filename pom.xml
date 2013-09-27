@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>SeqWare</name>
-    <description>SeqWare Parent POM</description>
-    <url>https://github.com/SeqWare/seqware</url>
+    <name>SeqWare Query Engine</name>
+    <description>SeqWare Query Engine Parent POM</description>
+    <url>https://github.com/SeqWare/queryengine</url>
     
     <prerequisites>
         <maven>2.2.1</maven>
@@ -80,9 +80,9 @@
         </repository>
     </distributionManagement>
 
-    <artifactId>seqware</artifactId>
+    <artifactId>seqware-queryengine</artifactId>
     <packaging>pom</packaging>
-    <groupId>com.github.seqware</groupId>
+    <groupId>io.seqware</groupId>
     <version>1.0.5-SNAPSHOT</version>
 
     <repositories>
@@ -142,7 +142,7 @@
     </repositories>
 
     <modules>
-      <module>seqware-queryengine</module> 
+      <module>seqware-queryengine-backend</module> 
       <module>seqware-queryengine-webservice</module> 
       <module>seqware-queryengine-legacy</module> 
       <module>seqware-distribution</module>
@@ -186,17 +186,17 @@
             <!-- while moving to HubFlow, the combination of HubFlow and maven:prepare is causing problems.
             release:update-versions seems to have an easier time with versions defined here -->
             <dependency>
-                <groupId>com.github.seqware</groupId>
+                <groupId>io.seqware</groupId>
                 <artifactId>seqware-queryengine</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.seqware</groupId>
+                <groupId>io.seqware</groupId>
                 <artifactId>seqware-queryengine-legacy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.seqware</groupId>
+                <groupId>io.seqware</groupId>
                 <artifactId>seqware-distribution</artifactId>
                 <version>${project.version}</version>
             </dependency>

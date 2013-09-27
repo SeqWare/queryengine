@@ -1,23 +1,16 @@
 ## Introduction 
 
-This README is just a quick overview of building SeqWare. See our
-[project homepage](http://seqware.github.com) for much more documentation.
+This README is just a quick overview of building the SeqWare Query Engine. See our
+[project homepage](http://seqware.github.io/docs/8-query-engine/) for much more documentation.
 
-This is top level of the [SeqWare Project](http://seqware.github.com).
-This contains the 5 major components of the SeqWare project along with
+This contains the 3 major components of the query engine project along with
 documentation:
 
-* seqware-meta-db
-* seqware-webservice
-* seqware-portal
-* seqware-pipeline
-* seqware-queryengine
-* seqware-common
-* the http://seqware.github.com website and manual
-* seqware-ext-testing
+* seqware-queryengine-backend
+* seqware-queryengine-legacy
+* seqware-queryengine-webservice
 
-The seqware-common sub-project provides a location for common code
-and most of the other sub-projects have this as a dependency.
+The seqware-distribution sub-project provides a location for building a "fat" distribution jar. 
 
 ## Prerequisites 
 
@@ -47,7 +40,7 @@ Our source code is available from [GitHub](https://github.com/SeqWare/seqware) o
 To get a copy of of our source code you will first need to install Git (<code>sudo apt-get install git</code> in Ubuntu) and then clone our repository.
 
 <pre title="Cloning the git repository">
-<span class="prompt">~$</span> <kbd>git clone git://github.com/SeqWare/seqware.git</kbd>
+<span class="prompt">~$</span> <kbd>git clone git@github.com:SeqWare/queryengine.git</kbd>
 Cloning into 'seqware'...
 remote: Counting objects: 8984, done.
 remote: Compressing objects: 100% (2908/2908), done.
@@ -61,8 +54,7 @@ By default, this will land you on the default branch. You will want to check-out
 For example:
 
 	~$ cd seqware_github/
-	~/seqware_github$ git checkout 0.13.6.5
-	HEAD is now at f8698e9... Merge branch 'hotfix/0.13.6.5'
+	~/seqware_github$ git checkout 1.0.4
 
 ### Building and Automated Testing 
 
@@ -75,70 +67,20 @@ Maven now runs unit tests as follows (unit tests in the SeqWare context are quic
 
     mvn clean install  
 
-In order to run the integration tests on the entire project, please ensure that you have followed the steps in each of the integration testing guides for our sub-projects. This includes [MetaDB](http://seqware.github.com/docs/github_readme/3-metadb/) , [Web Service](http://seqware.github.com/docs/github_readme/4-webservice/) , and [Query Engine](http://seqware.github.com/docs/github_readme/2-queryengine/). 
-
-**WARNING:  While integration and extended tests are running, launching workflows and workflow status checking MUST not occur.  If you have a cronjob performing these tasks it MUST be disabled prior to integration and extended testing.**
-
 When this is complete: 
 
     export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=512m" 
+
 (This ensures that enough memory is allocated for integration tests)
+
     mvn clean install -DskipITs=false
-(This runs all unit tests and integration tests that only require postgres as a prerequisite)
-    mvn clean install -DskipITs=false -P extITs,embeddedTomcat
-(runs all unit tests and all integration tests including those that require Condor/Globus/Pegasus)
 
-In the last case, the extended integration tests profile is used to trigger integration tests that run our command line utilities. 
-In order to point your command-line tools at the web service brought up by the integration tests, you will need to comment out your crontab and modify your SeqWare ~/.seqware/settings to include:
+(This runs all unit tests and integration tests)
 
-    SW_REST_URL=http://localhost:8889/seqware-webservice
+You can also build individual components such as the query engine web service with: 
 
-It is possible to disable our embedded tomcat instance and run against both a remote postgres and Tomcat instance. Set the following variables in your .seqware/settings to override these settings for basic integration tests and extended integration tests respectively:
-
-    BASIC_TEST_DB_HOST=otherserver.ca
-    BASIC_TEST_DB_NAME=test_seqware_meta_db
-    BASIC_TEST_DB_USER=seqware
-    BASIC_TEST_DB_PASSWORD=seqware
-
-    EXTENDED_TEST_DB_HOST=otherserver.ca
-    EXTENDED_TEST_DB_NAME=test_seqware_meta_db
-    EXTENDED_TEST_DB_USER=seqware
-    EXTENDED_TEST_DB_PASSWORD=seqware
-
-Then set your SW_REST_URL to the web service that uses the above database and invoke the following command. Note that you will need to deploy the seqware-webservice war yourself. 
-
-    mvn clean install -DskipITs=false -P 'extITs,!embeddedTomcat'
-
-Alternatively, if you wish to still use an embedded tomcat instance for testing, modify the properties at the beginning of your seqware-webservice/pom.xml to match the above databases and invoke the integration tests with your SW_REST_URL set to http://localhost:8889/seqware-webservice
-
-    mvn clean install -DskipITs=false -P extITs,embeddedTomcat
-
-You can also run the integration tests by using a locally installed tomcat instance. Make sure the BASIC_TEST_* and EXTENDED_TEST_* are defined to get this to work:
-
-    mvn clean install -DskipITs=false -P extITs
-
-You can also build individual components such as the new query engine with: 
-
-    cd seqware-queryengine
+    cd seqware-queryengine-webservice
     mvn clean install
-
-### Building Our Site
-
-In order to publish to seqware.github.com, checkout our current hotfix and publish our site:
-
-    git checkout hotfix/0.13.6.7
-    cd seqware-distribution 
-    mvn site-deploy
-
-Then you would look at the site at: http://seqware.github.io
-
-In order to publish to our unstable docs supporting the development of 1.0.0, checkout from develop and publish:
-
-    git checkout develop 
-    cd seqware-distribution 
-    mvn site-deploy
-
-Then you would look at the site at: http://seqware.github.io/unstable.seqware.github.com/
 
 ###Problems with Maven
 

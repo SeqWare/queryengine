@@ -4,20 +4,21 @@
 
     <parent> 
         <version>1.0.5-SNAPSHOT</version> 
-        <groupId>com.github.seqware</groupId> 
-        <artifactId>seqware</artifactId> 
+        <groupId>io.seqware</groupId> 
+        <artifactId>seqware-queryengine</artifactId>
         <relativePath>../pom.xml</relativePath> 
     </parent>
 
     <artifactId>seqware-distribution</artifactId>
 
     <name>seqware-distribution</name>
-    <url>https://github.com/SeqWare/seqware</url>
+    <url>https://github.com/SeqWare/queryengine</url>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-queryengine</artifactId>
+            <groupId>io.seqware</groupId>
+            <artifactId>seqware-queryengine-backend</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <properties>
