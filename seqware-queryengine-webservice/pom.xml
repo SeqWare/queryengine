@@ -152,10 +152,6 @@ never
     </build>
 
     <dependencies>
-	 <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-common</artifactId>
-	 </dependency>
          <dependency>
             <groupId>com.github.seqware</groupId>
             <artifactId>seqware-queryengine</artifactId>

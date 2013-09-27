@@ -471,80 +471,6 @@ never
             <artifactId>antlr</artifactId>
             <version>3.4</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jackson-core-asl</artifactId>
-                    <groupId>org.codehaus.jackson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jackson-mapper-asl</artifactId>
-                    <groupId>org.codehaus.jackson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-webmvc</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-tx</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-orm</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-core</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet.ext.httpclient</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet.ext.jackson</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet.ext.ssl</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet.ext.xml</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.restlet.ext.xstream</artifactId>
-                    <groupId>org.restlet.jee</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jul-to-slf4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- dependencies for REST, some may be optional -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -660,6 +586,19 @@ never
             <type>jar</type>
             <version>2.5</version>
             <scope>provided</scope>
+        </dependency>
+         <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-exec</artifactId>
+         </dependency>
+         <dependency>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+        </dependency>
+           <dependency>
+            <groupId>ch.enterag</groupId>
+            <artifactId>zip64</artifactId>
+            <version>1.03</version>
         </dependency>
     </dependencies>
 

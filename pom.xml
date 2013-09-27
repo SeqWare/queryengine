@@ -142,21 +142,10 @@
     </repositories>
 
     <modules>
-        <module>seqware-common</module>
-    <module>seqware-queryengine</module> 
-    <module>seqware-queryengine-webservice</module> 
-    <module>seqware-queryengine-legacy</module> 
-<!--        <module>seqware-meta-db</module>
-        <module>seqware-pipeline</module>
-        <module>seqware-webservice-dto</module>
-        <module>seqware-webservice</module>
-        <module>seqware-portal</module>
-        <module>seqware-archetypes/seqware-archetype-decider</module>
-        <module>seqware-archetypes/seqware-archetype-java-workflow</module>
-        <module>seqware-archetypes/seqware-archetype-module</module>
--->
-        <module>seqware-distribution</module>
-<!--        <module>seqware-ext-testing</module> -->
+      <module>seqware-queryengine</module> 
+      <module>seqware-queryengine-webservice</module> 
+      <module>seqware-queryengine-legacy</module> 
+      <module>seqware-distribution</module>
     </modules>
 
 
@@ -204,36 +193,6 @@
             <dependency>
                 <groupId>com.github.seqware</groupId>
                 <artifactId>seqware-queryengine-legacy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-meta-db</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-pipeline</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-webservice-dto</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-webservice</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.seqware</groupId>
-                <artifactId>seqware-portal</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -19,12 +19,6 @@
             <groupId>com.github.seqware</groupId>
             <artifactId>seqware-queryengine</artifactId>
         </dependency>
-<!--
-        <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-pipeline</artifactId>
-        </dependency>
--->
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,29 +89,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven-assembly-plugin.version}</version>
                 <executions>
-<!--
-                    <execution>
-                        <id>executable-jar-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>net.sourceforge.seqware.pipeline.runner.PluginRunner</mainClass>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Implementation-Build>${buildNumber}</Implementation-Build>
-                                </manifestEntries>
-                            </archive>
-                            <descriptors>
-                                <descriptor>src/assemble/seqware-pipeline-full.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
--->
                     <execution>
                         <id>executable-queryengine-jar-assembly</id>
                         <phase>package</phase>
