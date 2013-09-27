@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Reference;
@@ -49,6 +50,9 @@ public class ReferenceSetTest {
      */
     @Test
     public void testVersioningAndFeatureSets() {
+        if (!Constants.TRACK_VERSIONING){
+            return;
+        }
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
         ReferenceSet aSet = mManager.buildReferenceSet().setName("Human").setOrganism("Homo Sapiens").build();
         Assert.assertTrue("versions should start with version 1", aSet.getVersion() == 1);

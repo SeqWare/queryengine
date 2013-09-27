@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.github.seqware.queryengine.Benchmarking;
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QueryEngine.FeaturePB;
 import com.github.seqware.queryengine.impl.protobufIO.FeatureIO;
 import com.github.seqware.queryengine.impl.tuplebinderIO.FeatureTB;
@@ -437,7 +438,8 @@ public class HBaseTest implements Benchmarking {
         FeatureSet set = InMemoryFeatureSet.newBuilder().setReference(InMemoryReference.newBuilder().setName("testRef").build()).build();
         // we need to upgrade the feature with a link to an enforced FeatureSet like in the real back-end
         FSGID fsgid = new FSGID(testFeature.getSGID(), testFeature, set);
-        testFeature.impersonate(fsgid, testFeature.getPrecedingSGID());
+        testFeature.impersonate(fsgid, Constants.TRACK_VERSIONING ? testFeature.getPrecedingSGID() : null);
+        
 
         // Streams that will hold the serialized objects:
         ByteArrayOutputStream sgidBytes = new ByteArrayOutputStream();

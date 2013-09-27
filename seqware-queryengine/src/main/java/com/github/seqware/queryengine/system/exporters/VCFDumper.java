@@ -16,18 +16,21 @@
  */
 package com.github.seqware.queryengine.system.exporters;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryFuture;
+import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import com.github.seqware.queryengine.util.SGID;
+import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +38,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 
 /**
@@ -47,7 +54,7 @@ import org.apache.log4j.Logger;
  */
 public class VCFDumper {
     /** Constant <code>VCF="VCFVariantImportWorker.VCF"</code> */
-    public static final String VCF = VCFVariantImportWorker.VCF;
+    public static final String VCF = Constants.TRACK_TAGSET ? VCFVariantImportWorker.VCF : null;
 
     private String[] args;
 
@@ -101,7 +108,8 @@ public class VCFDumper {
      * @param feature a {@link com.github.seqware.queryengine.model.Feature} object.
      * @return a boolean.
      */
-    public static boolean outputFeatureInVCF(StringBuffer buffer, Feature feature) {
+    
+    public static boolean outputFeatureInVCF(StringBuilder buffer, Feature feature) {
         boolean caughtNonVCF = false;
         buffer.append(feature.getSeqid()).append("\t").append(feature.getStart() + 1).append("\t");
         if (feature.getTagByKey(VCF, ImportConstants.VCF_SECOND_ID) == null) {
@@ -114,10 +122,16 @@ public class VCFDumper {
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString()).append("\t");
             buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
             buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_INFO).getValue().toString());
+            // for some actually useful output, you'll probably want to output specific tags here
+            SeqWareIterable<Tag> tags = feature.getTags();
+            for (Tag tag : tags) {
+              buffer.append(tag.getKey());
+              if (tag.getValue() != null) { buffer.append("=").append(tag.getValue());}
+              buffer.append(";");
+            }
         } catch (NullPointerException npe) {
             if (!caughtNonVCF) {
-                Logger.getLogger(VCFDumper.class.getName()).info("VCF exporting non-VCF feature");
+                Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");
 
             }
             // this may occur when exporting Features that were not originally VCF files
@@ -159,10 +173,14 @@ public class VCFDumper {
                     // get a FeatureSet from the back-end
                     QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, fSet);
                     File get = future.get();
-                    BufferedReader in = new BufferedReader(new FileReader(get));
-                    IOUtils.copy(in, outputStream);
-                    in.close();
+                    Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
+                    for(File f : listFiles){
+                        BufferedReader in = new BufferedReader(new FileReader(f));
+                        IOUtils.copy(in, outputStream);
+                        in.close();
+                    }
                     get.deleteOnExit();
+                    assert(outputStream != null);
                     outputStream.flush();
                     outputStream.close();
                     mrSuccess = true;
@@ -171,7 +189,7 @@ public class VCFDumper {
                     Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
                     System.exit(-1);
                 } catch(Exception e){
-                    Logger.getLogger(VCFDumper.class.getName()).info("MapReduce exporting failed, falling-through to normal exporting to file");
+                    Logger.getLogger(VCFDumper.class.getName()).fatal("MapReduce exporting failed, falling-through to normal exporting to file",e);
                     // fall-through and do normal exporting if Map Reduce exporting fails
                 }
             } // TODO: clearly this should be expanded to include closing database etc 
@@ -181,8 +199,9 @@ public class VCFDumper {
         }
         // fall-through if plugin-fails
         try {
+            assert(outputStream != null);
             for (Feature feature : fSet) {
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 boolean caught = outputFeatureInVCF(buffer, feature);
                 if (caught) {
                     caughtNonVCF = true;

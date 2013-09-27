@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.lazy;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
@@ -70,7 +71,7 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
 //        if (!(feature.getSGID() instanceof FSGID)) {
         FSGID fsgid = new FSGID(feature.getSGID(), feature, this);
         processTimestamp(fsgid);
-        feature.impersonate(fsgid, feature.getPrecedingSGID());
+        feature.impersonate(fsgid, Constants.TRACK_VERSIONING ? feature.getPrecedingSGID() : null);
         // we have to use the Feature's manager since there is no guarantee that the set's manager is active
         if (feature.getManager() != null) {
             feature.getManager().atomStateChange(feature, CreateUpdateManager.State.NEW_CREATION);
@@ -79,6 +80,12 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
     }
 
     private void processTimestamp(FSGID fsgid) {
+        if (!Constants.TRACK_VERSIONING){
+            // we want this if this is a new creation, so features get attached to this set (kind of a hack)
+            fsgid.setBackendTimestamp(new Date(this.getTimestamp().getTime() - 1));
+            return;
+        }
+        
         // as a convenience, we should have Features in a FeatureSet and the associated FeatureLists take on the time
         // of the FeatureSet
         if (this.getPrecedingSGID() == null) {

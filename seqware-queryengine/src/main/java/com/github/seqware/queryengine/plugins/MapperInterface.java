@@ -16,13 +16,12 @@
  */
 package com.github.seqware.queryengine.plugins;
 
-import com.github.seqware.queryengine.model.FeatureSet;
 
 /**
  *
  * @author dyuen
  */
-public interface MapperInterface<KEYOUT, VALUEOUT> {
+public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterface {
 
     public void write(KEYOUT textKey, VALUEOUT text);
 
@@ -36,11 +35,5 @@ public interface MapperInterface<KEYOUT, VALUEOUT> {
 
     public void incrementCounter();
     
-    public Object[] getExt_parameters();
 
-    public Object[] getInt_parameters();
-
-    public FeatureSet getSourceSet();
-
-    public FeatureSet getDestSet();
 }

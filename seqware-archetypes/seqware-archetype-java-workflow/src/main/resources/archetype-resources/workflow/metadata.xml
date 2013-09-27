@@ -1,9 +1,0 @@
-<bundle version="${version}">
-  <workflow name="${workflow-name}" version="${workflow-version}" seqware_version="${seqware-version}"
-  basedir="${workflow_bundle_dir}/Workflow_Bundle_${workflow-directory-name}/${version}">
-    <description>${workflow-description}</description>
-    <workflow_class path="${workflow_bundle_dir}/Workflow_Bundle_${workflow-directory-name}/${version}/classes/${workflow-package}/WorkflowClient.java"/>
-    <config path="${workflow_bundle_dir}/Workflow_Bundle_${workflow-directory-name}/${version}/config/workflow.ini"/>
-    <requirements compute="single" memory="20M" network="local"  workflow_engine="Pegasus,Oozie" workflow_type="java"/>
-  </workflow>
-</bundle>

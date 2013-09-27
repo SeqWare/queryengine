@@ -16,8 +16,10 @@
  */
 package com.github.seqware.queryengine.impl.protobufIO;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QueryEngine;
 import com.github.seqware.queryengine.dto.QueryEngine.FeaturePB;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.util.FSGID;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -54,7 +56,9 @@ public class FeatureIO implements ProtobufTransferInterface<FeaturePB, Feature> 
         return fMesg;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     QUESTION: is this the location of all feature serializaiton? yep
+     */
     @Override
     public FeaturePB m2pb(Feature feature) {
         assert(feature.getSGID() instanceof FSGID);
@@ -67,7 +71,11 @@ public class FeatureIO implements ProtobufTransferInterface<FeaturePB, Feature> 
         builder = feature.getSeqid() != null ? builder.setId(feature.getSeqid()) : builder;
         builder.setStart(feature.getStart()).setStop(feature.getStop());
         builder.setStrand(FeaturePB.StrandPB.valueOf(feature.getStrand().name()));
+        // are these the tags??? yep, all atoms have tags
         builder.setAtom(UtilIO.handleAtom2PB(builder.getAtom(), feature));
+        if (Constants.OUTPUT_METRICS) {
+            Logger.getLogger(HBaseStorage.class.getName()).info("Feature atom serialized to " + builder.getAtom().toByteArray().length + " bytes");
+        }
         if (ProtobufTransferInterface.PERSIST_VERSION_CHAINS && feature.getPrecedingVersion() != null){
             builder.setPrecedingVersion(m2pb(feature.getPrecedingVersion()));
         }

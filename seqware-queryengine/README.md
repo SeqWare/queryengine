@@ -30,26 +30,29 @@ However, if you wish to do some development or run the integration tests, there 
 
 For our tutorial, use the following values in your ~/.seqware/settings
 
-	#
-	# SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS
-	#
-	HBASE.ZOOKEEPER.QUORUM=localhost
-	HBASE.ZOOKEEPER.PROPERTY.CLIENTPORT=2181
-	HBASE.MASTER=localhost:60000
-	MAPRED.JOB.TRACKER=localhost:8021
-	FS.DEFAULT.NAME=hdfs://localhost:8020
-	FS.DEFAULTFS=hdfs://localhost:8020
-	FS.HDFS.IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
+    #
+    # SEQWARE QUERY ENGINE SETTINGS
+    #
+    QE_NAMESPACE=batman
+    QE_DEVELOPMENT_DEPENDENCY=file:/home/<your user>/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
+    QE_PERSIST=true
+    QE_HBASE_REMOTE_TESTING=false
+    # Connect to either HBOOT, SQWDEV, or an implicit localhost
+    QE_HBASE_PROPERTIES=localhost
 
-	# SEQWARE QUERY ENGINE SETTINGS
-	QE_NAMESPACE=BATMAN
-	QE_DEVELOPMENT_DEPENDENCY=file:/home/seqware/Development/gitroot/seqware-github/seqware-distribution/target/seqware-distribution-<%= seqware_release_version %>-qe-full.jar
-	QE_PERSIST=true
-	QE_HBASE_REMOTE_TESTING=false
-	QE_HBASE_PROPERTIES=LOCAL
-	
+Note that since QE_HBASE_REMOTE_TESTING is set to false, the variables under the heading SEQWARE QUERY ENGINE AND GENERAL HADOOP SETTINGS will be used. If QE_REMOTE_TESTING is set to true and QE_HBASE_PROPERTIES is set to something different, then corresponding families of these variables have to be setup in your .seqware/settings file in order to connect to a different server. For example, if it was set to SQWDEV then you require the following:
 
-1. 	Refresh the code for the query engine by doing a <code>git fetch</code> and <code>git pull</code> in the seqware_github directory. On the VM, you may need to merge changes or simply discard changes with a command such as <code>git checkout seqware-queryengine/src/main/java/com/github/seqware/queryengine/Constants.java</code>
+    QE_SQWDEV_HBASE_ZOOKEEPER_QUORUM=sqwdev.res.oicr.on.ca
+    QE_SQWDEV_HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT=2181
+    QE_SQWDEV_HBASE_MASTER=sqwdev.res.oicr.on.ca:60000
+    QE_SQWDEV_MAPRED_JOB_TRACKER=sqwdev.res.oicr.on.ca:8021
+    QE_SQWDEV_FS_DEFAULT_NAME=hdfs://sqwdev.res.oicr.on.ca:8020
+    QE_SQWDEV_FS_DEFAULTFS=hdfs://sqwdev.res.oicr.on.ca:8020
+    QE_SQWDEV_FS_HDFS_IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
+
+The QE_DEVELOPMENT_DEPENDENCY variable is used for development time. When running map/reduce tasks, we need to upload our code to the Hadoop cluster. When running from a jar, we simply have the jar upload itself. However, when running in an IDE, we need to specify a (up-to-date) jar file for upload that contains the code for M/R. Normally, we upload the full jar. 
+
+1. 	Refresh the code for the query engine by doing a <code>git pull</code> in the seqware_github directory. On the VM, you may need to merge changes or simply discard changes with a command such as <code>git checkout seqware-queryengine/src/main/java/com/github/seqware/queryengine/Constants.java</code>
 2. 	If the [web interface](http://localhost:60010/master-status) for HBase stalls or is inactive, you may need to restart the HBase processes. This can be done by the following commands:
 	<pre title="Title of the snippet">
 	sudo - root (or sudo bash)
@@ -103,3 +106,28 @@ If you run into the following error when the hbase-plugin starts up, please chec
 
 In particular, the latest (v. 13) version of Linux Mint has on the second line <code>127.0.1.1  \<your hostname\></code> which should be modified to <code>127.0.0.1  \<your hostname\></code>  
 
+## Performance Toggles
+
+You will find several performance and metic related toggles in com.github.seqware.queryengine.Constants which allow you to turn on and off versioning, tracking of tagsets, and output various metrics on the size of serialized objects. 
+
+## Basic Commands
+
+For a full tutorial, please see http://seqware.github.io/docs/8-query-engine/
+
+However, some basic commands to get you started follow (replace UUID's with UUID's relevant to your run of the utilities):
+
+Create a reference: 
+
+    java -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19 keyValue_ref.out
+
+Import a VCF file:
+
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
+    
+Dump a feature set to VCF file:
+
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.VCFDumper 91583362-9d4d-4040-bc36-e2b457ed883e test_out.vcf
+
+Dump a feature set to elastic search compatible JSON file:
+
+    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json

@@ -15,13 +15,9 @@
     <url>https://github.com/SeqWare/seqware</url>
 
     <dependencies>
-   <!-- <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-queryengine</artifactId>
-        </dependency> -->
         <dependency>
             <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-pipeline</artifactId>
+            <artifactId>seqware-queryengine</artifactId>
         </dependency>
     </dependencies>
     <properties>
@@ -94,27 +90,6 @@
                 <version>${maven-assembly-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>executable-jar-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>net.sourceforge.seqware.pipeline.runner.PluginRunner</mainClass>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Implementation-Build>${buildNumber}</Implementation-Build>
-                                </manifestEntries>
-                            </archive>
-                            <descriptors>
-                                <descriptor>src/assemble/seqware-pipeline-full.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-               <!-- <execution>
                         <id>executable-queryengine-jar-assembly</id>
                         <phase>package</phase>
                         <goals>
@@ -123,7 +98,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>net.sourceforge.seqware.pipeline.runner.PluginRunner</mainClass>
+                                    <mainClass>com.github.seqware.queryengine.system.importers.SOFeatureImporter</mainClass>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
@@ -134,7 +109,7 @@
                                 <descriptor>src/assemble/seqware-queryengine.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution> -->
+                    </execution> 
                 </executions>
             </plugin>
             <plugin>
@@ -155,7 +130,7 @@
                             <ignorePathsToDelete>
                                 <ignorePathToDelete>javadoc</ignorePathToDelete>
                                 <ignorePathToDelete>manuals</ignorePathToDelete>
-                           <!-- <ignorePathToDelete>queryengine-api</ignorePathToDelete> -->
+                                <ignorePathToDelete>queryengine-api</ignorePathToDelete>
                                 <ignorePathToDelete>webservice-api</ignorePathToDelete>
                                 <ignorePathToDelete>pictures</ignorePathToDelete>
                             </ignorePathsToDelete>

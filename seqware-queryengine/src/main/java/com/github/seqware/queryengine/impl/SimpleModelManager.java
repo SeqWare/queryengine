@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.backInterfaces.BackEndInterface;
 import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
@@ -163,7 +164,7 @@ public class SimpleModelManager implements CreateUpdateManager {
                 assert (featureList.getFeatures().isEmpty() || featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
                 featureList.add(f);
                 // upgrade the featureList with this redundant information on the way in
-                featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), featureList.getPrecedingSGID());
+                featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
             }
             if (featureList.getFeatures().size() > 0) {
                 FSGID listfsgid = (FSGID) featureList.getSGID();

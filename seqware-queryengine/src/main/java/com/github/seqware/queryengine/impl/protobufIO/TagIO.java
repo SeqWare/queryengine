@@ -16,8 +16,10 @@
  */
 package com.github.seqware.queryengine.impl.protobufIO;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.dto.QESupporting;
 import com.github.seqware.queryengine.dto.QESupporting.TagPB;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.protobuf.ByteString;
@@ -35,7 +37,7 @@ public class TagIO implements ProtobufTransferInterface<TagPB, Tag> {
     /** {@inheritDoc} */
     @Override
     public Tag pb2m(TagPB tag) {
-        Tag.Builder builder = Tag.newBuilder().setKey(tag.getKey());
+        Tag.Builder builder = Tag.newLightWeightBuilder().setKey(tag.getKey());
         builder = tag.hasPredicate() ? builder.setPredicate(tag.getPredicate()) : builder;
         // tag value
         if (tag.hasVBytes()) {
@@ -70,9 +72,11 @@ public class TagIO implements ProtobufTransferInterface<TagPB, Tag> {
         QESupporting.TagPB.Builder builder = QESupporting.TagPB.newBuilder().setKey(tag.getKey());
         builder = tag.getPredicate() != null ? builder.setPredicate(tag.getPredicate()) : builder;
         // ensure that parent is properly set
-        if (tag.getTagSetSGID() == null){
+        if (Constants.TRACK_TAGSET && tag.getTagSetSGID() == null){
             Logger.getLogger(TagIO.class.getName()).fatal("Tag " + tag.getKey() + " is not owned by a tagset");
             throw new RuntimeException("Tag cannot be flushed without a TagSet");
+        } else if (!Constants.TRACK_TAGSET && tag.getTagSetSGID() != null){
+            throw new RuntimeException("Tags must be flushed without TagSets");
         }
         // tag value
         if (tag.getValue() != null) {
@@ -96,6 +100,9 @@ public class TagIO implements ProtobufTransferInterface<TagPB, Tag> {
             builder.setTagSet(SGIDIO.m2pb(tag.getTagSetSGID()));
         }
         builder.setAtom(UtilIO.handleAtom2PB(builder.getAtom(), tag));
+        if (Constants.OUTPUT_METRICS) {
+            Logger.getLogger(HBaseStorage.class.getName()).info("Tag atom serialized to " + builder.getAtom().toByteArray().length + " bytes");
+        }
         if (ProtobufTransferInterface.PERSIST_VERSION_CHAINS && tag.getPrecedingVersion() != null) {
             builder.setPrecedingVersion(m2pb(tag.getPrecedingVersion()));
         }

@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.impl;
 
+import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.backInterfaces.SerializationInterface;
 import com.github.seqware.queryengine.impl.protobufIO.*;
 import com.github.seqware.queryengine.model.*;
@@ -25,6 +26,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.protobuf.Message;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Logger;
 
 /**
  * <p>ProtobufSerialization class.</p>
@@ -46,7 +48,11 @@ public class ProtobufSerialization implements SerializationInterface {
         Class cl = ((AtomImpl)atom).getHBaseClass();
         ProtobufTransferInterface pb = biMap.get(cl);
         Message m2pb = pb.m2pb((AtomImpl)atom);
-        return Bytes.add(Bytes.toBytes(getSerializationConstant()), m2pb.toByteArray());
+        byte[] toByteArray = m2pb.toByteArray();
+        if (Constants.OUTPUT_METRICS) {
+            Logger.getLogger(HBaseStorage.class.getName()).info(cl.getName() + " serialized to " + toByteArray.length + " bytes");
+        }
+        return Bytes.add(Bytes.toBytes(getSerializationConstant()), toByteArray);
     }
 
     /** {@inheritDoc} */

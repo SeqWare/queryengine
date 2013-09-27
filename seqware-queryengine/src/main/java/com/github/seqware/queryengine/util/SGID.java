@@ -72,6 +72,7 @@ public class SGID implements Serializable, KryoSerializable {
      * @param rowKey a {@link java.lang.String} object.
      */
     public SGID(String rowKey) {
+        
         friendlyRowKey = rowKey;
         backendTimestamp = new Date();
     }
@@ -118,7 +119,12 @@ public class SGID implements Serializable, KryoSerializable {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return uuid.hashCode() + backendTimestamp.hashCode();
+      // it's null if I skip setting it in favor of the friendly name
+      if (uuid == null) {
+        return friendlyRowKey.hashCode() + backendTimestamp.hashCode();
+      }
+      return uuid.hashCode() + backendTimestamp.hashCode();
+      
     }
 
     /** {@inheritDoc} */
