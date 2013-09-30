@@ -3,28 +3,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent> 
-        <version>1.0.4-SNAPSHOT</version> 
-        <groupId>com.github.seqware</groupId> 
-        <artifactId>seqware</artifactId> 
+        <version>1.0.5-SNAPSHOT</version> 
+        <groupId>io.seqware</groupId> 
+        <artifactId>seqware-queryengine</artifactId>
         <relativePath>../pom.xml</relativePath> 
     </parent>
 
     <artifactId>seqware-distribution</artifactId>
 
     <name>seqware-distribution</name>
-    <url>https://github.com/SeqWare/seqware</url>
+    <url>https://github.com/SeqWare/queryengine</url>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-queryengine</artifactId>
+            <groupId>io.seqware</groupId>
+            <artifactId>seqware-queryengine-backend</artifactId>
+            <version>${project.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>com.github.seqware</groupId>
-            <artifactId>seqware-pipeline</artifactId>
-        </dependency>
--->
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,29 +90,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven-assembly-plugin.version}</version>
                 <executions>
-<!--
-                    <execution>
-                        <id>executable-jar-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>net.sourceforge.seqware.pipeline.runner.PluginRunner</mainClass>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Implementation-Build>${buildNumber}</Implementation-Build>
-                                </manifestEntries>
-                            </archive>
-                            <descriptors>
-                                <descriptor>src/assemble/seqware-pipeline-full.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
--->
                     <execution>
                         <id>executable-queryengine-jar-assembly</id>
                         <phase>package</phase>
