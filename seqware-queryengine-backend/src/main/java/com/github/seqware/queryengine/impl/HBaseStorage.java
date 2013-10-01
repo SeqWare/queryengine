@@ -736,30 +736,58 @@ public class HBaseStorage extends StorageInterface {
      */
     public static Map<SGID, List<FeatureList>> grabFeatureListsGivenRow(Result result, List<SGID> featureSetIDs, SerializationInterface serializer) {
         Map<SGID, List<FeatureList>> resultMap = new HashMap<SGID, List<FeatureList>>();
-        for (SGID featureSetID  : featureSetIDs) {
-            byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
-            List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
-            // map is time -> data
-            NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
-            if (map == null) {
-                // column not present in this row
+        if (featureSetIDs.size() > 0) {
+            for (SGID featureSetID : featureSetIDs) {
+                byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
+                List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
+                // map is time -> data
+                NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
+                if (map == null) {
+                    // column not present in this row
+                    resultMap.put(featureSetID, cachedPayloads);
+                    continue;
+                }
+                // go through the possible qualifiers and break them down
+                for (Entry<Long, byte[]> e : map.entrySet()) {
+                    long time = e.getKey();
+                    if (time >= featureSetID.getBackendTimestamp().getTime()) {
+                        continue;
+                    }
+                    FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
+                    if (list == null) {
+                        //TODO: investigate this
+                        continue;
+                    }
+                    cachedPayloads.add(list);
+                }
                 resultMap.put(featureSetID, cachedPayloads);
-                continue;
             }
+        } else{
+            NavigableMap<Long, byte[]> map = null;
+            NavigableMap<byte[], NavigableMap<Long, byte[]>> familyMap = result.getMap().get(TEST_FAMILY_INBYTES);
+            // WARNING: this is going to stash together all columns (feature sets) with the same time
+            for (NavigableMap<Long, byte[]> familyColMap : familyMap.values()) {
+                if (map == null) {
+                    map = familyColMap;
+                } else {
+                    map.putAll(familyColMap);
+                }
+            } 
             // go through the possible qualifiers and break them down
             for (Entry<Long, byte[]> e : map.entrySet()) {
                 long time = e.getKey();
-                if (time >= featureSetID.getBackendTimestamp().getTime()) {
-                    continue;
-                }
                 FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
                 if (list == null) {
                     //TODO: investigate this
                     continue;
                 }
-                cachedPayloads.add(list);
+                // we can get the feature set id from the first feature in the list (all features in a list have the same feature set)
+                SGID featureSetID = ((FSGID)list.getFeatures().iterator().next().getSGID()).getFeatureSetID();
+                if (!resultMap.containsKey(featureSetID)){
+                    resultMap.put(featureSetID, new ArrayList<FeatureList>());
+                }
+                resultMap.get(featureSetID).add(list);
             }
-            resultMap.put(featureSetID, cachedPayloads);
         }
         return resultMap;
     }
