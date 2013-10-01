@@ -714,6 +714,19 @@ public class HBaseStorage extends StorageInterface {
     }
 
     /**
+     * Assumes one featureSetID
+     * @param result
+     * @param featureSetID
+     * @param serializer
+     * @return 
+     */
+    public static List<FeatureList> grabFeatureListsGivenRow(Result result, SGID featureSetID, SerializationInterface serializer) {
+        List<SGID> list = new ArrayList<SGID>();
+        list.add(featureSetID);
+        return HBaseStorage.grabFeatureListsGivenRow(result, list, serializer).get(featureSetID);
+    }
+    
+    /**
      * <p>grabFeatureListsGivenRow.</p>
      *
      * @param result a {@link org.apache.hadoop.hbase.client.Result} object.
@@ -721,29 +734,34 @@ public class HBaseStorage extends StorageInterface {
      * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      * @return a {@link java.util.List} object.
      */
-    public static List<FeatureList> grabFeatureListsGivenRow(Result result, SGID featureSetID, SerializationInterface serializer) {
-        byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
-        List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
-        // map is time -> data
-        NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
-        if (map == null) {
-            // column not present in this row
-            return cachedPayloads;
-        }
-        // go through the possible qualifiers and break them down
-        for (Entry<Long, byte[]> e : map.entrySet()) {
-            long time = e.getKey();
-            if (time >= featureSetID.getBackendTimestamp().getTime()) {
+    public static Map<SGID, List<FeatureList>> grabFeatureListsGivenRow(Result result, List<SGID> featureSetIDs, SerializationInterface serializer) {
+        Map<SGID, List<FeatureList>> resultMap = new HashMap<SGID, List<FeatureList>>();
+        for (SGID featureSetID  : featureSetIDs) {
+            byte[] qualifier = Bytes.toBytes(featureSetID.getUuid().toString());
+            List<FeatureList> cachedPayloads = new ArrayList<FeatureList>();
+            // map is time -> data
+            NavigableMap<Long, byte[]> map = result.getMap().get(TEST_FAMILY_INBYTES).get(qualifier);
+            if (map == null) {
+                // column not present in this row
+                resultMap.put(featureSetID, cachedPayloads);
                 continue;
             }
-            FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
-            if (list == null) {
-                //TODO: investigate this
-                continue;
+            // go through the possible qualifiers and break them down
+            for (Entry<Long, byte[]> e : map.entrySet()) {
+                long time = e.getKey();
+                if (time >= featureSetID.getBackendTimestamp().getTime()) {
+                    continue;
+                }
+                FeatureList list = serializer.deserialize(e.getValue(), FeatureList.class);
+                if (list == null) {
+                    //TODO: investigate this
+                    continue;
+                }
+                cachedPayloads.add(list);
             }
-            cachedPayloads.add(list);
+            resultMap.put(featureSetID, cachedPayloads);
         }
-        return cachedPayloads;
+        return resultMap;
     }
     
     

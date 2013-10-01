@@ -2,7 +2,9 @@ package com.github.seqware.queryengine.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.util.SGID;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;
 
 /**
@@ -24,7 +26,7 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      * implementation.
      * @return a ReturnValue object.
      */
-    public abstract void map(Collection<Feature> atom, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
+    public abstract void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.

@@ -24,6 +24,7 @@ import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
 import com.github.seqware.queryengine.plugins.JobRunParameterInterface;
@@ -33,9 +34,6 @@ import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
-import com.github.seqware.queryengine.plugins.plugins.FeaturesByFilterPlugin;
-import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
-import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.io.Files;
 import java.io.File;
@@ -43,25 +41,24 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.Map.Entry;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
@@ -71,7 +68,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 
@@ -94,20 +90,70 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
      * <code>EXT_PARAMETERS="ext_parameters"</code>
      */
     public static final String EXT_PARAMETERS = "ext_parameters";
+    public static final int EXTERNAL_PARAMETERS = 0;
+    public static final int INTERNAL_PARAMETERS = 1;
+    public static final int NUM_AND_SOURCE_FEATURE_SETS = 2;
+    public static final int DESTINATION_FEATURE_SET = 3;
+    public static final int SETTINGS_MAP = 4;
+    public static final int PLUGIN_CLASS = 5;
+
+    public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
+        byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
+        ByteBuffer buf = ByteBuffer.wrap(data);
+        int numSets = buf.getInt();
+        List<FeatureSet> sSets = new ArrayList<FeatureSet>();
+        for(int i = 0; i < numSets ; i++){
+            // get size of blob
+            int bSize = buf.getInt();
+            byte[] dst = new byte[bSize];
+            buf.get(dst);
+            FeatureSet deserialize = SWQEFactory.getSerialization().deserialize(dst, FeatureSet.class);
+            sSets.add(deserialize);
+        }
+        return sSets;
+    }
+        
     protected Job job;
     private MapReducePlugin mapReducePlugin;
     private FeatureSet outputSet;
 
-    public MRHBasePluginRunner(MapReducePlugin mapReducePlugin, FeatureSet inputSet, Object... parameters) {
+    /**
+     * 
+     * @param mapReducePlugin the particular plugin to instantiate and run
+     * @param inputSet a feature set to operate on
+     * @param parameters parameters that we should serialize for the plugin developer
+     */
+    
+    /**
+     * 
+     * @param mapReducePlugin the particular plugin to instantiate and run
+     * @param reference a reference (has to be provided in lieu of a feature set) 
+     * @param inputSet a set of feature sets to operate on
+     * @param parameters an arbitrary number of external parameters for plugin developers to provide to their plugins
+     */
+    public MRHBasePluginRunner(MapReducePlugin mapReducePlugin, Reference reference, List<FeatureSet> inputSet, Object... parameters) {
+        // we should either have a reference or more than one input set
+        assert(reference != null || inputSet.size() > 0);
+        // all feature sets should have the same reference
+        if (inputSet.size() > 0){
+            
+            SGID ref = inputSet.iterator().next().getReference().getSGID();
+            for(FeatureSet set : inputSet){
+             assert(set.getReferenceID().equals(ref));   
+            }
+        }
+        
+        SGID referenceSGID = reference != null ? reference.getSGID() : inputSet.iterator().next().getReferenceID();
+        
         this.mapReducePlugin = mapReducePlugin;
         try {
             CreateUpdateManager manager = SWQEFactory.getModelManager();
             //outputSet should attach to the original reference
-            this.outputSet = manager.buildFeatureSet().setReferenceID(inputSet.getReferenceID()).build();
+            this.outputSet = manager.buildFeatureSet().setReferenceID(referenceSGID).build();
             manager.close();
 
             // do setup for Map/Reduce from the HBase API
-            String tableName = generateTableName(inputSet);
+            String tableName = generateTableName(outputSet);
             String destTableName = generateTableName(outputSet);
 
             Configuration conf = new Configuration();
@@ -115,7 +161,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             HBaseConfiguration.addHbaseResources(conf);
 
             // we need to pass the parameters for a featureset, maybe we can take advantage of our serializers
-            byte[] sSet = SWQEFactory.getSerialization().serialize(inputSet);
+            byte[][] sSet = new byte[inputSet.size()][];//SWQEFactory.getSerialization().serialize(inputSet);
+            for(int i = 0; i < sSet.length; i++){
+                sSet[i] = SWQEFactory.getSerialization().serialize(inputSet.get(i));
+            }
             byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
 
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
@@ -148,9 +197,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-            byte[] qualiferBytes = Bytes.toBytes(inputSet.getSGID().getUuid().toString());
-            scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
-            scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
+            for(FeatureSet set : inputSet){
+                byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
+                scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
+            }
+            // this might be redundant, check this!!!! 
+            // scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
@@ -278,16 +330,24 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return build;
     }
 
-    public static String[] serializeParametersToString(Object[] parameters, PluginInterface mapReducePlugin, byte[] sSet, byte[] dSet) {
-        String[] str_params = new String[6];
+    public static String[] serializeParametersToString(Object[] parameters, PluginInterface mapReducePlugin, byte[][] sSet, byte[] dSet) {
+        int num_guaranteed_parameters = 6;
+        String[] str_params = new String[num_guaranteed_parameters];
         byte[] ext_serials = mapReducePlugin.handleSerialization(parameters);
         byte[] int_serials = mapReducePlugin.handleSerialization(mapReducePlugin.getInternalParameters());
-        str_params[0] = Base64.encodeBase64String(ext_serials);
-        str_params[1] = Base64.encodeBase64String(int_serials);
-        str_params[2] = Base64.encodeBase64String(sSet);
-        str_params[3] = Base64.encodeBase64String(dSet);
-        str_params[4] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(Constants.getSETTINGS_MAP()));
-        str_params[5] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(mapReducePlugin));
+        str_params[EXTERNAL_PARAMETERS] = Base64.encodeBase64String(ext_serials);
+        str_params[INTERNAL_PARAMETERS] = Base64.encodeBase64String(int_serials);
+        ByteBuffer bBuffer = ByteBuffer.allocate(1024*1024); // one MB should be enough for now
+        bBuffer.putInt(sSet.length);
+        for(byte[] arr : sSet){
+            bBuffer.putInt(arr.length);
+            bBuffer.put(arr);
+        }
+        str_params[NUM_AND_SOURCE_FEATURE_SETS] = Base64.encodeBase64String(bBuffer.array());
+        str_params[DESTINATION_FEATURE_SET] = Base64.encodeBase64String(dSet);
+        str_params[SETTINGS_MAP] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(Constants.getSETTINGS_MAP()));
+        str_params[PLUGIN_CLASS] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(mapReducePlugin));
+
         return str_params;
     }
 
@@ -300,7 +360,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         private MapReducePlugin mapReducePlugin;
         protected Object[] ext_parameters;
         protected Object[] int_parameters;
-        protected FeatureSet sourceSet;
+        protected List<FeatureSet> sourceSets;
         protected FeatureSet destSet;
 
         @Override
@@ -331,8 +391,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
 
         @Override
-        public FeatureSet getSourceSet() {
-            return sourceSet;
+        public List<FeatureSet> getSourceSets() {
+            return sourceSets;
         }
 
         @Override
@@ -351,8 +411,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
 
         @Override
-        public void setSourceSet(FeatureSet set) {
-            this.sourceSet = set;
+        public void setSourceSets(List<FeatureSet> sets) {
+            this.sourceSets = sets;
         }
 
         @Override
@@ -367,7 +427,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             if (pluginParameter != null && !pluginParameter.isEmpty()) {
                 Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
                 // yuck! I need a cleaner way to do this when done refactoring
-                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[0];
+                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[EXTERNAL_PARAMETERS];
             }
             mapReducePlugin.reduceInit();
         }
@@ -398,7 +458,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         /**
          * the feature set that we will be reading
          */
-        protected FeatureSet sourceSet;
+        protected List<FeatureSet> sourceSets;
         /**
          * the feature set that we will be writing to, may be null
          */
@@ -434,12 +494,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void map(ImmutableBytesWritable row, Result values, Mapper.Context context) throws IOException, InterruptedException {
             this.context = context;
-
-            List<FeatureList> list = HBaseStorage.grabFeatureListsGivenRow(values, sourceSet.getSGID(), SWQEFactory.getSerialization());
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Counting " + sourceSet.getSGID() + " on row with " + list.size() + " lists");
-            Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(list);
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-            mapReducePlugin.map(consolidateRow, this);
+            List<SGID> sourceSetIDs = new ArrayList<SGID>();
+            for(FeatureSet sSet : sourceSets){
+                sourceSetIDs.add(sSet.getSGID());
+            }
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+"featuresets");
+            Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
+            Map<SGID, Collection<Feature>> consolidatedMap = new HashMap<SGID, Collection<Feature>>();
+            for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
+               Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(e.getValue());
+               Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
+               consolidatedMap.put(e.getKey(), consolidateRow); 
+            }
+            mapReducePlugin.map(consolidatedMap, this);
         }
 
         @Override
@@ -453,8 +520,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
 
         @Override
-        public FeatureSet getSourceSet() {
-            return sourceSet;
+        public List<FeatureSet> getSourceSets() {
+            return sourceSets;
         }
 
         @Override
@@ -468,7 +535,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             if (pluginParameter != null && !pluginParameter.isEmpty()) {
                 Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
                 // yuck! I need a cleaner way to do this when done refactoring
-                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[0];
+                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[EXTERNAL_PARAMETERS];
             }
         }
 
@@ -483,8 +550,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
 
         @Override
-        public void setSourceSet(FeatureSet set) {
-            this.sourceSet = set;
+        public void setSourceSets(List<FeatureSet> sets) {
+            this.sourceSets = sets;
         }
 
         @Override
@@ -497,32 +564,34 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         Configuration conf = context.getConfiguration();
         String[] strings = conf.getStrings(MRHBasePluginRunner.EXT_PARAMETERS);
         Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
-        final String mapParameter = strings[4];
+        final String mapParameter = strings[SETTINGS_MAP];
         if (mapParameter != null && !mapParameter.isEmpty()) {
-            Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[0];
+            Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[EXTERNAL_PARAMETERS];
             if (settingsMap != null) {
                 Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Settings map retrieved with " + settingsMap.size() + " entries");
                 Constants.setSETTINGS_MAP(settingsMap);
             }
         }
+        
         Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
-        final String externalParameters = strings[0];
+        final String externalParameters = strings[EXTERNAL_PARAMETERS];
         if (externalParameters != null && !externalParameters.isEmpty()) {
             inter.setExt_parameters((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)));
         }
-        final String internalParameters = strings[1];
+        final String internalParameters = strings[INTERNAL_PARAMETERS];
         if (internalParameters != null && !internalParameters.isEmpty()) {
             inter.setInt_parameters((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)));
         }
-        final String sourceSetParameter = strings[2];
-        if (sourceSetParameter != null && !sourceSetParameter.isEmpty()) {
-            inter.setSourceSet(SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(sourceSetParameter), FeatureSet.class));
+        final String sourceSets = strings[NUM_AND_SOURCE_FEATURE_SETS];
+        if (sourceSets != null && !sourceSets.isEmpty()) {
+            List<FeatureSet> sSets = convertBase64StrToFeatureSets(sourceSets);
+            inter.setSourceSets(sSets);
         }
-        final String destSetParameter = strings[3];
+        final String destSetParameter = strings[DESTINATION_FEATURE_SET];
         if (destSetParameter != null && !destSetParameter.isEmpty()) {
             inter.setDestSet(SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class));
         }
-        final String pluginParameter = strings[5];
+        final String pluginParameter = strings[PLUGIN_CLASS];
         return pluginParameter;
     }
 

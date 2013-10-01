@@ -21,7 +21,9 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.util.SGID;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
@@ -66,8 +68,8 @@ public class FeatureSetCountPlugin extends MapReducePlugin<Collection<Feature>, 
     }
 
     @Override
-    public void map(Collection<Feature> atom, MapperInterface<Collection<Feature>, Object> mapperInterface) {
-        for (Feature f : atom) {
+    public void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, Object> mapperInterface) {
+        for (Feature f : atoms.values().iterator().next()) {
             // why can't I increment this by the size directly on the cluster?
             mapperInterface.incrementCounter();
         }

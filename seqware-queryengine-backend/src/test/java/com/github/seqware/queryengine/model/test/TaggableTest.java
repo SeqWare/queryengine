@@ -56,7 +56,7 @@ public class TaggableTest {
         rSet = mManager.buildReferenceSet().setName("Minbar").setOrganism("Minbari").build();
         aSet = mManager.buildPlugin().setName("FP").setDescription("Funky program").build();
         // only for testing, PluginRun classes 
-        a = mManager.buildPluginRun().setParameters(new ArrayList<Object>()).setPluginRunner(SWQEFactory.getPluginRunner(null, null)).build();
+        a = mManager.buildPluginRun().setParameters(new ArrayList<Object>()).setPluginRunner(SWQEFactory.getPluginRunner(null, (FeatureSet)null)).build();
         r1 = mManager.buildReference().setName("ref1").build();
         rSet.add(r1);
         group = mManager.buildGroup().setName("Developers").setDescription("Users that are working on new stuff").build();

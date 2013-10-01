@@ -58,7 +58,7 @@ public class ACLTest {
         viewerGroup = mManager.buildGroup().setName("Viewers").setDescription("Users that are just looking at stuff").build();
         marshmallowUser = mManager.buildUser().setFirstName("Joe").setLastName("Smith").setEmailAddress("joe.smith@googly.com").setPassword("password").build();
         titanicUser = mManager.buildUser().setFirstName("Deanna").setLastName("Troi").setEmailAddress("deanna.troi@googly.com").setPassword("password").build();
-        a1 = mManager.buildPluginRun().setParameters(new ArrayList()).setPluginRunner(SWQEFactory.getPluginRunner(null, null)).build();
+        a1 = mManager.buildPluginRun().setParameters(new ArrayList()).setPluginRunner(SWQEFactory.getPluginRunner(null, (FeatureSet)null)).build();
         group.add(marshmallowUser);
         viewerGroup.add(titanicUser);
 

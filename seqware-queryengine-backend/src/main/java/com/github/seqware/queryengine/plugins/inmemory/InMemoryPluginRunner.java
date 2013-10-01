@@ -21,6 +21,7 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
@@ -29,7 +30,10 @@ import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
 import com.github.seqware.queryengine.util.SGID;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 
@@ -46,35 +50,46 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     private final String[] serializedParameters;
     private Object[] ext_parameters;
     private Object[] int_parameters;
-    private FeatureSet sourceSet;
+    private List<FeatureSet> sourceSet;
     private FeatureSet destSet;
 
-    public InMemoryPluginRunner(PluginInterface pluginInterface, FeatureSet inputSet, Object[] parameters) {
+    public InMemoryPluginRunner(PluginInterface pluginInterface, Reference reference, List<FeatureSet> inputSet, Object[] parameters) {
+        if (reference != null){
+            throw new UnsupportedOperationException();
+        }
+        if (inputSet.size() > 1){
+            throw new UnsupportedOperationException();
+        }
+        
         this.pluginInterface = pluginInterface;
         CreateUpdateManager manager = SWQEFactory.getModelManager();
         //outputSet should attach to the original reference
-        FeatureSet outputSet = manager.buildFeatureSet().setReferenceID(inputSet.getReferenceID()).build();
+        FeatureSet outputSet = manager.buildFeatureSet().setReferenceID(inputSet.iterator().next().getReferenceID()).build();
         manager.close();
 
-        byte[] sSet = SWQEFactory.getSerialization().serialize(inputSet);
+        byte[][] sSet = new byte[inputSet.size()][];//SWQEFactory.getSerialization().serialize(inputSet);
+        for (int i = 0; i < sSet.length; i++) {
+            sSet[i] = SWQEFactory.getSerialization().serialize(inputSet.get(i));
+        }
         byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
         // pretend to serialize parameters 
         this.serializedParameters = MRHBasePluginRunner.serializeParametersToString(parameters, pluginInterface, sSet, dSet);
 
         // pretend to de-serialize 
-        final String externalParameters = serializedParameters[0];
+        final String externalParameters = serializedParameters[MRHBasePluginRunner.EXTERNAL_PARAMETERS];
         if (externalParameters != null && !externalParameters.isEmpty()) {
             this.ext_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters));
         }
-        final String internalParameters = serializedParameters[1];
+        final String internalParameters = serializedParameters[MRHBasePluginRunner.INTERNAL_PARAMETERS];
         if (internalParameters != null && !internalParameters.isEmpty()) {
             this.int_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters));
         }
-        final String sourceSetParameter = serializedParameters[2];
+        final String sourceSetParameter = serializedParameters[MRHBasePluginRunner.NUM_AND_SOURCE_FEATURE_SETS];
         if (sourceSetParameter != null && !sourceSetParameter.isEmpty()) {
-            this.sourceSet = SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(sourceSetParameter), FeatureSet.class);
+            List<FeatureSet> sSets = MRHBasePluginRunner.convertBase64StrToFeatureSets(sourceSetParameter);
+            this.sourceSet = sSets;
         }
-        final String destSetParameter = serializedParameters[3];
+        final String destSetParameter = serializedParameters[MRHBasePluginRunner.DESTINATION_FEATURE_SET];
         if (destSetParameter != null && !destSetParameter.isEmpty()) {
             this.destSet = SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class);
         }
@@ -85,15 +100,17 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
 
             mrPlugin.mapInit(this);
             List<Feature> features = new ArrayList<Feature>();
-            for (Feature f : inputSet) {
+            for (Feature f : inputSet.iterator().next()) {
                 features.add(f);
             }
-            mrPlugin.map(features, this);
+            Map<SGID, Collection<Feature>> map = new HashMap<SGID, Collection<Feature>>();
+            map.put(null, features);
+            mrPlugin.map(map, this);
             mrPlugin.mapCleanup();
 
             mrPlugin.reduceInit();
             // TODO: make this pass through functional in order to simulate MapReduce
-            for (Feature f : inputSet) {
+            for (Feature f : inputSet.iterator().next()) {
                 mrPlugin.reduce(null, null, this);
             }
             mrPlugin.reduceCleanup();
@@ -141,7 +158,7 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     }
 
     @Override
-    public FeatureSet getSourceSet() {
+    public List<FeatureSet> getSourceSets() {
         return this.sourceSet;
     }
 
@@ -166,7 +183,7 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     }
 
     @Override
-    public void setSourceSet(FeatureSet set) {
+    public void setSourceSets(List<FeatureSet> set) {
         this.sourceSet = set;
     }
 

@@ -24,9 +24,11 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
+import com.github.seqware.queryengine.util.SGID;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.log4j.Logger;
 
@@ -60,11 +62,11 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<
      * {@inheritDoc}
      */
     @Override
-    public void map(Collection<Feature> atom, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
+    public void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
         count++;
 
-        for (Feature f : atom) {
+        for (Feature f : atoms.values().iterator().next()) {
             f.setManager(modelManager);
             boolean match = getFilter().featurePasses(f, mapperInterface.getExt_parameters());
             if (match) {
