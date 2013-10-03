@@ -41,7 +41,7 @@ public class FeaturesByRangePlugin extends FeaturesByFilterPlugin {
     public static class FeaturesByRangeFilter implements FeatureFilter {
 
         @Override
-        public boolean featurePasses(Feature f, Object... parameters) {
+        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
             boolean match = false;
             Location location = (QueryInterface.Location) parameters[0];
             String structure = (String) parameters[1];

@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import java.io.Serializable;
 
 /**
@@ -30,10 +31,12 @@ public interface FeatureFilter extends Serializable{
     /**
      * <p>featurePasses.</p>
      *
+     * @param set the value of set
      * @param f a {@link com.github.seqware.queryengine.model.Feature} object.
      * @param parameters a {@link java.lang.Object} object.
      * @return a boolean.
      */
-    public boolean featurePasses(Feature f, Object ... parameters);
+    
+    public boolean featurePasses(FeatureSet set, Feature f, Object... parameters);
     
 }
