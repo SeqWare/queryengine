@@ -334,13 +334,18 @@ public class SimplePersistentBackEnd implements BackEndInterface {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @param reference the value of reference
+     */
+    
     @Override
-    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, FeatureSet set, Object... parameters) {
+    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, FeatureSet set, Object... parameters) {
         try {
             PluginInterface plugin = pluginClass.newInstance();
             plugin.init(set, parameters);
-            return PluginRun.newBuilder().setPluginRunner(SWQEFactory.getPluginRunner(plugin, set, parameters)).build();
+            return PluginRun.newBuilder().setPluginRunner(SWQEFactory.getPluginRunner(plugin, reference, set, parameters)).build();
         } catch (InstantiationException ex) {
             Logger.getLogger(SimplePersistentBackEnd.class.getName()).fatal( null, ex);
         } catch (IllegalAccessException ex) {

@@ -29,6 +29,7 @@ import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
 import com.github.seqware.queryengine.util.SGID;
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,9 +56,6 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
 
     public InMemoryPluginRunner(PluginInterface pluginInterface, Reference reference, List<FeatureSet> inputSet, Object[] parameters) {
         if (reference != null){
-            throw new UnsupportedOperationException();
-        }
-        if (inputSet.size() > 1){
             throw new UnsupportedOperationException();
         }
         
@@ -99,12 +97,14 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
             MapReducePlugin mrPlugin = (MapReducePlugin) pluginInterface;
 
             mrPlugin.mapInit(this);
-            List<Feature> features = new ArrayList<Feature>();
-            for (Feature f : inputSet.iterator().next()) {
-                features.add(f);
+            Map<FeatureSet, Collection<Feature>> map = new HashMap<FeatureSet, Collection<Feature>>();
+            for(FeatureSet set : inputSet){
+                List<Feature> list = new ArrayList();
+                Iterables.addAll(list, set);
+                map.put(set, list);
             }
-            Map<SGID, Collection<Feature>> map = new HashMap<SGID, Collection<Feature>>();
-            map.put(null, features);
+            
+            
             mrPlugin.map(map, this);
             mrPlugin.mapCleanup();
 

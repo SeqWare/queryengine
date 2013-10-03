@@ -21,12 +21,10 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     /**
      * Mapping implementation that singles out desired atoms into a mapped set.
      *
-     * @param atom Atom that is to be either dropped, or added to mappedSet.
-     * @param mappedSet Set of atoms that are passed to the reduce
-     * implementation.
      * @return a ReturnValue object.
      */
-    public abstract void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
+    
+    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.

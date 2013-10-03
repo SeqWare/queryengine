@@ -24,6 +24,7 @@ import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
@@ -35,6 +36,9 @@ import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.util.SGID;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -132,11 +137,14 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
      * @param parameters an arbitrary number of external parameters for plugin developers to provide to their plugins
      */
     public MRHBasePluginRunner(MapReducePlugin mapReducePlugin, Reference reference, List<FeatureSet> inputSet, Object... parameters) {
+        // handle null inputSet
+        if (inputSet == null){
+            inputSet = new ArrayList<FeatureSet>();
+        }
         // we should either have a reference or more than one input set
         assert(reference != null || inputSet.size() > 0);
         // all feature sets should have the same reference
-        if (inputSet.size() > 0){
-            
+        if (inputSet.size() > 0){    
             SGID ref = inputSet.iterator().next().getReference().getSGID();
             for(FeatureSet set : inputSet){
              assert(set.getReferenceID().equals(ref));   
@@ -445,6 +453,20 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
         private MapReducePlugin mapReducePlugin;
         private PluginRunnerMapper.Context context;
+        
+        // cache for SGID to FeatureSet lookup
+        LoadingCache<SGID, FeatureSet> sgid2featureset = CacheBuilder.newBuilder()
+       .maximumSize(1000)
+       .expireAfterWrite(30, TimeUnit.MINUTES)
+       .build(
+           new CacheLoader<SGID, FeatureSet>() {
+             @Override
+             public FeatureSet load(SGID key)  {
+               QueryInterface query = SWQEFactory.getQueryInterface();
+               return query.getLatestAtomBySGID(key, FeatureSet.class);
+             }
+           });
+        
         /**
          * parameters that will be usable by the user (the writer of the
          * queries)
@@ -500,11 +522,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             }
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+"featuresets");
             Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
-            Map<SGID, Collection<Feature>> consolidatedMap = new HashMap<SGID, Collection<Feature>>();
+            Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
                Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(e.getValue());
                Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-               consolidatedMap.put(e.getKey(), consolidateRow); 
+               // try to get grab featureset given SGID
+               consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
             mapReducePlugin.map(consolidatedMap, this);
         }

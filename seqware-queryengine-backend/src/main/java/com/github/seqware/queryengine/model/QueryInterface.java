@@ -222,12 +222,13 @@ public interface QueryInterface {
      *
      * @param hours minimum time to live
      * @param pluginClass plug-in class to use
+     * @param reference the value of reference
+     * @param set a {@link com.github.seqware.queryengine.model.FeatureSet} object.
      * @param parameters parameters to use when initializing the plug-in
      * @return null if there is an error, QueryFuture if the plug-in is successfully run
-     * @param set a {@link com.github.seqware.queryengine.model.FeatureSet} object.
-     * @param <ReturnValue> a ReturnValue object.
      */
-    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass,  FeatureSet set, Object ... parameters);
+    
+    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, FeatureSet set, Object... parameters);
 
     /**
      * Filter features by a range of attributes.

@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
@@ -66,7 +67,7 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     }
 
     @Override
-    public void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);

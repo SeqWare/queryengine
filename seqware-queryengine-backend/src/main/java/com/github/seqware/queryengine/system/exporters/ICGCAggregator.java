@@ -20,17 +20,14 @@ import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
-import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryFuture;
-import com.github.seqware.queryengine.model.Tag;
+import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin;
-import com.github.seqware.queryengine.system.Utility;
-import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
+import com.github.seqware.queryengine.plugins.plugins.DonorsToMutationsAndGenesAggregationPlugin;
+import com.github.seqware.queryengine.plugins.plugins.GenesToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.plugins.plugins.MutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
-import com.github.seqware.queryengine.util.SGID;
-import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,6 +36,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
+import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -49,10 +47,10 @@ import org.apache.log4j.Logger;
  * This will dump VCF files given a FeatureSet that was originally imported from
  * a VCF file.
  *
- * @author dyuen
+ * @author boconnor
  * @version $Id: $Id
  */
-public class VCFDumper {
+public class ICGCAggregator {
     /** Constant <code>VCF="VCFVariantImportWorker.VCF"</code> */
     public static final String VCF = Constants.TRACK_TAGSET ? VCFVariantImportWorker.VCF : null;
 
@@ -64,7 +62,7 @@ public class VCFDumper {
      * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
-        VCFDumper dumper = new VCFDumper(args);
+        ICGCAggregator dumper = new ICGCAggregator(args);
         dumper.export();
     }
 
@@ -73,23 +71,56 @@ public class VCFDumper {
      */
     public void export() {
 
-        if (args.length < 1 || args.length > 2) {
+        if (args.length != 4) {
             System.err.println(args.length + " arguments found");
-            System.out.println("VCFDumper <featureSetID> [outputFile]");
+            System.out.println("VCFDumper <referenceName> <mutationOutputFile> <geneOutputFile> <donorOutputFile>");
             System.exit(-1);
         }
 
         // parse a SGID from a String representation, we need a more elegant solution here
-        String featureSetID = args[0];
-        SGID sgid = Utility.parseSGID(featureSetID);
-        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(sgid, FeatureSet.class);
+        String referenceName = args[0];
+        
+        // MUTATION CENTRIC
+        Reference ref = null;
+        for (Reference r : SWQEFactory.getQueryInterface().getReferences()) {
+          if (referenceName.equals(r.getName())) {
+            ref = r;
+            break;
+          }
+        }
 
         // if this featureSet does not exist
-        if (fSet == null) {
-            System.out.println("featureSet ID not found");
+        if (ref == null) {
+            System.out.println("reference not found");
             System.exit(-2);
         }
-        dumpVCFFromFeatureSetID(fSet, (args.length == 2 ? args[1] : null));
+        
+        // aggregations of donors/project counts by mutation
+        System.out.println("Finding Mutations to affected donors/project count aggregation");
+        long start = new Date().getTime();
+        dumpAggregations("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, MutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] : null));
+        long stop = new Date().getTime();
+        float diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: "+diff);
+        
+        // aggregations of affected donors/projects count by gene
+        System.out.println("Finding Genes to affected donors/project count aggregation");
+        start = new Date().getTime();
+        dumpAggregations("GENE\tDONORS/PROJECTS_AFFECTED\n", ref, null, GenesToDonorsAggregationPlugin.class, (args.length == 4 ? args[2] : null));
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: "+diff);
+        
+        // aggregations of donors to total count SSM mutations for that donor
+        System.out.println("Finding Donors to genes and mutations count aggregation");
+        start = new Date().getTime();
+        dumpAggregations("DONORS\tGENES/MUTATIONS_AFFECTING\n", ref, null, DonorsToMutationsAndGenesAggregationPlugin.class, (args.length == 4 ? args[3] : null));
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: "+diff);
+        
+        // aggregations of donors to total count of genes affected by SSM mutations
+
     }
 
     /**
@@ -97,48 +128,10 @@ public class VCFDumper {
      *
      * @param args an array of {@link java.lang.String} objects.
      */
-    public VCFDumper(String[] args) {
+    public ICGCAggregator(String[] args) {
         this.args = args;
     }
 
-    /**
-     * <p>outputFeatureInVCF.</p>
-     *
-     * @param buffer a {@link java.lang.StringBuffer} object.
-     * @param feature a {@link com.github.seqware.queryengine.model.Feature} object.
-     * @return a boolean.
-     */
-    
-    public static boolean outputFeatureInVCF(StringBuilder buffer, Feature feature) {
-        boolean caughtNonVCF = false;
-        buffer.append(feature.getSeqid()).append("\t").append(feature.getStart() + 1).append("\t");
-        if (feature.getTagByKey(VCF, ImportConstants.VCF_SECOND_ID) == null) {
-            buffer.append(".\t");
-        } else {
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_SECOND_ID).getValue().toString()).append("\t");
-        }
-        try {
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_REFERENCE_BASE).getValue().toString()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_CALLED_BASE).getValue().toString()).append("\t");
-            buffer.append(feature.getScore() == null ? "." : feature.getScore()).append("\t");
-            buffer.append(feature.getTagByKey(VCF,ImportConstants.VCF_FILTER).getValue().toString()).append("\t");
-            // for some actually useful output, you'll probably want to output specific tags here
-            SeqWareIterable<Tag> tags = feature.getTags();
-            for (Tag tag : tags) {
-              buffer.append(tag.getKey());
-              if (tag.getValue() != null) { buffer.append("=").append(tag.getValue());}
-              buffer.append(";");
-            }
-        } catch (NullPointerException npe) {
-            if (!caughtNonVCF) {
-                Logger.getLogger(VCFDumper.class.getName()).info("Exception while exporting invalid tag on feature");
-
-            }
-            // this may occur when exporting Features that were not originally VCF files
-            caughtNonVCF = true;
-        }
-        return caughtNonVCF;
-    }
 
     /**
      * <p>dumpVCFFromFeatureSetID.</p>
@@ -146,7 +139,7 @@ public class VCFDumper {
      * @param fSet a {@link com.github.seqware.queryengine.model.FeatureSet} object.
      * @param file a {@link java.lang.String} object.
      */
-    public static void dumpVCFFromFeatureSetID(FeatureSet fSet, String file) {
+    public static void dumpAggregations(String header, Reference ref, FeatureSet fSet, Class<? extends PluginInterface> arbitraryPlugin, String file) {
         BufferedWriter outputStream = null;
 
         try {
@@ -155,7 +148,7 @@ public class VCFDumper {
             } else {
                 outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
             }
-            outputStream.append("#CHROM	POS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
+            outputStream.append(header);
         } catch (IOException e) {
             Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
             System.exit(-1);
@@ -167,11 +160,8 @@ public class VCFDumper {
             // hack to use VCF MR
             if (SWQEFactory.getModelManager() instanceof MRHBaseModelManager) {
                 try {
-                    // pretend that the included com.github.seqware.queryengine.plugins.hbasemr.MRFeaturesByAttributesPlugin is an external plug-in
-                    Class<? extends PluginInterface> arbitraryPlugin;
-                    arbitraryPlugin = VCFDumperPlugin.class;
                     // get a FeatureSet from the back-end
-                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, null, fSet);
+                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, ref , null);
                     File get = future.get();
                     Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
                     for(File f : listFiles){
@@ -184,6 +174,7 @@ public class VCFDumper {
                     outputStream.flush();
                     outputStream.close();
                     mrSuccess = true;
+                    System.out.println("SUCCESS");
                 } catch (IOException e) {
                     // fail out on IO error
                     Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
@@ -194,27 +185,6 @@ public class VCFDumper {
                 }
             } // TODO: clearly this should be expanded to include closing database etc 
         }
-        if (mrSuccess) {
-            return;
-        }
-        // fall-through if plugin-fails
-        try {
-            assert(outputStream != null);
-            for (Feature feature : fSet) {
-                StringBuilder buffer = new StringBuilder();
-                boolean caught = outputFeatureInVCF(buffer, feature);
-                if (caught) {
-                    caughtNonVCF = true;
-                }
-                outputStream.append(buffer);
-                outputStream.newLine();
-            }
-            outputStream.flush();
-        } catch (IOException e) {
-            Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
-            System.exit(-1);
-        } finally {
-            IOUtils.closeQuietly(outputStream);
-        }
     }
 }
+

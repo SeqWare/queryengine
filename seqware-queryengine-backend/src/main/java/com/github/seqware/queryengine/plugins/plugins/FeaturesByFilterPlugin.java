@@ -60,9 +60,11 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<
     
     /**
      * {@inheritDoc}
+     *
      */
+    
     @Override
-    public void map(Map<SGID, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
         count++;
 
