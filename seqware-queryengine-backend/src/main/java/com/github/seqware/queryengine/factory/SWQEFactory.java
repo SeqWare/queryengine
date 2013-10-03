@@ -55,7 +55,7 @@ public class SWQEFactory {
     }
     
     
-    private static PluginRunnerInterface getPluginRunner(PluginInterface plugin, Reference reference, List<FeatureSet> inputSet, Object ... parameters) {
+    public static PluginRunnerInterface getPluginRunner(PluginInterface plugin, Reference reference, List<FeatureSet> inputSet, Object ... parameters) {
         if (plugin == null){
             return null;
         }

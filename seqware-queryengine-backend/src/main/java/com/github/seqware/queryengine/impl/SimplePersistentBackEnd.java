@@ -334,18 +334,29 @@ public class SimplePersistentBackEnd implements BackEndInterface {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, Object... parameters) {
+        return this.getFeaturesByPlugin(hours, pluginClass, reference, new ArrayList<FeatureSet>(), parameters);
+    }
+    
+    @Override
+    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, FeatureSet set, Object... parameters) {
+        List<FeatureSet> list = new ArrayList<FeatureSet>();
+        list.add(set);
+        return this.getFeaturesByPlugin(hours, pluginClass, reference, list, parameters);
+    }
+    
     /**
      * {@inheritDoc}
      *
      * @param reference the value of reference
      */
-    
     @Override
-    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, FeatureSet set, Object... parameters) {
+    public <ReturnValue> QueryFuture<ReturnValue> getFeaturesByPlugin(int hours, Class<? extends PluginInterface> pluginClass, Reference reference, List<FeatureSet> sets, Object... parameters) {
         try {
             PluginInterface plugin = pluginClass.newInstance();
-            plugin.init(set, parameters);
-            return PluginRun.newBuilder().setPluginRunner(SWQEFactory.getPluginRunner(plugin, reference, set, parameters)).build();
+            plugin.init(null, parameters);
+            return PluginRun.newBuilder().setPluginRunner(SWQEFactory.getPluginRunner(plugin, reference, sets, parameters)).build();
         } catch (InstantiationException ex) {
             Logger.getLogger(SimplePersistentBackEnd.class.getName()).fatal( null, ex);
         } catch (IllegalAccessException ex) {
