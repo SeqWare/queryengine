@@ -48,7 +48,7 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
 
     /** {@inheritDoc} */
     @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByAttributesFilter();
     }
 

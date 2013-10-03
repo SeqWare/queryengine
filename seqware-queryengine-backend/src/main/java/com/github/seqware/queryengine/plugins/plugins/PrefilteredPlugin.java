@@ -16,29 +16,25 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.plugins.MapReducePlugin;
 
 /**
- * <p>FeaturesAllPlugin class.</p>
+ * Implements the generic queries which independently decide on whether a
+ * Feature is included in a result. This kind of plugin is generic and allows
+ * the implementor to specify an output format.
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeaturesAllPlugin extends FeaturesByFilterPlugin {
+public abstract class PrefilteredPlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> 
+extends MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
 
-    /** {@inheritDoc} */
-    @Override
-    public FeatureFilter getFilter() {
-        return new FeaturesAllPlugin.FeaturesAllFilter();
-    }
-
-    public static class FeaturesAllFilter implements FeatureFilter {
-
-        @Override
-        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
-            // everything passes
-            return true;
-        }
-    }
+    /**
+     * <p>getFilter.</p>
+     *
+     * @return a
+     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
+     * object.
+     */
+    public abstract FeatureFilter getFilter();
 }

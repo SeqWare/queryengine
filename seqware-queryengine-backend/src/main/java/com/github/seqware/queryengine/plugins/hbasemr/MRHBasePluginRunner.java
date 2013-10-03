@@ -34,7 +34,9 @@ import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
+import com.github.seqware.queryengine.plugins.plugins.PrefilteredPlugin;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -529,6 +531,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
+            consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
             mapReducePlugin.map(consolidatedMap, this);
         }
 
@@ -618,4 +621,25 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return pluginParameter;
     }
 
+     public static Map<FeatureSet, Collection<Feature>> handlePreFilteredPlugins(Map<FeatureSet, Collection<Feature>> consolidatedMap, MapReducePlugin mapReducePlugin, Object[] ext_parameters) {
+            // for PreFilteredPlugins, we can do some prefiltering before the FeatureSets and features hit the actual plugin
+            if (mapReducePlugin instanceof PrefilteredPlugin){
+                FeatureFilter filter = ((PrefilteredPlugin)mapReducePlugin).getFilter();
+                Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<FeatureSet, Collection<Feature>>();
+                for(Entry<FeatureSet, Collection<Feature>> e : consolidatedMap.entrySet()){
+                    for(Feature f : e.getValue() ){
+                        if (!filter.featurePasses(e.getKey(), f, ext_parameters)){
+                            continue;
+                        }
+                        if (!filteredMap.containsKey(e.getKey())){
+                            filteredMap.put(e.getKey(), new ArrayList<Feature>());
+                        }
+                        filteredMap.get(e.getKey()).add(f);
+                        
+                    }
+                }
+                consolidatedMap = filteredMap;
+            }
+            return consolidatedMap;
+        }
 }

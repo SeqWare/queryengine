@@ -103,7 +103,8 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
                 Iterables.addAll(list, set);
                 map.put(set, list);
             }
-            
+            // mimic filtering 
+            map = MRHBasePluginRunner.handlePreFilteredPlugins(map, mrPlugin, this.ext_parameters);
             
             mrPlugin.map(map, this);
             mrPlugin.mapCleanup();

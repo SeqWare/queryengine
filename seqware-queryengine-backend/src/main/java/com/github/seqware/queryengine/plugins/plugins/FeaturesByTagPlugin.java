@@ -32,7 +32,7 @@ public class FeaturesByTagPlugin extends FeaturesByFilterPlugin {
 
     /** {@inheritDoc} */
     @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByTagPlugin.FeaturesByTagFilter();
     }
     

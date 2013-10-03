@@ -34,24 +34,16 @@ import org.apache.log4j.Logger;
 
 /**
  * Implements the generic queries which independently decide on whether a
- * Feature is included in a result.
+ * Feature is included in a result. This kind of plugin will write its results to 
+ * a new feature set. 
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<Feature>, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
+public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<Collection<Feature>, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
 
     private CreateUpdateManager modelManager;
     private long count = 0;
-
-    /**
-     * <p>getFilter.</p>
-     *
-     * @return a
-     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
-     * object.
-     */
-    protected abstract FeatureFilter getFilter();
     
     @Override
     public void reduce(FeatureSet reduceKey, Iterable<FeatureSet> reduceValues, ReducerInterface<FeatureSet, FeatureSet> reducerInterface) {
@@ -70,10 +62,7 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
             for (Feature f : e.getValue()) {
                 f.setManager(modelManager);
-                boolean match = getFilter().featurePasses(null, f, mapperInterface.getExt_parameters());
-                if (match) {
-                    results.add(f);
-                }
+                results.add(f);
             }
         }
         mapperInterface.getDestSet().add(results);

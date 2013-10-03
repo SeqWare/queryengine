@@ -31,7 +31,7 @@ public class FeaturesByRangePlugin extends FeaturesByFilterPlugin {
 
      /** {@inheritDoc} */
      @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByRangePlugin.FeaturesByRangeFilter();
     }
     
