@@ -20,9 +20,6 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.QueryInterface.Location;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
-import java.util.Collection;
 
 /**
  * Retrieves features based on their chromosomal location.

@@ -22,7 +22,6 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
-import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;

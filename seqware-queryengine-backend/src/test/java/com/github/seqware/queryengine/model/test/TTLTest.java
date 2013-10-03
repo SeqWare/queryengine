@@ -4,8 +4,6 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.*;
 import com.github.seqware.queryengine.model.interfaces.TTLable;
-import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
-import com.github.seqware.queryengine.plugins.plugins.FeaturesAllPlugin;
 import java.util.*;
 import junit.framework.Assert;
 import org.junit.BeforeClass;

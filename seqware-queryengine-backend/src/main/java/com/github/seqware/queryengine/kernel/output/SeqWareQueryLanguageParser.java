@@ -4,9 +4,6 @@ package com.github.seqware.queryengine.kernel.output;
 
 
 import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.antlr.runtime.tree.*;
 

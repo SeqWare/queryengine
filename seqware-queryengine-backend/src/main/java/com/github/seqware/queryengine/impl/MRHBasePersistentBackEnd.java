@@ -27,7 +27,6 @@ import com.github.seqware.queryengine.model.PluginRun;
 import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.hbasemr.*;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesAllPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByRangePlugin;

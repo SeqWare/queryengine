@@ -2,7 +2,6 @@ package com.github.seqware.queryengine.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.util.SGID;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;

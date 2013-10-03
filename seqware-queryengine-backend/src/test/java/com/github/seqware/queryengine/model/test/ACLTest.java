@@ -7,8 +7,6 @@ import com.github.seqware.queryengine.model.*;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.model.interfaces.ACLable;
-import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
-import com.github.seqware.queryengine.plugins.plugins.FeaturesAllPlugin;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

@@ -16,20 +16,8 @@
  */
 package com.github.seqware.queryengine.tutorial;
 
-import com.github.seqware.queryengine.dto.QESupporting;
-import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
-import com.github.seqware.queryengine.impl.protobufIO.FSGIDIO;
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.system.Utility;
-import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
-import com.github.seqware.queryengine.util.FSGID;
-import com.github.seqware.queryengine.util.SGID;
-import com.google.protobuf.TextFormat;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

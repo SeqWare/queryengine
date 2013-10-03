@@ -22,7 +22,6 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
-import com.github.seqware.queryengine.util.SGID;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;

@@ -1,15 +1,12 @@
 package net.sourceforge.seqware.common.util.configtools;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import net.sourceforge.seqware.common.util.Log;
-import net.sourceforge.seqware.common.util.filetools.FileTools;
 
 import net.sourceforge.seqware.common.util.maptools.MapTools;
 
@@ -46,15 +43,6 @@ public class ConfigTools {
       throw new Exception("The settings file " + settings + " does not exist!");
     } else if (!settingsFile.isFile()) {
       throw new Exception("The settings file " + settings + " is not a file!");
-    }
-
-    //SEQWARE-1595 : it seems that the Java 6 File API cannot retrieve permissions separated by owner and group
-    // will use Linux command until Java 7 NIO (hopefully)
-    String settingPerms = FileTools.determineFilePermissions(settings);
-    if (!ignorePermissions && !settingPerms.equals("-rw-------") && !settingPerms.equals("-rwx------")){  
-        String bigWarning = "*** SECURITY WARNING ***\nSeqWare settings file has incorrect file permissions. It should only be readable and writeable by the owner.\n In other words, run \"chmod 600 ~/.seqware/settings\"";
-        Log.fatal(bigWarning);
-        Log.stderr(bigWarning);
     }
     
     // else it should be OK
