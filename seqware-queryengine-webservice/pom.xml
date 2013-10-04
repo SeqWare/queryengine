@@ -169,7 +169,8 @@ never
         <profile>
             <id>embeddedHBase</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <!-- until we have actual tests  <activeByDefault>true</activeByDefault> -->
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>

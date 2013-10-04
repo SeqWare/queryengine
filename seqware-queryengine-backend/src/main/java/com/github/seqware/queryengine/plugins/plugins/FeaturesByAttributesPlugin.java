@@ -17,14 +17,17 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.kernel.RPNStack;
-import com.github.seqware.queryengine.kernel.RPNStack.Constant;
 import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
+import com.github.seqware.queryengine.kernel.RPNStack.FeatureSetTagOccurrence;
+import com.github.seqware.queryengine.kernel.RPNStack.FeatureSetTagValue;
+import com.github.seqware.queryengine.kernel.RPNStack.FeatureSetTagValuePresence;
 import com.github.seqware.queryengine.kernel.RPNStack.Parameter;
 import com.github.seqware.queryengine.kernel.RPNStack.TagHierarchicalOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagValue;
 import com.github.seqware.queryengine.kernel.RPNStack.TagValuePresence;
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
@@ -45,7 +48,7 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
 
     /** {@inheritDoc} */
     @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByAttributesFilter();
     }
 
@@ -55,7 +58,7 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
         private Map<String, Tag> hierarchyCache = new HashMap<String, Tag>();
 
         @Override
-        public boolean featurePasses(Feature feature, Object... parameters) {
+        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
 
             for (int i = 1; hierarchyConstraintSets == null && i < parameters.length; i++) {
                 if (parameters[i] instanceof List) {
@@ -64,12 +67,12 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
             }
 
             RPNStack rpnStack = (RPNStack) parameters[0];
-            manipulateRPNStack(rpnStack, feature, hierarchyConstraintSets, hierarchyCache);
+            manipulateRPNStack(rpnStack, set, f, hierarchyConstraintSets, hierarchyCache);
             boolean result = (Boolean) rpnStack.evaluate();
             return result;
         }
 
-        public static void manipulateRPNStack(RPNStack rpnStack, Feature feature, List<TagSet> hierarchyConstraintSets, Map<String, Tag> hierarchyCache) throws UnsupportedOperationException {
+        public static void manipulateRPNStack(RPNStack rpnStack, FeatureSet set, Feature feature, List<TagSet> hierarchyConstraintSets, Map<String, Tag> hierarchyCache) throws UnsupportedOperationException {
             // Get the parameters from the RPN stack and replace them with concrete values:
             for (Parameter parameter : rpnStack.getParameters()) {
                 if (parameter instanceof FeatureAttribute) {
@@ -78,10 +81,19 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
                     TagValue to = (TagValue)parameter;
                     Tag tagByKey = feature.getTagByKey(to.getTagSetRowKey(), parameter.getName());
                     rpnStack.setParameter(parameter, tagByKey == null ? null : tagByKey.getValue());
-                } else if (parameter instanceof TagOccurrence) {
+                }  else if (parameter instanceof FeatureSetTagValue) {
+                    FeatureSetTagValue to = (FeatureSetTagValue)parameter;
+                    Tag tagByKey = set.getTagByKey(to.getTagSetRowKey(), parameter.getName());
+                    rpnStack.setParameter(parameter, tagByKey == null ? null : tagByKey.getValue());
+                }
+                else if (parameter instanceof TagOccurrence) {
                     TagOccurrence to = (TagOccurrence)parameter;
                     rpnStack.setParameter(parameter, feature.getTagByKey(to.getTagSetRowKey(), parameter.getName()) != null);
-                } else if (parameter instanceof TagHierarchicalOccurrence) {
+                } else if (parameter instanceof FeatureSetTagOccurrence) {
+                    FeatureSetTagOccurrence to = (FeatureSetTagOccurrence)parameter;
+                    rpnStack.setParameter(parameter, set.getTagByKey(to.getTagSetRowKey(), parameter.getName()) != null);
+                }
+                else if (parameter instanceof TagHierarchicalOccurrence) {
                     boolean foundTag = false;
                     SeqWareIterable<Tag> tags = feature.getTags();
                     for (Tag tag : tags) {
@@ -119,7 +131,16 @@ public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
                             tag != null
                             && (tag.getValue() == null && to.getValue() == null
                             || tag.getValue() != null && tag.getValue().equals(to.getValue())));
-                } else {
+                } else if (parameter instanceof FeatureSetTagValuePresence) {
+                    FeatureSetTagValuePresence to = (FeatureSetTagValuePresence)parameter;
+                    Tag tag = set.getTagByKey(to.getTagSetRowKey(), parameter.getName());
+                    
+                    rpnStack.setParameter(parameter,
+                            tag != null
+                            && (tag.getValue() == null && to.getValue() == null
+                            || tag.getValue() != null && tag.getValue().equals(to.getValue())));
+                }
+                else {
                     throw new UnsupportedOperationException("This plugin can only handle FeatureAttribute parameters.");
                 }
             }

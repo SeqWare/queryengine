@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins;
 
 import com.github.seqware.queryengine.model.FeatureSet;
+import java.util.List;
 
 /**
  *
@@ -27,7 +28,7 @@ public interface JobRunParameterInterface {
 
     public Object[] getInt_parameters();
 
-    public FeatureSet getSourceSet();
+    public List<FeatureSet> getSourceSets();
 
     public FeatureSet getDestSet();
     
@@ -35,7 +36,7 @@ public interface JobRunParameterInterface {
 
     public void setInt_parameters(Object[] params);
 
-    public void setSourceSet(FeatureSet set);
+    public void setSourceSets(List<FeatureSet> set);
 
     public void setDestSet(FeatureSet set);
 }

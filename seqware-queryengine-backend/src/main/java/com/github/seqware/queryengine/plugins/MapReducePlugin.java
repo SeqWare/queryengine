@@ -3,6 +3,7 @@ package com.github.seqware.queryengine.plugins;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang.SerializationUtils;
 
 /**
@@ -19,12 +20,10 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     /**
      * Mapping implementation that singles out desired atoms into a mapped set.
      *
-     * @param atom Atom that is to be either dropped, or added to mappedSet.
-     * @param mappedSet Set of atoms that are passed to the reduce
-     * implementation.
      * @return a ReturnValue object.
      */
-    public abstract void map(Collection<Feature> atom, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
+    
+    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.

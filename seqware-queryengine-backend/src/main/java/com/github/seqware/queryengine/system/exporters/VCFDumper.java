@@ -171,7 +171,7 @@ public class VCFDumper {
                     Class<? extends PluginInterface> arbitraryPlugin;
                     arbitraryPlugin = VCFDumperPlugin.class;
                     // get a FeatureSet from the back-end
-                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, fSet);
+                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, null, fSet);
                     File get = future.get();
                     Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
                     for(File f : listFiles){

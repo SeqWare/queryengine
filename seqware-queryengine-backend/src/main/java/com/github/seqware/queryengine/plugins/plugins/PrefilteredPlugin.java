@@ -16,27 +16,25 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
-import java.io.Serializable;
+import com.github.seqware.queryengine.plugins.MapReducePlugin;
 
 /**
- * Interface for matching functions that we can quickly use in both in-memory and M/R plug-ins.
+ * Implements the generic queries which independently decide on whether a
+ * Feature is included in a result. This kind of plugin is generic and allows
+ * the implementor to specify an output format.
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public interface FeatureFilter extends Serializable{
-    
+public abstract class PrefilteredPlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> 
+extends MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
+
     /**
-     * <p>featurePasses.</p>
+     * <p>getFilter.</p>
      *
-     * @param set the value of set
-     * @param f a {@link com.github.seqware.queryengine.model.Feature} object.
-     * @param parameters a {@link java.lang.Object} object.
-     * @return a boolean.
+     * @return a
+     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
+     * object.
      */
-    
-    public boolean featurePasses(FeatureSet set, Feature f, Object... parameters);
-    
+    public abstract FeatureFilter getFilter();
 }

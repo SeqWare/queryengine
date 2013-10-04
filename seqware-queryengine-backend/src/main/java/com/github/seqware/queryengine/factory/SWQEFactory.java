@@ -21,11 +21,14 @@ import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.impl.*;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryInterface;
+import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
 import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the SeqWare Query Engine factory and should be used as the primary
@@ -37,15 +40,30 @@ import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
  */
 public class SWQEFactory {
 
+    public static PluginRunnerInterface getPluginRunner(PluginInterface plugin, Reference reference, Object ... parameters) {
+        return SWQEFactory.getPluginRunner(plugin, reference, null, parameters);
+    }
+    
+    public static PluginRunnerInterface getPluginRunner(PluginInterface plugin, List<FeatureSet> inputSet, Object ... parameters) {
+        return SWQEFactory.getPluginRunner(plugin, null, inputSet, parameters);
+    }
+    
     public static PluginRunnerInterface getPluginRunner(PluginInterface plugin, FeatureSet inputSet, Object ... parameters) {
+        List<FeatureSet> list = new ArrayList<FeatureSet>();
+        list.add(inputSet);
+        return SWQEFactory.getPluginRunner(plugin, null, list, parameters);
+    }
+    
+    
+    public static PluginRunnerInterface getPluginRunner(PluginInterface plugin, Reference reference, List<FeatureSet> inputSet, Object ... parameters) {
         if (plugin == null){
             return null;
         }
         if (current_backend == Model_Type.MRHBASE){
             MapReducePlugin mrPlugin = (MapReducePlugin)plugin;
-            return new MRHBasePluginRunner(mrPlugin, inputSet, parameters);
+            return new MRHBasePluginRunner(mrPlugin, reference, inputSet, parameters);
         } else{
-            return new InMemoryPluginRunner(plugin, inputSet, parameters);
+            return new InMemoryPluginRunner(plugin, reference, inputSet, parameters);
         }
     }
 

@@ -66,6 +66,15 @@ public interface Taggable<T> {
     public Tag getTagByKey(String tagSet, String key);
     
     /**
+     * Quickly get the value of a tag by the key, assuming a null TagSet.
+     *
+     * @param tagSet a {@link com.github.seqware.queryengine.model.TagSet} object.
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link com.github.seqware.queryengine.model.Tag} object.
+     */
+    public Tag getTagByKey(String key);
+    
+    /**
      * Quickly get the value of a tag by the key.
      *
      * @param tagSet a {@link com.github.seqware.queryengine.model.TagSet} object.

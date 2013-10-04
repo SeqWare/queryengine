@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
 import java.util.Arrays;
 import org.apache.commons.lang.ArrayUtils;
@@ -31,14 +32,14 @@ public class FeaturesByTagPlugin extends FeaturesByFilterPlugin {
 
     /** {@inheritDoc} */
     @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByTagPlugin.FeaturesByTagFilter();
     }
     
     public static class FeaturesByTagFilter implements FeatureFilter {
 
         @Override
-        public boolean featurePasses(Feature f, Object... parameters) {
+        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
             boolean b[] = new boolean[3];
             String subject = (String) parameters[0];
             String predicate = (String) parameters[1];

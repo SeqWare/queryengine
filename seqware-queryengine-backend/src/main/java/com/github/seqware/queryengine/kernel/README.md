@@ -21,7 +21,8 @@ Predicates are truth functions, i.e. they only return true or false. It is possi
 Feature property identifiers:
 
 *  named identifier (sequence of letters, digits, underlines)
-*  `tagValue(tagset , tagkey)` (retrieve the value of 'tagkey' from the tagset with the key 'tagset')
+*  `tagValue(tagset , tagkey)` (retrieve the value of 'tagkey' from the feature with the key 'tagset')
+*  `fsTagValue(tagset , tagkey)` (retrieve the value of 'tagkey' from the featureSet with the key 'tagset')
 
 Comparators:
 
@@ -44,6 +45,8 @@ Predicates:
 *  `tagOccurrence(tagset, tagkey)` (select features that are tagged with `tagkey`)
 *  `tagHierarchicalOccurrence(tagset, tagkey)` (select features that are tagged with `tagkey`, or whose tag's parent is `tagkey`; _not translated into RPNStack parameter yet_)
 *  `tagValuePresence(tagset, tagkey)` (select features that have a certain tag/value pair combination)
+*  `fsTagOccurrence(tagset, tagkey)` (select features from feature sets that are tagged with `tagkey`)
+*  `fsTagValuePresence(tagset, tagkey)` (select features from feature sets that have a certain tag/value pair combination)
 
 ### Boolean Operators
 

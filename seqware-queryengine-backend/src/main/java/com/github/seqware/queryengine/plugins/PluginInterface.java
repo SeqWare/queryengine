@@ -17,11 +17,7 @@
 package com.github.seqware.queryengine.plugins;
 
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.util.SGID;
 import java.io.Serializable;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.mapreduce.OutputFormat;
 
 /**
  * This will describe the interface custom plugins must conform to. Details are
