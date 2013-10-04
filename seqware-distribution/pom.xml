@@ -28,48 +28,12 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <id>generate_markdown</id>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>sh</executable>
-                            <arguments>
-                                <argument>src/scripts/generate_markdown.sh</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>compile_website</id>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>nanoc</executable>
-                            <commandlineArgs>compile</commandlineArgs>
-                            <workingDirectory>docs/site/</workingDirectory>
-                        </configuration>
-                    </execution>
-
-
-                </executions>
             </plugin>
             <plugin>
                 <!-- should be temporary, until we figure out what is generating temp directories -->
@@ -115,49 +79,12 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-publish-plugin</artifactId>
-                <version>1.0-beta-2</version>
-                <executions>
-                    <execution>
-                        <phase>site-deploy</phase>
-                        <goals>
-                            <goal>publish-scm</goal>
-                        </goals>
-
-                        <configuration>
-	        <pubScmUrl>scm:git:ssh://git@github.com/SeqWare/unstable.seqware.github.com.git</pubScmUrl>	
-                            <content>docs/site/output/</content>
-                            <scmBranch>gh-pages</scmBranch>
-                            <ignorePathsToDelete>
-                                <ignorePathToDelete>javadoc</ignorePathToDelete>
-                                <ignorePathToDelete>manuals</ignorePathToDelete>
-                                <ignorePathToDelete>queryengine-api</ignorePathToDelete>
-                                <ignorePathToDelete>webservice-api</ignorePathToDelete>
-                                <ignorePathToDelete>pictures</ignorePathToDelete>
-                            </ignorePathsToDelete>
-                            <tryUpdate>true</tryUpdate>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <configuration>
                     <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 </project>
