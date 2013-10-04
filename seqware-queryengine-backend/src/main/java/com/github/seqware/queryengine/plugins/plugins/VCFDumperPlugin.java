@@ -21,6 +21,7 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin.SerializableText;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
@@ -37,7 +38,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, File> {
+public class VCFDumperPlugin extends MapReducePlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
 
     private SerializableText text = new SerializableText();
     private SerializableText textKey = new SerializableText();
@@ -50,11 +51,6 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     @Override
     public Class getMapOutputValueClass() {
         return SerializableText.class;
-    }
-
-    @Override
-    public int getNumReduceTasks() {
-        return 1;
     }
 
     /**

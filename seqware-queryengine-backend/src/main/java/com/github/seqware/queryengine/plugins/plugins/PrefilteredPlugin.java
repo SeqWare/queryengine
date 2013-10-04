@@ -26,8 +26,8 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class PrefilteredPlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> 
-extends MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
+public abstract class PrefilteredPlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> 
+extends MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
 
     /**
      * <p>getFilter.</p>

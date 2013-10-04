@@ -22,6 +22,7 @@ import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.plugins.DonorsToMutationsAndGenesAggregationPlugin.SerializableText;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<DonorsToMutationsAndGenesAggregationPlugin.SerializableText, DonorsToMutationsAndGenesAggregationPlugin.SerializableText, DonorsToMutationsAndGenesAggregationPlugin.SerializableText, DonorsToMutationsAndGenesAggregationPlugin.SerializableText, DonorsToMutationsAndGenesAggregationPlugin.SerializableText, DonorsToMutationsAndGenesAggregationPlugin.SerializableText, File> {
+public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
 
   private SerializableText text = new SerializableText();
   private SerializableText textKey = new SerializableText();
@@ -53,11 +54,6 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
   @Override
   public Class getMapOutputValueClass() {
     return SerializableText.class;
-  }
-
-  @Override
-  public int getNumReduceTasks() {
-    return 1;
   }
 
   /**
@@ -164,7 +160,7 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
     return File.class;
   }
 
-  public static class SerializableText extends Text implements Serializable {
+  public static class SerializableText extends Text {
 
     public SerializableText() {
       super();

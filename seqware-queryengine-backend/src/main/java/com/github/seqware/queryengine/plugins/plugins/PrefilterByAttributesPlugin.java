@@ -23,8 +23,8 @@ package com.github.seqware.queryengine.plugins.plugins;
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class PrefilterByAttributesPlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>
-extends PrefilteredPlugin <MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
+public abstract class PrefilterByAttributesPlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>
+extends PrefilteredPlugin <MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
 
 
     /**

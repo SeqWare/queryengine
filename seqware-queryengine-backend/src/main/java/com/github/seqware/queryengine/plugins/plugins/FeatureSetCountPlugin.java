@@ -33,7 +33,7 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeatureSetCountPlugin extends MapReducePlugin<Collection<Feature>, Object, Object, Object, Object, Object, Long> {
+public class FeatureSetCountPlugin extends MapReducePlugin<Object, Object, Object, Object, Long> {
 
     /**
      * {@inheritDoc}
@@ -68,7 +68,7 @@ public class FeatureSetCountPlugin extends MapReducePlugin<Collection<Feature>, 
     }
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, Object> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Object, Object> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
             // why can't I increment this by the size directly on the cluster?
             mapperInterface.incrementCounter();

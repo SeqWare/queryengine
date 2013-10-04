@@ -19,11 +19,10 @@ package com.github.seqware.queryengine.plugins.plugins;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.plugins.GenesToDonorsAggregationPlugin.SerializableText;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, File> {
+public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
 
   private SerializableText text = new SerializableText();
   private SerializableText textKey = new SerializableText();
@@ -52,11 +51,6 @@ public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<
   @Override
   public Class getMapOutputValueClass() {
     return SerializableText.class;
-  }
-
-  @Override
-  public int getNumReduceTasks() {
-    return 1;
   }
 
   /**
@@ -156,7 +150,7 @@ public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<
     return File.class;
   }
 
-  public static class SerializableText extends Text implements Serializable {
+  public static class SerializableText extends Text {
 
     public SerializableText() {
       super();

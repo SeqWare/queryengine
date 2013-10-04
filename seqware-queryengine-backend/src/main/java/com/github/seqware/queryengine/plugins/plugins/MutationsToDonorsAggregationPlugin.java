@@ -19,9 +19,9 @@ package com.github.seqware.queryengine.plugins.plugins;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.plugins.MutationsToDonorsAggregationPlugin.SerializableText;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<MutationsToDonorsAggregationPlugin.SerializableText, MutationsToDonorsAggregationPlugin.SerializableText, MutationsToDonorsAggregationPlugin.SerializableText, MutationsToDonorsAggregationPlugin.SerializableText, MutationsToDonorsAggregationPlugin.SerializableText, MutationsToDonorsAggregationPlugin.SerializableText, File> {
+public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
 
     private SerializableText text = new SerializableText();
     private SerializableText textKey = new SerializableText();
@@ -52,11 +52,6 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
     @Override
     public Class getMapOutputValueClass() {
         return SerializableText.class;
-    }
-
-    @Override
-    public int getNumReduceTasks() {
-        return 1;
     }
 
     /**
@@ -140,7 +135,7 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
         return File.class;
     }
     
-    public static class SerializableText extends Text implements Serializable{
+    public static class SerializableText extends Text{
         public SerializableText(){
             super();
         }

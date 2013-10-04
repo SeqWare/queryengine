@@ -15,7 +15,7 @@ import org.apache.commons.lang.SerializationUtils;
  * @author jbaran
  * @version $Id: $Id
  */
-public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> implements PluginInterface {
+public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> implements PluginInterface {
 
     /**
      * Mapping implementation that singles out desired atoms into a mapped set.
@@ -23,7 +23,7 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      * @return a ReturnValue object.
      */
     
-    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
+    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPREDUCEKEY, MAPREDUCEVALUE> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.
@@ -33,7 +33,7 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      * step.
      * @return a ReturnValue object.
      */
-    public abstract void reduce(REDUCEKEYIN reduceKey, Iterable<REDUCEVALUEIN> reduceValues, ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> reducerInterface);
+    public abstract void reduce(MAPREDUCEKEY reduceKey, Iterable<MAPREDUCEVALUE> reduceValues, ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> reducerInterface);
 
     @Override
     public Object[] getInternalParameters(){
@@ -99,59 +99,27 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     }
 
     @Override
-    public ReturnValue test() {
+    public boolean test() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
-    public ReturnValue verifyParameters() {
+    public boolean verifyParameters() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
-    public ReturnValue verifyInput() {
+    public boolean cleanup() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue filterInit() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue filter() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue verifyOutput() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue cleanup() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
@@ -183,9 +151,5 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     @Override
     public Class<?> getOutputClass() {
         return null;
-    }
-
-    public int getNumReduceTasks() {
-        return 0;
     }
 }

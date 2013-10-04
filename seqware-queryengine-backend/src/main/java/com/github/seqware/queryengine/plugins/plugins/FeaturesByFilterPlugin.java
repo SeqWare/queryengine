@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<Collection<Feature>, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
+public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
 
     private CreateUpdateManager modelManager;
     private long count = 0;
@@ -56,7 +56,7 @@ public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<Collectio
      */
     
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
         count++;
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
