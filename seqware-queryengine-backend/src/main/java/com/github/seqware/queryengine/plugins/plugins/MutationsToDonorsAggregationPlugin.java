@@ -135,7 +135,7 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
         return File.class;
     }
     
-    public static class SerializableText extends Text{
+    public static class SerializableText extends Text implements Serializable {
         public SerializableText(){
             super();
         }

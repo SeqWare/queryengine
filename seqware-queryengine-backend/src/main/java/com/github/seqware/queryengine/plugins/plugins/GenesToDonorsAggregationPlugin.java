@@ -23,6 +23,7 @@ import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.GenesToDonorsAggregationPlugin.SerializableText;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -150,7 +151,7 @@ public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<
     return File.class;
   }
 
-  public static class SerializableText extends Text {
+  public static class SerializableText extends Text implements Serializable {
 
     public SerializableText() {
       super();
