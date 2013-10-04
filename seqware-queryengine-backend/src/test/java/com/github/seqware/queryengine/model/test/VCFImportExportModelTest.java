@@ -18,7 +18,6 @@ package com.github.seqware.queryengine.model.test;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBasePersistentBackEnd;
-import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
 import com.github.seqware.queryengine.system.test.VCFImportExportTest;
 import java.io.IOException;
 import org.junit.Test;

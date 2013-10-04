@@ -27,29 +27,23 @@ import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.log4j.Logger;
 
 /**
  * Implements the generic queries which independently decide on whether a
- * Feature is included in a result.
+ * Feature is included in a result. This kind of plugin will write its results to 
+ * a new feature set. 
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<Feature>, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
+public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<Collection<Feature>, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
 
     private CreateUpdateManager modelManager;
     private long count = 0;
-
-    /**
-     * <p>getFilter.</p>
-     *
-     * @return a
-     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
-     * object.
-     */
-    protected abstract FeatureFilter getFilter();
     
     @Override
     public void reduce(FeatureSet reduceKey, Iterable<FeatureSet> reduceValues, ReducerInterface<FeatureSet, FeatureSet> reducerInterface) {
@@ -58,16 +52,16 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<Collection<
     
     /**
      * {@inheritDoc}
+     *
      */
+    
     @Override
-    public void map(Collection<Feature> atom, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
         count++;
-
-        for (Feature f : atom) {
-            f.setManager(modelManager);
-            boolean match = getFilter().featurePasses(f, mapperInterface.getExt_parameters());
-            if (match) {
+        for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
+            for (Feature f : e.getValue()) {
+                f.setManager(modelManager);
                 results.add(f);
             }
         }

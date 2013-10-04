@@ -16,11 +16,9 @@
  */
 package com.github.seqware.queryengine.impl.protobufIO;
 
-import com.github.seqware.queryengine.dto.QESupporting.SGIDPB;
 import com.github.seqware.queryengine.dto.QueryEngine;
 import com.github.seqware.queryengine.dto.QueryEngine.GroupPB;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
 import com.github.seqware.queryengine.model.impl.AtomImpl;

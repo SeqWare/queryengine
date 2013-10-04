@@ -20,9 +20,6 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.QueryInterface.Location;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
-import java.util.Collection;
 
 /**
  * Retrieves features based on their chromosomal location.
@@ -34,14 +31,14 @@ public class FeaturesByRangePlugin extends FeaturesByFilterPlugin {
 
      /** {@inheritDoc} */
      @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesByRangePlugin.FeaturesByRangeFilter();
     }
     
     public static class FeaturesByRangeFilter implements FeatureFilter {
 
         @Override
-        public boolean featurePasses(Feature f, Object... parameters) {
+        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
             boolean match = false;
             Location location = (QueryInterface.Location) parameters[0];
             String structure = (String) parameters[1];

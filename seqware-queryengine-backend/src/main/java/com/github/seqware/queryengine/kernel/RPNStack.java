@@ -140,6 +140,23 @@ public class RPNStack implements Serializable {
             return tagSetRowKey;
         }
     }
+    
+    /**
+     * Represents tags whose occurrence is probed.
+     */
+    public static class FeatureSetTagOccurrence extends Parameter {
+
+        private String tagSetRowKey;
+
+        public FeatureSetTagOccurrence(String tagSetRowKey, String key) {
+            super(key);
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
+        }
+
+        public String getTagSetRowKey() {
+            return tagSetRowKey;
+        }
+    }
 
     /**
      * Represents tags whose value is retrieved
@@ -149,6 +166,23 @@ public class RPNStack implements Serializable {
         private String tagSetRowKey;
 
         public TagValue(String tagSetRowKey, String key) {
+            super(key);
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
+        }
+
+        public String getTagSetRowKey() {
+            return tagSetRowKey;
+        }
+    }
+    
+        /**
+     * Represents tags whose value is retrieved
+     */
+    public static class FeatureSetTagValue extends Parameter {
+
+        private String tagSetRowKey;
+
+        public FeatureSetTagValue(String tagSetRowKey, String key) {
             super(key);
             this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
         }
@@ -186,6 +220,40 @@ public class RPNStack implements Serializable {
         private Object value;
 
         public TagValuePresence(String tagSetRowKey, String name, Tag.ValueType type, Object value) {
+            super(name);
+            this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
+            this.type = type;
+            this.value = value;
+        }
+
+        public String getTagSetRowKey() {
+            return tagSetRowKey;
+        }
+
+        @Override
+        public final String getUniqueName() {
+            return this.getClass().getName() + "://" + this.getName() + "#" + getValue();
+        }
+
+        public Tag.ValueType getType() {
+            return this.type;
+        }
+
+        public Object getValue() {
+            return this.value;
+        }
+    }
+    
+    /**
+     * Represents tag/value pairs that should be present.
+     */
+    public static class FeatureSetTagValuePresence extends Parameter {
+
+        private String tagSetRowKey;
+        private Tag.ValueType type;
+        private Object value;
+
+        public FeatureSetTagValuePresence(String tagSetRowKey, String name, Tag.ValueType type, Object value) {
             super(name);
             this.tagSetRowKey = Constants.TRACK_TAGSET ? tagSetRowKey : null;
             this.type = type;
@@ -268,6 +336,7 @@ public class RPNStack implements Serializable {
      * @return Evaluation result when interpreting the stack contents in RPN.
      */
     public Object evaluate() {
+        
         List<Object> rpnStack = new LinkedList<Object>(this.stack);
         List<Object> operationArguments = new LinkedList<Object>();
 
@@ -326,6 +395,10 @@ public class RPNStack implements Serializable {
             }
         }
 
+        // allow empty RPNStacks to pass everything
+        if (operationArguments.isEmpty()){
+            return true;
+        }
         return operationArguments.remove(0);
     }
 
@@ -492,6 +565,9 @@ public class RPNStack implements Serializable {
             case SeqWareQueryLanguageParser.STRING:
                 arguments.add(new Constant(text.replaceFirst("^\"", "").replaceFirst("\"$", "")));
                 break;
+             case SeqWareQueryLanguageParser.NULL:
+                arguments.add(null);
+                break;
             case SeqWareQueryLanguageParser.NAMED_CONSTANT:
                 if (text.equals("STRAND_UNKNOWN")) {
                     arguments.add(new Constant(Feature.Strand.UNKNOWN));
@@ -517,7 +593,10 @@ public class RPNStack implements Serializable {
 
                 if (text.equals("tagValue")) {
                     arguments.add(new TagValue((String) functionTagSet.getValue(), (String) functionKey.getValue()));
-                } else {
+                } else if (text.equals("fsTagValue")) {
+                    arguments.add(new FeatureSetTagValue((String) functionTagSet.getValue(), (String) functionKey.getValue()));
+                } 
+                else {
                     throw new IllegalArgumentException("A two parameter function call of the following name is not known: " + text);
                 }
             }
@@ -530,7 +609,10 @@ public class RPNStack implements Serializable {
 
                 if (text.equals("tagOccurrence")) {
                     arguments.add(new TagOccurrence((String) functionTagSet.getValue(), (String) functionKey.getValue()));
-                } else if (text.equals("tagHierarchicalOccurrence")) {
+                } else if (text.equals("fsTagOccurrence")) {
+                    arguments.add(new FeatureSetTagOccurrence((String) functionTagSet.getValue(), (String) functionKey.getValue()));
+                }  
+                else if (text.equals("tagHierarchicalOccurrence")) {
                     throw new IllegalArgumentException("A tagHierarchialOccurence is not supported yet: " + text);
                     // TODO I don't know how to get the row key.
                     // arguments.add(new TagHierarchicalOccurrence(Compression.getSequenceOntologyAccessionSurrogate((String)functionArgument)), ...);
@@ -549,7 +631,11 @@ public class RPNStack implements Serializable {
                 if (text.equals("tagValuePresence")) {
                     // TODO: we can ignore type for now until we measure efficiency loss
                     arguments.add(new TagValuePresence((String) functionTagSet.getValue(), (String) functionKey.getValue(), null, functionValue.getValue()));
-                } else {
+                } else if (text.equals("fsTagValuePresence")) {
+                    // TODO: we can ignore type for now until we measure efficiency loss
+                    arguments.add(new FeatureSetTagValuePresence((String) functionTagSet.getValue(), (String) functionKey.getValue(), null, functionValue.getValue()));
+                }
+                else {
                     throw new IllegalArgumentException("A three parameter predicate call of the following name is not known: " + text);
                 }
             }

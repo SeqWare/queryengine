@@ -16,11 +16,24 @@
  */
 package com.github.seqware.queryengine.system;
 
+import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.impl.MRHBaseModelManager;
+import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
+import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryFuture;
+import com.github.seqware.queryengine.model.Reference;
+import com.github.seqware.queryengine.plugins.PluginInterface;
+import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.*;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 
 /**
@@ -88,5 +101,53 @@ public class Utility {
             throw ex;
         }
         return outputFile;
+    }
+
+    /**
+     * <p>dumpVCFFromFeatureSetID.</p>
+     *
+     * @param fSet a {@link com.github.seqware.queryengine.model.FeatureSet} object.
+     * @param file a {@link java.lang.String} object.
+     */
+    public static boolean dumpFromMapReducePlugin(String header, Reference ref, FeatureSet fSet, Class<? extends PluginInterface> arbitraryPlugin, String file, Object ... params) {
+        BufferedWriter outputStream = null;
+        try {
+            if (file != null) {
+                outputStream = new BufferedWriter(new FileWriter(file));
+            } else {
+                outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
+            }
+            if (header != null) {
+                outputStream.append(header);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(Utility.class.getName()).fatal("Exception thrown starting export to file:", e);
+            System.exit(-1);
+        }
+        if (SWQEFactory.getQueryInterface() instanceof MRHBasePersistentBackEnd) {
+            if (SWQEFactory.getModelManager() instanceof MRHBaseModelManager) {
+                try {
+                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, ref, params);
+                    File get = future.get();
+                    Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
+                    for (File f : listFiles) {
+                        BufferedReader in = new BufferedReader(new FileReader(f));
+                        IOUtils.copy(in, outputStream);
+                        in.close();
+                    }
+                    get.deleteOnExit();
+                    assert (outputStream != null);
+                    outputStream.flush();
+                    outputStream.close();
+                    return true;
+                } catch (IOException e) {
+                    Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
+                    System.exit(-1);
+                } catch (Exception e) {
+                    Logger.getLogger(VCFDumper.class.getName()).fatal("MapReduce exporting failed, falling-through to normal exporting to file", e);
+                }
+            }
+        }
+        return false;
     }
 }

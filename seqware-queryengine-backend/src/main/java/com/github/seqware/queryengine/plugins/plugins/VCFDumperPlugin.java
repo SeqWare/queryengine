@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
@@ -24,8 +25,8 @@ import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
@@ -65,8 +66,8 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     }
 
     @Override
-    public void map(Collection<Feature> collection, MapperInterface<SerializableText, SerializableText> mapperInterface) {
-        for (Feature f : collection) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+        for (Feature f : atoms.values().iterator().next()) {
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
             text.set(buffer.toString());     // we can only emit Writables...

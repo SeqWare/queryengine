@@ -57,7 +57,7 @@ constant
 	;
 	
 literal
-	:	INT | FLOAT | STRING
+	:	INT | FLOAT | STRING | NULL
 	;
 
 key_value_function
@@ -81,17 +81,21 @@ NAMED_CONSTANT
 	;
 	
 NAMED_FUNCTION
-	:	'tagValue'
+	:	'tagValue' | 'fsTagValue'
 	;
 	
 NAMED_TWO_PARAM_PREDICATE
-	:	'tagOccurrence' | 'tagHierarchicalOccurrence'
+	:	'tagOccurrence' | 'fsTagOccurrence' | 'tagHierarchicalOccurrence'
 	;
 	
 NAMED_THREE_PARAM_PREDICATE
-	:	'tagValuePresence'
+	:	'tagValuePresence' | 'fsTagValuePresence'
 	;
-			
+
+NULL 
+        :       ('null' | 'NULL')
+        ;	
+		
 ID
 	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
 	;

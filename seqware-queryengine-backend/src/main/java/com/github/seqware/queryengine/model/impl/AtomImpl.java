@@ -325,6 +325,12 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
         return new TagValueIterable(tags);//Factory.getBackEnd().getTags(this);
     }
     
+        /** {@inheritDoc} */
+    @Override
+    public Tag getTagByKey(String key) {
+        return getTagByKey((TagSet)null, key);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public Tag getTagByKey(TagSet tagSet, String key) {

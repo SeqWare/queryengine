@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
+import com.github.seqware.queryengine.model.FeatureSet;
 
 /**
  * <p>FeaturesAllPlugin class.</p>
@@ -28,14 +29,14 @@ public class FeaturesAllPlugin extends FeaturesByFilterPlugin {
 
     /** {@inheritDoc} */
     @Override
-    protected FeatureFilter getFilter() {
+    public FeatureFilter getFilter() {
         return new FeaturesAllPlugin.FeaturesAllFilter();
     }
 
     public static class FeaturesAllFilter implements FeatureFilter {
 
         @Override
-        public boolean featurePasses(Feature f, Object... parameters) {
+        public boolean featurePasses(FeatureSet set, Feature f, Object... parameters) {
             // everything passes
             return true;
         }
