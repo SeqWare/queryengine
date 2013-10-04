@@ -336,6 +336,7 @@ public class RPNStack implements Serializable {
      * @return Evaluation result when interpreting the stack contents in RPN.
      */
     public Object evaluate() {
+        
         List<Object> rpnStack = new LinkedList<Object>(this.stack);
         List<Object> operationArguments = new LinkedList<Object>();
 
@@ -394,6 +395,10 @@ public class RPNStack implements Serializable {
             }
         }
 
+        // allow empty RPNStacks to pass everything
+        if (operationArguments.isEmpty()){
+            return true;
+        }
         return operationArguments.remove(0);
     }
 

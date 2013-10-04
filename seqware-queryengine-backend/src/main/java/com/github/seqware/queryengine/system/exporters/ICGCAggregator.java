@@ -27,6 +27,7 @@ import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.plugins.DonorsToMutationsAndGenesAggregationPlugin;
 import com.github.seqware.queryengine.plugins.plugins.GenesToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.plugins.plugins.MutationsToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -98,7 +99,7 @@ public class ICGCAggregator {
         // aggregations of donors/project counts by mutation
         System.out.println("Finding Mutations to affected donors/project count aggregation");
         long start = new Date().getTime();
-        dumpAggregations("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, MutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] : null));
+        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, MutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] : null));
         long stop = new Date().getTime();
         float diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: "+diff);
@@ -106,7 +107,7 @@ public class ICGCAggregator {
         // aggregations of affected donors/projects count by gene
         System.out.println("Finding Genes to affected donors/project count aggregation");
         start = new Date().getTime();
-        dumpAggregations("GENE\tDONORS/PROJECTS_AFFECTED\n", ref, null, GenesToDonorsAggregationPlugin.class, (args.length == 4 ? args[2] : null));
+        Utility.dumpFromMapReducePlugin("GENE\tDONORS/PROJECTS_AFFECTED\n", ref, null, GenesToDonorsAggregationPlugin.class, (args.length == 4 ? args[2] : null));
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: "+diff);
@@ -114,7 +115,7 @@ public class ICGCAggregator {
         // aggregations of donors to total count SSM mutations for that donor
         System.out.println("Finding Donors to genes and mutations count aggregation");
         start = new Date().getTime();
-        dumpAggregations("DONORS\tGENES/MUTATIONS_AFFECTING\n", ref, null, DonorsToMutationsAndGenesAggregationPlugin.class, (args.length == 4 ? args[3] : null));
+        Utility.dumpFromMapReducePlugin("DONORS\tGENES/MUTATIONS_AFFECTING\n", ref, null, DonorsToMutationsAndGenesAggregationPlugin.class, (args.length == 4 ? args[3] : null));
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: "+diff);
@@ -130,61 +131,6 @@ public class ICGCAggregator {
      */
     public ICGCAggregator(String[] args) {
         this.args = args;
-    }
-
-
-    /**
-     * <p>dumpVCFFromFeatureSetID.</p>
-     *
-     * @param fSet a {@link com.github.seqware.queryengine.model.FeatureSet} object.
-     * @param file a {@link java.lang.String} object.
-     */
-    public static void dumpAggregations(String header, Reference ref, FeatureSet fSet, Class<? extends PluginInterface> arbitraryPlugin, String file) {
-        BufferedWriter outputStream = null;
-
-        try {
-            if (file != null) {
-                outputStream = new BufferedWriter(new FileWriter(file));
-            } else {
-                outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
-            }
-            outputStream.append(header);
-        } catch (IOException e) {
-            Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
-            System.exit(-1);
-        }
-
-        boolean caughtNonVCF = false;
-        boolean mrSuccess = false;
-        if (SWQEFactory.getQueryInterface() instanceof MRHBasePersistentBackEnd) {
-            // hack to use VCF MR
-            if (SWQEFactory.getModelManager() instanceof MRHBaseModelManager) {
-                try {
-                    // get a FeatureSet from the back-end
-                    QueryFuture<File> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, ref , null);
-                    File get = future.get();
-                    Collection<File> listFiles = FileUtils.listFiles(get, new WildcardFileFilter("part*"), DirectoryFileFilter.DIRECTORY);
-                    for(File f : listFiles){
-                        BufferedReader in = new BufferedReader(new FileReader(f));
-                        IOUtils.copy(in, outputStream);
-                        in.close();
-                    }
-                    get.deleteOnExit();
-                    assert(outputStream != null);
-                    outputStream.flush();
-                    outputStream.close();
-                    mrSuccess = true;
-                    System.out.println("SUCCESS");
-                } catch (IOException e) {
-                    // fail out on IO error
-                    Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
-                    System.exit(-1);
-                } catch(Exception e){
-                    Logger.getLogger(VCFDumper.class.getName()).fatal("MapReduce exporting failed, falling-through to normal exporting to file",e);
-                    // fall-through and do normal exporting if Map Reduce exporting fails
-                }
-            } // TODO: clearly this should be expanded to include closing database etc 
-        }
     }
 }
 

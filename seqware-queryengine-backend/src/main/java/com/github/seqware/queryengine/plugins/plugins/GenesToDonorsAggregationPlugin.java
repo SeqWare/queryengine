@@ -39,7 +39,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class GenesToDonorsAggregationPlugin extends MapReducePlugin<GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, File> {
+public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, GenesToDonorsAggregationPlugin.SerializableText, File> {
 
   private SerializableText text = new SerializableText();
   private SerializableText textKey = new SerializableText();
