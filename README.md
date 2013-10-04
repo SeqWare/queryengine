@@ -53,7 +53,7 @@ By default, this will land you on the default branch. You will want to check-out
 
 For example:
 
-	~$ cd seqware_github/
+	~$ cd queryengine/
 	~/seqware_github$ git checkout 1.0.4
 
 ### Building and Automated Testing 
