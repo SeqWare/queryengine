@@ -38,7 +38,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<Text, Text, Text, Text, File> {
+public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<Text, Text, Text, Text> {
 
   private Text text = new Text();
   private Text textKey = new Text();
@@ -51,14 +51,6 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
   @Override
   public Class getMapOutputValueClass() {
     return Text.class;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Object[] getInternalParameters() {
-    return new Object[0];
   }
 
   @Override

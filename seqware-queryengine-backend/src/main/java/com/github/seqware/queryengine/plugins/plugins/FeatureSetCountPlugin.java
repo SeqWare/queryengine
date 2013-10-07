@@ -32,15 +32,7 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeatureSetCountPlugin extends MapReducePlugin<Object, Object, Object, Object, Long> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] getInternalParameters() {
-        return new Object[0];
-    }
+public class FeatureSetCountPlugin extends MapReducePlugin<Object, Object, Object, Object> {
 
     @Override
     public ResultMechanism getResultMechanism() {

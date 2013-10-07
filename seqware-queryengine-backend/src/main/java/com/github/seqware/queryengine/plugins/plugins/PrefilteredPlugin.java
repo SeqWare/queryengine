@@ -16,8 +16,6 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
-
 /**
  * Implements the generic queries which independently decide on whether a
  * Feature is included in a result. This kind of plugin is generic and allows
@@ -26,8 +24,7 @@ import com.github.seqware.queryengine.plugins.MapReducePlugin;
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class PrefilteredPlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> 
-extends MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT>  {
+public interface PrefilteredPlugin{
 
     /**
      * <p>getFilter.</p>

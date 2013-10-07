@@ -20,6 +20,7 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<FeatureSet, FeatureSet, FeatureSet, FeatureSet, FeatureSet>  {
+public abstract class FeaturesByFilterPlugin extends MapReducePlugin<FeatureSet, FeatureSet, FeatureSet, FeatureSet> implements PrefilteredPlugin {
 
     private CreateUpdateManager modelManager;
     private long count = 0;
@@ -53,7 +54,6 @@ public abstract class FeaturesByFilterPlugin extends PrefilteredPlugin<FeatureSe
      * {@inheritDoc}
      *
      */
-    
     @Override
     public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();

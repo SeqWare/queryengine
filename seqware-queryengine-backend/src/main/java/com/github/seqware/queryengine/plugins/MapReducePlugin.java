@@ -14,7 +14,7 @@ import java.util.Map;
  * @author jbaran
  * @version $Id: $Id
  */
-public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> implements PluginInterface {
+public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT> implements PluginInterface {
 
     /**
      * Called during the map phase of map/reduce
