@@ -18,16 +18,13 @@ package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
+import com.github.seqware.queryengine.plugins.recipes.FilteredFileOutputPlugin;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
-import java.io.File;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * This plug-in implements a quick and dirty export using Map/Reduce
@@ -37,36 +34,19 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, VCFDumperPlugin.SerializableText, File> {
+public class VCFDumperPlugin extends FilteredFileOutputPlugin {
 
-    private SerializableText text = new SerializableText();
-    private SerializableText textKey = new SerializableText();
-
+    private Text text = new Text();
+    private Text textKey = new Text();
+    
+    /** {@inheritDoc} */
     @Override
-    public Class getMapOutputKeyClass() {
-        return SerializableText.class;
+    public FeatureFilter getFilter() {
+        return new FeaturesAllPlugin.FeaturesAllFilter();
     }
 
     @Override
-    public Class getMapOutputValueClass() {
-        return SerializableText.class;
-    }
-
-    @Override
-    public int getNumReduceTasks() {
-        return 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] getInternalParameters() {
-        return new Object[0];
-    }
-
-    @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
@@ -77,30 +57,9 @@ public class VCFDumperPlugin extends MapReducePlugin<VCFDumperPlugin.Serializabl
     }
 
     @Override
-    public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
-        for (SerializableText val : values) {
+    public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
+        for (Text val : values) {
             reducerInterface.write(val, text);
         }
-    }
-
-    @Override
-    public ResultMechanism getResultMechanism() {
-        return ResultMechanism.FILE;
-    }
-
-    @Override
-    public Class<?> getResultClass() {
-        return File.class;
-    }
-    
-    public static class SerializableText extends Text implements Serializable{
-        public SerializableText(){
-            super();
-        }
-    }
-    
-    @Override
-    public Class<?> getOutputClass() {
-        return TextOutputFormat.class;
     }
 }

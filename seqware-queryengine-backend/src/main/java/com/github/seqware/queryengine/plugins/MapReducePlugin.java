@@ -1,10 +1,11 @@
 package com.github.seqware.queryengine.plugins;
 
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * An abstracted map-reduce interface. These interfaces will eventually restrict
@@ -15,15 +16,14 @@ import org.apache.commons.lang.SerializationUtils;
  * @author jbaran
  * @version $Id: $Id
  */
-public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUCEVALUEIN, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> implements PluginInterface {
+public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT> implements PluginInterface {
 
     /**
-     * Mapping implementation that singles out desired atoms into a mapped set.
-     *
-     * @return a ReturnValue object.
+     * Called during the map phase of map/reduce
+     * @param atoms a map between featuresets found and collections of atoms available at a particular position
+     * @param mapperInterface interface that allows the plug-in to emit keys and values for use by the reducer
      */
-    
-    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPKEYOUT, MAPVALUEOUT> mapperInterface);
+    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPREDUCEKEY, MAPREDUCEVALUE> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.
@@ -33,7 +33,7 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
      * step.
      * @return a ReturnValue object.
      */
-    public abstract void reduce(REDUCEKEYIN reduceKey, Iterable<REDUCEVALUEIN> reduceValues, ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> reducerInterface);
+    public abstract void reduce(MAPREDUCEKEY reduceKey, Iterable<MAPREDUCEVALUE> reduceValues, ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> reducerInterface);
 
     @Override
     public Object[] getInternalParameters(){
@@ -61,20 +61,6 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
          * empty method that can be overridden
          */
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public byte[] handleSerialization(Object... parameters) {
-        byte[] serialize = SerializationUtils.serialize(parameters);
-        return serialize;
-    }
-    
-    /** {@inheritDoc} */
-     @Override
-    public Object[] handleDeserialization(byte[] data){
-        Object[] result = (Object[]) SerializationUtils.deserialize(data);
-        return result;
-    }
     
     /**
      * <p>mapperCleanup.</p>
@@ -99,59 +85,27 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     }
 
     @Override
-    public ReturnValue test() {
+    public boolean test() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
-    public ReturnValue verifyParameters() {
+    public boolean verifyParameters() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
-    public ReturnValue verifyInput() {
+    public boolean cleanup() {
         /**
          * empty method that can be overridden
          */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue filterInit() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue filter() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue verifyOutput() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
-    }
-
-    @Override
-    public ReturnValue cleanup() {
-        /**
-         * empty method that can be overridden
-         */
-        return new ReturnValue();
+        return true;
     }
 
     @Override
@@ -163,29 +117,27 @@ public abstract class MapReducePlugin<MAPKEYOUT, MAPVALUEOUT, REDUCEKEYIN, REDUC
     public void init(FeatureSet set, Object... parameters) {
         /** .. */
     }
-    
-    public Class getMapperClass() {
+
+    /**
+     * Silly hack due to how Java Generic are type-erased at compile time. 
+     * This class should match MAPREDUCEKEY (if actually emitting keys/values for use by a reducer)
+     * @return 
+     */
+    public Class getMapOutputKeyClass(){
         return null;
     }
 
-    public Class getReducerClass() {
-        return null;
-    }
-
-    public Class getMapOutputKeyClass() {
-        return null;
-    }
-
-    public Class getMapOutputValueClass() {
+    /**
+     * Silly hack due to how Java Generic are type-erased at compile time. 
+     * This class should match MAPREDUCEVALUE (if actually emitting keys/values for use by a reducer)
+     * @return 
+     */
+    public Class getMapOutputValueClass(){
         return null;
     }
 
     @Override
     public Class<?> getOutputClass() {
         return null;
-    }
-
-    public int getNumReduceTasks() {
-        return 0;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 SeqWare
+ * Copyright (C) 2013 SeqWare
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,28 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.runners;
 
-import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import java.util.List;
 
 /**
- * Interface for matching functions that we can quickly use in both in-memory and M/R plug-ins.
- *
+ * Internal back-end interface used to transfer variables from and to various kinds of plugin runners
  * @author dyuen
- * @version $Id: $Id
  */
-public interface FeatureFilter {
+public interface JobRunParameterInterface {
     
-    /**
-     * <p>featurePasses.</p>
-     *
-     * @param set the value of set
-     * @param f a {@link com.github.seqware.queryengine.model.Feature} object.
-     * @param parameters a {@link java.lang.Object} object.
-     * @return a boolean.
-     */
+    public Object[] getExt_parameters();
+
+    public Object[] getInt_parameters();
+
+    public List<FeatureSet> getSourceSets();
+
+    public FeatureSet getDestSet();
     
-    public boolean featurePasses(FeatureSet set, Feature f, Object... parameters);
-    
+    public void setExt_parameters(Object[] params);
+
+    public void setInt_parameters(Object[] params);
+
+    public void setSourceSets(List<FeatureSet> set);
+
+    public void setDestSet(FeatureSet set);
 }
