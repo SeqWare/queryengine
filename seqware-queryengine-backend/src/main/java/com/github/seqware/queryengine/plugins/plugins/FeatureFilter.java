@@ -18,7 +18,6 @@ package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
-import java.io.Serializable;
 
 /**
  * Interface for matching functions that we can quickly use in both in-memory and M/R plug-ins.
@@ -26,7 +25,7 @@ import java.io.Serializable;
  * @author dyuen
  * @version $Id: $Id
  */
-public interface FeatureFilter extends Serializable{
+public interface FeatureFilter {
     
     /**
      * <p>featurePasses.</p>

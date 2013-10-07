@@ -18,11 +18,18 @@ package com.github.seqware.queryengine.plugins;
 
 
 /**
- *
+ * This wraps the Hadoop context object, allowing us to hopefully cleanly transfer
+ * our plugins to some other MapReduce-like framework.
+ * 
  * @author dyuen
  */
 public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterface {
 
+    /**
+     * Emit keys and values for passing onto the reducer
+     * @param textKey
+     * @param text 
+     */
     public void write(KEYOUT textKey, VALUEOUT text);
 
     /**
@@ -33,6 +40,9 @@ public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterf
         ROWS
     }
 
+    /**
+     * Increment the row counter
+     */
     public void incrementCounter();
     
 

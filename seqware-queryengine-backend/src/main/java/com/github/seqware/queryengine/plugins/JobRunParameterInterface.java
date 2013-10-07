@@ -20,10 +20,11 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.List;
 
 /**
- *
+ * Internal back-end interface used to transfer variables from and to various kinds of plugin runners
  * @author dyuen
  */
 public interface JobRunParameterInterface {
+    
     public Object[] getExt_parameters();
 
     public Object[] getInt_parameters();

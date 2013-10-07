@@ -21,9 +21,7 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
-import com.github.seqware.queryengine.plugins.plugins.MutationsToDonorsAggregationPlugin.SerializableText;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,19 +37,19 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
+public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<Text, Text, Text, Text, File> {
 
-    private SerializableText text = new SerializableText();
-    private SerializableText textKey = new SerializableText();
+    private Text text = new Text();
+    private Text textKey = new Text();
     
     @Override
     public Class getMapOutputKeyClass() {
-        return SerializableText.class;
+        return Text.class;
     }
 
     @Override
     public Class getMapOutputValueClass() {
-        return SerializableText.class;
+        return Text.class;
     }
 
     /**
@@ -63,7 +61,7 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
     }
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
       // map is varID string (looks like ICGC mutation?) ->   donor::project
       HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
       for(FeatureSet fs : atoms.keySet()) {
@@ -107,8 +105,8 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
     }
     
     @Override
-    public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
-        for (SerializableText val : values) {
+    public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
+        for (Text val : values) {
           String[] valArr = val.toString().split("\t");
           String[] fsArr = valArr[2].split(",");
           String newFeatStr = "";
@@ -133,12 +131,6 @@ public class MutationsToDonorsAggregationPlugin extends PrefilterByAttributesPlu
     @Override
     public Class<?> getResultClass() {
         return File.class;
-    }
-    
-    public static class SerializableText extends Text {
-        public SerializableText(){
-            super();
-        }
     }
     
     @Override

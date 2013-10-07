@@ -28,8 +28,16 @@ import java.io.Serializable;
  */
 public interface PluginRunnerInterface<ResultType> extends Serializable{
         
+    /**
+     * Blocking call that retrieves the results of a call to a plug-in
+     * @return 
+     */
     public ResultType get();
 
+    /**
+     * Get the backing plugin for this runner
+     * @return 
+     */
     public PluginInterface getPlugin();
 
 }

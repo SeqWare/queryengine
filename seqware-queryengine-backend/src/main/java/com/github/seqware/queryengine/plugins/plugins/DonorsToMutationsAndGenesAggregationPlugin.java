@@ -19,12 +19,9 @@ package com.github.seqware.queryengine.plugins.plugins;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
-import com.github.seqware.queryengine.plugins.plugins.DonorsToMutationsAndGenesAggregationPlugin.SerializableText;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,19 +38,19 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
+public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttributesPlugin<Text, Text, Text, Text, File> {
 
-  private SerializableText text = new SerializableText();
-  private SerializableText textKey = new SerializableText();
+  private Text text = new Text();
+  private Text textKey = new Text();
 
   @Override
   public Class getMapOutputKeyClass() {
-    return SerializableText.class;
+    return Text.class;
   }
 
   @Override
   public Class getMapOutputValueClass() {
-    return SerializableText.class;
+    return Text.class;
   }
 
   /**
@@ -65,7 +62,7 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
   }
 
   @Override
-  public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+  public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
     
     // the key is donorID, the value is a hash of mutation ID -> geneArray
     Map<FeatureSet, HashMap<String, ArrayList<String>>> results = new HashMap<FeatureSet, HashMap<String, ArrayList<String>>>();
@@ -132,13 +129,13 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
   }
 
   @Override
-  public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
+  public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
     // key is feature set, value is mutation->gene that can just be cat'd
-    SerializableText newVal = new SerializableText();
+    Text newVal = new Text();
     StringBuilder newValSB = new StringBuilder();
     newValSB.append(key).append("\t");
     boolean first = true;
-    for (SerializableText val : values) {
+    for (Text val : values) {
       if (first) {
         first = false;
       } else {
@@ -158,13 +155,6 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends PrefilterByAttri
   @Override
   public Class<?> getResultClass() {
     return File.class;
-  }
-
-  public static class SerializableText extends Text {
-
-    public SerializableText() {
-      super();
-    }
   }
 
   @Override

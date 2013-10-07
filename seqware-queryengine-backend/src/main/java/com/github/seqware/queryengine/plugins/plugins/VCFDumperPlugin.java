@@ -21,7 +21,6 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
-import com.github.seqware.queryengine.plugins.plugins.VCFDumperPlugin.SerializableText;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import java.io.File;
 import java.io.Serializable;
@@ -38,19 +37,19 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class VCFDumperPlugin extends MapReducePlugin<SerializableText, SerializableText, SerializableText, SerializableText, File> {
+public class VCFDumperPlugin extends MapReducePlugin<Text, Text, Text, Text, File> {
 
-    private SerializableText text = new SerializableText();
-    private SerializableText textKey = new SerializableText();
+    private Text text = new Text();
+    private Text textKey = new Text();
 
     @Override
     public Class getMapOutputKeyClass() {
-        return SerializableText.class;
+        return Text.class;
     }
 
     @Override
     public Class getMapOutputValueClass() {
-        return SerializableText.class;
+        return Text.class;
     }
 
     /**
@@ -62,7 +61,7 @@ public class VCFDumperPlugin extends MapReducePlugin<SerializableText, Serializa
     }
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<SerializableText, SerializableText> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
@@ -73,8 +72,8 @@ public class VCFDumperPlugin extends MapReducePlugin<SerializableText, Serializa
     }
 
     @Override
-    public void reduce(SerializableText key, Iterable<SerializableText> values, ReducerInterface<SerializableText, SerializableText> reducerInterface) {
-        for (SerializableText val : values) {
+    public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
+        for (Text val : values) {
             reducerInterface.write(val, text);
         }
     }
@@ -87,12 +86,6 @@ public class VCFDumperPlugin extends MapReducePlugin<SerializableText, Serializa
     @Override
     public Class<?> getResultClass() {
         return File.class;
-    }
-    
-    public static class SerializableText extends Text implements Serializable{
-        public SerializableText(){
-            super();
-        }
     }
     
     @Override

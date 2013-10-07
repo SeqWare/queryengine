@@ -17,11 +17,10 @@ import java.util.Map;
 public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT, RESULT> implements PluginInterface {
 
     /**
-     * Mapping implementation that singles out desired atoms into a mapped set.
-     *
-     * @return a ReturnValue object.
+     * Called during the map phase of map/reduce
+     * @param atoms a map between featuresets found and collections of atoms available at a particular position
+     * @param mapperInterface interface that allows the plug-in to emit keys and values for use by the reducer
      */
-    
     public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPREDUCEKEY, MAPREDUCEVALUE> mapperInterface);
 
     /**
@@ -116,20 +115,22 @@ public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT
     public void init(FeatureSet set, Object... parameters) {
         /** .. */
     }
-    
-    public Class getMapperClass() {
+
+    /**
+     * Silly hack due to how Java Generic are type-erased at compile time. 
+     * This class should match MAPREDUCEKEY (if actually emitting keys/values for use by a reducer)
+     * @return 
+     */
+    public Class getMapOutputKeyClass(){
         return null;
     }
 
-    public Class getReducerClass() {
-        return null;
-    }
-
-    public Class getMapOutputKeyClass() {
-        return null;
-    }
-
-    public Class getMapOutputValueClass() {
+    /**
+     * Silly hack due to how Java Generic are type-erased at compile time. 
+     * This class should match MAPREDUCEVALUE (if actually emitting keys/values for use by a reducer)
+     * @return 
+     */
+    public Class getMapOutputValueClass(){
         return null;
     }
 
