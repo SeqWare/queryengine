@@ -4,7 +4,6 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * An abstracted map-reduce interface. These interfaces will eventually restrict
@@ -60,20 +59,6 @@ public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT
         /**
          * empty method that can be overridden
          */
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public byte[] handleSerialization(Object... parameters) {
-        byte[] serialize = SerializationUtils.serialize(parameters);
-        return serialize;
-    }
-    
-    /** {@inheritDoc} */
-     @Override
-    public Object[] handleDeserialization(byte[] data){
-        Object[] result = (Object[]) SerializationUtils.deserialize(data);
-        return result;
     }
     
     /**

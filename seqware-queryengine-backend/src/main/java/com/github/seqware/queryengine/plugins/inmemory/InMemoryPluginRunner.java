@@ -22,21 +22,26 @@ import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
+import com.github.seqware.queryengine.plugins.JobRunParameterInterface;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
+import static com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner.EXT_PARAMETERS;
+import static com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner.serializeParametersToString;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.collect.Iterables;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.SerializationUtils;
+import net.sourceforge.seqware.common.util.Rethrow;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Job;
 
 /**
  * Base class for all in-memory plug-in runners.
@@ -44,7 +49,7 @@ import org.apache.commons.lang.SerializationUtils;
  * @author dyuen
  * @version $Id: $Id
  */
-public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInterface<ResultType>, MapperInterface, ReducerInterface {
+public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInterface<ResultType>, MapperInterface, ReducerInterface, JobRunParameterInterface {
 
     private PluginInterface pluginInterface;
     private Long counter = 0L;
@@ -55,10 +60,10 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     private FeatureSet destSet;
 
     public InMemoryPluginRunner(PluginInterface pluginInterface, Reference reference, List<FeatureSet> inputSet, Object[] parameters) {
-        if (reference != null){
+        if (reference != null) {
             throw new UnsupportedOperationException();
         }
-        
+
         this.pluginInterface = pluginInterface;
         CreateUpdateManager manager = SWQEFactory.getModelManager();
         //outputSet should attach to the original reference
@@ -72,40 +77,39 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
         byte[] dSet = SWQEFactory.getSerialization().serialize(outputSet);
         // pretend to serialize parameters 
         this.serializedParameters = MRHBasePluginRunner.serializeParametersToString(parameters, pluginInterface, sSet, dSet);
-
         // pretend to de-serialize 
-        final String externalParameters = serializedParameters[MRHBasePluginRunner.EXTERNAL_PARAMETERS];
-        if (externalParameters != null && !externalParameters.isEmpty()) {
-            this.ext_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters));
+        Configuration conf = new Configuration();
+        String[] str_params = serializeParametersToString(parameters, pluginInterface, sSet, dSet);
+        conf.setStrings(EXT_PARAMETERS, str_params);
+        Job job = null;
+        try {
+            job = new Job(conf);
+        } catch (IOException ex) {
+            Rethrow.rethrow(ex);
         }
-        final String internalParameters = serializedParameters[MRHBasePluginRunner.INTERNAL_PARAMETERS];
-        if (internalParameters != null && !internalParameters.isEmpty()) {
-            this.int_parameters = (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters));
-        }
-        final String sourceSetParameter = serializedParameters[MRHBasePluginRunner.NUM_AND_SOURCE_FEATURE_SETS];
-        if (sourceSetParameter != null && !sourceSetParameter.isEmpty()) {
-            List<FeatureSet> sSets = MRHBasePluginRunner.convertBase64StrToFeatureSets(sourceSetParameter);
-            this.sourceSet = sSets;
-        }
-        final String destSetParameter = serializedParameters[MRHBasePluginRunner.DESTINATION_FEATURE_SET];
-        if (destSetParameter != null && !destSetParameter.isEmpty()) {
-            this.destSet = SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class);
-        }
+        Class plugin = MRHBasePluginRunner.transferConfiguration(job, this);
 
         // this is not currently asynchronous
         if (pluginInterface instanceof MapReducePlugin) {
-            MapReducePlugin mrPlugin = (MapReducePlugin) pluginInterface;
+            MapReducePlugin mrPlugin = null;
+            try {
+                mrPlugin = (MapReducePlugin) plugin.newInstance();
+            } catch (InstantiationException ex) {
+                Rethrow.rethrow(ex);
+            } catch (IllegalAccessException ex) {
+                Rethrow.rethrow(ex);
+            }
 
             mrPlugin.mapInit(this);
             Map<FeatureSet, Collection<Feature>> map = new HashMap<FeatureSet, Collection<Feature>>();
-            for(FeatureSet set : inputSet){
+            for (FeatureSet set : inputSet) {
                 List<Feature> list = new ArrayList();
                 Iterables.addAll(list, set);
                 map.put(set, list);
             }
             // mimic filtering 
             map = MRHBasePluginRunner.handlePreFilteredPlugins(map, mrPlugin, this.ext_parameters);
-            
+
             mrPlugin.map(map, this);
             mrPlugin.mapCleanup();
 
@@ -115,7 +119,7 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
                 mrPlugin.reduce(null, null, this);
             }
             mrPlugin.reduceCleanup();
-            
+
             mrPlugin.cleanup();
         } else {
             throw new UnsupportedOperationException("Scan plugins not supported yet");
@@ -192,6 +196,4 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
     public void setDestSet(FeatureSet set) {
         this.destSet = set;
     }
-
-
 }

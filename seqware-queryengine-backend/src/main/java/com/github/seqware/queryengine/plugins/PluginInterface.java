@@ -68,14 +68,14 @@ public interface PluginInterface extends Serializable {
     public boolean verifyParameters();
 
     /**
-     * <p>cleanup.</p>
+     * Not currently used. Could be used to verify that a plugin properly tears down its environment.
      *
      * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
      */ 
     public boolean cleanup();
     
     /**
-     * Non-blocking call to determine whether the result is ready
+     * Non-blocking call to determine whether the result is ready.
      *
      * @return a boolean.
      */
@@ -83,7 +83,8 @@ public interface PluginInterface extends Serializable {
     
     /**
      * Used by the query engine back-end to store parameters for a plugin. 
-     * These parameters allow us to initialize a plugin when running on a remote cluster.
+     * These parameters allow us to initialize a plugin when running on a remote cluster. 
+     * This group of parameters is intended for use the back-end internally. 
      * @return 
      */
     public Object[] getInternalParameters();
@@ -107,18 +108,4 @@ public interface PluginInterface extends Serializable {
      * @return 
      */
     public Class<?> getOutputClass();
-    
-    /**
-     * Given an arbitrary set of parameters as input to the plugin, we need to know how to serialize them. 
-     * @param parameters
-     * @return 
-     */
-    public byte[] handleSerialization(Object... parameters);
-    
-    /**
-     * Matches handleSerialization, given a blob of data, deserialize into parameter objects. 
-     * @param data
-     * @return 
-     */
-    public Object[] handleDeserialization(byte[] data);
 }

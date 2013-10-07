@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import net.sourceforge.seqware.common.util.Rethrow;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -342,8 +344,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static String[] serializeParametersToString(Object[] parameters, PluginInterface mapReducePlugin, byte[][] sSet, byte[] dSet) {
         int num_guaranteed_parameters = 6;
         String[] str_params = new String[num_guaranteed_parameters];
-        byte[] ext_serials = mapReducePlugin.handleSerialization(parameters);
-        byte[] int_serials = mapReducePlugin.handleSerialization(mapReducePlugin.getInternalParameters());
+        byte[] ext_serials = SerializationUtils.serialize(parameters);
+        byte[] int_serials = SerializationUtils.serialize(mapReducePlugin.getInternalParameters());
         str_params[EXTERNAL_PARAMETERS] = Base64.encodeBase64String(ext_serials);
         str_params[INTERNAL_PARAMETERS] = Base64.encodeBase64String(int_serials);
         ByteBuffer bBuffer = ByteBuffer.allocate(1024*1024); // one MB should be enough for now
@@ -354,8 +356,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
         str_params[NUM_AND_SOURCE_FEATURE_SETS] = Base64.encodeBase64String(bBuffer.array());
         str_params[DESTINATION_FEATURE_SET] = Base64.encodeBase64String(dSet);
-        str_params[SETTINGS_MAP] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(Constants.getSETTINGS_MAP()));
-        str_params[PLUGIN_CLASS] = Base64.encodeBase64String(mapReducePlugin.handleSerialization(mapReducePlugin));
+        str_params[SETTINGS_MAP] = Base64.encodeBase64String(SerializationUtils.serialize(new Object[]{Constants.getSETTINGS_MAP()}));
+        str_params[PLUGIN_CLASS] = Base64.encodeBase64String(SerializationUtils.serialize(mapReducePlugin.getClass()));
 
         return str_params;
     }
@@ -432,11 +434,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void setup(Reducer.Context context) {
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Setting up reducer");
-            String pluginParameter = MRHBasePluginRunner.transferConfiguration(context, this);
-            if (pluginParameter != null && !pluginParameter.isEmpty()) {
-                Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
-                // yuck! I need a cleaner way to do this when done refactoring
-                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[EXTERNAL_PARAMETERS];
+            Class plugin = MRHBasePluginRunner.transferConfiguration(context, this);
+            try {
+                mapReducePlugin = (MapReducePlugin) plugin.newInstance();
+            } catch (InstantiationException ex) {
+                Rethrow.rethrow(ex);
+            } catch (IllegalAccessException ex) {
+                Rethrow.rethrow(ex);
             }
             mapReducePlugin.reduceInit();
         }
@@ -556,11 +560,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
         private void baseMapperSetup(Context context) {
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).info("Setting up mapper");
-            String pluginParameter = MRHBasePluginRunner.transferConfiguration(context, this);
-            if (pluginParameter != null && !pluginParameter.isEmpty()) {
-                Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
-                // yuck! I need a cleaner way to do this when done refactoring
-                mapReducePlugin = (MapReducePlugin) ((Object[]) deserialize)[EXTERNAL_PARAMETERS];
+            Class plugin = MRHBasePluginRunner.transferConfiguration(context, this);
+            try {
+                mapReducePlugin = (MapReducePlugin) plugin.newInstance();
+            } catch (InstantiationException ex) {
+                Rethrow.rethrow(ex);
+            } catch (IllegalAccessException ex) {
+                Rethrow.rethrow(ex);
             }
         }
 
@@ -585,7 +591,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         }
     }
 
-    public static String transferConfiguration(JobContext context, JobRunParameterInterface inter) {
+    public static Class transferConfiguration(JobContext context, JobRunParameterInterface inter) {
         Configuration conf = context.getConfiguration();
         String[] strings = conf.getStrings(MRHBasePluginRunner.EXT_PARAMETERS);
         Logger.getLogger(PluginRunnerMapper.class.getName()).info("QEMapper configured with: host: " + Constants.Term.HBASE_PROPERTIES.getTermValue(Map.class).toString() + " namespace: " + Constants.Term.NAMESPACE.getTermValue(String.class));
@@ -617,7 +623,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             inter.setDestSet(SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class));
         }
         final String pluginParameter = strings[PLUGIN_CLASS];
-        return pluginParameter;
+        if (pluginParameter != null && !pluginParameter.isEmpty()) {
+            Object deserialize = SerializationUtils.deserialize(Base64.decodeBase64(pluginParameter));
+            Class plugin = (Class)deserialize;
+            return plugin;
+        }
+        throw new RuntimeException("Could not determine plugin to run");
     }
 
      public static Map<FeatureSet, Collection<Feature>> handlePreFilteredPlugins(Map<FeatureSet, Collection<Feature>> consolidatedMap, MapReducePlugin mapReducePlugin, Object[] ext_parameters) {

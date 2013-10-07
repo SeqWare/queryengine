@@ -24,7 +24,6 @@ import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.ReducerInterface;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
 /**
@@ -34,15 +33,6 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
  * @version $Id: $Id
  */
 public class FeatureSetCountPlugin extends MapReducePlugin<Object, Object, Object, Object, Long> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] handleSerialization(Object... parameters) {
-        byte[] serialize = SerializationUtils.serialize(parameters);
-        return serialize;
-    }
 
     /**
      * {@inheritDoc}
