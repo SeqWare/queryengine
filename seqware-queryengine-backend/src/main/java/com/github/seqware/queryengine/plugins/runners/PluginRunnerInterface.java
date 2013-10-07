@@ -14,24 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.runners;
+
+import com.github.seqware.queryengine.plugins.PluginInterface;
+import java.io.Serializable;
 
 /**
- * Implements the generic queries which independently decide on whether a
- * Feature is included in a result. This kind of plugin is generic and allows
- * the implementor to specify an output format.
- *
+ * Base interface for plug-in runners.
+ * 
+ * Plug-in runners perform the actual task of running plug-ins, hiding away the 
+ * details of interacting with specific backend types. 
+ * 
  * @author dyuen
- * @version $Id: $Id
  */
-public interface PrefilteredPlugin{
+public interface PluginRunnerInterface<ResultType> extends Serializable{
+        
+    /**
+     * Blocking call that retrieves the results of a call to a plug-in
+     * @return 
+     */
+    public ResultType get();
 
     /**
-     * <p>getFilter.</p>
-     *
-     * @return a
-     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
-     * object.
+     * Get the backing plugin for this runner
+     * @return 
      */
-    public abstract FeatureFilter getFilter();
+    public PluginInterface getPlugin();
+
 }

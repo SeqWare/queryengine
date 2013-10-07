@@ -16,28 +16,24 @@
  */
 package com.github.seqware.queryengine.plugins;
 
-import java.io.Serializable;
+import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
 
 /**
- * Base interface for plug-in runners.
- * 
- * Plug-in runners perform the actual task of running plug-ins, hiding away the 
- * details of interacting with specific backend types. 
- * 
+ * Implements the generic queries which independently decide on whether a
+ * Feature is included in a result. This kind of plugin is generic and allows
+ * the implementor to specify an output format.
+ *
  * @author dyuen
+ * @version $Id: $Id
  */
-public interface PluginRunnerInterface<ResultType> extends Serializable{
-        
-    /**
-     * Blocking call that retrieves the results of a call to a plug-in
-     * @return 
-     */
-    public ResultType get();
+public interface PrefilteredPlugin{
 
     /**
-     * Get the backing plugin for this runner
-     * @return 
+     * <p>getFilter.</p>
+     *
+     * @return a
+     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
+     * object.
      */
-    public PluginInterface getPlugin();
-
+    public abstract FeatureFilter getFilter();
 }

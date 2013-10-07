@@ -30,6 +30,8 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
+import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
+import com.github.seqware.queryengine.plugins.recipes.FilteredFeatureSetOutputPlugin;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +46,7 @@ import java.util.Map;
  * @author jbaran
  * @version $Id: $Id
  */
-public class FeaturesByAttributesPlugin extends FeaturesByFilterPlugin {
+public class FeaturesByAttributesPlugin extends FilteredFeatureSetOutputPlugin {
 
     /** {@inheritDoc} */
     @Override

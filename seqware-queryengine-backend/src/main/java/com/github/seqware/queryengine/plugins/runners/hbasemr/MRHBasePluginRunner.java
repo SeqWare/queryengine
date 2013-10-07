@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.hbasemr;
+package com.github.seqware.queryengine.plugins.runners.hbasemr;
 
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
@@ -28,15 +28,15 @@ import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
-import com.github.seqware.queryengine.plugins.JobRunParameterInterface;
+import com.github.seqware.queryengine.plugins.runners.JobRunParameterInterface;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.runners.PluginRunnerInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
-import com.github.seqware.queryengine.plugins.plugins.PrefilteredPlugin;
+import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

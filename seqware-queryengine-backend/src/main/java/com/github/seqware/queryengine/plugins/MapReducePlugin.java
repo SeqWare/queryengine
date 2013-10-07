@@ -1,5 +1,7 @@
 package com.github.seqware.queryengine.plugins;
 
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.util.Collection;

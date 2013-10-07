@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
+import com.github.seqware.queryengine.plugins.recipes.FilteredFeatureSetOutputPlugin;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
@@ -28,7 +29,7 @@ import org.apache.commons.lang.ArrayUtils;
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeaturesByTagPlugin extends FeaturesByFilterPlugin {
+public class FeaturesByTagPlugin extends FilteredFeatureSetOutputPlugin {
 
     /** {@inheritDoc} */
     @Override

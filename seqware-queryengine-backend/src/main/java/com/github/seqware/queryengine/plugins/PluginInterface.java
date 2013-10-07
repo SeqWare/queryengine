@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.plugins;
 
+import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.io.Serializable;
 

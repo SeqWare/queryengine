@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.contribs;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
-import java.io.File;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
+import com.github.seqware.queryengine.plugins.recipes.FilteredFileOutputPlugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * This plug-in implements a quick and dirty export using Map/Reduce
@@ -37,20 +36,10 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<Text, Text, Text, Text> {
+public class GenesToDonorsAggregationPlugin extends FilteredFileOutputPlugin {
 
   private Text text = new Text();
   private Text textKey = new Text();
-
-  @Override
-  public Class getMapOutputKeyClass() {
-    return Text.class;
-  }
-
-  @Override
-  public Class getMapOutputValueClass() {
-    return Text.class;
-  }
 
   @Override
   public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
@@ -129,20 +118,5 @@ public class GenesToDonorsAggregationPlugin extends PrefilterByAttributesPlugin<
     Text newVal = new Text();
     newVal.set(key.toString() + "\t" + newFeatStr);
     reducerInterface.write(newVal, null);
-  }
-
-  @Override
-  public ResultMechanism getResultMechanism() {
-    return ResultMechanism.FILE;
-  }
-
-  @Override
-  public Class<?> getResultClass() {
-    return File.class;
-  }
-
-  @Override
-  public Class<?> getOutputClass() {
-    return TextOutputFormat.class;
   }
 }

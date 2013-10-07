@@ -14,36 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins;
-
+package com.github.seqware.queryengine.plugins.runners;
 
 /**
  * This wraps the Hadoop context object, allowing us to hopefully cleanly transfer
  * our plugins to some other MapReduce-like framework.
- * 
  * @author dyuen
  */
-public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterface {
-
+public interface ReducerInterface<REDUCEKEYOUT, REDUCEVALUEOUT> extends JobRunParameterInterface {
     /**
-     * Emit keys and values for passing onto the reducer
-     * @param textKey
+     * Emit keys and values from the reducer
+     * @param val
      * @param text 
      */
-    public void write(KEYOUT textKey, VALUEOUT text);
+    public void write(REDUCEKEYOUT val, REDUCEVALUEOUT text);
 
-    /**
-     * Counter enumeration to count the actual rows.
-     */
-    public static enum Counters {
-
-        ROWS
-    }
-
-    /**
-     * Increment the row counter
-     */
-    public void incrementCounter();
     
-
 }

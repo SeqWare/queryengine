@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.recipes;
 
+import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,14 +34,14 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.log4j.Logger;
 
 /**
- * Implements the generic queries which independently decide on whether a
- * Feature is included in a result. This kind of plugin will write its results to 
- * a new feature set. 
+ * This kind of plug-in will write its results to a new feature set. 
+ * Implement this class and the filter function in order to simply create a new smaller feature set from 
+ * an existing feature set. 
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class FeaturesByFilterPlugin extends MapReducePlugin<FeatureSet, FeatureSet, FeatureSet, FeatureSet> implements PrefilteredPlugin {
+public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<FeatureSet, FeatureSet, FeatureSet, FeatureSet> implements PrefilteredPlugin {
 
     private CreateUpdateManager modelManager;
     private long count = 0;
@@ -66,7 +67,7 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<FeatureSet,
         }
         mapperInterface.getDestSet().add(results);
         if (count % 1000 == 0) {
-            Logger.getLogger(FeaturesByFilterPlugin.class.getName()).info(new Date().toString() + " with total lines so far: " + count);
+            Logger.getLogger(FilteredFeatureSetOutputPlugin.class.getName()).info(new Date().toString() + " with total lines so far: " + count);
         }
         // TODO: we only seem to be able to keep about a quarter of the number of Features that we can keep in memory in
         // VCF importer, check this out
@@ -74,7 +75,7 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<FeatureSet,
             modelManager.flush();
             modelManager.clear();
             modelManager.persist(mapperInterface.getDestSet());
-            Logger.getLogger(FeaturesByFilterPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
+            Logger.getLogger(FilteredFeatureSetOutputPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
         }
     }
 
@@ -90,7 +91,7 @@ public abstract class FeaturesByFilterPlugin extends MapReducePlugin<FeatureSet,
 
     @Override
     public void mapCleanup() {
-        Logger.getLogger(FeaturesByFilterPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
+        Logger.getLogger(FilteredFeatureSetOutputPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
         this.modelManager.close();
     }
 

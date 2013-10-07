@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.inmemory;
+package com.github.seqware.queryengine.plugins.runners.inmemory;
 
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
@@ -22,15 +22,15 @@ import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
-import com.github.seqware.queryengine.plugins.JobRunParameterInterface;
+import com.github.seqware.queryengine.plugins.runners.JobRunParameterInterface;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapperInterface;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
-import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
-import static com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner.EXT_PARAMETERS;
-import static com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner.serializeParametersToString;
+import com.github.seqware.queryengine.plugins.runners.PluginRunnerInterface;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
+import com.github.seqware.queryengine.plugins.runners.hbasemr.MRHBasePluginRunner;
+import static com.github.seqware.queryengine.plugins.runners.hbasemr.MRHBasePluginRunner.EXT_PARAMETERS;
+import static com.github.seqware.queryengine.plugins.runners.hbasemr.MRHBasePluginRunner.serializeParametersToString;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
