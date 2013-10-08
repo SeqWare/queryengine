@@ -18,14 +18,11 @@ package com.github.seqware.queryengine.plugins.plugins;
 
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.plugins.MapReducePlugin;
-import com.github.seqware.queryengine.plugins.MapperInterface;
-import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.ReducerInterface;
+import com.github.seqware.queryengine.plugins.runners.MapperInterface;
+import com.github.seqware.queryengine.plugins.recipes.LongValuePlugin;
+import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
 /**
  * Counts the number of Features in a FeatureSet
@@ -33,42 +30,10 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
  * @author dyuen
  * @version $Id: $Id
  */
-public class FeatureSetCountPlugin extends MapReducePlugin<Collection<Feature>, Object, Object, Object, Object, Object, Long> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] handleSerialization(Object... parameters) {
-        byte[] serialize = SerializationUtils.serialize(parameters);
-        return serialize;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] getInternalParameters() {
-        return new Object[0];
-    }
+public class FeatureSetCountPlugin extends LongValuePlugin {
 
     @Override
-    public ResultMechanism getResultMechanism() {
-        return PluginInterface.ResultMechanism.COUNTER;
-    }
-
-    @Override
-    public Class<?> getResultClass() {
-        return Long.class;
-    }
-    
-    @Override
-    public Class<?> getOutputClass() {
-        return NullOutputFormat.class;
-    }
-
-    @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Collection<Feature>, Object> mapperInterface) {
+    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Object, Object> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
             // why can't I increment this by the size directly on the cluster?
             mapperInterface.incrementCounter();

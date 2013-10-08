@@ -24,9 +24,9 @@ import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.PluginRunnerInterface;
-import com.github.seqware.queryengine.plugins.hbasemr.MRHBasePluginRunner;
-import com.github.seqware.queryengine.plugins.inmemory.InMemoryPluginRunner;
+import com.github.seqware.queryengine.plugins.runners.PluginRunnerInterface;
+import com.github.seqware.queryengine.plugins.runners.hbasemr.MRHBasePluginRunner;
+import com.github.seqware.queryengine.plugins.runners.inmemory.InMemoryPluginRunner;
 import java.util.ArrayList;
 import java.util.List;
 

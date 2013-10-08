@@ -14,31 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.recipes;
 
-import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
+import com.github.seqware.queryengine.plugins.PluginInterface;
+import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
 /**
- * Implements the generic queries which independently decide on whether a
- * Feature is included in a result. 
+ * This kind of output emits a single value. 
+ * Increment counters via the MapperInterface, do nothing for the Reducer, and then 
+ * output that one Long value
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public abstract class PrefilterByAttributesPlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT>
-extends MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT, REDUCEVALUEOUT> implements PrefilteredPlugin{
+public abstract class LongValuePlugin extends MapReducePlugin<Object, Object, Object, Object> {
 
-
-    /**
-     * <p>getFilter.</p>
-     *
-     * @return a
-     * {@link com.github.seqware.queryengine.plugins.inmemory.FeatureFilter}
-     * object.
-     */
     @Override
-    public FeatureFilter getFilter(){
-        return new FeaturesByAttributesPlugin.FeaturesByAttributesFilter();
+    public ResultMechanism getResultMechanism() {
+        return PluginInterface.ResultMechanism.COUNTER;
+    }
+
+    @Override
+    public Class<?> getResultClass() {
+        return Long.class;
+    }
+    
+    @Override
+    public Class<?> getOutputClass() {
+        return NullOutputFormat.class;
     }
 }

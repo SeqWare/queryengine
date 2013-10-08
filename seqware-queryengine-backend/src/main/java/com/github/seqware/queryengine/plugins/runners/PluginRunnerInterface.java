@@ -14,28 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.runners;
 
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.plugins.PluginInterface;
+import java.io.Serializable;
 
 /**
- * Interface for matching functions that we can quickly use in both in-memory and M/R plug-ins.
- *
+ * Base interface for plug-in runners.
+ * 
+ * Plug-in runners perform the actual task of running plug-ins, hiding away the 
+ * details of interacting with specific backend types. 
+ * 
  * @author dyuen
- * @version $Id: $Id
  */
-public interface FeatureFilter {
-    
+public interface PluginRunnerInterface<ResultType> extends Serializable{
+        
     /**
-     * <p>featurePasses.</p>
-     *
-     * @param set the value of set
-     * @param f a {@link com.github.seqware.queryengine.model.Feature} object.
-     * @param parameters a {@link java.lang.Object} object.
-     * @return a boolean.
+     * Blocking call that retrieves the results of a call to a plug-in
+     * @return 
      */
-    
-    public boolean featurePasses(FeatureSet set, Feature f, Object... parameters);
-    
+    public ResultType get();
+
+    /**
+     * Get the backing plugin for this runner
+     * @return 
+     */
+    public PluginInterface getPlugin();
+
 }

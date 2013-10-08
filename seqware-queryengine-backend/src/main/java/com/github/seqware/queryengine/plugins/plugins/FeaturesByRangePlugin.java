@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.plugins.plugins;
 
+import com.github.seqware.queryengine.plugins.recipes.FilteredFeatureSetOutputPlugin;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryInterface;
@@ -27,10 +28,10 @@ import com.github.seqware.queryengine.model.QueryInterface.Location;
  * @author jbaran
  * @version $Id: $Id
  */
-public class FeaturesByRangePlugin extends FeaturesByFilterPlugin {
+public class FeaturesByRangePlugin extends FilteredFeatureSetOutputPlugin {
 
      /** {@inheritDoc} */
-     @Override
+    @Override
     public FeatureFilter getFilter() {
         return new FeaturesByRangePlugin.FeaturesByRangeFilter();
     }

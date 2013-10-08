@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.plugins;
 
+import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import java.io.Serializable;
 
@@ -46,7 +47,7 @@ public interface PluginInterface extends Serializable {
 
     /**
      * Initialize this plug-in, this is called once when the plug-in is starting
-     * a job
+     * a job. Not currently used. 
      *
      * @param set input feature set that we will be operating on
      * @param parameters parameters that the plug-in will require
@@ -55,74 +56,57 @@ public interface PluginInterface extends Serializable {
     public void init(FeatureSet set, Object... parameters);
 
     /**
-     * <p>test.</p>
-     *
+     * Not currently used.
      * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
      */
-    public ReturnValue test();
+    public boolean test();
 
     /**
-     * <p>verifyParameters.</p>
+     * Not currently used. Could be used to verify that parameters to a plugin are valid. 
      *
      * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
      */
-    public ReturnValue verifyParameters();
+    public boolean verifyParameters();
 
     /**
-     * <p>verifyInput.</p>
+     * Not currently used. Could be used to verify that a plugin properly tears down its environment.
      *
      * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
-     */
-    public ReturnValue verifyInput();
-
-    /**
-     * <p>filterInit.</p>
-     *
-     * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
-     */
-    public ReturnValue filterInit();
-
-    /**
-     * <p>filter.</p>
-     *
-     * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
-     */
-    public ReturnValue filter();
-
-    /**
-     * <p>verifyOutput.</p>
-     *
-     * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
-     */
-    public ReturnValue verifyOutput();
-
-    /**
-     * <p>cleanup.</p>
-     *
-     * @return a {@link com.github.seqware.queryengine.plugins.PluginInterface.ReturnValue} object.
-     */
-    public ReturnValue cleanup();
+     */ 
+    public boolean cleanup();
     
     /**
-     * Non-blocking call to determine whether the result is ready
+     * Non-blocking call to determine whether the result is ready.
      *
      * @return a boolean.
      */
     public boolean isComplete();
     
-    public class ReturnValue{
-        
-    }
-    
+    /**
+     * Used by the query engine back-end to store parameters for a plugin. 
+     * These parameters allow us to initialize a plugin when running on a remote cluster. 
+     * This group of parameters is intended for use the back-end internally. 
+     * @return 
+     */
     public Object[] getInternalParameters();
     
+    /**
+     * Describe which result mechanism this plugin uses 
+     * @return 
+     */
     public ResultMechanism getResultMechanism();
     
+    /**
+     * Return the class of the final output for a plugin.
+     * 
+     * When returning an SGID, we need to know what the corresponding class for a SGID. 
+     * @return 
+     */
     public Class<?> getResultClass();
     
+    /**
+     * Pass-through to the mapreduce job's setOutputFormatClass
+     * @return 
+     */
     public Class<?> getOutputClass();
-    
-    public byte[] handleSerialization(Object... parameters);
-    
-    public Object[] handleDeserialization(byte[] data);
 }

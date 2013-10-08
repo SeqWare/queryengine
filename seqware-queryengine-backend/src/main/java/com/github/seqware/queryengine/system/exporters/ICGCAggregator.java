@@ -18,31 +18,13 @@ package com.github.seqware.queryengine.system.exporters;
 
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.impl.MRHBaseModelManager;
-import com.github.seqware.queryengine.impl.MRHBasePersistentBackEnd;
-import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.Reference;
-import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.plugins.DonorsToMutationsAndGenesAggregationPlugin;
-import com.github.seqware.queryengine.plugins.plugins.GenesToDonorsAggregationPlugin;
-import com.github.seqware.queryengine.plugins.plugins.MutationsToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.plugins.contribs.DonorsToMutationsAndGenesAggregationPlugin;
+import com.github.seqware.queryengine.plugins.contribs.GenesToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.plugins.contribs.MutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
 import java.util.Date;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.log4j.Logger;
 
 /**
  * This will dump VCF files given a FeatureSet that was originally imported from

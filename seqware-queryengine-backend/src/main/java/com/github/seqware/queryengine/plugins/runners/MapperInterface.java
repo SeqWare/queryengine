@@ -14,28 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.seqware.queryengine.plugins.plugins;
+package com.github.seqware.queryengine.plugins.runners;
 
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
 
 /**
- * Interface for matching functions that we can quickly use in both in-memory and M/R plug-ins.
- *
+ * This wraps the Hadoop context object, allowing us to hopefully cleanly transfer
+ * our plugins to some other MapReduce-like framework.
+ * 
  * @author dyuen
- * @version $Id: $Id
  */
-public interface FeatureFilter {
-    
+public interface MapperInterface<KEYOUT, VALUEOUT> extends JobRunParameterInterface {
+
     /**
-     * <p>featurePasses.</p>
-     *
-     * @param set the value of set
-     * @param f a {@link com.github.seqware.queryengine.model.Feature} object.
-     * @param parameters a {@link java.lang.Object} object.
-     * @return a boolean.
+     * Emit keys and values for passing onto the reducer
+     * @param textKey
+     * @param text 
      */
+    public void write(KEYOUT textKey, VALUEOUT text);
+
+    /**
+     * Counter enumeration to count the actual rows.
+     */
+    public static enum Counters {
+
+        ROWS
+    }
+
+    /**
+     * Increment the row counter
+     */
+    public void incrementCounter();
     
-    public boolean featurePasses(FeatureSet set, Feature f, Object... parameters);
-    
+
 }
