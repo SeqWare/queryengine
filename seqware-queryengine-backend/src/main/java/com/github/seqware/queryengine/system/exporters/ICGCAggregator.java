@@ -22,6 +22,7 @@ import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.contribs.DonorsToMutationsAndGenesAggregationPlugin;
 import com.github.seqware.queryengine.plugins.contribs.GenesToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.plugins.contribs.MutationsToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.plugins.contribs.SimpleMutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import java.util.Date;
@@ -84,6 +85,14 @@ public class ICGCAggregator {
         Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, MutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] : null));
         long stop = new Date().getTime();
         float diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: "+diff);
+        
+        // simple aggregations of donors/project counts by mutation
+        System.out.println("Finding Mutations to affected donors/project count aggregation");
+        start = new Date().getTime();
+        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, SimpleMutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] + ".simple" : null));
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: "+diff);
         
         // aggregations of affected donors/projects count by gene

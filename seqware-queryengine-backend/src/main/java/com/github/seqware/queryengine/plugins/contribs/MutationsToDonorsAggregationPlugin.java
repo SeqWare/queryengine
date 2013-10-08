@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.hadoop.io.Text;
 
 /**
@@ -43,50 +44,53 @@ public class MutationsToDonorsAggregationPlugin extends FilteredFileOutputPlugin
 
     @Override
     public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
-      // map is varID string (looks like ICGC mutation?) ->   donor::project
+      // map is mutation \t mutation ID ->   List of donor::project
+      // "10:100008435-100008436_G->A   MU1157731" -> {"DO29264::LAML-KR","DO29242::LAML-KR","DO14015::COAD-US"}
       HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
       for(FeatureSet fs : atoms.keySet()) {
         for (Feature f : atoms.get(fs)) {
+          // create "10:100008435-100008436_G->A"
           String ref = null;
           String var = null;
           String id = null;
+          // example of iterating through tags 
           for(Tag t : f.getTags()) {
-              //buffer.append(t.getKey()+"="+t.getValue()+":");
               if ("ref_base".equals(t.getKey())) { ref = t.getValue().toString(); }
               if ("call_base".equals(t.getKey())) { var = t.getValue().toString(); }
               if ("id".equals(t.getKey())) { id = t.getValue().toString(); }
           }
+          // varID becomes "10:100008435-100008436_G->A MU1157731"
           String varID = f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"_"+ref+"->"+var+"\t"+id;
           ArrayList<String> otherFS = results.get(varID);
           if (otherFS == null) { otherFS = new ArrayList<String>(); }
-          // need to convert SGID to hashed value
+          // create DO29264::LAML-KR
           Tag tagByKey = fs.getTagByKey("donor");
           String donor = (String)tagByKey.getValue();
           tagByKey = fs.getTagByKey("project");
           String project = (String)tagByKey.getValue();
           String value = donor + "::" + project;
-          
           if (!otherFS.contains(value)) { otherFS.add(value); }
           results.put(varID, otherFS);
         }
       }
-      // now iterate and add to results
-      for (String currVar : results.keySet()) {
+      // now iterate and emit into map/reduce 
+      for (Entry<String, ArrayList<String>> entry : results.entrySet()) {
         boolean first = true;
         StringBuilder valueStr = new StringBuilder();
-        for (String currFS : results.get(currVar)) {
-          
+        for (String currFS : entry.getValue()) {
           if (first) { first=false; valueStr.append(currFS); }
           else { valueStr.append(",").append(currFS); }
         }
-        textKey.set(currVar);
-        text.set(currVar+"\t"+valueStr.toString());
+        textKey.set(entry.getKey());
+        text.set(entry.getKey()+"\t"+valueStr.toString());
+        // ( "10:100008435-100008436_G->A MU1157731" , "10:100008435-100008436_G->A MU1157731 DO29264::LAML-KR,DO29242::LAML-KR,DO14015::COAD-US")
         mapperInterface.write(textKey, text); 
       }
     }
     
     @Override
     public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
+        // values 
         for (Text val : values) {
           String[] valArr = val.toString().split("\t");
           String[] fsArr = valArr[2].split(",");
@@ -97,8 +101,6 @@ public class MutationsToDonorsAggregationPlugin extends FilteredFileOutputPlugin
             else { newFeatStr += ","+currFS; }
           }
           
-          // HELP, not sure what's going in here, why are you writing the text?
-          //reducerInterface.write(val, text);
           val.set(valArr[0]+"\t"+valArr[1]+"\t"+newFeatStr);
           reducerInterface.write(val, null);
         }
