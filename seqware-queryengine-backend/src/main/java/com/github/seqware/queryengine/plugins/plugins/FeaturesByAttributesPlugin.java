@@ -68,7 +68,10 @@ public class FeaturesByAttributesPlugin extends FilteredFeatureSetOutputPlugin {
                 }
             }
 
-            RPNStack rpnStack = (RPNStack) parameters[0];
+            RPNStack rpnStack = new RPNStack();
+            if (parameters.length > 0 && parameters[0] instanceof RPNStack){
+                rpnStack = (RPNStack) parameters[0];
+            }
             manipulateRPNStack(rpnStack, set, f, hierarchyConstraintSets, hierarchyCache);
             boolean result = (Boolean) rpnStack.evaluate();
             return result;
