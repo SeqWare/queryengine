@@ -87,14 +87,6 @@ public class ICGCAggregator {
         float diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: "+diff);
         
-        // simple aggregations of donors/project counts by mutation
-        System.out.println("Finding Mutations to affected donors/project count aggregation");
-        start = new Date().getTime();
-        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, SimpleMutationsToDonorsAggregationPlugin.class, (args.length == 4 ? args[1] + ".simple" : null));
-        stop = new Date().getTime();
-        diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: "+diff);
-        
         // aggregations of affected donors/projects count by gene
         System.out.println("Finding Genes to affected donors/project count aggregation");
         start = new Date().getTime();
