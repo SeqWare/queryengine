@@ -47,8 +47,13 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
     }
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+    public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
+            
+            if (f.getStart() != position){
+                continue;
+            }
+            
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
             text.set(buffer.toString());     

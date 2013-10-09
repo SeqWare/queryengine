@@ -362,6 +362,10 @@ public class VCFVariantImportWorker extends ImportWorker {
                         String referenceSegment = t[3];
                         int lengthOfMutation = referenceSegment.length();
                         fBuilder.setStop(start + lengthOfMutation);
+                    } else{
+                        Integer pos = Integer.parseInt(t[1]);
+                        int start = pos - 1;
+                        fBuilder.setStop(start);
                     }
                     //m.setStartPosition(pos - 1);
                     //m.setStopPosition(pos);

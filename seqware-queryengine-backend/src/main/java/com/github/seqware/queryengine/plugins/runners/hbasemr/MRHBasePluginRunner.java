@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.runners.hbasemr;
 
 import com.github.seqware.queryengine.Constants;
+import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
@@ -37,6 +38,7 @@ import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
+import static com.github.seqware.queryengine.util.FSGID.PositionSeparator;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -533,8 +535,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
+            // figure out current row
+            String rowKey = Bytes.toString(row.get());
+            rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
+            Long position = Long.valueOf(rowKey);
+
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
-            mapReducePlugin.map(consolidatedMap, this);
+            mapReducePlugin.map(position, consolidatedMap, this);
         }
 
         @Override

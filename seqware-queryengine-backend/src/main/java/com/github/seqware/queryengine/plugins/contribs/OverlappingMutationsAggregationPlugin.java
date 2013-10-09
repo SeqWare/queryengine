@@ -22,51 +22,59 @@ import com.github.seqware.queryengine.plugins.runners.MapperInterface;
 import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.plugins.recipes.FilteredFileOutputPlugin;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.hadoop.io.Text;
 
 /**
- * This plug-in implements a quick and dirty export using Map/Reduce
- *
- * TODO: Copy from HDFS and parse key value file to VCF properly.
+ * This plug-in implements an experiment with overlapping mutations in map
+ * reduce
  *
  * @author dyuen
  * @version $Id: $Id
  */
-public class SimpleMutationsToDonorsAggregationPlugin extends FilteredFileOutputPlugin {
+public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlugin {
 
     private Text text = new Text();
     private Text textKey = new Text();
-
+    
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
-        // map is mutation \t mutation ID ->   List of donor::project
-        // "10:100008435-100008436_G->A   MU1157731" -> {"DO29264::LAML-KR","DO29242::LAML-KR","DO14015::COAD-US"}
+        // identify mutuations that are actually at this position
+        Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
         for (FeatureSet fs : atoms.keySet()) {
             for (Feature f : atoms.get(fs)) {
-                
-                if (f.getStart() != position){
+                if (f.getStart() == position) {
+                    featuresAtCurrentLocation.add(f);
+                }
+            }
+        }
+
+        for (FeatureSet fs : atoms.keySet()) {
+            for (Feature f : atoms.get(fs)) {
+                // skip features we already know are at the current location
+                if (f.getStart() == position) {
                     continue;
                 }
-                
-                // create "10:100008435-100008436_G->A"
-                String ref = f.getTagByKey("ref_base").getValue().toString();
-                String var = f.getTagByKey("call_base").getValue().toString();
-                String id = f.getTagByKey("id").getValue().toString();     
-                // varID becomes "10:100008435-100008436_G->A MU1157731"
-                String varID = f.getSeqid() + ":" + f.getStart() + "-" + f.getStop() + "_" + ref + "->" + var + "\t" + id;
-                // create DO29264::LAML-KR
-                String donor = (String) fs.getTagByKey("donor").getValue();
-                String project = (String) fs.getTagByKey("project").getValue();
-                String value = donor + "::" + project;
-                textKey.set(varID);
-                text.set(value.toString());
-                // ( "10:100008435-100008436_G->A MU1157731" , "DO29264::LAML-KR,DO29242::LAML-KR,DO14015::COAD-US")
-                mapperInterface.write(textKey, text);
+
+                String overlapID = f.getTagByKey("id").getValue().toString();
+
+                for (Feature positionFeature : featuresAtCurrentLocation) {
+                    String ref = positionFeature.getTagByKey("ref_base").getValue().toString();
+                    String var = positionFeature.getTagByKey("call_base").getValue().toString();
+                    String id = positionFeature.getTagByKey("id").getValue().toString();
+                    String varID = positionFeature.getSeqid() + ":" + positionFeature.getStart()
+                            + "-" + positionFeature.getStop() + "_" + ref + "->" + var + "\t" + id;
+                    textKey.set(varID);
+                    text.set(overlapID);
+                    // ( "10:100008435-100008436_G->A MU1157731" , "MU000001")
+                    mapperInterface.write(textKey, text);
+                }
             }
         }
     }
-    
+
     @Override
     public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
         // values 
@@ -83,7 +91,7 @@ public class SimpleMutationsToDonorsAggregationPlugin extends FilteredFileOutput
                 }
             }
         }
-
+        // ( "10:100008435-100008436_G->A MU1157731" , "MU000001 , MU000002, MU00003")
         text.set(key.toString() + "\t" + newFeatStr);
         reducerInterface.write(text, null);
     }
