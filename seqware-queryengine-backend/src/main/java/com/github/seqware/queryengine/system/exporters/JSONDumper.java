@@ -39,7 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
- * This will dump VCF files given a FeatureSet that was originally imported from
+ * This will dump JSON files compatible with ElasticSearch given a FeatureSet that was originally imported from
  * a VCF file.
  *
  * @author dyuen
@@ -68,7 +68,7 @@ public class JSONDumper {
 
         if (args.length < 1 || args.length > 2) {
             System.err.println(args.length + " arguments found");
-            System.out.println("VCFDumper <featureSetID> [outputFile]");
+            System.out.println("JSONDumper <featureSetID> [outputFile]");
             System.exit(-1);
         }
 
