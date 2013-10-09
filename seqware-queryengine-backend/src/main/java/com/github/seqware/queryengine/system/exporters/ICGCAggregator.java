@@ -22,6 +22,7 @@ import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.contribs.DonorsToMutationsAndGenesAggregationPlugin;
 import com.github.seqware.queryengine.plugins.contribs.GenesToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.plugins.contribs.MutationsToDonorsAggregationPlugin;
+import com.github.seqware.queryengine.plugins.contribs.SimpleMutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.workers.VCFVariantImportWorker;
 import java.util.Date;

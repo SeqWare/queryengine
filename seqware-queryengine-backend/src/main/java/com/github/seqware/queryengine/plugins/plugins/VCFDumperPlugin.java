@@ -42,6 +42,7 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
     /** {@inheritDoc} */
     @Override
     public FeatureFilter getFilter() {
+        // we create a filter that passes all features in order to export all features
         return new FeaturesAllPlugin.FeaturesAllFilter();
     }
 
@@ -50,14 +51,16 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
         for (Feature f : atoms.values().iterator().next()) {
             StringBuilder buffer = new StringBuilder();
             VCFDumper.outputFeatureInVCF(buffer, f);
-            text.set(buffer.toString());     // we can only emit Writables...
+            text.set(buffer.toString());     
             textKey.set(f.getSGID().getRowKey());
+            // the map function emits SGID , rows of a VCF file in pairs
             mapperInterface.write(textKey, text);
         }
     }
 
     @Override
     public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
+        // the reducer simply emits the rows of the VCF file
         for (Text val : values) {
             reducerInterface.write(val, text);
         }
