@@ -54,24 +54,26 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
         for (FeatureSet fs : atoms.keySet()) {
             for (Feature f : atoms.get(fs)) {
 
-                String overlapID = f.getTagByKey("id").getValue().toString();
+                String fOverlapID = f.getTagByKey("id").getValue().toString();
 
                 for (Feature positionFeature : featuresAtCurrentLocation) {
-                    String ref = positionFeature.getTagByKey("ref_base").getValue().toString();
-                    String var = positionFeature.getTagByKey("call_base").getValue().toString();
-                    String id = positionFeature.getTagByKey("id").getValue().toString();
-                    String varID = positionFeature.getSeqid() + ":" + positionFeature.getStart()
-                            + "-" + positionFeature.getStop() + "_" + ref + "->" + var + "\t" + id;
-                    
-                    // don't both overlapping with yourself
-                    if (id.equals(overlapID)){
+                    String positionFeatureVarID = calculateVarID(positionFeature);
+                    String positionOverlapID = positionFeature.getTagByKey("id").getValue().toString();
+                    String fFeatureVarID = calculateVarID(positionFeature);
+                    if (positionFeatureVarID.equals(fFeatureVarID)){
                         continue;
                     }
-                    
-                    textKey.set(varID);
-                    text.set(overlapID);
+ 
+                    textKey.set(positionFeatureVarID);
+                    text.set(fOverlapID);
                     // ( "10:100008435-100008436_G->A MU1157731" , "MU000001")
-                    mapperInterface.write(textKey, text);
+                    mapperInterface.write(textKey, text); 
+                    // display the reverse overlap as well
+                    textKey.set(fFeatureVarID);
+                    text.set(positionOverlapID);
+                    // ( "10:other_mutation MU000001" , "MU000001")
+                    mapperInterface.write(textKey, text); 
+                    
                 }
             }
         }
@@ -101,5 +103,14 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
         // ( "10:100008435-100008436_G->A MU1157731" , "MU000001 , MU000002, MU00003")
         text.set(key.toString() + "\t" + newFeatStr);
         reducerInterface.write(text, null);
+    }
+
+    private String calculateVarID(Feature positionFeature) {
+        String ref = positionFeature.getTagByKey("ref_base").getValue().toString();
+        String var = positionFeature.getTagByKey("call_base").getValue().toString();
+        String id = positionFeature.getTagByKey("id").getValue().toString();
+        String varID = positionFeature.getSeqid() + ":" + positionFeature.getStart()
+                + "-" + positionFeature.getStop() + "_" + ref + "->" + var + "\t" + id;
+        return varID;
     }
 }
