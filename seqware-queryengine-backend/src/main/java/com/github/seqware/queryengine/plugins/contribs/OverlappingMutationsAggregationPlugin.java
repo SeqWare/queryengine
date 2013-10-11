@@ -53,10 +53,6 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
 
         for (FeatureSet fs : atoms.keySet()) {
             for (Feature f : atoms.get(fs)) {
-                // skip features we already know are at the current location
-                if (f.getStart() == position) {
-                    continue;
-                }
 
                 String overlapID = f.getTagByKey("id").getValue().toString();
 
@@ -66,6 +62,12 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
                     String id = positionFeature.getTagByKey("id").getValue().toString();
                     String varID = positionFeature.getSeqid() + ":" + positionFeature.getStart()
                             + "-" + positionFeature.getStop() + "_" + ref + "->" + var + "\t" + id;
+                    
+                    // don't both overlapping with yourself
+                    if (varID.equals(overlapID)){
+                        continue;
+                    }
+                    
                     textKey.set(varID);
                     text.set(overlapID);
                     // ( "10:100008435-100008436_G->A MU1157731" , "MU000001")
