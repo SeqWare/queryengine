@@ -34,7 +34,7 @@ public class FeatureTest {
     @Test
     public void testUUIDGenerationNonStrandedFeature() {
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
-        Assert.assertNotNull("Feature UUID is null, which means that no UUID was generated for the feature.", mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).build().getSGID());
+        Assert.assertNotNull("Feature UUID is null, which means that no UUID was generated for the feature.", mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).build().getSGID());
     }
 
     /**
@@ -43,7 +43,7 @@ public class FeatureTest {
     @Test
     public void testUUIDGenerationStrandedFeature() {
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
-        Assert.assertNotNull("Feature UUID is null, which means that no UUID was generated for the feature.", mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).setStrand(Feature.Strand.POSITIVE).build().getSGID());
+        Assert.assertNotNull("Feature UUID is null, which means that no UUID was generated for the feature.", mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.POSITIVE).build().getSGID());
     }
     
     /**

@@ -136,14 +136,14 @@ public class SimpleModelManager implements CreateUpdateManager {
                 for (Atom a : features) {
                     Feature f = (Feature) a;
                     // ensure that we have a FeatureList available for every feature set / position covered by the feature
-                    for (long i = f.getStart(); i <= f.getStop(); i++) {
+                    for (long i = f.getStart(); i < f.getStop(); i++) {
                         if (!map.containsKey(i)) {
                             map.put(i, new HashMap<SGID, FeatureList>());
                         }
                         SGID featureSetID = ((FSGID) f.getSGID()).getFeatureSetID();
                         if (!map.get(i).containsKey(featureSetID)) {
                             FeatureList featureList = new FeatureList();
-                            featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
+                            featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID(), f.getSeqid(), i), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
                             map.get(i).put(featureSetID, featureList);
                         }
                         FeatureList featureList = map.get(i).get(featureSetID);

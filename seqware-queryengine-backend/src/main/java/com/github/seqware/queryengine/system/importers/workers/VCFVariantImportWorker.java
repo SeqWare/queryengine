@@ -363,9 +363,7 @@ public class VCFVariantImportWorker extends ImportWorker {
                         int lengthOfMutation = referenceSegment.length();
                         fBuilder.setStop(start + lengthOfMutation);
                     } else{
-                        Integer pos = Integer.parseInt(t[1]);
-                        int start = pos - 1;
-                        fBuilder.setStop(start);
+                        throw new RuntimeException("No POS found");
                     }
                     //m.setStartPosition(pos - 1);
                     //m.setStopPosition(pos);
