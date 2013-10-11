@@ -50,8 +50,8 @@ public class Feature extends AtomImpl<Feature> {
     private Double score = null;
     private String phase = ".";
     private String seqid = null;
-    private long start = 0;
-    private long stop = 0;
+    private long start = Long.MIN_VALUE;
+    private long stop = Long.MIN_VALUE;
     private Strand strand = null;
 
     public enum AdditionalAttributeType { STRING, FLOAT, DOUBLE, LONG, INTEGER };
@@ -334,6 +334,15 @@ public class Feature extends AtomImpl<Feature> {
             // let's mandate an seqid for rowKey purposes 
             if (feature.seqid == null) {
                 throw new RuntimeException("Ensure that Feature is built with an id for rowKey purposes");
+            }
+            if (feature.start == feature.stop){
+                throw new RuntimeException("start is the same as stop, stop is exclusive");
+            }
+            if (feature.start == Long.MIN_VALUE){
+                throw new RuntimeException("start is not set");
+            }
+            if (feature.stop == Long.MIN_VALUE){
+                throw new RuntimeException("stop is not set");
             }
 // with lazy molecule sets, it makes less sense to notify that a feature is created on build
 //            if (feature.getManager() != null) {

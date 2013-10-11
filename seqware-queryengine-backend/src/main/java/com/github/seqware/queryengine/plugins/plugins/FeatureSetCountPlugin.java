@@ -33,8 +33,12 @@ import java.util.Map;
 public class FeatureSetCountPlugin extends LongValuePlugin {
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Object, Object> mapperInterface) {
+    public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Object, Object> mapperInterface) {
         for (Feature f : atoms.values().iterator().next()) {
+            
+            if (f.getStart() != position){
+                continue;
+            }
             // why can't I increment this by the size directly on the cluster?
             mapperInterface.incrementCounter();
         }

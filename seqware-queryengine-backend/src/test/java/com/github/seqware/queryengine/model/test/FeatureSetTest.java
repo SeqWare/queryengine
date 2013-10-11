@@ -31,9 +31,9 @@ public class FeatureSetTest {
         // this is sort of painful, but you cannot assume that a Feature doesn't change when you add it to sets
         //Set<Feature> testFeatures = new HashSet<Feature>();
         List<Feature> testFeatures = new ArrayList<Feature>();
-        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).build());
-        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000200).setStop(1000300).build());
-        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000400).setStop(1000500).build());
+        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).build());
+        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000200).setStop(1000201).build());
+        testFeatures.add(mManager.buildFeature().setSeqid("chr16").setStart(1000400).setStop(1000401).build());
 
         for (Feature testFeature : testFeatures) {
             aSet.add(testFeature);
@@ -67,9 +67,9 @@ public class FeatureSetTest {
         FeatureSet aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
 
         mManager.flush(); // this should persist a version with no features
-        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build());
-        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000200).setStop(1000300).build());
-        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000400).setStop(1000500).build());
+        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000001).build());
+        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000200).setStop(1000210).build());
+        aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000400).setStop(1000410).build());
         mManager.flush(); // this should persist a version with three features
         aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000600).setStop(1000610).build());
         aSet.add(mManager.buildFeature().setSeqid("chrX").setStart(1000700).setStop(1000710).build());
@@ -114,9 +114,9 @@ public class FeatureSetTest {
         FeatureSet aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
         mManager.flush(); // this should persist a version with no features
         
-        Feature[] arr = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(),
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(), 
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build()};
+        Feature[] arr = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000001).build(),
+        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000001).build(), 
+        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000001).build()};
         aSet.add(arr);
         
         // start with zero features before a flush
@@ -149,9 +149,9 @@ public class FeatureSetTest {
         // since there is no manager active
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
         FeatureSet aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
-        Feature[] arr = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(),
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(), 
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build()};
+        Feature[] arr = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000001).build(),
+        mManager.buildFeature().setSeqid("chrX").setStart(1000002).setStop(1000003).build(), 
+        mManager.buildFeature().setSeqid("chrX").setStart(1000003).setStop(1000004).build()};
         aSet.add(arr);
         
         mManager.flush();
@@ -160,16 +160,16 @@ public class FeatureSetTest {
         mManager.clear();
         // aSet is no longer managed, but can be added to by reference (without changing its version)
         
-        Feature[] arr2 = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000001).setStop(1000100).build(),
-        mManager.buildFeature().setSeqid("chrX").setStart(1000001).setStop(1000100).build(), 
-        mManager.buildFeature().setSeqid("chrX").setStart(1000001).setStop(1000100).build()};
+        Feature[] arr2 = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000004).setStop(1000005).build(),
+        mManager.buildFeature().setSeqid("chrX").setStart(1000005).setStop(1000006).build(), 
+        mManager.buildFeature().setSeqid("chrX").setStart(1000006).setStop(1000007).build()};
         aSet.add(arr2);
         mManager.flush();
         Assert.assertTrue("FeatureSet size wrong, expected 6 and found " + aSet.getCount(), aSet.getCount() == 6);
         
-        Feature[] arr3 = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(),
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build(), 
-        mManager.buildFeature().setSeqid("chrX").setStart(1000000).setStop(1000100).build()};
+        Feature[] arr3 = new Feature[]{mManager.buildFeature().setSeqid("chrX").setStart(1000007).setStop(1000008).build(),
+        mManager.buildFeature().setSeqid("chrX").setStart(1000008).setStop(1000009).build(), 
+        mManager.buildFeature().setSeqid("chrX").setStart(1000009).setStop(1000010).build()};
         aSet.add(arr3);
         mManager.flush();
         Assert.assertTrue("FeatureSet size wrong, expected 9 and found " + aSet.getCount(), aSet.getCount() == 9);

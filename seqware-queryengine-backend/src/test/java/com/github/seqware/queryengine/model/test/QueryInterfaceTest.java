@@ -51,10 +51,10 @@ public class QueryInterfaceTest implements Benchmarking {
 
         aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
         // create and store some features
-        a1 = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).setStrand(Feature.Strand.NEGATIVE).setType("type1").setScore(100.0).setSource("Program A").setPragma("pragma").setPhase(".").build();
-        a2 = mManager.buildFeature().setSeqid("chr16").setStart(1000001).setStop(1000101).setStrand(Feature.Strand.POSITIVE).setType("type2").setScore(80.0).setSource("Program A").setPragma("pragma").setPhase(".").build();
-        a3 = mManager.buildFeature().setSeqid("chr16").setStart(1000002).setStop(1000102).setStrand(Feature.Strand.NOT_STRANDED).setType("type2").setScore(80.0).setSource("Program B").setPragma("pragma").setPhase(".").build();
-        a4 = mManager.buildFeature().setSeqid("chr16").setStart(1000003).setStop(1000103).setStrand(Feature.Strand.UNKNOWN).setType("type3").setScore(50.0).setSource("Program B").setPragma("pragma").setPhase(".").build();
+        a1 = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.NEGATIVE).setType("type1").setScore(100.0).setSource("Program A").setPragma("pragma").setPhase(".").build();
+        a2 = mManager.buildFeature().setSeqid("chr16").setStart(1000001).setStop(1000002).setStrand(Feature.Strand.POSITIVE).setType("type2").setScore(80.0).setSource("Program A").setPragma("pragma").setPhase(".").build();
+        a3 = mManager.buildFeature().setSeqid("chr16").setStart(1000002).setStop(1000003).setStrand(Feature.Strand.NOT_STRANDED).setType("type2").setScore(80.0).setSource("Program B").setPragma("pragma").setPhase(".").build();
+        a4 = mManager.buildFeature().setSeqid("chr16").setStart(1000003).setStop(1000004).setStrand(Feature.Strand.UNKNOWN).setType("type3").setScore(50.0).setSource("Program B").setPragma("pragma").setPhase(".").build();
         aSet.add(a1);
         aSet.add(a2);
         aSet.add(a3);
@@ -95,7 +95,7 @@ public class QueryInterfaceTest implements Benchmarking {
             }
         }
         Assert.assertTrue(atomBySGID.getCount() + " features did not match via query interface getAtomBySGID()", b1 && b2 && b3);
-
+       
         // get a FeatureSet from the back-end while creating a new set
         QueryFuture<FeatureSet> future = SWQEFactory.getQueryInterface().getFeatures(0, aSet);
 
@@ -371,7 +371,7 @@ public class QueryInterfaceTest implements Benchmarking {
         resultSet = queryFuture.get();
         count = (int) resultSet.getCount();
         Assert.assertTrue("Setting a query constraint with a != operation failed, expected 7 and found " + count, count == 7);
-
+       
         queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, bSet, RPNStack.compileQuery("!(tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"SO::sequence_variant::functional_variant::transcript_function_variant::transcript_processing_variant\"))"));
         resultSet = queryFuture.get();
         count = (int) resultSet.getCount();

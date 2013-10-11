@@ -52,9 +52,9 @@ public class FeatureStoreInterfaceTest {
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
         aSet = mManager.buildFeatureSet().setReference(mManager.buildReference().setName("Dummy_ref").build()).build();
         // create and store some features
-        a1 = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).build();
-        a2 = mManager.buildFeature().setSeqid("chr16").setStart(1000200).setStop(1000300).build();
-        a3 = mManager.buildFeature().setSeqid("chr16").setStart(1000400).setStop(1000500).build();
+        a1 = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).build();
+        a2 = mManager.buildFeature().setSeqid("chr16").setStart(1000200).setStop(1000201).build();
+        a3 = mManager.buildFeature().setSeqid("chr16").setStart(1000400).setStop(1000401).build();
         aSet.add(a1);
         aSet.add(a2);
         aSet.add(a3);
@@ -95,15 +95,15 @@ public class FeatureStoreInterfaceTest {
         tagset.add(transcriptProcessingVariant, transcriptStabilityVariant, copyNumberChange);
         
         // Features for location based tagging, which tests tag querying capabilities:
-        Feature a = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).setStrand(Feature.Strand.POSITIVE).build();
-        Feature b = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000101).setStrand(Feature.Strand.POSITIVE).build();
-        Feature c = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000102).setStrand(Feature.Strand.POSITIVE).build();
+        Feature a = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature b = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature c = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
 
         // Features for variant based tagging, which tests inheritance based querying capabilities:
-        Feature d = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000101).setStrand(Feature.Strand.NEGATIVE).build();
-        Feature e = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000102).setStrand(Feature.Strand.POSITIVE).build();
-        Feature f = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000101).setStrand(Feature.Strand.POSITIVE).build();
-        Feature g = mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build();
+        Feature d = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.NEGATIVE).build();
+        Feature e = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature f = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature g = mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build();
 
         // Loci tags:
         a.associateTag(termTag.toBuilder().setValue("region").build());
@@ -133,16 +133,16 @@ public class FeatureStoreInterfaceTest {
         set.add(e);
         set.add(f);
         set.add(g);
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000101).setStrand(Feature.Strand.NEGATIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.NEGATIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000102).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.NEGATIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.NEGATIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
 
         return set;
     }
@@ -169,13 +169,13 @@ public class FeatureStoreInterfaceTest {
         tagset.add(termTag, idTag);
         
         // Features for location based tagging, which tests tag querying capabilities:
-        Feature a = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000100).setStrand(Feature.Strand.POSITIVE).build();
-        Feature b = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000101).setStrand(Feature.Strand.POSITIVE).build();
-        Feature c = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000102).setStrand(Feature.Strand.POSITIVE).build();
-        Feature d = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000101).setStrand(Feature.Strand.NEGATIVE).build();
-        Feature e = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000102).setStrand(Feature.Strand.POSITIVE).build();
-        Feature f = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000101).setStrand(Feature.Strand.POSITIVE).build();
-        Feature g = mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build();
+        Feature a = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature b = mManager.buildFeature().setSeqid("chr16").setStart(1000000).setStop(1000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature c = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature d = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.NEGATIVE).build();
+        Feature e = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature f = mManager.buildFeature().setSeqid("chr16").setStart(2000000).setStop(2000001).setStrand(Feature.Strand.POSITIVE).build();
+        Feature g = mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build();
 
         // id tag formatting:
         a.associateTag(idTag.toBuilder().setValue(-1).build());
@@ -191,16 +191,16 @@ public class FeatureStoreInterfaceTest {
         set.add(e);
         set.add(f);
         set.add(g);
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000101).setStrand(Feature.Strand.NEGATIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.NEGATIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000102).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000101).setStrand(Feature.Strand.POSITIVE).build());
-        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000102).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.NEGATIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr16").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(3000000).setStop(3000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.NEGATIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
+        set.add(mManager.buildFeature().setSeqid("chr17").setStart(4000000).setStop(4000001).setStrand(Feature.Strand.POSITIVE).build());
 
         return set;
     }

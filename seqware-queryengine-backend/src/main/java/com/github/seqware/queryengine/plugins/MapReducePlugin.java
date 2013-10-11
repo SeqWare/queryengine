@@ -20,10 +20,12 @@ public abstract class MapReducePlugin<MAPREDUCEKEY, MAPREDUCEVALUE, REDUCEKEYOUT
 
     /**
      * Called during the map phase of map/reduce
+     *
+     * @param position the value of position
      * @param atoms a map between featuresets found and collections of atoms available at a particular position
      * @param mapperInterface interface that allows the plug-in to emit keys and values for use by the reducer
-     */
-    public abstract void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPREDUCEKEY, MAPREDUCEVALUE> mapperInterface);
+     */  
+    public abstract void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<MAPREDUCEKEY, MAPREDUCEVALUE> mapperInterface);
 
     /**
      * Reduce implementation that takes mapped atoms and processes them.

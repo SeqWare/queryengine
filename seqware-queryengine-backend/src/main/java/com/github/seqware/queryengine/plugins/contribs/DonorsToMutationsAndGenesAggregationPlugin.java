@@ -43,7 +43,7 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends FilteredFileOutp
   private Text textKey = new Text();
 
   @Override
-  public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+  public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
     
     // the key is donorID, the value is a hash of mutation ID -> geneArray
     Map<FeatureSet, HashMap<String, ArrayList<String>>> results = new HashMap<FeatureSet, HashMap<String, ArrayList<String>>>();
@@ -53,6 +53,11 @@ public class DonorsToMutationsAndGenesAggregationPlugin extends FilteredFileOutp
       
       // for each mutation
       for (Feature f : atoms.get(fs)) {
+          
+          if (f.getStart() != position){
+                continue;
+          }
+          
         // mutation ID
         String id = null;
         // gene ID

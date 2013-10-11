@@ -135,11 +135,11 @@ public class VCFImportExportTest {
             for(int i = 0; i < output.size(); i++){
                 String[] cLine = control.get(i).split("\t");
                 String[] eLine = output.get(i).split("\t");
-                Assert.assertTrue("VCF position does not match" , cLine[1].equals(eLine[1]));
-                Assert.assertTrue("VCF ID does not match" , cLine[2].equals(eLine[2]));
-                Assert.assertTrue("VCF REF does not match" , cLine[3].equals(eLine[3]));
-                Assert.assertTrue("VCF ALT does not match" , cLine[4].equals(eLine[4]));
-                Assert.assertTrue("VCF FILTER does not match" , cLine[6].equals(eLine[6]));
+                Assert.assertTrue("VCF position does not match \n" + control.get(i) + "\n" + output.get(i) + "\n"+ createTempFile.getAbsolutePath(), cLine[1].equals(eLine[1]));
+                Assert.assertTrue("VCF ID does not match\n" + control.get(i) + "\n" + output.get(i) + "\n"+ createTempFile.getAbsolutePath(), cLine[2].equals(eLine[2]));
+                Assert.assertTrue("VCF REF does not match\n" + control.get(i) + "\n" + output.get(i)+ "\n" + createTempFile.getAbsolutePath(), cLine[3].equals(eLine[3]));
+                Assert.assertTrue("VCF ALT does not match\n" + control.get(i) + "\n" + output.get(i) + "\n"+ createTempFile.getAbsolutePath(), cLine[4].equals(eLine[4]));
+                Assert.assertTrue("VCF FILTER does not match\n" + control.get(i) + "\n" + output.get(i) + "\n"+ createTempFile.getAbsolutePath(), cLine[6].equals(eLine[6]));
                 //Assert.assertTrue("VCF INFO does not match" , cLine[7].equals(eLine[7]));
             }
         } catch (IOException ex) {

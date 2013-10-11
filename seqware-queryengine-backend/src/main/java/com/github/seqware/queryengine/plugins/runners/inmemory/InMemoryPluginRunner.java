@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import net.sourceforge.seqware.common.util.Rethrow;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
@@ -101,17 +102,28 @@ public final class InMemoryPluginRunner<ResultType> implements PluginRunnerInter
             }
 
             mrPlugin.mapInit(this);
-            Map<FeatureSet, Collection<Feature>> map = new HashMap<FeatureSet, Collection<Feature>>();
+            
+            Map<Long, Map<FeatureSet, Collection<Feature>>> map = new HashMap<Long, Map<FeatureSet, Collection<Feature>>>();
             for (FeatureSet set : inputSet) {
-                List<Feature> list = new ArrayList();
-                Iterables.addAll(list, set);
-                map.put(set, list);
+                for(Feature feature : set){
+                    for(long i = feature.getStart(); i <= feature.getStop(); i++){
+                        if (!map.containsKey(i)){
+                            map.put(i, new HashMap<FeatureSet, Collection<Feature>>());
+                        }
+                        if (!map.get(i).containsKey(set)){
+                            map.get(i).put(set, new ArrayList<Feature>());
+                        }
+                        map.get(i).get(set).add(feature);
+                    }
+                }
             }
             // mimic filtering 
-            map = MRHBasePluginRunner.handlePreFilteredPlugins(map, mrPlugin, this.ext_parameters);
-
-            mrPlugin.map(map, this);
-            mrPlugin.mapCleanup();
+            for(Entry<Long, Map<FeatureSet, Collection<Feature>>> e : map.entrySet()){
+                Map<FeatureSet, Collection<Feature>> innerMap = MRHBasePluginRunner.handlePreFilteredPlugins(e.getValue(), mrPlugin, this.ext_parameters);
+                // not sure what to do for position here
+                mrPlugin.map(e.getKey(), innerMap, this);
+                mrPlugin.mapCleanup();
+            }
 
             mrPlugin.reduceInit();
             // TODO: make this pass through functional in order to simulate MapReduce

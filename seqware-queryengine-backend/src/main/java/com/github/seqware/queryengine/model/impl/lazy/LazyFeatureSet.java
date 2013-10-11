@@ -194,7 +194,9 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
                     rowKey = nextL.getSGID().getRowKey();
                 }
                 // ensure that row keys are ascending
-                assert (nextL.getSGID().getRowKey().compareTo(rowKey) >= 0);
+                if (!Constants.NAIVE_OVERLAPS){
+                    assert (nextL.getSGID().getRowKey().compareTo(rowKey) >= 0);
+                }
                 if (!rowKey.equals(nextL.getSGID().getRowKey())) {
                     // we've moved onto a new row
                     rowKey = nextL.getSGID().getRowKey();
