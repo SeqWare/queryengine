@@ -64,7 +64,7 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
                             + "-" + positionFeature.getStop() + "_" + ref + "->" + var + "\t" + id;
                     
                     // don't both overlapping with yourself
-                    if (varID.equals(overlapID)){
+                    if (id.equals(overlapID)){
                         continue;
                     }
                     
