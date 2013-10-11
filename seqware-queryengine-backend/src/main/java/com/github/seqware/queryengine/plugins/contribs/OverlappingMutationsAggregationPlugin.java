@@ -78,9 +78,14 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
     @Override
     public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
         // values 
+        Set<Text> seenSet = new HashSet<Text>();
         String newFeatStr = "";
         boolean first = true;
         for (Text val : values) {
+            if (seenSet.contains(val)){
+                continue;
+            }
+            seenSet.add(val);
             String[] fsArr = val.toString().split(",");
             for (String currFS : fsArr) {
                 if (first) {
