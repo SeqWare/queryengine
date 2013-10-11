@@ -95,36 +95,34 @@ public class QueryInterfaceTest implements Benchmarking {
             }
         }
         Assert.assertTrue(atomBySGID.getCount() + " features did not match via query interface getAtomBySGID()", b1 && b2 && b3);
+       
+        // get a FeatureSet from the back-end while creating a new set
+        QueryFuture<FeatureSet> future = SWQEFactory.getQueryInterface().getFeatures(0, aSet);
 
-// TODO: this breaks with multi location mutations, figure out why
-//        
-//        // get a FeatureSet from the back-end while creating a new set
-//        QueryFuture<FeatureSet> future = SWQEFactory.getQueryInterface().getFeatures(0, aSet);
-//
-//        // check that Features are present match
-//        FeatureSet result = future.get();
-//
-//        b1 = false;
-//        b2 = false;
-//        b3 = false;
-//        for (Feature f : result) {
-//            // sadly, Features no longer will be exactly the same after a query, queries generate new features
-//            // in new FeatureSets
-//            if (f.getStart() == a1.getStart() && f.getStop() == a1.getStop()) {
-//                b1 = true;
-//            } else if (f.getStart() == a2.getStart() && f.getStop() == a2.getStop()) {
-//                b2 = true;
-//            } else if (f.getStart() == a3.getStart() && f.getStop() == a3.getStop()) {
-//                b3 = true;
-//            }
-//        }
-//        Assert.assertTrue(result.getCount() + " features did not match via query interface getFeatures() plug-in ", b1 && b2 && b3);
-//
-//        if (BENCHMARK) {
-//            future = SWQEFactory.getQueryInterface().getFeatures(0, benchmarkSet);
-//
-//            this.benchmark("getFeatures(...)", future);
-//        }
+        // check that Features are present match
+        FeatureSet result = future.get();
+
+        b1 = false;
+        b2 = false;
+        b3 = false;
+        for (Feature f : result) {
+            // sadly, Features no longer will be exactly the same after a query, queries generate new features
+            // in new FeatureSets
+            if (f.getStart() == a1.getStart() && f.getStop() == a1.getStop()) {
+                b1 = true;
+            } else if (f.getStart() == a2.getStart() && f.getStop() == a2.getStop()) {
+                b2 = true;
+            } else if (f.getStart() == a3.getStart() && f.getStop() == a3.getStop()) {
+                b3 = true;
+            }
+        }
+        Assert.assertTrue(result.getCount() + " features did not match via query interface getFeatures() plug-in ", b1 && b2 && b3);
+
+        if (BENCHMARK) {
+            future = SWQEFactory.getQueryInterface().getFeatures(0, benchmarkSet);
+
+            this.benchmark("getFeatures(...)", future);
+        }
     }
 
     private void benchmark(String title, QueryFuture<FeatureSet> future) {
@@ -373,22 +371,20 @@ public class QueryInterfaceTest implements Benchmarking {
         resultSet = queryFuture.get();
         count = (int) resultSet.getCount();
         Assert.assertTrue("Setting a query constraint with a != operation failed, expected 7 and found " + count, count == 7);
+       
+        queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, bSet, RPNStack.compileQuery("!(tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"SO::sequence_variant::functional_variant::transcript_function_variant::transcript_processing_variant\"))"));
+        resultSet = queryFuture.get();
+        count = (int) resultSet.getCount();
+        Assert.assertTrue("Setting a query constraint with a ! operation failed, expected 15 and found " + count, count == 15);
 
-// TODO: counting is somewhat borked and only fixed for Map/Reduce plugins (meaning other back-ends may fail)
-//        
-//        queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, bSet, RPNStack.compileQuery("!(tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"SO::sequence_variant::functional_variant::transcript_function_variant::transcript_processing_variant\"))"));
-//        resultSet = queryFuture.get();
-//        count = (int) resultSet.getCount();
-//        Assert.assertTrue("Setting a query constraint with a ! operation failed, expected 15 and found " + count, count == 15);
-//
-//        queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, bSet, RPNStack.compileQuery(
-//                "!(" + "tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTFUNCTIONAL_VARIANT + "\")"
-//                + " || tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTFUNCTIONAL_VARIANT2 + "\")"
-//                + " || tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTSTRUCTURAL_VARIANT + "\")"
-//                + ")"));
-//        resultSet = queryFuture.get();
-//        count = (int) resultSet.getCount();
-//        Assert.assertTrue("Setting a query constraint with a complex ! operation failed, expected 13 and found " + count, count == 13);
+        queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, bSet, RPNStack.compileQuery(
+                "!(" + "tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTFUNCTIONAL_VARIANT + "\")"
+                + " || tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTFUNCTIONAL_VARIANT2 + "\")"
+                + " || tagOccurrence(\"" + b_tagset.getSGID().getRowKey() + "\",\"" + FeatureStoreInterfaceTest.SOSEQUENCE_VARIANTSTRUCTURAL_VARIANT + "\")"
+                + ")"));
+        resultSet = queryFuture.get();
+        count = (int) resultSet.getCount();
+        Assert.assertTrue("Setting a query constraint with a complex ! operation failed, expected 13 and found " + count, count == 13);
     }
 
     /**
