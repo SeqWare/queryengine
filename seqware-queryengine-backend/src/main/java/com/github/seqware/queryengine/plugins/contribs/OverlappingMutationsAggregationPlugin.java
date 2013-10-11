@@ -59,7 +59,7 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
                 for (Feature positionFeature : featuresAtCurrentLocation) {
                     String positionFeatureVarID = calculateVarID(positionFeature);
                     String positionOverlapID = positionFeature.getTagByKey("id").getValue().toString();
-                    String fFeatureVarID = calculateVarID(positionFeature);
+                    String fFeatureVarID = calculateVarID(f);
                     if (positionFeatureVarID.equals(fFeatureVarID)){
                         continue;
                     }
