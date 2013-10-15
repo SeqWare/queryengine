@@ -54,13 +54,19 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
     /**
      * {@inheritDoc}
      *
+     * @param position the value of position
      */
+    
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
+    public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
         count++;
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
             for (Feature f : e.getValue()) {
+                // ignore features that do not start at this position
+                if (f.getStart() != position){
+                    continue;
+                }
                 f.setManager(modelManager);
                 results.add(f);
             }

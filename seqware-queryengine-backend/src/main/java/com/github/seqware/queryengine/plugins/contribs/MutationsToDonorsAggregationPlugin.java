@@ -43,12 +43,17 @@ public class MutationsToDonorsAggregationPlugin extends FilteredFileOutputPlugin
     private Text textKey = new Text();
 
     @Override
-    public void map(Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+    public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
       // map is mutation \t mutation ID ->   List of donor::project
       // "10:100008435-100008436_G->A   MU1157731" -> {"DO29264::LAML-KR","DO29242::LAML-KR","DO14015::COAD-US"}
       HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
       for(FeatureSet fs : atoms.keySet()) {
         for (Feature f : atoms.get(fs)) {
+            
+            if (f.getStart() != position){
+                continue;
+            }
+            
           // create "10:100008435-100008436_G->A"
           String ref = null;
           String var = null;

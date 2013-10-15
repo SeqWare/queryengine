@@ -30,6 +30,7 @@ import com.github.seqware.queryengine.model.impl.inMemory.*;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.github.seqware.queryengine.util.FSGID;
+import com.github.seqware.queryengine.util.SGID;
 import java.util.*;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
@@ -128,52 +129,84 @@ public class SimpleModelManager implements CreateUpdateManager {
 
     private void createBuckets(Entry<String, List<Atom>> e) {
         if (e.getKey().startsWith(FeatureList.prefix + StorageInterface.SEPARATOR)) {
-            // sort Features and place them within buckets
-            List<Atom> features = e.getValue();
-            // sort based on the row key, this should place features with the same start position next to each other
-            Collections.sort(features, new Comparator() {
+            if (Constants.NAIVE_OVERLAPS) {
+                List<Atom> features = e.getValue();
+                // position in genome -> feature set ID -> feature list
+                Map<Long, Map<SGID, FeatureList>> map = new HashMap<Long, Map<SGID, FeatureList>>();
+                for (Atom a : features) {
+                    Feature f = (Feature) a;
+                    // ensure that we have a FeatureList available for every feature set / position covered by the feature
+                    for (long i = f.getStart(); i < f.getStop(); i++) {
+                        if (!map.containsKey(i)) {
+                            map.put(i, new HashMap<SGID, FeatureList>());
+                        }
+                        SGID featureSetID = ((FSGID) f.getSGID()).getFeatureSetID();
+                        if (!map.get(i).containsKey(featureSetID)) {
+                            FeatureList featureList = new FeatureList();
+                            featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID(), f.getSeqid(), i), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
+                            map.get(i).put(featureSetID, featureList);
+                        }
+                        FeatureList featureList = map.get(i).get(featureSetID);
+                        // need to assign feature a new SGID, so the multiple locations don't get confusing
+                        featureList.add(f);
+                    }
+                }
+                // grab all FeatureLists and set them as the value
+                List<Atom> bucketList = new ArrayList<Atom>();
+                for(Map<SGID, FeatureList> innerMap : map.values()){
+                    bucketList.addAll(innerMap.values());
+                }
+                e.setValue(bucketList);
+            } else {
 
-                @Override
-                public int compare(Object t, Object t1) {
-                    assert (t instanceof Feature);
-                    assert (t1 instanceof Feature);
-                    Feature f0 = (Feature) t;
-                    Feature f1 = (Feature) t1;
-                    // first separate by featureset
-                    if (!((FSGID)f0.getSGID()).getFeatureSetID().equals(((FSGID)f1.getSGID()).getFeatureSetID())){
-                        return ((FSGID)f0.getSGID()).getFeatureSetID().getRowKey().compareTo(((FSGID)f1.getSGID()).getFeatureSetID().getRowKey());
+
+                // sort Features and place them within buckets
+                List<Atom> features = e.getValue();
+                // sort based on the row key, this should place features with the same start position next to each other
+                Collections.sort(features, new Comparator() {
+                    @Override
+                    public int compare(Object t, Object t1) {
+                        assert (t instanceof Feature);
+                        assert (t1 instanceof Feature);
+                        Feature f0 = (Feature) t;
+                        Feature f1 = (Feature) t1;
+                        // first separate by featureset
+                        if (!((FSGID) f0.getSGID()).getFeatureSetID().equals(((FSGID) f1.getSGID()).getFeatureSetID())) {
+                            return ((FSGID) f0.getSGID()).getFeatureSetID().getRowKey().compareTo(((FSGID) f1.getSGID()).getFeatureSetID().getRowKey());
+                        }
+                        // then by rowkey
+                        return f0.getSGID().getRowKey().compareTo(f1.getSGID().getRowKey());
                     }
-                    // then by rowkey
-                    return f0.getSGID().getRowKey().compareTo(f1.getSGID().getRowKey());
-                }
-            });
-            // go through and upgrade to buckets
-            List<Atom> bucketList = new ArrayList<Atom>(features.size());
-            FeatureList featureList = null;
-            String lastRowKey = "";
-            for (Atom a : features) {
-                Feature f = (Feature) a;
-                // start a new bucket if this is a new rowkey
-                if (!f.getSGID().getRowKey().equals(lastRowKey)) {
-                    if (featureList != null) {
-                        bucketList.add(featureList);
+                });
+                // go through and upgrade to buckets
+                List<Atom> bucketList = new ArrayList<Atom>(features.size());
+                FeatureList featureList = null;
+                String lastRowKey = "";
+                for (Atom a : features) {
+                    Feature f = (Feature) a;
+                    // start a new bucket if this is a new rowkey
+                    if (!f.getSGID().getRowKey().equals(lastRowKey)) {
+                        if (featureList != null) {
+                            bucketList.add(featureList);
+                        }
+                        featureList = new FeatureList();
+                        lastRowKey = f.getSGID().getRowKey();
                     }
-                    featureList = new FeatureList();
-                    lastRowKey = f.getSGID().getRowKey();
+                    assert (featureList.getFeatures().isEmpty() || featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
+                    featureList.add(f);
+                    // upgrade the featureList with this redundant information on the way in
+                    featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
                 }
-                assert (featureList.getFeatures().isEmpty() || featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
-                featureList.add(f);
-                // upgrade the featureList with this redundant information on the way in
-                featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
+                // handle the last remaining bucket
+                if (featureList.getFeatures().size() > 0) {
+                    FSGID listfsgid = (FSGID) featureList.getSGID();
+                    FSGID firstElement = (FSGID) featureList.getFeatures().get(0).getSGID();
+                    assert (listfsgid.getRowKey().equals(firstElement.getRowKey()) && listfsgid.getReferenceName().equals(firstElement.getReferenceName())
+                            && listfsgid.getFeatureSetID().equals(firstElement.getFeatureSetID()));
+                    bucketList.add(featureList);
+                }
+                e.setValue(bucketList);
             }
-            if (featureList.getFeatures().size() > 0) {
-                FSGID listfsgid = (FSGID) featureList.getSGID();
-                FSGID firstElement = (FSGID) featureList.getFeatures().get(0).getSGID();
-                assert(listfsgid.getRowKey().equals(firstElement.getRowKey()) && listfsgid.getReferenceName().equals(firstElement.getReferenceName())
-                        && listfsgid.getFeatureSetID().equals(firstElement.getFeatureSetID()));
-                bucketList.add(featureList);
-            }
-            e.setValue(bucketList);
         }
     }
 

@@ -87,6 +87,26 @@ public class FSGID extends SGID implements KryoSerializable {
         this.featureSetID = fsgid.getFeatureSetID();
         this.setBackendTimestamp(fsgid.getBackendTimestamp());
     }
+    
+    /**
+     * construct a FSGID based on all the components of a SGID while taking the
+     * non-unique aspects on a FSGID, used when creating FeatureLists only.
+     * 
+     * use a different position for naive overlaps
+     * 
+     * @param sgid
+     * @param fsgid
+     * @param position 
+     */
+    public FSGID(SGID sgid, FSGID fsgid, String seqid, long position){
+        super(sgid.getUuid().getMostSignificantBits(), sgid.getUuid().getLeastSignificantBits(), sgid.getBackendTimestamp().getTime(), null);
+        StringBuilder builder = new StringBuilder();
+        builder.append(fsgid.referenceName).append(StorageInterface.SEPARATOR).append(seqid).append(PositionSeparator).append(padZeros(position, HBaseStorage.PAD));
+        this.friendlyRowKey = builder.toString();
+        this.referenceName = fsgid.referenceName;
+        this.featureSetID = fsgid.getFeatureSetID();
+        this.setBackendTimestamp(fsgid.getBackendTimestamp());
+    }
 
 
     /**
@@ -133,10 +153,10 @@ public class FSGID extends SGID implements KryoSerializable {
         this.tombstone = tombstone;
     }
 
-    private String padZeros(long input, int totalPlaces) throws Exception {
+    private String padZeros(long input, int totalPlaces) {
         String strInput = Long.valueOf(input).toString();
         if (strInput.length() > totalPlaces) {
-            throw new Exception("Integer " + input + " is larger than total places of " + totalPlaces + " so padding this string failed.");
+            throw new RuntimeException("Integer " + input + " is larger than total places of " + totalPlaces + " so padding this string failed.");
         }
         int diff = totalPlaces - strInput.length();
         StringBuilder buffer = new StringBuilder();
