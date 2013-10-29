@@ -161,6 +161,12 @@ public class SimplePersistentBackEnd implements BackEndInterface {
     
     /** {@inheritDoc} */
     @Override
+    public SeqWareIterable<ReadSet> getReadSets() {
+        return getAllOfClass(ReadSet.class);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public SeqWareIterable<PluginRun> getPluginRuns() {
         return getAllOfClass(PluginRun.class);
     }
