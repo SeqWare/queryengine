@@ -32,6 +32,7 @@ import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -83,9 +84,9 @@ public class BrianTest {
       
       
         BrianTest dumper = new BrianTest(args);
-        /*dumper.printReferences();
+        dumper.printReferences();
         dumper.printFeatureSets();
-        dumper.printTagSets(); */
+        dumper.printTagSets();
         dumper.printReadSets();
         //dumper.export();
     }
@@ -111,9 +112,9 @@ public class BrianTest {
       
       CreateUpdateManager man = SWQEFactory.getModelManager();
       ReadSet.Builder rsb = man.buildReadSet();
-      rsb.setReadSetIndexPath("/tmp/foo.bam.bai");
-      rsb.setReadSetPath("/tmp/foo.bam");
-      rsb.setReadSetName("Foo");
+      rsb.setReadSetIndexPath("/home/boconnor/Development/Prototypes/SampleBams/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam.bai");
+      rsb.setReadSetPath("/home/boconnor/Development/Prototypes/SampleBams/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam");
+      rsb.setReadSetName("HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522");
       ReadSet newReadSet = rsb.build();
       man.flush();
       //man.close();
@@ -126,6 +127,20 @@ public class BrianTest {
       Log.stdout("TRYING TO LIST READ SETS");
       for(ReadSet s : readSets) {
         Log.stdout(s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
+        File file = new File(s.getReadSetPath());
+        if (file.exists()) {
+          // going to read it
+          s.open(file);
+          int count = 0;
+          try {
+            count = s.scan("20", 0, Integer.MAX_VALUE);
+            Log.stdout("READ COUNTS: "+count);
+          } catch (IOException ex) {
+            Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          s.close();
+          break;
+        }
       }
       
       store.closeStorage();

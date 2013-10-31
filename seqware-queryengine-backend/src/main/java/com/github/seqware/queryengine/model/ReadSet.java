@@ -54,7 +54,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     this.bamFile = null;
   }
 
-  private int scan(String chromosome, int start, int end) throws IOException {
+  public int scan(String chromosome, int start, int end) throws IOException {
     int nCount = 0;
     CloseableIterator<SAMRecord> iter = null;
     try {
