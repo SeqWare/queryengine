@@ -42,6 +42,7 @@ public abstract class StorageInterface {
     public final BiMap<Class, String> directBIMap = new ImmutableBiMap.Builder<Class, String>().put(PluginRun.class, PluginRun.prefix)
             .put(Plugin.class, Plugin.prefix).put(Reference.class, Reference.prefix).put(ReferenceSet.class, ReferenceSet.prefix)
             .put(Tag.class, Tag.prefix).put(TagSet.class, TagSet.prefix).put(User.class, User.prefix).put(Group.class, Group.prefix)
+            .put(ReadSet.class, ReadSet.prefix)
             .put(FeatureSet.class, FeatureSet.prefix).build();
     
     /** Constant <code>SEPARATOR="."</code> */

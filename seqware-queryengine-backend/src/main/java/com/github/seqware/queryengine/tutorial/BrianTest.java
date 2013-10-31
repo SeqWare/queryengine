@@ -83,9 +83,9 @@ public class BrianTest {
       
       
         BrianTest dumper = new BrianTest(args);
-        dumper.printReferences();
+        /*dumper.printReferences();
         dumper.printFeatureSets();
-        dumper.printTagSets();
+        dumper.printTagSets(); */
         dumper.printReadSets();
         //dumper.export();
     }
@@ -121,13 +121,13 @@ public class BrianTest {
       StorageInterface store = SWQEFactory.getStorage();
      
       
-/*      QueryInterface query = SWQEFactory.getQueryInterface();
+      QueryInterface query = SWQEFactory.getQueryInterface();
       SeqWareIterable<ReadSet> readSets = query.getReadSets();
       Log.stdout("TRYING TO LIST READ SETS");
       for(ReadSet s : readSets) {
         Log.stdout(s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
       }
-      */
+      
       store.closeStorage();
     }
     
