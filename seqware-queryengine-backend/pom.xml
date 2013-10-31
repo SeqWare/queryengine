@@ -600,6 +600,12 @@ never
             <artifactId>zip64</artifactId>
             <version>1.03</version>
         </dependency>
+        <dependency>
+            <groupId>org.broadinstitute</groupId>
+            <artifactId>sam</artifactId>
+            <version>1.92</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
    <profiles>
