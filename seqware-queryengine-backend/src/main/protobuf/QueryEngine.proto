@@ -74,6 +74,19 @@ message UserPB {
     repeated SGIDPB grps = 14;
 }
 
+message ReadSetPB {
+    // atom/molecule stuff
+    optional AtomPB atom = 1;
+    optional ReadSetPB precedingVersion = 2;
+    //optional ACLPB acl = 3; // deprecated
+    optional MoleculePB mol = 4;
+
+    // User-specific
+    optional string readSetName = 10;
+    optional string readSetPath = 11;
+    optional string readSetIndexPath = 12;
+}
+
 message GroupPB {
     // atom/molecule stuff
     optional AtomPB atom = 1;

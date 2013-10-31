@@ -65,6 +65,15 @@ public class HBasePersistentBackEnd extends SimplePersistentBackEnd {
         }
         return super.getGroups();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public SeqWareIterable<ReadSet> getReadSets() {
+        if (storage instanceof HBaseStorage) {
+            return handleTableScan(ReadSet.class, ReadSet.prefix);
+        }
+        return super.getReadSets();
+    }
 
     /** {@inheritDoc} */
     @Override

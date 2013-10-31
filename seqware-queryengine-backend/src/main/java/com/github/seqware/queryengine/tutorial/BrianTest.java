@@ -23,6 +23,7 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.QueryInterface;
+import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
 import com.github.seqware.queryengine.model.TagSet;
@@ -34,6 +35,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sourceforge.seqware.common.util.Log;
@@ -83,6 +86,7 @@ public class BrianTest {
         dumper.printReferences();
         dumper.printFeatureSets();
         dumper.printTagSets();
+        dumper.printReadSets();
         //dumper.export();
     }
     
@@ -100,6 +104,31 @@ public class BrianTest {
       for(Reference ref : refs) {
         Log.stdout(ref.getName() + " " + ref.getSGID());
       }
+    }
+    
+    public void printReadSets() {
+      
+      
+      CreateUpdateManager man = SWQEFactory.getModelManager();
+      ReadSet.Builder rsb = man.buildReadSet();
+      rsb.setReadSetIndexPath("/tmp/foo.bam.bai");
+      rsb.setReadSetPath("/tmp/foo.bam");
+      rsb.setReadSetName("Foo");
+      ReadSet newReadSet = rsb.build();
+      man.flush();
+      //man.close();
+
+      StorageInterface store = SWQEFactory.getStorage();
+     
+      
+/*      QueryInterface query = SWQEFactory.getQueryInterface();
+      SeqWareIterable<ReadSet> readSets = query.getReadSets();
+      Log.stdout("TRYING TO LIST READ SETS");
+      for(ReadSet s : readSets) {
+        Log.stdout(s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
+      }
+      */
+      store.closeStorage();
     }
     
     public void printFeatureSets() {

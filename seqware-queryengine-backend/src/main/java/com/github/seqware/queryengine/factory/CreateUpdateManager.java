@@ -104,6 +104,13 @@ public interface CreateUpdateManager {
      * @return feature set
      */
     public FeatureSet.Builder buildFeatureSet();
+    
+    /**
+     * Build a readSet
+     *
+     * @return feature set
+     */
+    public ReadSet.Builder buildReadSet();
 
     /**
      * Build a Reference with a given name

@@ -327,6 +327,18 @@ public class SimpleModelManager implements CreateUpdateManager {
         fSet.setManager(this);
         return fSet;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public ReadSet.Builder buildReadSet() {
+        ReadSet.Builder rSet = null;
+        if (backend instanceof SimplePersistentBackEnd) {
+            rSet = ReadSet.newBuilder().setManager(this);
+        }
+        assert(rSet != null);
+        rSet.setManager(this);
+        return rSet;
+    }
 
     /** {@inheritDoc} */
     @Override
