@@ -6,6 +6,7 @@ import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import net.sf.samtools.SAMFileHeader;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import net.sf.samtools.SAMFileReader;
@@ -32,6 +33,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   private ArrayList<String> reads;
   private File bamFile = null;
   private SAMFileReader inputSam = null;
+  private SAMFileHeader header = null;
   private boolean containsbamRecord = false;//false : the alignment of the returned SAMRecords need only overlap the interval of interest. 
 
   /**
@@ -89,6 +91,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
       if (file.exists()) {
         close();
         open(file);
+        this.header = inputSam.getFileHeader();
         return (this.inputSam.query(contig, start, end, this.containsbamRecord));
       }
     } catch (Exception e) {
@@ -99,6 +102,14 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
       }
     }
     return(null);
+  }
+
+  public SAMFileHeader getHeader() {
+    return header;
+  }
+
+  public void setHeader(SAMFileHeader header) {
+    this.header = header;
   }
 
   public ArrayList<String> getReads() {

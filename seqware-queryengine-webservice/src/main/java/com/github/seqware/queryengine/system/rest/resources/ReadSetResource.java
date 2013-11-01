@@ -41,6 +41,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sf.samtools.SAMRecord;
@@ -80,7 +81,7 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
    */
   @GET
   @Path("/{sgid}")
-  @ApiOperation(value = "List reads in a readset in SAM", notes = "This can only be done by an authenticated user.")
+  @ApiOperation(value = "List reads in a readset in SAM format", notes = "This can only be done by an authenticated user.")
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
     @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -89,49 +90,35 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
           @ApiParam(value = "rowkey that needs to be updated", required = true)
           @PathParam("sgid") String sgid,
           @ApiParam(value = "contig to limit to", required = true)
-          @PathParam("contig") String contig,
+          @QueryParam("contig") String contig,
           @ApiParam(value = "start position", required = true)
-          @PathParam("start") Integer start,
+          @QueryParam("start") String start,
           @ApiParam(value = "stop position", required = true)
-          @PathParam("stop") Integer stop) throws InvalidIDException {
+          @QueryParam("stop") String stop) throws InvalidIDException {
 
-    // LEFT OFF HERE: need to figure out how to write back data
     ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
     StringBuilder sb = new StringBuilder();
     if (readSet == null) {
       // A genuinely bad request:
       // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-      return ("PROBLEM!");
-      //throw new InvalidIDException(INVALID_ID, "ID not found");
-    }
-
-    int count = -500;
-
-    if (readSet != null) {
+      throw new InvalidIDException(INVALID_ID, "ID not found");
+    } else {
       try {
-
-        count = readSet.scanCount("20", 1, 63000000);
-
-        sb.append("\nCOUNT: ");
-        sb.append(count);
-        sb.append(" ReadSet: ");
-        sb.append(readSet);
-        
-        CloseableIterator<SAMRecord> set = readSet.scan("20", 1, 63000000);
-        int max = 100;
-        while (set.hasNext() && max > 0) {
+        //CloseableIterator<SAMRecord> set = readSet.scan("20", 1, 63000000);
+        CloseableIterator<SAMRecord> set = readSet.scan(contig, Integer.parseInt(start), Integer.parseInt(stop));
+        sb.append(readSet.getHeader().getTextHeader());
+        int max = 1000;
+        while (set.hasNext()) {
           max--;
+          if (max < 0) { break; }
           SAMRecord rec = set.next();
-          sb.append("\n"+rec.getAlignmentStart()+" "+rec.getReadName());
+          sb.append(rec.getSAMString());
         }
-        
         return sb.toString();
-
       } catch (IOException ex) {
         Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
-
     return ("");
   }
 }
