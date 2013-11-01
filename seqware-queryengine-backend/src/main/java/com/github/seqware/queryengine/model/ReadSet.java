@@ -5,6 +5,7 @@ import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import net.sf.samtools.SAMFileReader;
@@ -28,6 +29,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   private String readSetName;
   private String readSetPath;
   private String readSetIndexPath;
+  private ArrayList<String> reads;
   private File bamFile = null;
   private SAMFileReader inputSam = null;
   private boolean containsbamRecord = false;//false : the alignment of the returned SAMRecords need only overlap the interval of interest. 
@@ -39,14 +41,14 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     super();
   }
 
-  public void open(File bamFile) {
+  private void open(File bamFile) {
     close();
     this.bamFile = bamFile;
     this.inputSam = new SAMFileReader(this.bamFile);
     this.inputSam.setValidationStringency(ValidationStringency.SILENT);
   }
 
-  public void close() {
+  private void close() {
     if (inputSam != null) {
       inputSam.close();
     }
@@ -55,29 +57,40 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   }
 
   public int scanCount(String contig, int start, int end) throws IOException {
-    int nCount = 0;
-    
-    CloseableIterator<SAMRecord> iter = null;
-    try {
-      iter = this.inputSam.query(contig, start, end, this.containsbamRecord);
-      while (iter.hasNext()) {
-        SAMRecord rec = iter.next();
-        ++nCount;
-      }
-      return nCount;
-    } catch (Exception e) {
-      throw new IOException(e);
-    } finally {
-      if (iter != null) {
-        iter.close();
+    int nCount = -1;
+    File file = new File(getReadSetPath());
+    if (file.exists()) {
+      // going to read it
+      open(file);
+      CloseableIterator<SAMRecord> iter = null;
+      try {
+        iter = this.inputSam.query(contig, start, end, this.containsbamRecord);
+        while (iter.hasNext()) {
+          SAMRecord rec = iter.next();
+          ++nCount;
+        }
+        return nCount;
+      } catch (Exception e) {
+        throw new IOException(e);
+      } finally {
+        if (iter != null) {
+          iter.close();
+        }
+        close();
       }
     }
+    return nCount;
   }
-  
+
   public CloseableIterator<SAMRecord> scan(String contig, int start, int end) throws IOException {
     CloseableIterator<SAMRecord> iter = null;
     try {
-      return(this.inputSam.query(contig, start, end, this.containsbamRecord));
+      File file = new File(getReadSetPath());
+      if (file.exists()) {
+        close();
+        open(file);
+        return (this.inputSam.query(contig, start, end, this.containsbamRecord));
+      }
     } catch (Exception e) {
       throw new IOException(e);
     } finally {
@@ -85,6 +98,15 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
         iter.close();
       }
     }
+    return(null);
+  }
+
+  public ArrayList<String> getReads() {
+    return reads;
+  }
+
+  public void setReads(ArrayList<String> reads) {
+    this.reads = reads;
   }
 
   public String getReadSetName() {
@@ -152,7 +174,8 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   /**
    * Create a new ACL builder
    *
-   * @return a {@link com.github.seqware.queryengine.model.ReadSet.Builder} object.
+   * @return a {@link com.github.seqware.queryengine.model.ReadSet.Builder}
+   * object.
    */
   public static ReadSet.Builder newBuilder() {
     return new ReadSet.Builder();

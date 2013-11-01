@@ -130,7 +130,7 @@ public class BrianTest {
         File file = new File(s.getReadSetPath());
         if (file.exists()) {
           // going to read it
-          s.open(file);
+          //s.open(file);
           int count = 0;
           try {
             count = s.scanCount("20", 0, Integer.MAX_VALUE);
@@ -138,7 +138,7 @@ public class BrianTest {
           } catch (IOException ex) {
             Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);
           }
-          s.close();
+          //s.close();
           break;
         }
       }

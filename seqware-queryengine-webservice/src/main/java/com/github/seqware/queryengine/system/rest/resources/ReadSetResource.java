@@ -16,6 +16,9 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.QueryInterface;
@@ -40,6 +43,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sf.samtools.SAMRecord;
+import net.sf.samtools.util.CloseableIterator;
 import net.sourceforge.seqware.common.util.Log;
 
 /**
@@ -91,58 +96,39 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
           @PathParam("stop") Integer stop) throws InvalidIDException {
 
     // LEFT OFF HERE: need to figure out how to write back data
-    /*ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
-     if (readSet == null) {
-     // A genuinely bad request:
-     // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-     return ("PROBLEM!");
-     //throw new InvalidIDException(INVALID_ID, "ID not found");
-     }
-   
-     int count = -500;
-
-     if (readSet != null) {
-     try {
-     // DENIS, take a look here, why does this always throw a null pointer exception
-     count = readSet.scanCount(contig, start, stop);
-     } catch (IOException ex) {
-     Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     }*/
-
+    ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
     StringBuilder sb = new StringBuilder();
-    QueryInterface query = SWQEFactory.getQueryInterface();
-    SeqWareIterable<ReadSet> readSets = query.getReadSets();
-    Log.stdout("TRYING TO LIST READ SETS");
-    for (ReadSet s : readSets) {
-      if (s.getSGID().toString().contains(sgid)) {
+    if (readSet == null) {
+      // A genuinely bad request:
+      // (see also http://www.biodas.org/documents/spec-1.6.html#response)
+      return ("PROBLEM!");
+      //throw new InvalidIDException(INVALID_ID, "ID not found");
+    }
 
-        int count = -700;
-        try {
-          sb.append(s.getSGID().toString() + " " + s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
-          File file = new File(s.getReadSetPath());
-          if (file.exists()) {
-            // going to read it
-            s.open(file);
-            try {
-              count = s.scanCount("20", 0, Integer.MAX_VALUE);
-              Log.stdout("READ COUNTS: " + count);
-            } catch (IOException ex) {
-              Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            s.close();
-            //s.scanCount(contig, start, stop);
-          }
-        } catch (Exception ex) {
-          Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    int count = -500;
+
+    if (readSet != null) {
+      try {
+
+        count = readSet.scanCount("20", 1, 63000000);
 
         sb.append("\nCOUNT: ");
         sb.append(count);
         sb.append(" ReadSet: ");
-        sb.append(s);
+        sb.append(readSet);
+        
+        CloseableIterator<SAMRecord> set = readSet.scan("20", 1, 63000000);
+        int max = 100;
+        while (set.hasNext() && max > 0) {
+          max--;
+          SAMRecord rec = set.next();
+          sb.append("\n"+rec.getAlignmentStart()+" "+rec.getReadName());
+        }
+        
         return sb.toString();
 
+      } catch (IOException ex) {
+        Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
 
