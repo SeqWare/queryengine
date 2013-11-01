@@ -133,7 +133,7 @@ public class BrianTest {
           s.open(file);
           int count = 0;
           try {
-            count = s.scan("20", 0, Integer.MAX_VALUE);
+            count = s.scanCount("20", 0, Integer.MAX_VALUE);
             Log.stdout("READ COUNTS: "+count);
           } catch (IOException ex) {
             Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);

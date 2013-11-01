@@ -359,7 +359,8 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /** {@inheritDoc} */
     @Override
     public T getPrecedingVersion() {
-        return this.precedingVersion.get();
+      if (this.precedingVersion == null) { return(null); } 
+      return this.precedingVersion.get();
     }
 
     /** {@inheritDoc} */
@@ -388,8 +389,9 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      * @return a {@link com.github.seqware.queryengine.util.SGID} object.
      */
     public SGID getPrecedingSGID() {
-        return this.precedingVersion.getSGID();
-        //return precedingSGID;
+      if (this.precedingVersion == null) { return null; }
+      return this.precedingVersion.getSGID();
+      //return precedingSGID;
     }
 
     /**

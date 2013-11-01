@@ -54,16 +54,29 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     this.bamFile = null;
   }
 
-  public int scan(String chromosome, int start, int end) throws IOException {
+  public int scanCount(String contig, int start, int end) throws IOException {
     int nCount = 0;
     CloseableIterator<SAMRecord> iter = null;
     try {
-      iter = this.inputSam.query(chromosome, start, end, this.containsbamRecord);
+      iter = this.inputSam.query(contig, start, end, this.containsbamRecord);
       while (iter.hasNext()) {
         SAMRecord rec = iter.next();
         ++nCount;
       }
       return nCount;
+    } catch (Exception e) {
+      throw new IOException(e);
+    } finally {
+      if (iter != null) {
+        iter.close();
+      }
+    }
+  }
+  
+  public CloseableIterator<SAMRecord> scan(String contig, int start, int end) throws IOException {
+    CloseableIterator<SAMRecord> iter = null;
+    try {
+      return(this.inputSam.query(contig, start, end, this.containsbamRecord));
     } catch (Exception e) {
       throw new IOException(e);
     } finally {
