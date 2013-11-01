@@ -18,9 +18,11 @@ package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
+import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.model.User;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
+import com.github.seqware.queryengine.tutorial.BrianTest;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
@@ -28,6 +30,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +40,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sourceforge.seqware.common.util.Log;
 
 /**
  * Readset resource.
@@ -87,29 +91,61 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
           @PathParam("stop") Integer stop) throws InvalidIDException {
 
     // LEFT OFF HERE: need to figure out how to write back data
-    ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
-    if (readSet == null) {
-      // A genuinely bad request:
-      // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-      return ("PROBLEM!");
-      //throw new InvalidIDException(INVALID_ID, "ID not found");
-    }
-    StringBuilder sb = new StringBuilder();
-    int count = -500;
+    /*ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
+     if (readSet == null) {
+     // A genuinely bad request:
+     // (see also http://www.biodas.org/documents/spec-1.6.html#response)
+     return ("PROBLEM!");
+     //throw new InvalidIDException(INVALID_ID, "ID not found");
+     }
+   
+     int count = -500;
 
-    if (readSet != null) {
-      try {
-        // DENIS, take a look here, why does this always throw a null pointer exception
-        count = readSet.scanCount(contig, start, stop);
-      } catch (IOException ex) {
-        Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+     if (readSet != null) {
+     try {
+     // DENIS, take a look here, why does this always throw a null pointer exception
+     count = readSet.scanCount(contig, start, stop);
+     } catch (IOException ex) {
+     Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }*/
+
+    StringBuilder sb = new StringBuilder();
+    QueryInterface query = SWQEFactory.getQueryInterface();
+    SeqWareIterable<ReadSet> readSets = query.getReadSets();
+    Log.stdout("TRYING TO LIST READ SETS");
+    for (ReadSet s : readSets) {
+      if (s.getSGID().toString().contains(sgid)) {
+
+        int count = -700;
+        try {
+          sb.append(s.getSGID().toString() + " " + s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
+          File file = new File(s.getReadSetPath());
+          if (file.exists()) {
+            // going to read it
+            s.open(file);
+            try {
+              count = s.scanCount("20", 0, Integer.MAX_VALUE);
+              Log.stdout("READ COUNTS: " + count);
+            } catch (IOException ex) {
+              Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            s.close();
+            //s.scanCount(contig, start, stop);
+          }
+        } catch (Exception ex) {
+          Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        sb.append("\nCOUNT: ");
+        sb.append(count);
+        sb.append(" ReadSet: ");
+        sb.append(s);
+        return sb.toString();
+
       }
     }
 
-    sb.append("COUNT: ");
-    sb.append(count);
-    sb.append(" ReadSet: ");
-    sb.append(readSet);
-    return sb.toString();
+    return ("");
   }
 }

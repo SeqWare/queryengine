@@ -56,8 +56,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
 
   public int scanCount(String contig, int start, int end) throws IOException {
     int nCount = 0;
-    return(500);
-    /*
+    
     CloseableIterator<SAMRecord> iter = null;
     try {
       iter = this.inputSam.query(contig, start, end, this.containsbamRecord);
@@ -72,7 +71,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
       if (iter != null) {
         iter.close();
       }
-    }*/
+    }
   }
   
   public CloseableIterator<SAMRecord> scan(String contig, int start, int end) throws IOException {
