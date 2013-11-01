@@ -22,7 +22,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
 
   /**
    * Constant
-   * <code>prefix="User"</code>
+   * <code>prefix="ReadSet"</code>
    */
   public final static String prefix = "ReadSet";
   private String readSetName;
@@ -33,7 +33,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   private boolean containsbamRecord = false;//false : the alignment of the returned SAMRecords need only overlap the interval of interest. 
 
   /**
-   * Create a new user
+   * Create a new readset
    */
   private ReadSet() {
     super();
@@ -56,6 +56,8 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
 
   public int scanCount(String contig, int start, int end) throws IOException {
     int nCount = 0;
+    return(500);
+    /*
     CloseableIterator<SAMRecord> iter = null;
     try {
       iter = this.inputSam.query(contig, start, end, this.containsbamRecord);
@@ -70,7 +72,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
       if (iter != null) {
         iter.close();
       }
-    }
+    }*/
   }
   
   public CloseableIterator<SAMRecord> scan(String contig, int start, int end) throws IOException {
@@ -126,8 +128,6 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     }
     ReadSet rhs = (ReadSet) obj;
     return new EqualsBuilder()
-            // Group Equality does not need SGID equality, we do not want different Users with different times to be treated differently
-            //                .appendSuper(super.equals(obj))
             .append(super.getSGID().getRowKey(), rhs.getSGID().getRowKey())
             .append(readSetName, rhs.getReadSetName())
             .append(readSetPath, rhs.getReadSetPath())
@@ -153,7 +153,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   /**
    * Create a new ACL builder
    *
-   * @return a {@link com.github.seqware.queryengine.model.User.Builder} object.
+   * @return a {@link com.github.seqware.queryengine.model.ReadSet.Builder} object.
    */
   public static ReadSet.Builder newBuilder() {
     return new ReadSet.Builder();
@@ -162,7 +162,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
   /**
    * {@inheritDoc}
    *
-   * Create an User builder started with a copy of this
+   * Create an ReadSet builder started with a copy of this
    */
   @Override
   public ReadSet.Builder toBuilder() {

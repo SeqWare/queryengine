@@ -126,7 +126,7 @@ public class BrianTest {
       SeqWareIterable<ReadSet> readSets = query.getReadSets();
       Log.stdout("TRYING TO LIST READ SETS");
       for(ReadSet s : readSets) {
-        Log.stdout(s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
+        Log.stdout(s.getSGID().toString() + " " + s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
         File file = new File(s.getReadSetPath());
         if (file.exists()) {
           // going to read it
