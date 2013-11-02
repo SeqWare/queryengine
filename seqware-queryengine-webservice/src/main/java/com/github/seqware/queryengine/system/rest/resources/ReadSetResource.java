@@ -33,8 +33,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -42,8 +46,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import net.sourceforge.seqware.common.util.Log;
@@ -86,7 +92,7 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
     @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
     @ApiResponse(code = INVALID_SET, message = "Element not found")})
   @Produces(MediaType.TEXT_PLAIN)
-  public String getSAMReadListing(
+  public Response getSAMReadListing(
           @ApiParam(value = "rowkey that needs to be updated", required = true)
           @PathParam("sgid") String sgid,
           @ApiParam(value = "contig to limit to", required = true)
@@ -96,8 +102,9 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
           @ApiParam(value = "stop position", required = true)
           @QueryParam("stop") String stop) throws InvalidIDException {
 
-    ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
-    StringBuilder sb = new StringBuilder();
+    
+    // FIXME: is final correct here?
+    final ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
     if (readSet == null) {
       // A genuinely bad request:
       // (see also http://www.biodas.org/documents/spec-1.6.html#response)
@@ -105,20 +112,27 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
     } else {
       try {
         //CloseableIterator<SAMRecord> set = readSet.scan("20", 1, 63000000);
-        CloseableIterator<SAMRecord> set = readSet.scan(contig, Integer.parseInt(start), Integer.parseInt(stop));
-        sb.append(readSet.getHeader().getTextHeader());
-        int max = 1000;
-        while (set.hasNext()) {
-          max--;
-          if (max < 0) { break; }
-          SAMRecord rec = set.next();
-          sb.append(rec.getSAMString());
-        }
-        return sb.toString();
+        final CloseableIterator<SAMRecord> set = readSet.scan(contig, Integer.parseInt(start), Integer.parseInt(stop));
+        
+        StreamingOutput stream = new StreamingOutput() {
+          @Override
+          public void write(OutputStream os) throws IOException, WebApplicationException {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            writer.write(readSet.getHeader().getTextHeader());
+            while (set.hasNext()) {
+              SAMRecord rec = set.next();
+              writer.write(rec.getSAMString());
+            }
+            writer.flush();
+          }
+        };
+
+        return Response.ok(stream).build();
+
       } catch (IOException ex) {
         Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
-    return ("");
+    return (null);
   }
 }
