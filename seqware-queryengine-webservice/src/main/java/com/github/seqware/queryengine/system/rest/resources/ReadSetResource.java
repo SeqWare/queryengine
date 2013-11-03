@@ -50,6 +50,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import net.sf.samtools.BAMFileWriter;
+import net.sf.samtools.SAMFileWriter;
+import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import net.sourceforge.seqware.common.util.Log;
@@ -174,13 +177,15 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
         StreamingOutput stream = new StreamingOutput() {
           @Override
           public void write(OutputStream os) throws IOException, WebApplicationException {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-            writer.write(readSet.getHeader().getTextHeader());
+            BAMFileWriter writer = new BAMFileWriter(os, new File("/tmp/foo.bam"));
+            //Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            writer.setHeader(readSet.getHeader());
             while (set.hasNext()) {
               SAMRecord rec = set.next();
-              writer.write(rec.getSAMString());
+              writer.addAlignment(rec);
+              Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, "READ: "+rec.getReadName());
             }
-            writer.flush();
+            writer.close();
           }
         };
 
