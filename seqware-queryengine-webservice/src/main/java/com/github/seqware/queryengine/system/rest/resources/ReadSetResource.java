@@ -135,4 +135,62 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
     }
     return (null);
   }
+  
+  /**
+   * Return the reads that belong to the specified read set in BAM
+   *
+   * @param sgid rowkey of readset to operate on
+   * @return
+   */
+  @GET
+  @Path("/{sgid}")
+  @ApiOperation(value = "List reads in a readset in SAM format", notes = "This can only be done by an authenticated user.")
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+    @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  @Produces("application/bam")
+  public Response getBAMReadListing(
+          @ApiParam(value = "rowkey that needs to be updated", required = true)
+          @PathParam("sgid") String sgid,
+          @ApiParam(value = "contig to limit to", required = true)
+          @QueryParam("contig") String contig,
+          @ApiParam(value = "start position", required = true)
+          @QueryParam("start") String start,
+          @ApiParam(value = "stop position", required = true)
+          @QueryParam("stop") String stop) throws InvalidIDException {
+
+    
+    // FIXME: is final correct here?
+    final ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
+    if (readSet == null) {
+      // A genuinely bad request:
+      // (see also http://www.biodas.org/documents/spec-1.6.html#response)
+      throw new InvalidIDException(INVALID_ID, "ID not found");
+    } else {
+      try {
+        //CloseableIterator<SAMRecord> set = readSet.scan("20", 1, 63000000);
+        final CloseableIterator<SAMRecord> set = readSet.scan(contig, Integer.parseInt(start), Integer.parseInt(stop));
+        
+        StreamingOutput stream = new StreamingOutput() {
+          @Override
+          public void write(OutputStream os) throws IOException, WebApplicationException {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            writer.write(readSet.getHeader().getTextHeader());
+            while (set.hasNext()) {
+              SAMRecord rec = set.next();
+              writer.write(rec.getSAMString());
+            }
+            writer.flush();
+          }
+        };
+
+        return Response.ok(stream).build();
+
+      } catch (IOException ex) {
+        Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+    return (null);
+  }
+  
 }
