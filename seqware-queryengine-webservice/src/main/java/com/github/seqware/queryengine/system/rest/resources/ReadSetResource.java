@@ -161,9 +161,7 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
           @QueryParam("start") String start,
           @ApiParam(value = "stop position", required = true)
           @QueryParam("stop") String stop) throws InvalidIDException {
-
     
-    // FIXME: is final correct here?
     final ReadSet readSet = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
     if (readSet == null) {
       // A genuinely bad request:
@@ -183,7 +181,6 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
             while (set.hasNext()) {
               SAMRecord rec = set.next();
               writer.addAlignment(rec);
-              Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, "READ: "+rec.getReadName());
             }
             writer.close();
           }
