@@ -83,18 +83,18 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
   }
 
   /**
-   * Return the reads that belong to the specified read set in SAM
+   * Return the reads that belong to the specified read set in SAM format
    *
    * @param sgid rowkey of readset to operate on
    * @return
    */
   @GET
   @Path("/{sgid}")
-  @ApiOperation(value = "List reads in a readset in SAM format", notes = "This can only be done by an authenticated user.")
+  @ApiOperation(value = "List reads in a readset in SAM format, use the header 'Accept: text/sam' for this resource.", notes = "This can only be done by an authenticated user.")
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
     @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  @Produces(MediaType.TEXT_PLAIN)
+  @Produces("text/sam")
   public Response getSAMReadListing(
           @ApiParam(value = "rowkey that needs to be updated", required = true)
           @PathParam("sgid") String sgid,
@@ -140,14 +140,14 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
   }
   
   /**
-   * Return the reads that belong to the specified read set in BAM
+   * Return the reads that belong to the specified read set in BAM format
    *
    * @param sgid rowkey of readset to operate on
    * @return
    */
   @GET
   @Path("/{sgid}")
-  @ApiOperation(value = "List reads in a readset in SAM format", notes = "This can only be done by an authenticated user.")
+  @ApiOperation(value = "List reads in a readset in BAM format, use the header 'Accept: application/bam' for this resource.", notes = "This can only be done by an authenticated user.")
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
     @ApiResponse(code = INVALID_SET, message = "Element not found")})
