@@ -16,7 +16,9 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
@@ -56,11 +58,21 @@ public class TagSetResource extends GenericMutableSetResource<TagSet> {
     public final SeqWareIterable getElements() {
         return SWQEFactory.getQueryInterface().getTagSets();
     }
+
+  @Override
+  public void saveSet(Atom set) {
+    CreateUpdateManager um = SWQEFactory.getModelManager();
+    um.buildTagSet().setName("foo").build();
+    um.close();
+  }
     
     /**
      * Upload an OBO file to create a new tagset for an ontology
      * @param sgid rowkey of ontology to create
      * @return 
+     * 
+     * LEFT OFF HERE: best way to implement this?
+     * 
      */
     @POST
     @ApiOperation(value = "Create new ontology from an OBO file", notes = "This can only be done by an authenticated user.")

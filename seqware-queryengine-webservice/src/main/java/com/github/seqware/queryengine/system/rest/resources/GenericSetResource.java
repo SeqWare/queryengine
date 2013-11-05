@@ -47,7 +47,11 @@ public abstract class GenericSetResource<T extends Atom> extends GenericElementR
     public final Response addSet(
             @ApiParam(value = "Set that needs to be added to the store", required = true) Atom set) {
         // make this an overrideable method in the real version
-        //petData.addPet(pet);
+        saveSet(set);
         return Response.ok().entity("SUCCESS").build();
+    }
+    
+    public void saveSet(Atom set) {
+      
     }
 }
