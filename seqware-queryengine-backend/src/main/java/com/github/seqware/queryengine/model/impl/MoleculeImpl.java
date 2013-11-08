@@ -8,6 +8,8 @@ import com.github.seqware.queryengine.model.interfaces.TTLable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Implements core functionality that is shared by classes that are controlled

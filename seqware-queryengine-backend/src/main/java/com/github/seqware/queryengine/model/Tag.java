@@ -10,6 +10,7 @@ import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.util.ArrayList;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * A Tag an instance of a TagSpec which contains all three of the values
@@ -162,6 +163,7 @@ public class Tag extends AtomImpl<Tag> {
      * @param set a {@link com.github.seqware.queryengine.model.TagSet} object.
      * @return a {@link com.github.seqware.queryengine.model.Tag} object.
      */
+    @JsonIgnore
     public Tag setTagSet(TagSet set) {
         this.tagSet.set(set);
         return this;

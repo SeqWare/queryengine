@@ -1,12 +1,12 @@
 package com.github.seqware.queryengine.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.model.interfaces.Versionable;
 import com.github.seqware.queryengine.model.interfaces.Taggable;
 import com.github.seqware.queryengine.model.interfaces.Buildable;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.Serializable;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Implements core functionality that is shared by all classes that require
@@ -37,7 +37,6 @@ public interface Atom<T extends Atom> extends Taggable, Versionable<T>, Serializ
      *
      * @return unique identifier for this (version of) resource
      */
-    @JsonIgnore
     public SGID getSGID();
 
     /**
@@ -56,7 +55,7 @@ public interface Atom<T extends Atom> extends Taggable, Versionable<T>, Serializ
      *
      * @return a int.
      */
-    @JsonIgnore
+    @XmlTransient
     public int getExternalSerializationVersion();
 
 }

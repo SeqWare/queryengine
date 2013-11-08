@@ -16,17 +16,9 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Atom;
-import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.ReadSet;
-import com.github.seqware.queryengine.model.User;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
-import com.github.seqware.queryengine.tutorial.BrianTest;
-import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -47,15 +39,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.BAMFileWriter;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
-import net.sourceforge.seqware.common.util.Log;
 
 /**
  * Readset resource.

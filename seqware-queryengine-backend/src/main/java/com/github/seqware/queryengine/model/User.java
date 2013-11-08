@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
@@ -10,6 +11,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
@@ -23,6 +29,8 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
 public class User extends MoleculeImpl<User> {
 
     /** Constant <code>prefix="User"</code> */
@@ -46,6 +54,7 @@ public class User extends MoleculeImpl<User> {
      *
      * @return email address as a String
      */
+    @XmlElement(name="emailAddress")
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -65,6 +74,7 @@ public class User extends MoleculeImpl<User> {
      *
      * @return first name as a String
      */
+    @XmlElement(name="firstName")
     public String getFirstName() {
         return firstName;
     }
@@ -74,6 +84,7 @@ public class User extends MoleculeImpl<User> {
      *
      * @return last name as a String
      */
+    @XmlElement(name="lastName")
     public String getLastName() {
         return lastName;
     }
@@ -83,6 +94,7 @@ public class User extends MoleculeImpl<User> {
      *
      * @return list of groups
      */
+    @XmlElement(name="groups")
     public List<Group> getGroups() {
         return Collections.unmodifiableList(groups);
     }
@@ -168,6 +180,7 @@ public class User extends MoleculeImpl<User> {
      *
      * @return a {@link java.lang.String} object.
      */
+    @XmlElement(name="password")
     public String getPassword() {
         return password;
     }
@@ -186,12 +199,18 @@ public class User extends MoleculeImpl<User> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
+    @JsonIgnore
+    @org.codehaus.jackson.annotate.JsonIgnore
     public Class getHBaseClass() {
         return User.class;
     }
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
+    @JsonIgnore
+    @org.codehaus.jackson.annotate.JsonIgnore
     public String getHBasePrefix() {
         return User.prefix;
     }

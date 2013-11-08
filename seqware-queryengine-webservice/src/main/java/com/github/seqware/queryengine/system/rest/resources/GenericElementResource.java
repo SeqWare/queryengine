@@ -93,7 +93,7 @@ public abstract class GenericElementResource<T extends Atom> {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
     @Produces(MediaType.APPLICATION_JSON)
-    public final Response featureByIDRequest(
+    public Response featureByIDRequest(
             @ApiParam(value = "id of set to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) throws InvalidIDException {
         // Check whether the dsn contains the type of store, or not:
@@ -326,7 +326,7 @@ public abstract class GenericElementResource<T extends Atom> {
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response updateElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-            @ApiParam(value = "Updated user object", required = true) Atom user) {
+            @ApiParam(value = "Updated user object", required = true) T user) {
         // make this an overrideable method in the real version
         //userData.addUser(user);
         return Response.ok().entity("").build();

@@ -2,8 +2,10 @@ package com.github.seqware.queryengine.model;
 
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryGroup;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
  * A Group of users that may share ACL permissions
@@ -11,6 +13,7 @@ import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
  * @author dyuen
  * @version $Id: $Id
  */
+@JsonDeserialize(as=InMemoryGroup.class)
 public interface Group extends MolSetInterface<Group, User> {
     /** Constant <code>prefix="Group"</code> */
     public final static String prefix = "Group";

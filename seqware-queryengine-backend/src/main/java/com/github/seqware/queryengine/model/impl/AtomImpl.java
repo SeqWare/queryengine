@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
@@ -31,6 +34,7 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     private final static transient TagIO tagIO = new TagIO();
@@ -46,6 +50,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
     public int getExternalSerializationVersion() {
         return externalSerializationVersion;
     }
@@ -216,7 +221,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @return a {@link com.github.seqware.queryengine.factory.CreateUpdateManager} object.
      */
-    @JsonIgnore
+    @XmlTransient
     public CreateUpdateManager getManager() {
         // happens pretty often now when building model objects
 //        if (manager == null){
@@ -230,6 +235,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param manager a {@link com.github.seqware.queryengine.factory.CreateUpdateManager} object.
      */
+    @XmlTransient
     public void setManager(CreateUpdateManager manager) {
         this.manager = manager;
     }
@@ -348,6 +354,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
     public long getVersion() {
         if (this.precedingVersion == null || this.precedingVersion.get() == null) {
             return 1;
@@ -358,6 +365,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
     public T getPrecedingVersion() {
       if (this.precedingVersion == null) { return(null); } 
       return this.precedingVersion.get();
@@ -365,6 +373,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
     public void setPrecedingVersion(T precedingVersion) {
         // inform the model manager that this is a new version of an object now
         if (this.getManager() != null) {
@@ -378,6 +387,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param precedingSGID a {@link com.github.seqware.queryengine.util.SGID} object.
      */
+    @XmlTransient
     public void setPrecedingSGID(SGID precedingSGID) {
         this.precedingVersion.setSGID(precedingSGID);
         //this.precedingSGID = precedingSGID;
@@ -399,7 +409,9 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @return a {@link java.lang.Class} object.
      */
+    @XmlTransient
     @JsonIgnore
+    @org.codehaus.jackson.annotate.JsonIgnore
     public abstract Class getHBaseClass();
 
     /**
@@ -407,7 +419,9 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @return a {@link java.lang.String} object.
      */
+    @XmlTransient
     @JsonIgnore
+    @org.codehaus.jackson.annotate.JsonIgnore
     public abstract String getHBasePrefix();
 
     public static class TagValueIterable implements SeqWareIterable<Tag> {

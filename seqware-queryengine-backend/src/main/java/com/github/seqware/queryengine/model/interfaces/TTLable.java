@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.model.interfaces;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Interface for object that can be set to expire at some point in the future.
@@ -41,6 +42,7 @@ public interface TTLable {
      * @param cascade whether the expiry should cascade down to children in the
      * case of sets (ignored) when the target is not a set
      */
+    @XmlTransient
     public void setTTL(long expiryTime, boolean cascade);
 
     /**
@@ -50,6 +52,7 @@ public interface TTLable {
      * @param cascade whether the expiry should cascade down to children in the
      * case of sets (ignored) when the target is not a set
      */
+    @XmlTransient
     public void setTTL(int hours, boolean cascade);
     
     /**
@@ -57,6 +60,7 @@ public interface TTLable {
      *
      * @return a {@link java.util.Date} object.
      */
+    @XmlTransient
     public Date getExpiryDate();
     
     /**
@@ -65,6 +69,7 @@ public interface TTLable {
      *
      * @return a int.
      */
+    @XmlTransient
     public int getTTL();
     
     /**
@@ -72,6 +77,7 @@ public interface TTLable {
      *
      * @return a boolean.
      */
+    @XmlTransient
     public boolean isExpires();
     
     /**
@@ -79,6 +85,7 @@ public interface TTLable {
      *
      * @return a long.
      */
+    @XmlTransient
     public long getExpiryTime();
     
     /**
@@ -86,5 +93,6 @@ public interface TTLable {
      *
      * @return a boolean.
      */
+    @XmlTransient
     public boolean getCascade();
 }

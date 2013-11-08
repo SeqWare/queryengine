@@ -4,6 +4,7 @@ import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
@@ -20,12 +21,14 @@ public class InMemoryGroup extends AbstractInMemorySet<Group, User> implements G
 
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name="name")
     public String getName() {
         return name;
     }
 
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name="description")
     public String getDescription() {
         return description;
     }

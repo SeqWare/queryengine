@@ -14,6 +14,10 @@
             <param-name>api.version</param-name>
             <param-value>1.0</param-value>
         </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </servlet>      
     <servlet-mapping>
         <servlet-name>seqware-queryengine-webservice</servlet-name>
