@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.model.Atom;
+import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -30,7 +31,7 @@ import javax.ws.rs.core.Response;
  *
  * @author dyuen
  */
-public abstract class GenericMutableSetResource<T extends Atom> extends GenericSetResource<T> {
+public abstract class GenericMutableSetResource<T extends MolSetInterface, S extends Atom> extends GenericSetResource<T> {
     
     /**
      * Create a totally new element inside the set given a specification without an associated
@@ -47,7 +48,7 @@ public abstract class GenericMutableSetResource<T extends Atom> extends GenericS
     public final Response addElement(
             @ApiParam(value = "set to add an element to", required = true) 
             @PathParam("sgid") String sgid,
-            @ApiParam(value = "element that needs to be added to the store", required = true) Atom element) {
+            @ApiParam(value = "element that needs to be added to the store", required = true) S element) {
         // make this an overrideable method in the real version
         //petData.addPet(pet);
         return Response.ok().entity("SUCCESS").build();

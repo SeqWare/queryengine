@@ -19,6 +19,7 @@ package com.github.seqware.queryengine.system.rest.resources;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
+import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
@@ -42,7 +43,7 @@ import javax.ws.rs.core.Response;
 @Path("/tagset")
 @Api(value = "/tagset", description = "Operations about tagsets"/*, listingPath="/resources.json/tagset"*/)
 @Produces({"application/json"})
-public class TagSetResource extends GenericMutableSetResource<TagSet> {
+public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
 
     @Override
     public final String getClassName() {
@@ -60,7 +61,7 @@ public class TagSetResource extends GenericMutableSetResource<TagSet> {
     }
 
   @Override
-  public void saveSet(Atom set) {
+  public void saveSet(TagSet set) {
     CreateUpdateManager um = SWQEFactory.getModelManager();
     um.buildTagSet().setName("foo").build();
     um.close();

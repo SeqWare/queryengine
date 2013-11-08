@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
@@ -31,7 +32,7 @@ import javax.ws.rs.Produces;
 @Path("/referenceset")
 @Api(value = "/referenceset", description = "Operations about referencesets"/*, listingPath="/resources/referenceset"*/)
 @Produces({"application/json"})
-public class ReferenceSetResource extends GenericMutableSetResource<ReferenceSet> {
+public class ReferenceSetResource extends GenericMutableSetResource<ReferenceSet, Reference> {
 
     @Override
     public String getClassName() {
