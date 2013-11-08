@@ -44,7 +44,7 @@ public class User extends MoleculeImpl<User> {
     /**
      * Create a new user
      */
-    private User() {
+    public User() {
         super();
         groups = new ArrayList();
     }
