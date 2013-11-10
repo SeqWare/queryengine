@@ -36,6 +36,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -102,6 +103,24 @@ public class GroupResource extends GenericMutableSetResource<Group, User> {
     return(super.updateElement(sgid, group));
 
   }
+  
+     /**
+     * Update an existing element.
+     *
+     * @param sgid
+     * @param user
+     * @return
+     */
+    @DELETE
+    @Path("/{sgid}")
+    @ApiOperation(value = "Delete an existing Group", notes = "This can only be done by an authenticated user.")
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    public Response deleteElement(
+            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
+      return(super.deleteElement(sgid));
+    }
   
 
   @POST

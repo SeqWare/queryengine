@@ -70,6 +70,7 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
 
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name = "name")
     public String getName() {
         return name;
     }

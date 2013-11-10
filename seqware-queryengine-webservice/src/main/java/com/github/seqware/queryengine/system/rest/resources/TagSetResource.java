@@ -16,9 +16,15 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Group;
+import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
+import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
+import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -26,8 +32,12 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -72,11 +82,91 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
         @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.TEXT_PLAIN)
     public Response uploadOBO(
-            @ApiParam(value = "rowkey that needs to be updated", required = true) 
-            @QueryParam("sgid") String sgid
+            @ApiParam(value = "OBO-formated body that needs to be created", required = true) 
+            String body
             ) {
         // make this an overrideable method in the real version
         //userData.addUser(user);
         return Response.ok().entity("").build();
     }
+    
+    
+  @GET
+  @Override
+  @Path(value = "/{sgid}")
+  @ApiOperation(value = "Find a specific Tagset by rowkey in JSON", notes = "Add extra notes here", response = TagSet.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+    @ApiResponse(code = INVALID_SET, message = "set not found")})
+  @Produces(MediaType.APPLICATION_JSON)
+  public final Response featureByIDRequest(
+          @ApiParam(value = "id of Tagset to be fetched", required = true)
+          @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+    return super.featureByIDRequest(sgid);
+  }
+
+  @PUT
+  @Path("/{sgid}")
+  @ApiOperation(value = "Update an existing Tagset", notes = "This can only be done by an authenticated user.")
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+    @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  @Override
+  public Response updateElement(
+          @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
+          @ApiParam(value = "Updated user object", required = true) TagSet obj) {
+
+    CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+    QueryInterface query = SWQEFactory.getQueryInterface();
+
+    return(super.updateElement(sgid, obj));
+
+  }
+  
+     /**
+     * Delete an existing element.
+     *
+     * @param sgid
+     * @param user
+     * @return
+     */
+    @DELETE
+    @Path("/{sgid}")
+    @ApiOperation(value = "Delete an existing Tagset", notes = "This can only be done by an authenticated user.")
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    public Response deleteElement(
+            @ApiParam(value = "rowkey of the Tagset to be deleted", required = true) @PathParam("sgid") String sgid) {
+      return(super.deleteElement(sgid));
+    }
+  
+
+  @POST
+  @Path("/{sgid}")
+  @ApiOperation(value = "Create a Tag in the Tagset", notes = "This can only be done by an authenticated user.", response = Tag.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
+  @Override
+  public final Response addElement(
+          @ApiParam(value = "set to add an element to", required = true)
+          @PathParam("sgid") String sgid,
+          @ApiParam(value = "element that needs to be added to the store", required = true) Tag obj) {
+    return super.addElement(sgid, obj);
+  }
+
+  @POST
+  @ApiOperation(value = "Create a totally new Tagset by JSON", notes = "This can only be done by an authenticated user.")
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Override
+  public Response addSet(
+          @ApiParam(value = "Group that needs to be added to the store", required = true) TagSet set) {
+    //System.out.println("addSet " + set.getDescription() + " " + set.getName());
+    // make this an overrideable method in the real version
+    return super.addSet(set);
+  }
+    
+    
 }
