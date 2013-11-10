@@ -38,6 +38,11 @@ public interface Atom<T extends Atom> extends Taggable, Versionable<T>, Serializ
      * @return unique identifier for this (version of) resource
      */
     public SGID getSGID();
+    
+    /* 
+     * FIXME: out of sheer desperation and frustration I'm setting this
+     */
+    public void setSGID(SGID sgid);
 
     /**
      * Get a creation time for this resource. Associated resource timestamps for
@@ -48,6 +53,14 @@ public interface Atom<T extends Atom> extends Taggable, Versionable<T>, Serializ
      * resource
      */
     public Date getTimestamp();
+    
+    /**
+     * Get a display name, not always unique, that can be easier for a human to read than an SGID
+     * Defaults to an SGID if not set.
+     *
+     * @return the displayName
+     */
+    public String getDisplayName();
     
     /**
      * Get the serializationVersion for this particular atom. Allows more advanced

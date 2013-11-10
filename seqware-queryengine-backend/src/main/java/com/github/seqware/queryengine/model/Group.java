@@ -5,6 +5,7 @@ import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.impl.inMemory.InMemoryGroup;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
+import com.github.seqware.queryengine.util.SGID;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
@@ -67,6 +68,8 @@ public interface Group extends MolSetInterface<Group, User> {
             aSet.getSGID().setFriendlyRowKey(rowKey);
             return this;
         }
+        
+        
     }
 
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
+import com.github.seqware.queryengine.util.SGID;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -214,6 +215,11 @@ public class User extends MoleculeImpl<User> {
     public String getHBasePrefix() {
         return User.prefix;
     }
+
+  @Override
+  public String getDisplayName() {
+    return(firstName + " " + lastName);
+  }
 
     public static class Builder extends BaseBuilder {
 

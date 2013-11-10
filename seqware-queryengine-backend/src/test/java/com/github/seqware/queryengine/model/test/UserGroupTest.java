@@ -96,6 +96,12 @@ public class UserGroupTest {
             n1.setPrecedingVersion(oldUser);
         }
         mManager.flush();
+        
+        /* FIXME: this is a pointless check since you're just seeing what the object
+         * looks like in memory.  Why not try to pull it back fromt eh DB?  You'll
+         * find that your db code creates a duplicate for this instad of an update
+         */
+        
         // check new current User's password
         Assert.assertTrue(n1.checkPassword(password2));  
         if (Constants.TRACK_VERSIONING){

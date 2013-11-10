@@ -152,6 +152,15 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
     }
 
     /**
+     * FIXME: not really good to return description. Should be short name.
+     * @return 
+     */
+  @Override
+  public String getDisplayName() {
+    return(description);
+  }
+
+    /**
      * Go through the raw iterator from the underlying storage type and batch up
      * the FeatureLists and return them by rows
      */

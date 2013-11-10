@@ -5,6 +5,7 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
 import java.util.Iterator;
 import java.util.regex.Pattern;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An in-memory representation of a reference.
@@ -52,6 +53,12 @@ public class InMemoryReference extends AbstractInMemorySet<Reference, FeatureSet
     public String getName() {
         return name;
     }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
+    }    
 
     /** {@inheritDoc} */
     @Override

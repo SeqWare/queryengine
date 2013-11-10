@@ -75,6 +75,7 @@ public class SGID implements Serializable, KryoSerializable {
         
         friendlyRowKey = rowKey;
         backendTimestamp = new Date();
+        uuid = UUID.fromString(rowKey);
     }
 
     /**

@@ -49,6 +49,13 @@ public abstract class StorageInterface {
     public static final String SEPARATOR = ".";
     
     /**
+     * 
+     *
+     * @param obj a {@link com.github.seqware.queryengine.model.Atom} object.
+     */
+    public abstract <T extends Atom> void deleteAtom(T ... obj);
+    
+    /**
      * Generically serialize an Atom into the interface
      * This method is also responsible for ensuring that the atom's backendTimestamp is populated
      *

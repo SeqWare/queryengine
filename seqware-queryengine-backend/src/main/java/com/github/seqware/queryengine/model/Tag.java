@@ -49,6 +49,11 @@ public class Tag extends AtomImpl<Tag> {
     private Object value = null;
     private ValueType vType = null;
 
+  @Override
+  public String getDisplayName() {
+    return(key + predicate + value);
+  }
+
     public enum ValueType {
         STRING, BYTEARR, SGID, FLOAT, DOUBLE, LONG, INTEGER
     };

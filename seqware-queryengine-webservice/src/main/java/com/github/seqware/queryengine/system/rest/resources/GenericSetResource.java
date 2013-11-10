@@ -52,7 +52,8 @@ public abstract class GenericSetResource<T extends MolSetInterface> extends Gene
         CreateUpdateManager modelManager = SWQEFactory.getModelManager();
         modelManager.objectCreated(set);
         modelManager.close();
-        return Response.ok().entity("SUCCESS").build();
+        //return Response.ok().entity("SUCCESS").build();
+        return Response.ok().entity("").build();
     }
     
 }

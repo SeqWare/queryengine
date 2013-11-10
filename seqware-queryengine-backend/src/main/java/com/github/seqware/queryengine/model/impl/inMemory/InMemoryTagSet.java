@@ -7,6 +7,7 @@ import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import java.util.*;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 
@@ -71,6 +72,12 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
     @Override
     public String getName() {
         return name;
+    }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
     }
 
     /**

@@ -220,6 +220,11 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     return ReadSet.prefix;
   }
 
+  @Override
+  public String getDisplayName() {
+    return(readSetName);
+  }
+
   public static class Builder extends BaseBuilder {
 
     private ReadSet readset = new ReadSet();

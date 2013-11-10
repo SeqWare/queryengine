@@ -10,6 +10,7 @@ import com.github.seqware.queryengine.util.InMemoryIterator;
 import com.github.seqware.queryengine.util.LazyReference;
 import com.github.seqware.queryengine.util.SGID;
 import java.util.*;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An in-memory representation of a feature set.
@@ -33,6 +34,7 @@ public class InMemoryFeatureSet extends FeatureSet {
      * information for a set of features.
      */
     private String description = null;
+    private String name = null;
 
     /**
      * Creates an in-memory feature set.
@@ -153,6 +155,12 @@ public class InMemoryFeatureSet extends FeatureSet {
     @Override
     public String getDescription() {
         return description;
+    }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
     }
 
     /** {@inheritDoc} */

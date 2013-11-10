@@ -19,14 +19,18 @@ package com.github.seqware.queryengine.system.rest.resources;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.ProtobufSerialization;
 import com.github.seqware.queryengine.impl.protobufIO.ProtobufTransferInterface;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Molecule;
+import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.interfaces.ACL;
+import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
+import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -35,10 +39,12 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -69,13 +75,17 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @ApiOperation(value = "List all available elements by rowkey", notes = "This lists the raw rowkeys used to uniquely identify each chain of entities."/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
-    public final Response featuresRequest() {
+    public Response featuresRequest() {
         // Check whether the dsn contains the type of store, or not:
         //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
         //            return this.getUnsupportedOperationResponse();
-        List<String> stringList = new ArrayList<String>();
+        List<HashMap<String, String>> stringList = new ArrayList<HashMap<String, String>>();
         for (Atom ts : getElements()) {
-            stringList.add(ts.getSGID().getRowKey());
+            HashMap<String, String> obj = new HashMap<String, String>();
+            obj.put("sgid", ts.getSGID().getUuid().toString());
+            obj.put("displayName", ts.getDisplayName());
+            obj.put("timestamp", ts.getTimestamp().toString());
+            stringList.add(obj);
         }
         return Response.ok(new Gson().toJson(stringList).toString())/*.header("Access-Control-Allow-Origin", "*").header("X-DAS-Status", "200")*/.build();
     }
@@ -133,7 +143,7 @@ public abstract class GenericElementResource<T extends Atom> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
-    public final Response taggedRequest(
+    public Response taggedRequest(
             @ApiParam(value = "rowkey of tagset to restrict matches to", required = true)
             @QueryParam(value = "tagset_id") String tagset_id,
             @ApiParam(value = "key of the tag to restrict matches to", required = true)
@@ -154,7 +164,7 @@ public abstract class GenericElementResource<T extends Atom> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
-    public final Response tagsOfElementRequest(
+    public Response tagsOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
         Atom latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
@@ -191,7 +201,7 @@ public abstract class GenericElementResource<T extends Atom> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
-    public final Response versioningOfElementRequest(
+    public Response versioningOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
 
@@ -235,7 +245,7 @@ public abstract class GenericElementResource<T extends Atom> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
-    public final Response permissionsOfElementRequest(
+    public Response permissionsOfElementRequest(
             @ApiParam(value = "id of element to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) {
         Atom latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
@@ -325,11 +335,54 @@ public abstract class GenericElementResource<T extends Atom> {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response updateElement(
-            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-            @ApiParam(value = "Updated user object", required = true) T user) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
-        return Response.ok().entity("").build();
+            @ApiParam(value = "rowkey that need to be updated", required = true) @PathParam("sgid") String sgid,
+            @ApiParam(value = "Updated user object", required = true) T element) {
+      
+              CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+
+              /* FIXME: Denis, why doesn't this work? This will create a new copy with a unique SGID instead of update */
+              /* NOTE: I think this element gets a new sgid, that's why the update never works! */
+              //Atom updatedElement = (Atom)element.toBuilder().setManager(modelManager);
+              //updatedElement.setSGID(new SGID(sgid));
+              element.setSGID(new SGID(sgid));
+              // FYI I created a new UPDATE state but it currently doesn't do anything different than NEW_VERSION
+              modelManager.atomStateChange(element, CreateUpdateManager.State.NEW_VERSION);
+              modelManager.flush();
+            
+              return Response.ok().entity("").build();
+    }
+    
+        /**
+     * Update an existing element.
+     *
+     * @param sgid
+     * @param user
+     * @return
+     */
+    @DELETE
+    @Path("/{sgid}")
+    @ApiOperation(value = "Delete an existing element", notes = "This can only be done by an authenticated user.")
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    public Response deleteElement(
+            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
+      
+              CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+              QueryInterface query = SWQEFactory.getQueryInterface();
+              Atom element = query.getLatestAtomBySGID(new SGID(sgid));
+
+              /* FIXME: Denis, why doesn't this work? This will create a new copy with a unique SGID instead of update */
+              /* NOTE: I think this element gets a new sgid, that's why the update never works! */
+              //Atom updatedElement = (Atom)element.toBuilder().setManager(modelManager);
+              //updatedElement.setSGID(new SGID(sgid));
+              element.setSGID(new SGID(sgid));
+              modelManager.delete(element);
+              // FYI I created a new UPDATE state but it currently doesn't do anything different than NEW_VERSION
+              //modelManager.atomStateChange(element, CreateUpdateManager.State.NEW_VERSION);
+              modelManager.flush();
+            
+              return Response.ok().entity("").build();
     }
 
     /**

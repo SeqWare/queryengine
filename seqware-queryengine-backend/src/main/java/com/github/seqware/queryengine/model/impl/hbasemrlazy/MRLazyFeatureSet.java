@@ -16,6 +16,8 @@ import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
  */
 public class MRLazyFeatureSet extends LazyFeatureSet implements LazyMolSet<FeatureSet, Feature> {
 
+    private String displayName = null;
+  
     /**
      * Creates an lazy M/R using feature set.
      */
@@ -46,6 +48,11 @@ public class MRLazyFeatureSet extends LazyFeatureSet implements LazyMolSet<Featu
         b.aSet = (MRLazyFeatureSet) this.copy(true);
         return b;
     }
+
+  @Override
+  public String getDisplayName() {
+    return(displayName);
+  }
 
     public static class Builder extends LazyFeatureSet.Builder {
 

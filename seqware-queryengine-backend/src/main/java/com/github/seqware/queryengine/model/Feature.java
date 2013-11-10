@@ -29,6 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class Feature extends AtomImpl<Feature> {
 
+
     /**
      * Strand locations of features.
      *
@@ -68,6 +69,11 @@ public class Feature extends AtomImpl<Feature> {
 
     private Feature() {
         super();
+    }
+    
+    @Override
+    public String getDisplayName() {
+      return(seqid+" "+source+":"+start+"-"+stop);
     }
 
     /** {@inheritDoc} */

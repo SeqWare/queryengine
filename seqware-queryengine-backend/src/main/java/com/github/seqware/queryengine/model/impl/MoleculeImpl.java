@@ -5,6 +5,7 @@ import com.github.seqware.queryengine.model.Molecule;
 import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.model.interfaces.ACLable;
 import com.github.seqware.queryengine.model.interfaces.TTLable;
+import com.github.seqware.queryengine.util.SGID;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -36,6 +37,10 @@ public abstract class MoleculeImpl<T extends Molecule> extends AtomImpl<T> imple
     @Override
     public ACL getPermissions() {
         return permissions;
+    }
+    
+    public void setSGID(SGID sgid) {
+      this.sgid = sgid;
     }
     
     /** {@inheritDoc} */

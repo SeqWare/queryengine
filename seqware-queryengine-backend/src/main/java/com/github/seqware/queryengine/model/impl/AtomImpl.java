@@ -41,7 +41,14 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /**
      * Unique identifier of this Atom
      */
-    private SGID sgid = null;
+    protected SGID sgid = null;
+
+  public void setSGID(SGID sgid) {
+    this.sgid = sgid;
+  }
+    
+    
+    
     /**
      * Exposed timestamp of this Atom
      */

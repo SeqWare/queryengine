@@ -58,6 +58,11 @@ public interface CreateUpdateManager {
          */
         NEW_VERSION,
         /**
+         * New versions of Atoms but without versioning, these Atoms do not take
+         * into account predecessors, they just overwrite
+         */
+        UPDATE,
+        /**
          * Managed Atoms that have not otherwise changed
          */
         MANAGED
@@ -85,6 +90,13 @@ public interface CreateUpdateManager {
      * @param p a {@link com.github.seqware.queryengine.model.Atom} object.
      */
     public void persist(Atom p);
+    
+    /**
+     * Delete an Atom
+     *
+     * @param p a {@link com.github.seqware.queryengine.model.Atom} object.
+     */
+    public void delete(Atom p);
 
     /**
      * Convenience method to flush() all entities and clear(). Currently managed

@@ -152,6 +152,56 @@ public class HBaseStorage extends StorageInterface {
         }
     }
 
+  @Override
+  public <T extends Atom> void deleteAtom(T... objArr) {
+    if (objArr.length == 0) {
+      return;
+    }
+    try {
+            int maxSize = Integer.MIN_VALUE;
+            int minSize = Integer.MAX_VALUE;
+
+            String prefix = ((AtomImpl) objArr[0]).getHBasePrefix();
+            HTable table = tableMap.get(prefix);
+            if (table == null) {
+                // just return, nothing to delete
+                return;
+            }
+            List<Row> deleteList = new ArrayList<Row>();
+            // LEFT OFF HERE
+            // queue up HBase calls for the batch interface
+            for (T obj : objArr) {
+                assert (prefix.equals(((AtomImpl) objArr[0]).getHBasePrefix()));
+
+                // WARNING: this is deleting a full row
+                // FIXME: I don't think I'm handling the timestamp correctly, Denis???
+                Delete d = new Delete(Bytes.toBytes(obj.getSGID().getRowKey().toString()));
+
+                deleteList.add(d);
+            }
+
+            // establish put
+            Object[] deleteBatch = table.batch(deleteList);
+            Logger.getLogger(HBaseStorage.class.getName()).trace("deleteBatch results: " + deleteBatch.length);
+            
+    }  catch (IOException ex) {
+        Logger.getLogger(HBaseStorage.class.getName()).fatal("IOException during table.batch()", ex);
+        // try to parse out more information to track down this issue with large data loads
+        if (ex instanceof RetriesExhaustedWithDetailsException) {
+            RetriesExhaustedWithDetailsException e = (RetriesExhaustedWithDetailsException) ex;
+            Logger.getLogger(FeatureImporter.class.getName()).fatal("Extra information on RetriesExhaustedWithDetailsException");
+            Logger.getLogger(FeatureImporter.class.getName()).fatal("Are we dealing with cluster issues? " + e.mayHaveClusterIssues());
+            Logger.getLogger(FeatureImporter.class.getName()).fatal("Issues over " + e.getNumExceptions() + " exceptions");
+        }
+        throw new RuntimeException("Unrecoverable error in HBaseStorage");
+    } catch (InterruptedException ex) {
+        Logger.getLogger(HBaseStorage.class.getName()).fatal("InterruptedException during table.batch()", ex);
+        throw new RuntimeException("Unrecoverable error in HBaseStorage");
+    }
+  }
+    
+    
+
     /** {@inheritDoc} */
     @Override
     public <T extends Atom> void serializeAtomsToTarget(T... objArr) {

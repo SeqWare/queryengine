@@ -80,7 +80,7 @@ public class SimpleModelManager implements CreateUpdateManager {
         for (Entry<String, AtomStatePair> e : workingList) {
             AtomImpl atom = (AtomImpl) e.getValue().atom;
             String cl = atom.getHBasePrefix();
-            if (e.getValue().getState() == State.NEW_VERSION) {
+            if (e.getValue().getState() == State.NEW_VERSION || e.getValue().getState() == State.UPDATE) {
                 if (!sortedUpdate.containsKey(cl)) {
                     sortedUpdate.put(cl, new ArrayList<Atom>());
                 }
@@ -306,7 +306,8 @@ public class SimpleModelManager implements CreateUpdateManager {
         // remove objects from a map before they change and then put them back afterwards
         List<Entry<String, AtomStatePair>> workingList = new ArrayList<Entry<String, AtomStatePair>>();
         for (Entry<String, AtomStatePair> p : dirtySet.entrySet()) {
-            if (p.getValue().getState() == State.NEW_CREATION || p.getValue().getState() == State.NEW_VERSION) {
+            if (p.getValue().getState() == State.NEW_CREATION || p.getValue().getState() == State.NEW_VERSION 
+                    || p.getValue().getState() == State.UPDATE) {
                 workingList.add(p);
             }
         }
@@ -457,7 +458,7 @@ public class SimpleModelManager implements CreateUpdateManager {
                 validTransition = true;
             } else if (current == State.NEW_CREATION && state == State.MANAGED) {
                 validTransition = true;
-            } else if (current == State.NEW_VERSION && state == State.MANAGED) {
+            } else if (current == State.UPDATE && state == State.MANAGED) {
                 validTransition = true;
             } else if (state == State.UNMANAGED){
                 // anything should be able to be unmanaged
@@ -482,6 +483,11 @@ public class SimpleModelManager implements CreateUpdateManager {
         assert (aSet != null);
         return aSet;
     }
+
+  @Override
+  public void delete(Atom p) {
+    this.backend.delete(p);
+  }
 
     protected static class AtomStatePair {
 
