@@ -56,6 +56,7 @@ public class User extends MoleculeImpl<User> implements UserFacade{
      * @return email address as a String
      */
     @XmlElement(name="emailAddress")
+    @Override
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -76,6 +77,7 @@ public class User extends MoleculeImpl<User> implements UserFacade{
      * @return first name as a String
      */
     @XmlElement(name="firstName")
+    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -86,6 +88,7 @@ public class User extends MoleculeImpl<User> implements UserFacade{
      * @return last name as a String
      */
     @XmlElement(name="lastName")
+    @Override
     public String getLastName() {
         return lastName;
     }
@@ -96,6 +99,7 @@ public class User extends MoleculeImpl<User> implements UserFacade{
      * @return list of groups
      */
     @XmlElement(name="groups")
+    @Override
     public List<Group> getGroups() {
         return Collections.unmodifiableList(groups);
     }
@@ -182,6 +186,7 @@ public class User extends MoleculeImpl<User> implements UserFacade{
      * @return a {@link java.lang.String} object.
      */
     @XmlElement(name="password")
+    @Override
     public String getPassword() {
         return password;
     }

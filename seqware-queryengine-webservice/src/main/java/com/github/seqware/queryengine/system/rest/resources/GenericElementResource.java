@@ -27,6 +27,8 @@ import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Molecule;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
+import com.github.seqware.queryengine.model.TagSet;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
 import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
@@ -115,6 +117,20 @@ public abstract class GenericElementResource<T extends Atom> {
             // (see also http://www.biodas.org/documents/spec-1.6.html#response)
             throw new InvalidIDException(INVALID_ID, "ID not found");
         }
+        
+        System.out.println("Printing tags");
+        for (Object tag : latestAtomByRowKey.getTags()) {
+            System.out.println(((Tag) tag).getDisplayName());
+        }
+        
+        System.out.println("Printing tagset map info");
+        if (latestAtomByRowKey instanceof InMemoryTagSet){
+            InMemoryTagSet tagset = (InMemoryTagSet)latestAtomByRowKey;
+            System.out.println(tagset.getMap().size());
+            for(Tag t : tagset){
+                System.out.println(t.getDisplayName());
+            }
+        }
 
         String toString;
         ObjectMapper mapper = new ObjectMapper();
@@ -126,7 +142,6 @@ public abstract class GenericElementResource<T extends Atom> {
             Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
         return Response.ok(toString.toString())/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
     }
 
@@ -316,8 +331,12 @@ public abstract class GenericElementResource<T extends Atom> {
             @QueryParam(value = "predicate") String predicate,
             @ApiParam(value = "tag value", required = false)
             @QueryParam(value = "value") String value) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
+        CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+        Atom old = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+        Atom newAtom = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+        newAtom.associateTag(Tag.newBuilder().setKey(key).setValue(value).setPredicate(predicate).build());
+        modelManager.update(old, newAtom);
+        modelManager.flush();
         return Response.ok().entity("").build();
     }
 

@@ -109,29 +109,8 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
   public final Response featureByIDRequest(
           @ApiParam(value = "id of Tagset to be fetched", required = true)
           @PathParam(value = "sgid") String sgid) throws InvalidIDException {
-    
-        //return super.featureByIDRequest(sgid);
-    
-        TagSet latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, TagSet.class);
-        if (latestAtomByRowKey == null) {
-            // A genuinely bad request:
-            // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-            throw new InvalidIDException(INVALID_ID, "ID not found");
-        }
-
-        String toString;
-        ObjectMapper mapper = new ObjectMapper();
-        VisibilityChecker<?> visibilityChecker = mapper.getVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY);
-        mapper.setVisibilityChecker(visibilityChecker);
-        try {
-            toString = mapper.writeValueAsString(latestAtomByRowKey);
-        } catch (IOException ex) {
-            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-
-        return Response.ok(toString.toString()).build();
-    
+        Response featureByIDRequest = super.featureByIDRequest(sgid);  
+        return featureByIDRequest;
   }
 
   @PUT
@@ -144,10 +123,6 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
   public Response updateElement(
           @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
           @ApiParam(value = "Updated user object", required = true) TagSet obj) {
-
-    CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-    QueryInterface query = SWQEFactory.getQueryInterface();
-
     return(super.updateElement(sgid, obj));
 
   }
@@ -165,6 +140,7 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Override
     public Response deleteElement(
             @ApiParam(value = "rowkey of the Tagset to be deleted", required = true) @PathParam("sgid") String sgid) {
       return(super.deleteElement(sgid));
