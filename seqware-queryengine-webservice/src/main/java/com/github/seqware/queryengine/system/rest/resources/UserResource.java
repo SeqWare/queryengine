@@ -17,8 +17,8 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
 @Path("/user")
 @Api(value = "/user", description = "Operations about users"/*, listingPath="/resources/user"*/)
 @Produces({"application/json"})
-public class UserResource extends GenericElementResource<User> {
+public class UserResource extends GenericElementResource<UserFacade> {
 
     @Override
     public final String getClassName() {
@@ -84,7 +84,7 @@ public class UserResource extends GenericElementResource<User> {
     @Override
     public Response updateElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-            @ApiParam(value = "Updated user object", required = true) User user) {
+            @ApiParam(value = "Updated user object", required = true) UserFacade user) {
         return super.updateElement(sgid, user);
     }
 }

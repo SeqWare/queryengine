@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
-import com.github.seqware.queryengine.util.SGID;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-public class User extends MoleculeImpl<User> {
+public class User extends MoleculeImpl<User> implements UserFacade{
 
     /** Constant <code>prefix="User"</code> */
     public final static String prefix = "User";
