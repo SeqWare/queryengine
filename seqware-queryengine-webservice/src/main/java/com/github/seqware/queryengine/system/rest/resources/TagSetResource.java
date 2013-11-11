@@ -16,8 +16,12 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
@@ -31,6 +35,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -94,7 +101,7 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
   @GET
   @Override
   @Path(value = "/{sgid}")
-  @ApiOperation(value = "Find a specific Tagset by rowkey in JSON", notes = "Add extra notes here", response = TagSet.class)
+  @ApiOperation(value = "Find a specific Tagset and its containing tags by rowkey", notes = "the results are returned in JSON", response = TagSet.class)
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
     @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -102,7 +109,29 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
   public final Response featureByIDRequest(
           @ApiParam(value = "id of Tagset to be fetched", required = true)
           @PathParam(value = "sgid") String sgid) throws InvalidIDException {
-    return super.featureByIDRequest(sgid);
+    
+        //return super.featureByIDRequest(sgid);
+    
+        TagSet latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, TagSet.class);
+        if (latestAtomByRowKey == null) {
+            // A genuinely bad request:
+            // (see also http://www.biodas.org/documents/spec-1.6.html#response)
+            throw new InvalidIDException(INVALID_ID, "ID not found");
+        }
+
+        String toString;
+        ObjectMapper mapper = new ObjectMapper();
+        VisibilityChecker<?> visibilityChecker = mapper.getVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY);
+        mapper.setVisibilityChecker(visibilityChecker);
+        try {
+            toString = mapper.writeValueAsString(latestAtomByRowKey);
+        } catch (IOException ex) {
+            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+
+        return Response.ok(toString.toString()).build();
+    
   }
 
   @PUT

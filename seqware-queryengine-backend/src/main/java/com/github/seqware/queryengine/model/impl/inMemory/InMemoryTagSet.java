@@ -34,6 +34,7 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         }
         super.add(element);
         map.put(element.getKey(), element);
+        Logger.getLogger(InMemoryTagSet.class.getName()).error("Adding a key/value " + element.getKey()+" "+element.getValue());
         assert (this.getSGID().getBackendTimestamp() != null);
         if (Constants.TRACK_TAGSET){
             element.setTagSet(this);
@@ -66,6 +67,16 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
     @Override
     public InMemoryTagSet add(Tag... elements) {
         return this.add(Arrays.asList(elements));
+    }
+
+    @XmlElement(name = "tagMap")
+    public Map<String, Tag> getMap() {
+      return map;
+    }
+    
+    @XmlElement(name = "tagMapCount")
+    public int getMapCount() {
+      return map.size();
     }
 
     /** {@inheritDoc} */

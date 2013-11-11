@@ -8,6 +8,7 @@ import com.github.seqware.queryengine.util.LazyReference;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -107,6 +108,7 @@ public class Tag extends AtomImpl<Tag> {
      *
      * @return String key
      */
+    @XmlElement(name = "key")
     public String getKey() {
         return key;
     }
@@ -134,6 +136,7 @@ public class Tag extends AtomImpl<Tag> {
      *
      * @return String value
      */
+    @XmlElement(name = "value")
     public Object getValue() {
         return value;
     }
@@ -143,6 +146,7 @@ public class Tag extends AtomImpl<Tag> {
      *
      * @return String predicate
      */
+    @XmlElement(name = "predicate")
     public String getPredicate() {
         return predicate;
     }
