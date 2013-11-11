@@ -80,7 +80,7 @@ public class SimpleModelManager implements CreateUpdateManager {
         for (Entry<String, AtomStatePair> e : workingList) {
             AtomImpl atom = (AtomImpl) e.getValue().atom;
             String cl = atom.getHBasePrefix();
-            if (e.getValue().getState() == State.NEW_VERSION || e.getValue().getState() == State.UPDATE) {
+            if (e.getValue().getState() == State.NEW_VERSION) {
                 if (!sortedUpdate.containsKey(cl)) {
                     sortedUpdate.put(cl, new ArrayList<Atom>());
                 }
@@ -192,13 +192,13 @@ public class SimpleModelManager implements CreateUpdateManager {
                         featureList = new FeatureList();
                         lastRowKey = f.getSGID().getRowKey();
                     }
-                    assert (featureList.getFeatures().isEmpty() || featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
+                    assert (featureList != null && featureList.getFeatures().isEmpty() || featureList != null && featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
                     featureList.add(f);
                     // upgrade the featureList with this redundant information on the way in
                     featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
                 }
                 // handle the last remaining bucket
-                if (featureList.getFeatures().size() > 0) {
+                if (featureList != null && featureList.getFeatures().size() > 0) {
                     FSGID listfsgid = (FSGID) featureList.getSGID();
                     FSGID firstElement = (FSGID) featureList.getFeatures().get(0).getSGID();
                     assert (listfsgid.getRowKey().equals(firstElement.getRowKey()) && listfsgid.getReferenceName().equals(firstElement.getReferenceName())
@@ -306,8 +306,7 @@ public class SimpleModelManager implements CreateUpdateManager {
         // remove objects from a map before they change and then put them back afterwards
         List<Entry<String, AtomStatePair>> workingList = new ArrayList<Entry<String, AtomStatePair>>();
         for (Entry<String, AtomStatePair> p : dirtySet.entrySet()) {
-            if (p.getValue().getState() == State.NEW_CREATION || p.getValue().getState() == State.NEW_VERSION 
-                    || p.getValue().getState() == State.UPDATE) {
+            if (p.getValue().getState() == State.NEW_CREATION || p.getValue().getState() == State.NEW_VERSION) {
                 workingList.add(p);
             }
         }
@@ -458,8 +457,6 @@ public class SimpleModelManager implements CreateUpdateManager {
                 validTransition = true;
             } else if (current == State.NEW_CREATION && state == State.MANAGED) {
                 validTransition = true;
-            } else if (current == State.UPDATE && state == State.MANAGED) {
-                validTransition = true;
             } else if (state == State.UNMANAGED){
                 // anything should be able to be unmanaged
                 validTransition = true;
@@ -482,6 +479,13 @@ public class SimpleModelManager implements CreateUpdateManager {
         }
         assert (aSet != null);
         return aSet;
+    }
+
+    @Override
+    public void update(Atom originalversion, Atom updatedVersion) {
+        ((AtomImpl)updatedVersion).impersonate(originalversion.getSGID());
+        ((AtomImpl)updatedVersion).setTimestamp(new Date());
+        this.atomStateChange(updatedVersion, CreateUpdateManager.State.NEW_VERSION);
     }
 
   @Override

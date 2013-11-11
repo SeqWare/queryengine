@@ -3,8 +3,11 @@ package com.github.seqware.queryengine.model.test;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.impl.AtomImpl;
+import java.util.Date;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -111,5 +114,37 @@ public class UserGroupTest {
             User oldN1 = SWQEFactory.getQueryInterface().getAtomBySGID(User.class, oldUser.getSGID());
             Assert.assertTrue(oldN1.checkPassword(password1));  
         }
+    }
+    
+    @Test
+    public void testUpdateUserAndCheckRowkey(){
+        // this test should create a user, flush it, update, change, flush again, and then check the rowkey
+        CreateUpdateManager mManager = SWQEFactory.getModelManager();
+        User initialUser = mManager.buildUser().setFirstName("Iron").setLastName("Man").build();
+        mManager.flush();
+        User foundUser = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(initialUser.getSGID().getRowKey(), User.class);
+        User builtUser = foundUser.toBuilder().setEmailAddress("I.am.iron.man@gmail.com").build();
+        mManager.update(foundUser, builtUser);
+        mManager.flush();
+        User foundUser2 = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(initialUser.getSGID().getRowKey(), User.class);
+        Assert.assertTrue("row key changed between initial flush and retrieval", initialUser.getSGID().getRowKey().equals(foundUser.getSGID().getRowKey()));
+        Assert.assertTrue("row key changed between first retrieval flush and retrieval after update", foundUser.getSGID().getRowKey().equals(foundUser2.getSGID().getRowKey()));
+        Assert.assertTrue("updated version has new data", foundUser2.getEmailAddress().equals("I.am.iron.man@gmail.com"));
+    }
+    
+    @Test
+    public void testUpdateGroupAndCheckRowkey(){
+        // this test should create a user, flush it, update, change, flush again, and then check the rowkey
+        CreateUpdateManager mManager = SWQEFactory.getModelManager();
+        Group initialUser = mManager.buildGroup().setName("Avengers").build();
+        mManager.flush();
+        Group foundUser = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(initialUser.getSGID().getRowKey(), Group.class);
+        Group builtUser = foundUser.toBuilder().setDescription("Dysfunctional").build();
+        mManager.update(foundUser, builtUser);
+        mManager.flush();
+        Group foundUser2 = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(initialUser.getSGID().getRowKey(), Group.class);
+        Assert.assertTrue("row key changed between initial flush and retrieval", initialUser.getSGID().getRowKey().equals(foundUser.getSGID().getRowKey()));
+        Assert.assertTrue("row key changed between first retrieval flush and retrieval after update", foundUser.getSGID().getRowKey().equals(foundUser2.getSGID().getRowKey()));
+        Assert.assertTrue("updated version has new data", foundUser2.getDescription().equals("Dysfunctional"));
     }
 }

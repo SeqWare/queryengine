@@ -16,20 +16,14 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Group;
-import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.User;
-import com.github.seqware.queryengine.plugins.runners.hbasemr.MRHBasePluginRunner;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
-import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
-import com.jcraft.jsch.Logger;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -45,7 +39,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.mortbay.log.Log;
 
 /**
  * Group resource.
@@ -97,9 +90,6 @@ public class GroupResource extends GenericMutableSetResource<Group, User> {
           @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
           @ApiParam(value = "Updated user object", required = true) Group group) {
 
-    CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-    QueryInterface query = SWQEFactory.getQueryInterface();
-
     return(super.updateElement(sgid, group));
 
   }
@@ -117,6 +107,7 @@ public class GroupResource extends GenericMutableSetResource<Group, User> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  @Override
     public Response deleteElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
       return(super.deleteElement(sgid));

@@ -339,16 +339,9 @@ public abstract class GenericElementResource<T extends Atom> {
             @ApiParam(value = "Updated user object", required = true) T element) {
       
               CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-
-              /* FIXME: Denis, why doesn't this work? This will create a new copy with a unique SGID instead of update */
-              /* NOTE: I think this element gets a new sgid, that's why the update never works! */
-              //Atom updatedElement = (Atom)element.toBuilder().setManager(modelManager);
-              //updatedElement.setSGID(new SGID(sgid));
-              element.setSGID(new SGID(sgid));
-              // FYI I created a new UPDATE state but it currently doesn't do anything different than NEW_VERSION
-              modelManager.atomStateChange(element, CreateUpdateManager.State.NEW_VERSION);
+	      T old = (T)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+	      modelManager.update(old, element);
               modelManager.flush();
-            
               return Response.ok().entity("").build();
     }
     
@@ -369,17 +362,8 @@ public abstract class GenericElementResource<T extends Atom> {
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
       
               CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-              QueryInterface query = SWQEFactory.getQueryInterface();
-              Atom element = query.getLatestAtomBySGID(new SGID(sgid));
-
-              /* FIXME: Denis, why doesn't this work? This will create a new copy with a unique SGID instead of update */
-              /* NOTE: I think this element gets a new sgid, that's why the update never works! */
-              //Atom updatedElement = (Atom)element.toBuilder().setManager(modelManager);
-              //updatedElement.setSGID(new SGID(sgid));
-              element.setSGID(new SGID(sgid));
-              modelManager.delete(element);
-              // FYI I created a new UPDATE state but it currently doesn't do anything different than NEW_VERSION
-              //modelManager.atomStateChange(element, CreateUpdateManager.State.NEW_VERSION);
+	      T old = (T)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+              modelManager.delete(old);
               modelManager.flush();
             
               return Response.ok().entity("").build();

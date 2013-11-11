@@ -71,8 +71,9 @@ public class SimplePersistentBackEnd implements BackEndInterface {
   }
 
   /**
-   * {@inheritDoc} COMMENT: Denis, isn't this just making a copy for every
-   * update? Why do we want that?
+   * {@inheritDoc} 
+   * As per the HBase concept of timestamps, updates are really creating a new copy of 
+   * an existing blob keyed to a new timestamp as opposed to re-using the same object
    */
   @Override
   public void update(Atom... objList) {

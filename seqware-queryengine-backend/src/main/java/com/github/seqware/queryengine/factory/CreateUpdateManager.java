@@ -58,11 +58,6 @@ public interface CreateUpdateManager {
          */
         NEW_VERSION,
         /**
-         * New versions of Atoms but without versioning, these Atoms do not take
-         * into account predecessors, they just overwrite
-         */
-        UPDATE,
-        /**
          * Managed Atoms that have not otherwise changed
          */
         MANAGED
@@ -203,4 +198,12 @@ public interface CreateUpdateManager {
      * @param state a {@link com.github.seqware.queryengine.factory.CreateUpdateManager.State} object.
      */
     public void atomStateChange(Atom source, State state);
+    
+    /**
+     * Convenience method to inform the model manager that updatedVersion is a new
+     * version of originalversion
+     * @param originalversion
+     * @param updatedVersion 
+     */
+    public void update(Atom originalversion, Atom updatedVersion);
 }
