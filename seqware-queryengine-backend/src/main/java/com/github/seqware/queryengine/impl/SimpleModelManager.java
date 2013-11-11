@@ -192,13 +192,13 @@ public class SimpleModelManager implements CreateUpdateManager {
                         featureList = new FeatureList();
                         lastRowKey = f.getSGID().getRowKey();
                     }
-                    assert (featureList.getFeatures().isEmpty() || featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
+                    assert (featureList != null && featureList.getFeatures().isEmpty() || featureList != null && featureList.getSGID().getRowKey().equals(f.getSGID().getRowKey()));
                     featureList.add(f);
                     // upgrade the featureList with this redundant information on the way in
                     featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID()), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
                 }
                 // handle the last remaining bucket
-                if (featureList.getFeatures().size() > 0) {
+                if (featureList != null && featureList.getFeatures().size() > 0) {
                     FSGID listfsgid = (FSGID) featureList.getSGID();
                     FSGID firstElement = (FSGID) featureList.getFeatures().get(0).getSGID();
                     assert (listfsgid.getRowKey().equals(firstElement.getRowKey()) && listfsgid.getReferenceName().equals(firstElement.getReferenceName())
@@ -469,6 +469,13 @@ public class SimpleModelManager implements CreateUpdateManager {
         }
         assert (aSet != null);
         return aSet;
+    }
+
+    @Override
+    public void update(Atom originalversion, Atom updatedVersion) {
+        ((AtomImpl)updatedVersion).impersonate(originalversion.getSGID());
+        ((AtomImpl)updatedVersion).setTimestamp(new Date());
+        this.atomStateChange(updatedVersion, CreateUpdateManager.State.NEW_VERSION);
     }
 
     protected static class AtomStatePair {

@@ -201,7 +201,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param sgid new SGID
      */
-    protected void impersonate(SGID sgid) {
+    public void impersonate(SGID sgid) {
         this.sgid = sgid;
     }
 
@@ -369,7 +369,9 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
         if (this.getManager() != null) {
             this.getManager().atomStateChange(this, CreateUpdateManager.State.NEW_VERSION);
         }
-        this.precedingVersion.set(precedingVersion);
+        if (Constants.TRACK_VERSIONING){
+            this.precedingVersion.set(precedingVersion);
+        }
     }
 
     /**

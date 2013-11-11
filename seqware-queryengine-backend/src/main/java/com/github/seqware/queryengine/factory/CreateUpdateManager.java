@@ -184,4 +184,12 @@ public interface CreateUpdateManager {
      * @param state a {@link com.github.seqware.queryengine.factory.CreateUpdateManager.State} object.
      */
     public void atomStateChange(Atom source, State state);
+    
+    /**
+     * Convenience method to inform the model manager that updatedVersion is a new
+     * version of originalversion
+     * @param originalversion
+     * @param updatedVersion 
+     */
+    public void update(Atom originalversion, Atom updatedVersion);
 }
