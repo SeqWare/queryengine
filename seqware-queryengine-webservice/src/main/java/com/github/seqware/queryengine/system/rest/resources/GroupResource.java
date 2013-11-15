@@ -17,9 +17,11 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
@@ -49,7 +51,7 @@ import javax.ws.rs.core.Response;
 @Path("/group")
 @Api(value = "/group", description = "Operations about groups")
 @Produces({"application/json"})
-public class GroupResource extends GenericMutableSetResource<Group, User> {
+public class GroupResource extends GenericMutableSetResource<Group, UserFacade> {
 
   @Override
   public final String getClassName() {
@@ -117,17 +119,15 @@ public class GroupResource extends GenericMutableSetResource<Group, User> {
 
   @POST
   @Path("/{sgid}")
-  @ApiOperation(value = "Create an element in the set", notes = "This can only be done by an authenticated user.", response = User.class)
+  @ApiOperation(value = "Create an element in the set", notes = "This can only be done by an authenticated user.", response = UserFacade.class)
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
   @Override
   public final Response addElement(
           @ApiParam(value = "set to add an element to", required = true)
           @PathParam("sgid") String sgid,
-          @ApiParam(value = "element that needs to be added to the store", required = true) User element) {
-    ObjectMapper mapper = new ObjectMapper();
-    User userFromFacade = mapper.convertValue(element, User.class);
-    return super.addElement(sgid, userFromFacade);
+          @ApiParam(value = "element that needs to be added to the store", required = true) @JsonDeserialize(as = User.class) UserFacade element) {
+    return super.addElement(sgid, element);
   }
 
   @POST
