@@ -16,6 +16,9 @@
  */
 package com.github.seqware.queryengine.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  * All SeqWare iterable collections should be easily countable too
  *
@@ -28,5 +31,7 @@ public interface SeqWareIterable<T> extends Iterable<T>{
      *
      * @return count of elements in the set
      */
+    @JsonIgnore
+    @XmlTransient
     public long getCount();
 }

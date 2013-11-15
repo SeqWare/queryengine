@@ -16,13 +16,9 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.Reference;
-import com.github.seqware.queryengine.model.ReferenceSet;
-import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReference;
-import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReferenceSet;
+import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
@@ -54,7 +50,7 @@ import javax.ws.rs.core.Response;
 @Path("/featureset")
 @Api(value = "/featureset", description = "Operations about featuresets"/**, listingPath = "/resources/featureset"*/)
 @Produces({"application/json"})
-public class FeatureSetResource extends GenericSetResource<FeatureSet> {
+public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
     public final String getClassName() {
@@ -190,7 +186,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
     @Override
     public Response updateElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-            @ApiParam(value = "Updated user object", required = true) FeatureSet group) {
+            @ApiParam(value = "Updated user object", required = true) FeatureSetFacade group) {
 
         return super.updateElement(sgid, group);
 
@@ -205,7 +201,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
      */
     @DELETE
     @Path("/{sgid}")
-    @ApiOperation(value = "Delete an existing Group", notes = "This can only be done by an authenticated user.")
+    @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.")
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -222,7 +218,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSet> {
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response addSet(
-            @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSet set) {
+            @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
         return super.addSet(set);
     }
 }

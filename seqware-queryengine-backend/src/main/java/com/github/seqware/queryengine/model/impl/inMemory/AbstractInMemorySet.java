@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AbstractMolSet;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
@@ -82,6 +83,7 @@ public abstract class AbstractInMemorySet<S extends MolSetInterface, T> extends 
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public long getCount() {
         return set.size();
     }

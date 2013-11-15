@@ -1,5 +1,7 @@
 package com.github.seqware.queryengine.model.impl.lazy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
@@ -14,6 +16,7 @@ import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.LazyReference;
 import com.github.seqware.queryengine.util.SGID;
 import java.util.*;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.log4j.Logger;
 
 /**
@@ -37,6 +40,8 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
      * User defined description of this feature set, can be used to store pragma
      * information for a set of features.
      */
+    @XmlElement(name="description")
+    @JsonProperty("description")
     private String description = null;
 
     /**
@@ -302,6 +307,7 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public long getCount() {
         if (!EXPENSIVE_ITERATION_WARNED) {
             Logger.getLogger(LazyFeatureSet.class.getName()).warn("Iterating through a LazyFeatureSet is expensive, avoid this");
@@ -339,6 +345,7 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
 
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name="description")
     public String getDescription() {
         return description;
     }

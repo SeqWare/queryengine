@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.Feature;
@@ -130,6 +131,7 @@ public class InMemoryFeatureSet extends FeatureSet {
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public long getCount() {
         return features.size();
     }
