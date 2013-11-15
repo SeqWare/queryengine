@@ -19,10 +19,23 @@ package com.github.seqware.queryengine.system.rest.resources;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.restModels.TagFacade;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
+import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Tag resource.
@@ -47,5 +60,19 @@ public class TagResource extends GenericElementResource<User> {
     @Override
     public final SeqWareIterable getElements() {
         return SWQEFactory.getQueryInterface().getTags();
+    }
+    
+    @GET
+    @Override
+    @Path(value = "/{sgid}")
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here" ,response=TagFacade.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
+    @Produces(MediaType.APPLICATION_JSON)
+    public final Response featureByIDRequest(
+            @ApiParam(value = "id of set to be fetched", required = true)
+            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+        return super.featureByIDRequest(sgid);
     }
 }

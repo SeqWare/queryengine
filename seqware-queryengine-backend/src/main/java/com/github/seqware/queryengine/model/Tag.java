@@ -48,8 +48,9 @@ public class Tag extends AtomImpl<Tag> implements TagFacade {
      *          synonyms -- note that one accession can appear multiple times in
      *          a tag set under various names and synonyms.
      */
+    @JsonProperty("key")
     private String key = null;
-
+    @JsonProperty("predicate")
     private String predicate = "=";
     @JsonProperty("value")
     private Object value = null;
@@ -115,6 +116,7 @@ public class Tag extends AtomImpl<Tag> implements TagFacade {
      */
     @XmlElement(name = "key")
     @Override
+    @JsonProperty("key")
     public String getKey() {
         return key;
     }
@@ -144,6 +146,7 @@ public class Tag extends AtomImpl<Tag> implements TagFacade {
      */
     @XmlElement(name = "value")
     @Override
+    @JsonProperty("value")
     public Object getValue() {
         return value;
     }
@@ -155,6 +158,7 @@ public class Tag extends AtomImpl<Tag> implements TagFacade {
      */
     @XmlElement(name = "predicate")
     @Override
+    @JsonProperty("predicate")
     public String getPredicate() {
         return predicate;
     }
