@@ -16,12 +16,10 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
-import com.github.seqware.queryengine.model.restModels.UserFacade;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;

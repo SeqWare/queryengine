@@ -16,11 +16,6 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
-import com.fasterxml.jackson.jaxrs.annotation.JacksonFeatures;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.ProtobufSerialization;
@@ -28,23 +23,16 @@ import com.github.seqware.queryengine.impl.protobufIO.ProtobufTransferInterface;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Molecule;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
-import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -88,7 +76,7 @@ public abstract class GenericElementResource<T extends Atom> {
             obj.put("timestamp", ts.getTimestamp().toString());
             stringList.add(obj);
         }
-        return Response.ok(new Gson().toJson(stringList).toString())/*.header("Access-Control-Allow-Origin", "*").header("X-DAS-Status", "200")*/.build();
+        return Response.ok().entity(stringList)/*.header("Access-Control-Allow-Origin", "*").header("X-DAS-Status", "200")*/.build();
     }
 
     /**
@@ -116,18 +104,7 @@ public abstract class GenericElementResource<T extends Atom> {
             // (see also http://www.biodas.org/documents/spec-1.6.html#response)
             throw new InvalidIDException(INVALID_ID, "ID not found");
         }
-
-        String toString;
-        ObjectMapper mapper = new ObjectMapper();
-        VisibilityChecker<?> visibilityChecker = mapper.getVisibilityChecker().withFieldVisibility(Visibility.PUBLIC_ONLY);
-        mapper.setVisibilityChecker(visibilityChecker);
-        try {
-            toString = mapper.writeValueAsString(latestAtomByRowKey);
-        } catch (IOException ex) {
-            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-        return Response.ok(toString.toString())/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+        return Response.ok().entity(latestAtomByRowKey)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
     }
 
     /**
@@ -178,14 +155,7 @@ public abstract class GenericElementResource<T extends Atom> {
         for (Tag t : tagsIterator) {
             tags.add(t);
         }
-        ObjectMapper mapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(tags);
-        } catch (IOException ex) {
-            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return Response.ok(json)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+        return Response.ok().entity(tags)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
     }
 
     /**
@@ -222,14 +192,7 @@ public abstract class GenericElementResource<T extends Atom> {
             Atom precedingVersion = (Atom) versions.peek().getPrecedingVersion();
             versions.add(precedingVersion);
         }
-        ObjectMapper mapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(versions);
-        } catch (IOException ex) {
-            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return Response.ok(json)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+        return Response.ok().entity(versions)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
 
 
     }
@@ -259,16 +222,7 @@ public abstract class GenericElementResource<T extends Atom> {
             // (see also http://www.biodas.org/documents/spec-1.6.html#response)
             return Response.status(Response.Status.BAD_REQUEST).header(QE_STATUS, INVALID_INPUT).build();
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        String json = null;
-        try {
-            ACL acl = ((Molecule) latestAtomByRowKey).getPermissions();
-            json = mapper.writeValueAsString(acl);
-        } catch (IOException ex) {
-            Logger.getLogger(GenericElementResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return Response.ok(json)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+        return Response.ok().entity(((Molecule) latestAtomByRowKey).getPermissions())/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
     }
 
     /**
