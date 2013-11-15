@@ -1,6 +1,7 @@
 package com.github.seqware.queryengine.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
@@ -12,10 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -30,8 +28,7 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.NONE)
+@JsonSerialize(as=UserFacade.class)
 public class User extends MoleculeImpl<User> implements UserFacade{
 
     /** Constant <code>prefix="User"</code> */
