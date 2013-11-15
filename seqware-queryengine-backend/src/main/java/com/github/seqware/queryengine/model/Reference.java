@@ -1,7 +1,10 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReference;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import java.util.Iterator;
@@ -15,6 +18,7 @@ import java.util.Iterator;
  * @author jbaran
  * @version $Id: $Id
  */
+@JsonDeserialize(as = InMemoryReference.class)
 public interface Reference extends MolSetInterface<Reference, FeatureSet> {
     /** Constant <code>prefix="Reference"</code> */
     public final static String prefix = "Reference";
@@ -24,6 +28,7 @@ public interface Reference extends MolSetInterface<Reference, FeatureSet> {
      *
      * @return Iterator of feature sets associated with this reference.
      */
+    @JsonIgnore
     public abstract Iterator<FeatureSet> featureSets();
 
     /**

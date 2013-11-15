@@ -16,3 +16,7 @@ Note that if your swagger documents are hosted on a remote server (such as a VM)
 ## Database connectivity
 
 If you want your web service to talk to a query engine back-end, please ensure that your .seqware/settings file is setup as described in seqware-queryengine/README.md
+
+## IDE 
+
+For quicker debugging, it is possible to setup an Apache Tomcat server in NetBeans. This way you will be able to run, debug, and quickly apply code changes from within your IDE. 

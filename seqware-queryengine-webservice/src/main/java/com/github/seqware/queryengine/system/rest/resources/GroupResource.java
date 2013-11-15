@@ -138,8 +138,6 @@ public class GroupResource extends GenericMutableSetResource<Group, UserFacade> 
   @Override
   public Response addSet(
           @ApiParam(value = "Group that needs to be added to the store", required = true) Group set) {
-    System.out.println("addSet " + set.getDescription() + " " + set.getName());
-    // make this an overrideable method in the real version
     return super.addSet(set);
   }
 }

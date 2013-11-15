@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.hbasemrlazy;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
@@ -14,6 +15,7 @@ import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
  * @author dyuen
  * @version $Id: $Id
  */
+@JsonSerialize(as=FeatureSet.class)
 public class MRLazyFeatureSet extends LazyFeatureSet implements LazyMolSet<FeatureSet, Feature> {
 
     private String displayName = null;

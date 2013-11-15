@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
@@ -13,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author dyuen
  * @version $Id: $Id
  */
+@JsonSerialize(as=Reference.class)
 public class InMemoryReference extends AbstractInMemorySet<Reference, FeatureSet> implements Reference {
     
     private String name;
@@ -50,6 +52,7 @@ public class InMemoryReference extends AbstractInMemorySet<Reference, FeatureSet
 
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name="name")
     public String getName() {
         return name;
     }

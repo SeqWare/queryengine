@@ -16,13 +16,17 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.ProtobufSerialization;
 import com.github.seqware.queryengine.impl.protobufIO.ProtobufTransferInterface;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Molecule;
+import com.github.seqware.queryengine.model.ReferenceSet;
 import com.github.seqware.queryengine.model.Tag;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReferenceSet;
+import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -240,10 +244,21 @@ public abstract class GenericElementResource<T extends Atom> {
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
     public Response updateElementPermissions(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
-            @PathParam("sgid") String sgid) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
-        return Response.ok().entity("").build();
+            @PathParam("sgid") String sgid,
+            @ApiParam(value = "Group that needs to be added to the store", required = true) ACL acl
+            ) {
+        CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+        Atom old = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+        Atom newAtom = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+        if (newAtom instanceof Molecule){
+            Molecule mol = (Molecule) newAtom;
+            mol.setPermissions(acl);
+        } else{
+            return Response.status(Response.Status.BAD_REQUEST).header(QE_STATUS, INVALID_INPUT).build();
+        }
+        modelManager.update(old, newAtom);
+        modelManager.flush();
+        return Response.ok().entity(newAtom).build();
     }
 
     /**
@@ -300,7 +315,7 @@ public abstract class GenericElementResource<T extends Atom> {
 	      T old = (T)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
 	      modelManager.update(old, element);
               modelManager.flush();
-              return Response.ok().entity("").build();
+              return Response.ok().entity(element).build();
     }
     
         /**
