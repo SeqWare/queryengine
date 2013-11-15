@@ -19,7 +19,6 @@ package com.github.seqware.queryengine.model.restModels;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.impl.hbasemrlazy.MRLazyFeatureSet;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 
@@ -37,12 +36,5 @@ public interface FeatureSetFacade extends MolSetInterface<FeatureSet, Feature>{
      * @return the description associated with this FeatureSet
      */
     public abstract String getDescription();
-    
-    /**
-     * Get the reference for this featureSet
-     *
-     * @return reference for the feature set
-     */
-    public abstract Reference getReference();
     
 }

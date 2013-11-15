@@ -33,17 +33,15 @@ public class MRLazyFeatureSet extends LazyFeatureSet implements LazyMolSet<Featu
         super();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @JsonIgnore
     @XmlTransient
     public long getCount() {
-        try{
-            QueryFuture<Long> featureSetCount = SWQEFactory.getQueryInterface().getFeatureSetCount(0, this);
-            return featureSetCount.get();
-        } catch (NullPointerException e){
-            return 0;
-        }
+        QueryFuture<Long> featureSetCount = SWQEFactory.getQueryInterface().getFeatureSetCount(0, this);
+        return featureSetCount.get();
     }
 
     /**
