@@ -16,36 +16,23 @@
  */
 package com.github.seqware.queryengine.model.restModels;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.github.seqware.queryengine.model.Molecule;
-import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.Atom;
+import com.github.seqware.queryengine.model.Tag;
 
 /**
  *
  * @author dyuen
  */
-@JsonDeserialize(as=User.class)
-public interface UserFacade extends Molecule<User>{
+@JsonDeserialize(as=Tag.class)
+public interface TagFacade extends Atom<Tag>{
+   
+    public String getKey();
 
+    
+    public String getPredicate();
 
-    /**
-     * @return the firstName
-     */
-    public String getFirstName();
-
-    /**
-     * @return the lastName
-     */
-    public String getLastName();
-
-    /**
-     * @return the emailAddress
-     */
-    public String getEmailAddress();
-
-    /**
-     * @return the password
-     */
-    public String getPassword();   
+    @JsonValue public Object getValue();  
     
 }

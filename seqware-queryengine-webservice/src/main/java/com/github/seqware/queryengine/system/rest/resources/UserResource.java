@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.User;
 import com.github.seqware.queryengine.model.restModels.UserFacade;
@@ -64,7 +65,7 @@ public class UserResource extends GenericElementResource<UserFacade> {
     @GET
     @Override
     @Path(value = "/{sgid}")
-    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here" ,response=User.class)
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here" ,response=UserFacade.class)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -84,7 +85,7 @@ public class UserResource extends GenericElementResource<UserFacade> {
     @Override
     public Response updateElement(
             @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-            @ApiParam(value = "Updated user object", required = true) UserFacade user) {
+            @ApiParam(value = "Updated user object", required = true) @JsonDeserialize(as = User.class) UserFacade user) {
         return super.updateElement(sgid, user);
     }
 }

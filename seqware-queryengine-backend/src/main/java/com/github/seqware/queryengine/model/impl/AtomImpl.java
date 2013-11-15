@@ -50,10 +50,12 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      * Exposed timestamp of this Atom
      */
     //private Date clientTimestamp;
+    @JsonIgnore
     private int externalSerializationVersion = SWQEFactory.getSerialization().getSerializationConstant();
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public int getExternalSerializationVersion() {
         return externalSerializationVersion;
     }
@@ -63,6 +65,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param externalSerializationVersion a int.
      */
+    @JsonIgnore
     public void setExternalSerializationVersion(int externalSerializationVersion) {
         this.externalSerializationVersion = externalSerializationVersion;
     }

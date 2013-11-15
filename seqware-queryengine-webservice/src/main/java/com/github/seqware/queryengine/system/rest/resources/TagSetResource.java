@@ -16,18 +16,10 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
-import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Atom;
-import com.github.seqware.queryengine.model.Group;
-import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
-import com.github.seqware.queryengine.model.User;
-import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
+import com.github.seqware.queryengine.model.restModels.TagFacade;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
@@ -35,9 +27,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -46,7 +35,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -58,7 +46,7 @@ import javax.ws.rs.core.Response;
 @Path("/tagset")
 @Api(value = "/tagset", description = "Operations about tagsets"/*, listingPath="/resources.json/tagset"*/)
 @Produces({"application/json"})
-public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
+public class TagSetResource extends GenericMutableSetResource<TagSet, TagFacade> {
 
     @Override
     public final String getClassName() {
@@ -149,14 +137,14 @@ public class TagSetResource extends GenericMutableSetResource<TagSet, Tag> {
 
   @POST
   @Path("/{sgid}")
-  @ApiOperation(value = "Create a Tag in the Tagset", notes = "This can only be done by an authenticated user.", response = Tag.class)
+  @ApiOperation(value = "Create a Tag in the Tagset", notes = "This can only be done by an authenticated user.", response = TagFacade.class)
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
   @Override
   public final Response addElement(
           @ApiParam(value = "set to add an element to", required = true)
           @PathParam("sgid") String sgid,
-          @ApiParam(value = "element that needs to be added to the store", required = true) Tag obj) {
+          @ApiParam(value = "element that needs to be added to the store", required = true) TagFacade obj) {
     return super.addElement(sgid, obj);
   }
 

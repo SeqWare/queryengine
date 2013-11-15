@@ -53,7 +53,11 @@ public class TagSetIO implements ProtobufTransferInterface<TagSetPB, TagSet>{
             sgidArr[i] = (SGIDIO.pb2m(userpb.getTagSpecIDs(i)));
         }
         List<Tag> atomsBySGID = SWQEFactory.getQueryInterface().getAtomsBySGID(Tag.class, sgidArr);
-        if (atomsBySGID != null && atomsBySGID.size() > 0) {user.add(atomsBySGID);}
+        Logger.getLogger(TagSetIO.class.getName()).debug("Reading key/values in TagSetIO");
+        if (atomsBySGID != null && atomsBySGID.size() > 0) {
+            Logger.getLogger(TagSetIO.class.getName()).debug("Reading "+atomsBySGID+"key/values in TagSetIO");
+            user.add(atomsBySGID);
+        }
         return user;
     }
     
@@ -68,7 +72,9 @@ public class TagSetIO implements ProtobufTransferInterface<TagSetPB, TagSet>{
         if (ProtobufTransferInterface.PERSIST_VERSION_CHAINS && sgid.getPrecedingVersion() != null){
             builder.setPrecedingVersion(m2pb(sgid.getPrecedingVersion()));
         }
+        Logger.getLogger(TagSetIO.class.getName()).debug("Adding key/values in TagSetIO");
         for(Tag ref : sgid){
+            Logger.getLogger(TagSetIO.class.getName()).debug("Adding a key/value " + ref.getKey()+" "+ref.getValue());
             builder.addTagSpecIDs(SGIDIO.m2pb(ref.getSGID()));
         }
         TagSetPB userpb = builder.build();

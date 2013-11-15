@@ -10,9 +10,6 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -37,14 +34,12 @@ public class User extends MoleculeImpl<User> implements UserFacade{
     private String lastName;
     private String emailAddress;
     private String password;
-    private List<Group> groups;
 
     /**
      * Create a new user
      */
     public User() {
         super();
-        groups = new ArrayList();
     }
 
     /**
@@ -88,17 +83,6 @@ public class User extends MoleculeImpl<User> implements UserFacade{
     @Override
     public String getLastName() {
         return lastName;
-    }
-
-    /**
-     * Get list of groups that this user is a part of
-     *
-     * @return list of groups
-     */
-    @XmlElement(name="groups")
-    @Override
-    public List<Group> getGroups() {
-        return Collections.unmodifiableList(groups);
     }
 
     /** {@inheritDoc} */
@@ -204,7 +188,6 @@ public class User extends MoleculeImpl<User> implements UserFacade{
     @Override
     @XmlTransient
     @JsonIgnore
-    @org.codehaus.jackson.annotate.JsonIgnore
     public Class getHBaseClass() {
         return User.class;
     }
@@ -213,7 +196,6 @@ public class User extends MoleculeImpl<User> implements UserFacade{
     @Override
     @XmlTransient
     @JsonIgnore
-    @org.codehaus.jackson.annotate.JsonIgnore
     public String getHBasePrefix() {
         return User.prefix;
     }

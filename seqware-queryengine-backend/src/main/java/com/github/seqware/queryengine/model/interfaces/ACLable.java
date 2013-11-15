@@ -1,6 +1,7 @@
 package com.github.seqware.queryengine.model.interfaces;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * Interface for object under access control.
@@ -17,6 +18,7 @@ public interface ACLable {
      *
      * @param permissions new set of permissions
      */
+    @JsonIgnore
     public void setPermissions(ACL permissions);
     
     /**

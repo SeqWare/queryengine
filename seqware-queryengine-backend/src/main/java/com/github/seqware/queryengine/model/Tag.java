@@ -1,8 +1,12 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
+import com.github.seqware.queryengine.model.restModels.TagFacade;
 import com.github.seqware.queryengine.util.InMemoryIterable;
 import com.github.seqware.queryengine.util.LazyReference;
 import com.github.seqware.queryengine.util.SGID;
@@ -11,7 +15,6 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * A Tag an instance of a TagSpec which contains all three of the values
@@ -28,7 +31,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author jbaran
  * @version $Id: $Id
  */
-public class Tag extends AtomImpl<Tag> {
+@JsonSerialize(as=TagFacade.class)
+public class Tag extends AtomImpl<Tag> implements TagFacade {
 
     /** Constant <code>prefix="Tag"</code> */
     public final static String prefix = "Tag";
@@ -47,6 +51,7 @@ public class Tag extends AtomImpl<Tag> {
     private String key = null;
 
     private String predicate = "=";
+    @JsonProperty("value")
     private Object value = null;
     private ValueType vType = null;
 
@@ -109,6 +114,7 @@ public class Tag extends AtomImpl<Tag> {
      * @return String key
      */
     @XmlElement(name = "key")
+    @Override
     public String getKey() {
         return key;
     }
@@ -137,6 +143,7 @@ public class Tag extends AtomImpl<Tag> {
      * @return String value
      */
     @XmlElement(name = "value")
+    @Override
     public Object getValue() {
         return value;
     }
@@ -147,6 +154,7 @@ public class Tag extends AtomImpl<Tag> {
      * @return String predicate
      */
     @XmlElement(name = "predicate")
+    @Override
     public String getPredicate() {
         return predicate;
     }
@@ -159,6 +167,7 @@ public class Tag extends AtomImpl<Tag> {
      * @param sgid a {@link com.github.seqware.queryengine.util.SGID} object.
      * @return a {@link com.github.seqware.queryengine.model.Tag} object.
      */
+    @JsonIgnore
     public Tag setTagSet(SGID sgid) {
         this.tagSet.setSGID(sgid);
         return this;
@@ -189,12 +198,14 @@ public class Tag extends AtomImpl<Tag> {
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public Class getHBaseClass() {
         return Tag.class;
     }
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public String getHBasePrefix() {
         return Tag.prefix;
     }

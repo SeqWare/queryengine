@@ -57,11 +57,12 @@ public abstract class GenericMutableSetResource<T extends MolSetInterface, S ext
             @ApiParam(value = "element that needs to be added to the store", required = true) S element) {
         // make this an overrideable method in the real version
         CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-        MolSetInterface latestAtomByRowKey = (MolSetInterface)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(rowKey, getModelClass());
-        latestAtomByRowKey.add(element);
+        MolSetInterface oldSet = (MolSetInterface)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(rowKey, getModelClass());
+        MolSetInterface newSet = (MolSetInterface)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(rowKey, getModelClass());
+        newSet.add(element);
         modelManager.objectCreated(element);
+        modelManager.update(oldSet, newSet);
         modelManager.close();
-        
-        return Response.ok().entity("").build();
+        return Response.ok().entity(newSet).build();
     }
 }

@@ -16,6 +16,8 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Group;
 import com.github.seqware.queryengine.model.User;
@@ -49,7 +51,7 @@ import javax.ws.rs.core.Response;
 @Path("/group")
 @Api(value = "/group", description = "Operations about groups")
 @Produces({"application/json"})
-public class GroupResource extends GenericMutableSetResource<Group, UserFacade> {
+public class GroupResource extends GenericMutableSetResource<Group, User> {
 
   @Override
   public final String getClassName() {
@@ -124,8 +126,10 @@ public class GroupResource extends GenericMutableSetResource<Group, UserFacade> 
   public final Response addElement(
           @ApiParam(value = "set to add an element to", required = true)
           @PathParam("sgid") String sgid,
-          @ApiParam(value = "element that needs to be added to the store", required = true) UserFacade element) {
-    return super.addElement(sgid, element);
+          @ApiParam(value = "element that needs to be added to the store", required = true) User element) {
+    ObjectMapper mapper = new ObjectMapper();
+    User userFromFacade = mapper.convertValue(element, User.class);
+    return super.addElement(sgid, userFromFacade);
   }
 
   @POST

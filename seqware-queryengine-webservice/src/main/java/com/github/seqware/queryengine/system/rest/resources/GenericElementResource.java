@@ -18,7 +18,9 @@ package com.github.seqware.queryengine.system.rest.resources;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+import com.fasterxml.jackson.jaxrs.annotation.JacksonFeatures;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.ProtobufSerialization;
@@ -31,6 +33,7 @@ import com.github.seqware.queryengine.model.interfaces.ACL;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -112,20 +115,6 @@ public abstract class GenericElementResource<T extends Atom> {
             // A genuinely bad request:
             // (see also http://www.biodas.org/documents/spec-1.6.html#response)
             throw new InvalidIDException(INVALID_ID, "ID not found");
-        }
-        
-        System.out.println("Printing tags");
-        for (Object tag : latestAtomByRowKey.getTags()) {
-            System.out.println(((Tag) tag).getDisplayName());
-        }
-        
-        System.out.println("Printing tagset map info");
-        if (latestAtomByRowKey instanceof InMemoryTagSet){
-            InMemoryTagSet tagset = (InMemoryTagSet)latestAtomByRowKey;
-            System.out.println(tagset.getMap().size());
-            for(Tag t : tagset){
-                System.out.println(t.getDisplayName());
-            }
         }
 
         String toString;
