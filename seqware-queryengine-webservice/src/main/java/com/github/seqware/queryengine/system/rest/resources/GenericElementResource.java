@@ -25,14 +25,10 @@ import com.github.seqware.queryengine.impl.ProtobufSerialization;
 import com.github.seqware.queryengine.impl.protobufIO.ProtobufTransferInterface;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Molecule;
-import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Tag;
-import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
 import com.github.seqware.queryengine.model.interfaces.ACL;
-import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
-import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -337,7 +333,7 @@ public abstract class GenericElementResource<T extends Atom> {
         newAtom.associateTag(Tag.newBuilder().setKey(key).setValue(value).setPredicate(predicate).build());
         modelManager.update(old, newAtom);
         modelManager.flush();
-        return Response.ok().entity("").build();
+        return Response.ok().entity(newAtom).build();
     }
 
     /**

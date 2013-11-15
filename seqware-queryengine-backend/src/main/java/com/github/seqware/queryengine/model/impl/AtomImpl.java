@@ -43,9 +43,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      */
     protected SGID sgid = null;
 
-  public void setSGID(SGID sgid) {
-    this.sgid = sgid;
-  }
+    @Override
+    public void setSGID(SGID sgid) {
+        this.sgid = sgid;
+    }
     
     
     
@@ -192,8 +193,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      */
     @Override
     public Date getTimestamp() {
-        return this.getSGID().getBackendTimestamp();
-        //return clientTimestamp;
+        if (this.getSGID() != null){
+            return this.getSGID().getBackendTimestamp();
+        }
+        return null;
     }
 
     /**
