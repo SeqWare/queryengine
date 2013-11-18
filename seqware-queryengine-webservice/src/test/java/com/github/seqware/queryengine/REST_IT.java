@@ -29,7 +29,7 @@ import org.junit.Test;
  * These tests test simple creation and retrieval of entities from the query engine web service
  * @author dyuen
  */
-public class Post_IT {
+public class REST_IT {
     public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
 
     @Test
@@ -79,6 +79,28 @@ public class Post_IT {
         Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
         String output = response.getEntity(String.class);
         Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky organism"));
+    }
+    
+        
+    @Test
+    public void testCreateReferenceSetAndTagIt() {
+        Client client = Client.create();
+        WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset");
+        String group = "{\n"
+                + "  \"name\": \"Funky name\",\n"
+                + "  \"organism\": \"Funky organism\"\n"
+                + "}";
+        ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        String output = response.getEntity(String.class);
+        String rowkey = extractRowKey(output);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky organism"));
+        // now let's try to tag it
+        webResource = client.resource(WEBSERVICE_URL + "referenceset/"+rowkey+"/tag?tagset_id=null&key=test&predicate=%3D&value=test");
+        response = webResource.type("application/json").put(ClientResponse.class, group);
+        output = response.getEntity(String.class);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky name") && output.contains("Funky organism"));
+        Assert.assertTrue("Returned entity tags incorrect" + output, output.contains(rowkey) && output.contains("test=test"));
     }
     
     @Test
@@ -141,6 +163,13 @@ public class Post_IT {
         Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
         output = response.getEntity(String.class);
         Assert.assertTrue("Returned entity incorrect" + output, output.contains("tagkey") && output.contains("tagpredicate") && output.contains("tagvalue"));
+        // try getting TagSet as a whole and look for tags within it
+        response = webResource.type("application/json").get(ClientResponse.class);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        output = response.getEntity(String.class);
+        Assert.assertTrue("Returned TagSet does not contain tag" + output, output.contains("\"mapCount\":1"));
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("tagkey") && output.contains("tagpredicate") && output.contains("tagvalue"));
+
     }
     
     @Test
