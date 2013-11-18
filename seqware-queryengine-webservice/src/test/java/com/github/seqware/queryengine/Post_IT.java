@@ -16,46 +16,21 @@
  */
 package com.github.seqware.queryengine;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.seqware.queryengine.model.Group;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * These tests test simple creation and retrieval of entities from the query engine web service
  * @author dyuen
  */
-public class SimpleCreateIT {
+public class Post_IT {
     public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
-    
-    public SimpleCreateIT() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void testCreateGroup() {
@@ -77,12 +52,7 @@ public class SimpleCreateIT {
         Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
         String output = response.getEntity(String.class);
         Assert.assertTrue("Returned entity incorrect" + output, output.contains("Avengers") && output.contains("dysfunctional"));
-        // now create a User using the returned rowkey
-        // grab rowkey via regular expression
-        Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
-        Matcher matcher = pattern.matcher(output);
-        matcher.find();
-        String rowkey = matcher.group(1);
+        String rowkey = extractRowKey(output);
         
         String user = "{\n"
                 + "  \"password\": \"n/a\",\n"
@@ -123,12 +93,7 @@ public class SimpleCreateIT {
         Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
         String output = response.getEntity(String.class);
         Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky organism"));
-        // now create a User using the returned rowkey
-        // grab rowkey via regular expression
-        Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
-        Matcher matcher = pattern.matcher(output);
-        matcher.find();
-        String rowkey = matcher.group(1);
+        String rowkey = extractRowKey(output);
         
         String user = "{\n"
                 + "  \"name\": \"Funky reference\"\n"
@@ -138,5 +103,66 @@ public class SimpleCreateIT {
         Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
         output = response.getEntity(String.class);
         Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky reference"));
+    }
+    
+    @Test
+    public void testCreateTagSet() {
+        Client client = Client.create();
+        WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+        String group = "{\n"
+                + "  \"name\": \"funky tagset\"\n"
+                + "}";
+        ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        String output = response.getEntity(String.class);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains("funky tagset"));
+    }
+    
+    @Test
+    public void testCreateTagSetWithTag() throws IOException {
+        Client client = Client.create();
+        WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+        String group = "{\n"
+                + "  \"name\": \"funky tagset\"\n"
+                + "}";
+        ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        String output = response.getEntity(String.class);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains("funky tagset"));
+        String rowkey = extractRowKey(output);
+        
+        String tag = "{\n"
+                + "  \"key\": \"tagkey\",\n"
+                + "  \"predicate\": \"tagpredicate\",\n"
+                + "  \"value\": \"tagvalue\"\n"
+                + "}";
+        webResource = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+        response = webResource.type("application/json").post(ClientResponse.class, tag);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        output = response.getEntity(String.class);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains("tagkey") && output.contains("tagpredicate") && output.contains("tagvalue"));
+    }
+    
+    @Test
+    public void testCreateFeatureSet() {
+        Client client = Client.create();
+        WebResource webResource = client.resource(WEBSERVICE_URL + "featureset");
+        String group = "{\n"
+                + "  \"description\": \"featureset\"\n"
+                + "}";
+        ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+        Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+        String output = response.getEntity(String.class);
+        Assert.assertTrue("Returned entity incorrect" + output, output.contains("featureset"));
+    }
+
+    protected String extractRowKey(String output) {
+        // now create a Tag using the returned rowkey
+        // grab rowkey via regular expression
+        Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
+        Matcher matcher = pattern.matcher(output);
+        matcher.find();
+        String rowkey = matcher.group(1);
+        return rowkey;
     }
 }
