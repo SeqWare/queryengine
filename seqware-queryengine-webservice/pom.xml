@@ -147,12 +147,6 @@ never
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-		    <runOrder>alphabetical</runOrder>
-                    <includes>
-                        <include>**/*Suite.java</include>
-                    </includes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
