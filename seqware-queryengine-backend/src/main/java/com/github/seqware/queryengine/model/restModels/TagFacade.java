@@ -17,7 +17,6 @@
 package com.github.seqware.queryengine.model.restModels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Tag;
@@ -35,6 +34,7 @@ public interface TagFacade extends Atom<Tag>{
     @JsonProperty("predicate")
     public String getPredicate();
 
-    @JsonValue public Object getValue();  
+    @JsonProperty("value")
+    public Object getValue();  
     
 }

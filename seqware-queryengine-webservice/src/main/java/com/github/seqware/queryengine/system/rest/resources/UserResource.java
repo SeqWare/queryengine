@@ -71,7 +71,7 @@ public class UserResource extends GenericElementResource<UserFacade> {
         @ApiResponse(code = INVALID_SET, message = "set not found")})
     @Produces(MediaType.APPLICATION_JSON)
     public final Response featureByIDRequest(
-            @ApiParam(value = "id of set to be fetched", required = true)
+            @ApiParam(value = "id of User to be fetched", required = true)
             @PathParam(value = "sgid") String sgid) throws InvalidIDException {
         return super.featureByIDRequest(sgid);
     }
