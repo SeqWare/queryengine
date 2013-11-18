@@ -63,6 +63,6 @@ public abstract class GenericMutableSetResource<T extends MolSetInterface, S ext
         modelManager.objectCreated(element);
         modelManager.update(oldSet, newSet);
         modelManager.close();
-        return Response.ok().entity(newSet).build();
+        return Response.ok().entity(element).build();
     }
 }
