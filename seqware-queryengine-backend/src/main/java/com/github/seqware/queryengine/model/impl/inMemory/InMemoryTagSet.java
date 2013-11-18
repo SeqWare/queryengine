@@ -34,7 +34,7 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         }
         super.add(element);
         map.put(element.getKey(), element);
-        Logger.getLogger(InMemoryTagSet.class.getName()).error("Adding a key/value " + element.getKey()+" "+element.getValue());
+        Logger.getLogger(InMemoryTagSet.class.getName()).debug("Adding a key/value " + element.getKey()+" "+element.getValue());
         assert (this.getSGID().getBackendTimestamp() != null);
         if (Constants.TRACK_TAGSET){
             element.setTagSet(this);
