@@ -134,8 +134,8 @@ never
                 		  -->
                 </configuration>
             </plugin>
+<!--
             <plugin>
-                <!-- try to run tests that require HBase here -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
@@ -148,6 +148,7 @@ never
                     </execution>
                 </executions>
             </plugin>
+-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -187,7 +188,7 @@ never
             <id>embeddedHBase</id>
             <activation>
                 <!-- until we have actual tests  <activeByDefault>true</activeByDefault> -->
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
