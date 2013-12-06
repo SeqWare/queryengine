@@ -78,7 +78,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @POST
     @Path("/{sgid}/query")
-    @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 10)
+    @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 100)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -103,7 +103,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @GET
     @Path("/{sgid}")
-    @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 1)
+    @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 70)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -124,7 +124,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @GET
     @Path("/{sgid}/{fsgid}")
-    @ApiOperation(value = "Get a specific feature in a featureset in JSON", notes = "This can only be done by an authenticated user.", position = 2)
+    @ApiOperation(value = "Get a specific feature in a featureset in JSON", notes = "This can only be done by an authenticated user.", position = 80)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -146,7 +146,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      * @return
      */
     @POST
-    @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.", position = 11)
+    @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
     @ApiResponses(value = {
         @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.TEXT_PLAIN)
@@ -166,7 +166,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @GET
     @Override
     @Path(value = "/{sgid}")
-    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", response = FeatureSet.class, position = 3)
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", response = FeatureSet.class, position = 90)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -179,7 +179,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @PUT
     @Path("/{sgid}")
-    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 100)
+    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -201,7 +201,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @DELETE
     @Path("/{sgid}")
-    @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 200)
+    @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 310)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -212,7 +212,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     }
 
     @POST
-    @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 12)
+    @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 120)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)

@@ -67,7 +67,7 @@ public abstract class GenericElementResource<T extends Atom> {
      * @return list of resources
      */
     @GET
-    @ApiOperation(value = "List all available elements by rowkey", notes = "This lists the raw rowkeys used to uniquely identify each chain of entities."/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "List all available elements by rowkey", notes = "This lists the raw rowkeys used to uniquely identify each chain of entities.", position = 10)
     public Response featuresRequest() {
         // Check whether the dsn contains the type of store, or not:
         //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
@@ -91,7 +91,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @Path(value = "/{sgid}")
-    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", position = 20)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -120,7 +120,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @Path(value = "/tags")
-    @ApiOperation(value = "List available elements filtered by a tagset and tag key", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "List available elements filtered by a tagset and tag key", notes = "Add extra notes here", position = 30)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -141,7 +141,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @Path(value = "/{sgid}/tags")
-    @ApiOperation(value = "Find a specific element by rowkey and list its tags ", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Find a specific element by rowkey and list its tags ", notes = "Add extra notes here", position = 40)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -171,7 +171,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @Path(value = "/{sgid}/version")
-    @ApiOperation(value = "Find a specific element by rowkey and list its version information", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Find a specific element by rowkey and list its version information", notes = "Add extra notes here", position = 50)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -208,7 +208,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @GET
     @Path(value = "/{sgid}/permissions")
-    @ApiOperation(value = "Find a specific element by rowkey and list its permissions ", notes = "Add extra notes here"/*, responseClass = " com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Find a specific element by rowkey and list its permissions ", notes = "Add extra notes here", position = 60)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -238,7 +238,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @PUT
     @Path("/{sgid}/permissions")
-    @ApiOperation(value = "Update permissions for a particular element", notes = "This can only be done by an authenticated user.")
+    @ApiOperation(value = "Update permissions for a particular element", notes = "This can only be done by an authenticated user.", position = 200)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -270,7 +270,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @PUT
     @Path("/{sgid}/tag")
-    @ApiOperation(value = "Tag an existing element", notes = "This can only be done by an authenticated user.")
+    @ApiOperation(value = "Tag an existing element", notes = "This can only be done by an authenticated user.", position = 210)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -303,7 +303,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @PUT
     @Path("/{sgid}")
-    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.")
+    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 220)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
@@ -327,7 +327,7 @@ public abstract class GenericElementResource<T extends Atom> {
      */
     @DELETE
     @Path("/{sgid}")
-    @ApiOperation(value = "Delete an existing element", notes = "This can only be done by an authenticated user.")
+    @ApiOperation(value = "Delete an existing element", notes = "This can only be done by an authenticated user.", position = 300)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
