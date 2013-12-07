@@ -212,7 +212,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     }
 
     @POST
-    @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 120)
+    @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 50000)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
