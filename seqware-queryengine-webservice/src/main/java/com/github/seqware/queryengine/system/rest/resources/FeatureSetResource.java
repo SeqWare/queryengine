@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
@@ -151,14 +152,21 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
     @Consumes(MediaType.TEXT_PLAIN)
     public Response uploadRawVCFfile(
-            @ApiParam(value = "tagset rowkey that needs to be updated", required = false)
-            @PathParam("sgid") String sgid,
             @ApiParam(value = "format of input", required = true, allowableValues = "VCF,GFF3,GVF")
             @DefaultValue(value = "VCF")
-            @QueryParam(value = "format") String format) {
+            @QueryParam(value = "format") String format,
+            @ApiParam(value = "VCF-formated body that needs to be created", required = true) 
+            String body
+            ) {
         // make this an overrideable method in the real version
         //userData.addUser(user);
         return Response.ok().entity("").build();
+        
+        /* CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+        modelManager.objectCreated(set);
+        modelManager.close();
+        return Response.ok().entity(set).build();*/
+        
     }
     
     
