@@ -20,6 +20,7 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
+import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
@@ -30,6 +31,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -158,8 +164,25 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             @ApiParam(value = "VCF-formated body that needs to be created", required = true) 
             String body
             ) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
+
+       try {
+          /*
+           * FIXME: this is a really naive approach, just write it out as a file and load using
+           * the import tool from the query engine backend. In the future this should be an asyncrhonous 
+           * process with the file uploaded to a admin configured location possibly on HDFS then 
+           * the upload should take place as a plugin, reporting back a token that the calling 
+           * user can occationally check in on.
+           */
+          BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/foo.vcf"));
+          bw.write(body);
+          bw.close();
+          // FIXME: totally hard coded!
+          FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "hg19", "/tmp/foo.vcf"});
+          
+        } catch (IOException ex) {
+          Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
         return Response.ok().entity("").build();
         
         /* CreateUpdateManager modelManager = SWQEFactory.getModelManager();
