@@ -89,9 +89,9 @@ public class InMemoryReference extends AbstractInMemorySet<Reference, FeatureSet
 
         @Override
         public Reference build() {            
-            if (reference.getName() == null || !Pattern.matches(Constants.refRegex,reference.getName())) {
+            /*if (reference.getName() == null || !Pattern.matches(Constants.refRegex,reference.getName())) {
                 throw new RuntimeException("Invalid reference name ("+reference.getName()+") names should be of the form " +Constants.refRegex);
-            }
+            }*/
             if (((InMemoryReference)reference).getManager() != null) {
                 ((InMemoryReference)reference).getManager().objectCreated(reference);
             }
