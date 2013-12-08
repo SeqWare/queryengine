@@ -69,7 +69,8 @@ import net.sf.samtools.util.CloseableIterator;
 @Api(value = "/featureset", description = "Operations about featuresets"/**
          * ,
          * listingPath
-         * = "/resources/featureset"
+         * =
+         * "/resources/featureset"
          */
         )
 @Produces({"application/json"})
@@ -156,7 +157,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     return Response.ok().entity("").build();
   }
 
-  /**
+  /*
    * Return
    * the
    * features
@@ -169,6 +170,11 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
    * set
    * in
    * VCF
+   * 
+   * FIXME: the Swagger API will not send the correct Content-Type header (text/plain) to get this resouces
+   * and it, as a result, hits the JSON resource instead.  See https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44
+   * Not sure if there's a way to make this work and I just don't know the magic syntax.  In the mean time use a
+   * tool like "Dev HTTP Client" chrome plugin which allows you to add the content type header.
    *
    * @param
    * sgid
@@ -205,9 +211,9 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             Writer writer = new BufferedWriter(new OutputStreamWriter(os));
             //writer.write(readSet.getHeader().getTextHeader());
             Iterator<Feature> iterator = set.getFeatures();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
               Feature f = iterator.next();
-              writer.write(f.getSeqid()+":"+f.getStart()+"-"+f.getStop()+"\n");
+              writer.write(f.getSeqid() + ":" + f.getStart() + "-" + f.getStop() + "\n");
             }
             writer.flush();
           }
