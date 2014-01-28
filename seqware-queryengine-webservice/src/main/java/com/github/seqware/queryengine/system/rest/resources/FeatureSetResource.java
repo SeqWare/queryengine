@@ -21,6 +21,7 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
+import com.github.seqware.queryengine.system.exporters.VCFDumper;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
@@ -208,14 +209,20 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         StreamingOutput stream = new StreamingOutput() {
           @Override
           public void write(OutputStream os) throws IOException, WebApplicationException {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+           
+            BufferedWriter bos = new BufferedWriter(new OutputStreamWriter(os));
+            
+            // FIXME: need a cleaner way to call the dumper code
+            VCFDumper.dumpVCFFromFeatureSetToStream(set, bos, false);
+            
+            /* Writer writer = new BufferedWriter(new OutputStreamWriter(os));
             //writer.write(readSet.getHeader().getTextHeader());
             Iterator<Feature> iterator = set.getFeatures();
             while (iterator.hasNext()) {
               Feature f = iterator.next();
               writer.write(f.getSeqid() + ":" + f.getStart() + "-" + f.getStop() + "\n");
             }
-            writer.flush();
+            writer.flush();*/
           }
         };
 
