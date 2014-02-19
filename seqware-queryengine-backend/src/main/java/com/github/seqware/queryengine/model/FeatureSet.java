@@ -1,9 +1,12 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AbstractMolSet;
+import com.github.seqware.queryengine.model.impl.hbasemrlazy.MRLazyFeatureSet;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
+import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
 import com.github.seqware.queryengine.util.SGID;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,7 +23,8 @@ import java.util.Iterator;
  * @author jbaran
  * @version $Id: $Id
  */
-public abstract class FeatureSet extends AbstractMolSet<FeatureSet> implements MolSetInterface<FeatureSet, Feature> {
+@JsonDeserialize(as=MRLazyFeatureSet.class)
+public abstract class FeatureSet extends AbstractMolSet<FeatureSet> implements MolSetInterface<FeatureSet, Feature>, FeatureSetFacade {
     /** Constant <code>prefix="FeatureSet"</code> */
     public final static String prefix = "FeatureSet";
 
@@ -36,6 +40,7 @@ public abstract class FeatureSet extends AbstractMolSet<FeatureSet> implements M
      *
      * @return the description associated with this FeatureSet
      */
+    @Override
     public abstract String getDescription();
 
     /**

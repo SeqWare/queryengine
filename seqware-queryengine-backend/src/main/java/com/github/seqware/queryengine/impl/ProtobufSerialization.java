@@ -39,7 +39,7 @@ public class ProtobufSerialization implements SerializationInterface {
     public final static BiMap<Class, ProtobufTransferInterface> biMap = new ImmutableBiMap.Builder<Class, ProtobufTransferInterface>().put(FeatureList.class, new FeatureListIO())
             .put(FeatureSet.class, new FeatureSetIO()).put(PluginRun.class, new PluginRunIO()).put(Plugin.class, new PluginIO())
             .put(Reference.class, new ReferenceIO()).put(ReferenceSet.class, new ReferenceSetIO()).put(Tag.class, new TagIO())
-            .put(TagSet.class, new TagSetIO()).put(User.class, new UserIO()).put(Group.class, new GroupIO())
+            .put(TagSet.class, new TagSetIO()).put(User.class, new UserIO()).put(Group.class, new GroupIO()).put(ReadSet.class, new ReadSetIO())
             .build();
 
     /** {@inheritDoc} */

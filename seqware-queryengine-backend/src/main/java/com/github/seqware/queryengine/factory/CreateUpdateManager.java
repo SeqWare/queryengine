@@ -85,6 +85,13 @@ public interface CreateUpdateManager {
      * @param p a {@link com.github.seqware.queryengine.model.Atom} object.
      */
     public void persist(Atom p);
+    
+    /**
+     * Delete an Atom
+     *
+     * @param p a {@link com.github.seqware.queryengine.model.Atom} object.
+     */
+    public void delete(Atom p);
 
     /**
      * Convenience method to flush() all entities and clear(). Currently managed
@@ -104,6 +111,13 @@ public interface CreateUpdateManager {
      * @return feature set
      */
     public FeatureSet.Builder buildFeatureSet();
+    
+    /**
+     * Build a readSet
+     *
+     * @return feature set
+     */
+    public ReadSet.Builder buildReadSet();
 
     /**
      * Build a Reference with a given name

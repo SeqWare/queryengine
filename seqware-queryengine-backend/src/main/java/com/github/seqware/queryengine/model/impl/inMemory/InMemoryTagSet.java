@@ -7,6 +7,7 @@ import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import java.util.*;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 
@@ -33,6 +34,7 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         }
         super.add(element);
         map.put(element.getKey(), element);
+        Logger.getLogger(InMemoryTagSet.class.getName()).debug("Adding a key/value " + element.getKey()+" "+element.getValue());
         assert (this.getSGID().getBackendTimestamp() != null);
         if (Constants.TRACK_TAGSET){
             element.setTagSet(this);
@@ -67,10 +69,27 @@ public class InMemoryTagSet extends AbstractInMemorySet<TagSet, Tag> implements 
         return this.add(Arrays.asList(elements));
     }
 
+    @XmlElement(name = "tagMap")
+    public Map<String, Tag> getMap() {
+      return map;
+    }
+    
+    @XmlElement(name = "tagMapCount")
+    public int getMapCount() {
+      return map.size();
+    }
+
     /** {@inheritDoc} */
     @Override
+    @XmlElement(name = "name")
     public String getName() {
         return name;
+    }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
     }
 
     /**

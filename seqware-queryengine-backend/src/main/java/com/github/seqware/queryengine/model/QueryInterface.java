@@ -137,6 +137,13 @@ public interface QueryInterface {
      */
     public SeqWareIterable<FeatureSet> getFeatureSets();
 
+    /**
+     * <p>getReadSets.</p>
+     *
+     * @return something iterable that iterates through all ReadSets
+     */
+    public SeqWareIterable<ReadSet> getReadSets();
+    
 //    // TAG/CV SET METHODS
     /**
      * <p>getTagSets.</p>

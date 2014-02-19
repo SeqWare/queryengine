@@ -1,15 +1,17 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
@@ -23,7 +25,8 @@ import org.apache.log4j.Logger;
  * @author dyuen
  * @version $Id: $Id
  */
-public class User extends MoleculeImpl<User> {
+@JsonSerialize(as=UserFacade.class)
+public class User extends MoleculeImpl<User> implements UserFacade{
 
     /** Constant <code>prefix="User"</code> */
     public final static String prefix = "User";
@@ -31,14 +34,12 @@ public class User extends MoleculeImpl<User> {
     private String lastName;
     private String emailAddress;
     private String password;
-    private List<Group> groups;
 
     /**
      * Create a new user
      */
-    private User() {
+    public User() {
         super();
-        groups = new ArrayList();
     }
 
     /**
@@ -46,6 +47,8 @@ public class User extends MoleculeImpl<User> {
      *
      * @return email address as a String
      */
+    @XmlElement(name="emailAddress")
+    @Override
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -65,6 +68,8 @@ public class User extends MoleculeImpl<User> {
      *
      * @return first name as a String
      */
+    @XmlElement(name="firstName")
+    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -74,17 +79,10 @@ public class User extends MoleculeImpl<User> {
      *
      * @return last name as a String
      */
+    @XmlElement(name="lastName")
+    @Override
     public String getLastName() {
         return lastName;
-    }
-
-    /**
-     * Get list of groups that this user is a part of
-     *
-     * @return list of groups
-     */
-    public List<Group> getGroups() {
-        return Collections.unmodifiableList(groups);
     }
 
     /** {@inheritDoc} */
@@ -168,6 +166,8 @@ public class User extends MoleculeImpl<User> {
      *
      * @return a {@link java.lang.String} object.
      */
+    @XmlElement(name="password")
+    @Override
     public String getPassword() {
         return password;
     }
@@ -186,15 +186,24 @@ public class User extends MoleculeImpl<User> {
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
+    @JsonIgnore
     public Class getHBaseClass() {
         return User.class;
     }
 
     /** {@inheritDoc} */
     @Override
+    @XmlTransient
+    @JsonIgnore
     public String getHBasePrefix() {
         return User.prefix;
     }
+
+  @Override
+  public String getDisplayName() {
+    return(firstName + " " + lastName);
+  }
 
     public static class Builder extends BaseBuilder {
 

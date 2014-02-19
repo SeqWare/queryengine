@@ -1,7 +1,9 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryGroup;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 
@@ -11,6 +13,7 @@ import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
  * @author dyuen
  * @version $Id: $Id
  */
+@JsonDeserialize(as=InMemoryGroup.class)
 public interface Group extends MolSetInterface<Group, User> {
     /** Constant <code>prefix="Group"</code> */
     public final static String prefix = "Group";
@@ -64,6 +67,8 @@ public interface Group extends MolSetInterface<Group, User> {
             aSet.getSGID().setFriendlyRowKey(rowKey);
             return this;
         }
+        
+        
     }
 
 

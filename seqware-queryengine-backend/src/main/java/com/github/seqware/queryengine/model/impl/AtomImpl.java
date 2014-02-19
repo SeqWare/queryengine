@@ -37,15 +37,25 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
     /**
      * Unique identifier of this Atom
      */
-    private SGID sgid = null;
+    protected SGID sgid = null;
+
+    @Override
+    public void setSGID(SGID sgid) {
+        this.sgid = sgid;
+    }
+    
+    
+    
     /**
      * Exposed timestamp of this Atom
      */
     //private Date clientTimestamp;
+    @JsonIgnore
     private int externalSerializationVersion = SWQEFactory.getSerialization().getSerializationConstant();
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public int getExternalSerializationVersion() {
         return externalSerializationVersion;
     }
@@ -55,12 +65,14 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param externalSerializationVersion a int.
      */
+    @JsonIgnore
     public void setExternalSerializationVersion(int externalSerializationVersion) {
         this.externalSerializationVersion = externalSerializationVersion;
     }
     /**
      * Current manager
      */
+    @JsonIgnore
     private transient CreateUpdateManager manager = null;
     /**
      * Map from rowkey for tagSet => name for tag => value
@@ -180,8 +192,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      */
     @Override
     public Date getTimestamp() {
-        return this.getSGID().getBackendTimestamp();
-        //return clientTimestamp;
+        if (this.getSGID() != null){
+            return this.getSGID().getBackendTimestamp();
+        }
+        return null;
     }
 
     /**
@@ -230,6 +244,7 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @param manager a {@link com.github.seqware.queryengine.factory.CreateUpdateManager} object.
      */
+    @JsonIgnore
     public void setManager(CreateUpdateManager manager) {
         this.manager = manager;
     }
@@ -358,8 +373,10 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public T getPrecedingVersion() {
-        return this.precedingVersion.get();
+      if (this.precedingVersion == null) { return(null); } 
+      return this.precedingVersion.get();
     }
 
     /** {@inheritDoc} */
@@ -389,9 +406,11 @@ public abstract class AtomImpl<T extends Atom> implements Atom<T> {
      *
      * @return a {@link com.github.seqware.queryengine.util.SGID} object.
      */
+    @JsonIgnore
     public SGID getPrecedingSGID() {
-        return this.precedingVersion.getSGID();
-        //return precedingSGID;
+      if (this.precedingVersion == null) { return null; }
+      return this.precedingVersion.getSGID();
+      //return precedingSGID;
     }
 
     /**

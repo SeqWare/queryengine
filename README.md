@@ -1,3 +1,4 @@
+
 ## Introduction 
 
 This README is just a quick overview of building the SeqWare Query Engine. See our
@@ -87,6 +88,29 @@ You can also build individual components such as the query engine web service wi
 Sometimes we run into problems when building, strange missing dependency issues
 and broken packages. A lot of the time this is an issue with Maven, try
 deleting your ~/.m2 directory and running the build process again.
+
+## Trying It Out
+
+Now that you have run the tests you might want to kick the tires yourself.  Currently this project
+has a backend that works with HBase (seqware-queryengine-backend) along with a RESTful web service
+(seqware-queryengine-webservice) that can be used programmatically or via a nice Swagger web 
+GUI to read, write, and query the interface for BAM/SAM files (ReadSets) or VCF files (FeatureSets).
+
+For the examples below start the web service by doing:
+
+    cd seqware-queryengine-webservice
+    mvn tomcat6:run
+
+At this point the web service is running.  The examples below will use the command line to interact with
+it. See the seqware-queryengine-webservice for information on how to use the Swagger UI instead.
+
+### Upload a VCF
+
+### Downloading a VCF
+
+### Uploading a BAM/SAM
+
+### Downloading a BAM/SAM
 
 
 ## Installing

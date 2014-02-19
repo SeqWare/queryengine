@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.impl.inMemory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.Feature;
@@ -10,6 +11,7 @@ import com.github.seqware.queryengine.util.InMemoryIterator;
 import com.github.seqware.queryengine.util.LazyReference;
 import com.github.seqware.queryengine.util.SGID;
 import java.util.*;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An in-memory representation of a feature set.
@@ -33,6 +35,7 @@ public class InMemoryFeatureSet extends FeatureSet {
      * information for a set of features.
      */
     private String description = null;
+    private String name = null;
 
     /**
      * Creates an in-memory feature set.
@@ -128,6 +131,7 @@ public class InMemoryFeatureSet extends FeatureSet {
 
     /** {@inheritDoc} */
     @Override
+    @JsonIgnore
     public long getCount() {
         return features.size();
     }
@@ -153,6 +157,12 @@ public class InMemoryFeatureSet extends FeatureSet {
     @Override
     public String getDescription() {
         return description;
+    }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
     }
 
     /** {@inheritDoc} */

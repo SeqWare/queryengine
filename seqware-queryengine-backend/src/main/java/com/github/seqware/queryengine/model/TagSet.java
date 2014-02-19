@@ -1,7 +1,9 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryTagSet;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 
@@ -13,6 +15,7 @@ import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
  * @author jbaran
  * @version $Id: $Id
  */
+@JsonDeserialize(as=InMemoryTagSet.class)
 public interface TagSet extends MolSetInterface<TagSet, Tag> {
     /** Constant <code>prefix="TagSet"</code> */
     public final static String prefix = "TagSet";
@@ -73,7 +76,7 @@ public interface TagSet extends MolSetInterface<TagSet, Tag> {
             return this;
         }
 
-        public abstract Builder setName(String name);
+        public abstract TagSet.Builder setName(String name);
         
         @Override
         public Builder setFriendlyRowKey(String rowKey) {

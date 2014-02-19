@@ -24,6 +24,8 @@ public class FeatureList extends AtomImpl<FeatureList> {
 
     /** Constant <code>prefix="Feature"</code> */
     public final static String prefix = "Feature";
+    
+    private String displayName = null;
 
     private List<Feature> features = new ArrayList<Feature>();
 
@@ -33,6 +35,8 @@ public class FeatureList extends AtomImpl<FeatureList> {
     public FeatureList() {
         super();
     }
+    
+    
     
     /**
      * Returns a list of features at this location, should not be modified.
@@ -114,6 +118,11 @@ public class FeatureList extends AtomImpl<FeatureList> {
 //        }
         return this;
     }
+
+  @Override
+  public String getDisplayName() {
+    return(displayName);
+  }
 
     public static class Builder extends BaseBuilder {
 

@@ -1,7 +1,10 @@
 package com.github.seqware.queryengine.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReference;
+import com.github.seqware.queryengine.model.impl.inMemory.InMemoryReferenceSet;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
 import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 
@@ -13,6 +16,7 @@ import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
  * @author jbaran
  * @version $Id: $Id
  */
+ @JsonDeserialize(as = InMemoryReferenceSet.class)
 public interface ReferenceSet extends MolSetInterface<ReferenceSet, Reference> {
     /** Constant <code>prefix="ReferenceSet"</code> */
     public final static String prefix = "ReferenceSet";

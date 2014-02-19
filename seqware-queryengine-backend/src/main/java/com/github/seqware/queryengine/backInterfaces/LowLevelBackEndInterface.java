@@ -45,6 +45,13 @@ public interface LowLevelBackEndInterface {
     public void update(Atom ... obj);
     
     /**
+     * Delete the obj from the backend
+     *
+     * @param obj Object to be deleted in the back-end
+     */
+    public void delete(Atom ... obj);
+    
+    /**
      * Update the obj using the latest information from the back-end
      *
      * @param obj Object to be refreshed from the back-end

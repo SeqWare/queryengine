@@ -255,4 +255,9 @@ public class TmpFileStorage extends StorageInterface {
         });
         return features;
     }
+
+  @Override
+  public <T extends Atom> void deleteAtom(T... obj) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

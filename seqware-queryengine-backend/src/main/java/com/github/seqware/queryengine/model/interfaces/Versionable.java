@@ -1,5 +1,7 @@
 package com.github.seqware.queryengine.model.interfaces;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Interface for versioning, versions are automatically generated and iterated
  * when a new entity is derived from a parent entity.
@@ -22,6 +24,7 @@ public interface Versionable<T extends Versionable> {
      * @return Previous (preceding) subject that represents an earlier version
      * of the subject.
      */
+    @JsonIgnore
     public T getPrecedingVersion();
     
     /**

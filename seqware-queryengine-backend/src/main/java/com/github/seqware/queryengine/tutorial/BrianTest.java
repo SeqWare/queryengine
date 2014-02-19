@@ -23,6 +23,7 @@ import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.QueryInterface;
+import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
 import com.github.seqware.queryengine.model.TagSet;
@@ -31,9 +32,12 @@ import com.github.seqware.queryengine.system.importers.workers.ImportConstants;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sourceforge.seqware.common.util.Log;
@@ -83,6 +87,7 @@ public class BrianTest {
         dumper.printReferences();
         dumper.printFeatureSets();
         dumper.printTagSets();
+        dumper.printReadSets();
         //dumper.export();
     }
     
@@ -100,6 +105,45 @@ public class BrianTest {
       for(Reference ref : refs) {
         Log.stdout(ref.getName() + " " + ref.getSGID());
       }
+    }
+    
+    public void printReadSets() {
+      
+      
+      CreateUpdateManager man = SWQEFactory.getModelManager();
+      ReadSet.Builder rsb = man.buildReadSet();
+      rsb.setReadSetIndexPath("/home/boconnor/Development/Prototypes/SampleBams/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam.bai");
+      rsb.setReadSetPath("/home/boconnor/Development/Prototypes/SampleBams/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam");
+      rsb.setReadSetName("HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522");
+      ReadSet newReadSet = rsb.build();
+      man.flush();
+      //man.close();
+
+      StorageInterface store = SWQEFactory.getStorage();
+     
+      
+      QueryInterface query = SWQEFactory.getQueryInterface();
+      SeqWareIterable<ReadSet> readSets = query.getReadSets();
+      Log.stdout("TRYING TO LIST READ SETS");
+      for(ReadSet s : readSets) {
+        Log.stdout(s.getSGID().toString() + " " + s.getReadSetName() + " " + s.getReadSetPath() + " " + s.getReadSetIndexPath());
+        File file = new File(s.getReadSetPath());
+        if (file.exists()) {
+          // going to read it
+          //s.open(file);
+          int count = 0;
+          try {
+            count = s.scanCount("20", 0, Integer.MAX_VALUE);
+            Log.stdout("READ COUNTS: "+count);
+          } catch (IOException ex) {
+            Logger.getLogger(BrianTest.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          //s.close();
+          break;
+        }
+      }
+      
+      store.closeStorage();
     }
     
     public void printFeatureSets() {

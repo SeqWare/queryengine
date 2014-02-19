@@ -327,6 +327,18 @@ public class SimpleModelManager implements CreateUpdateManager {
         fSet.setManager(this);
         return fSet;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public ReadSet.Builder buildReadSet() {
+        ReadSet.Builder rSet = null;
+        if (backend instanceof SimplePersistentBackEnd) {
+            rSet = ReadSet.newBuilder().setManager(this);
+        }
+        assert(rSet != null);
+        rSet.setManager(this);
+        return rSet;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -445,8 +457,6 @@ public class SimpleModelManager implements CreateUpdateManager {
                 validTransition = true;
             } else if (current == State.NEW_CREATION && state == State.MANAGED) {
                 validTransition = true;
-            } else if (current == State.NEW_VERSION && state == State.MANAGED) {
-                validTransition = true;
             } else if (state == State.UNMANAGED){
                 // anything should be able to be unmanaged
                 validTransition = true;
@@ -477,6 +487,11 @@ public class SimpleModelManager implements CreateUpdateManager {
         ((AtomImpl)updatedVersion).setTimestamp(new Date());
         this.atomStateChange(updatedVersion, CreateUpdateManager.State.NEW_VERSION);
     }
+
+  @Override
+  public void delete(Atom p) {
+    this.backend.delete(p);
+  }
 
     protected static class AtomStatePair {
 

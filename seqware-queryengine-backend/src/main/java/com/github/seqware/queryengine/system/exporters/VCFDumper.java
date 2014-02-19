@@ -147,6 +147,7 @@ public class VCFDumper {
      * @param file a {@link java.lang.String} object.
      */
     public static void dumpVCFFromFeatureSetID(FeatureSet fSet, String file) {
+        
         BufferedWriter outputStream = null;
 
         try {
@@ -155,14 +156,23 @@ public class VCFDumper {
             } else {
                 outputStream = new BufferedWriter(new OutputStreamWriter(System.out));
             }
-            outputStream.append("#CHROM	POS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
+
+            dumpVCFFromFeatureSetToStream(fSet, outputStream, true);
+            
         } catch (IOException e) {
             Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown starting export to file:", e);
             System.exit(-1);
         }
 
+    }
+    
+    public static void dumpVCFFromFeatureSetToStream(FeatureSet fSet, BufferedWriter outputStream, boolean closeStream) throws IOException {
+      
         boolean caughtNonVCF = false;
         boolean mrSuccess = false;
+        
+        outputStream.append("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
+        
         if (SWQEFactory.getQueryInterface() instanceof MRHBasePersistentBackEnd) {
             // hack to use VCF MR
             if (SWQEFactory.getModelManager() instanceof MRHBaseModelManager) {
@@ -182,7 +192,7 @@ public class VCFDumper {
                     get.deleteOnExit();
                     assert(outputStream != null);
                     outputStream.flush();
-                    outputStream.close();
+                    if (closeStream) { outputStream.close(); }
                     mrSuccess = true;
                 } catch (IOException e) {
                     // fail out on IO error
@@ -214,7 +224,7 @@ public class VCFDumper {
             Logger.getLogger(VCFDumper.class.getName()).fatal("Exception thrown exporting to file:", e);
             System.exit(-1);
         } finally {
-            IOUtils.closeQuietly(outputStream);
+            if (closeStream) { IOUtils.closeQuietly(outputStream); }
         }
     }
 }

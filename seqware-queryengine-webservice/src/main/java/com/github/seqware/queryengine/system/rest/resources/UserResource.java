@@ -16,12 +16,26 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.User;
+import com.github.seqware.queryengine.model.restModels.UserFacade;
+import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * User resource.
@@ -31,7 +45,7 @@ import javax.ws.rs.Produces;
 @Path("/user")
 @Api(value = "/user", description = "Operations about users"/*, listingPath="/resources/user"*/)
 @Produces({"application/json"})
-public class UserResource extends GenericElementResource<User> {
+public class UserResource extends GenericElementResource<UserFacade> {
 
     @Override
     public final String getClassName() {
@@ -46,5 +60,32 @@ public class UserResource extends GenericElementResource<User> {
     @Override
     public final SeqWareIterable getElements() {
         return SWQEFactory.getQueryInterface().getUsers();
+    }
+    
+    @GET
+    @Override
+    @Path(value = "/{sgid}")
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here" ,response=UserFacade.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
+    @Produces(MediaType.APPLICATION_JSON)
+    public final Response featureByIDRequest(
+            @ApiParam(value = "id of User to be fetched", required = true)
+            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+        return super.featureByIDRequest(sgid);
+    }
+    
+    @PUT
+    @Path("/{sgid}")
+    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.")
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Override
+    public Response updateElement(
+            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
+            @ApiParam(value = "Updated user object", required = true) @JsonDeserialize(as = User.class) UserFacade user) {
+        return super.updateElement(sgid, user);
     }
 }

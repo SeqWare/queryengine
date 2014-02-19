@@ -42,10 +42,18 @@ public abstract class StorageInterface {
     public final BiMap<Class, String> directBIMap = new ImmutableBiMap.Builder<Class, String>().put(PluginRun.class, PluginRun.prefix)
             .put(Plugin.class, Plugin.prefix).put(Reference.class, Reference.prefix).put(ReferenceSet.class, ReferenceSet.prefix)
             .put(Tag.class, Tag.prefix).put(TagSet.class, TagSet.prefix).put(User.class, User.prefix).put(Group.class, Group.prefix)
+            .put(ReadSet.class, ReadSet.prefix)
             .put(FeatureSet.class, FeatureSet.prefix).build();
     
     /** Constant <code>SEPARATOR="."</code> */
     public static final String SEPARATOR = ".";
+    
+    /**
+     * 
+     *
+     * @param obj a {@link com.github.seqware.queryengine.model.Atom} object.
+     */
+    public abstract <T extends Atom> void deleteAtom(T ... obj);
     
     /**
      * Generically serialize an Atom into the interface

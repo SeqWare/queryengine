@@ -4,6 +4,7 @@ import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.ReferenceSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An in-memory representation of a reference set.
@@ -29,6 +30,11 @@ public class InMemoryReferenceSet extends AbstractInMemorySet<ReferenceSet, Refe
         return organism;
     }
 
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
+    }
     
     /**
      * <p>newBuilder.</p>

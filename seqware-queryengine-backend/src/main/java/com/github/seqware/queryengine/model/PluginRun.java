@@ -94,6 +94,11 @@ public final class PluginRun<ReturnType> extends MoleculeImpl<PluginRun> impleme
         return "PluginRun";
     }
 
+  @Override
+  public String getDisplayName() {
+    return("");
+  }
+
     public static class Builder extends BaseBuilder {
         private PluginRun pRun = new PluginRun();
         private List<Object> parameters;

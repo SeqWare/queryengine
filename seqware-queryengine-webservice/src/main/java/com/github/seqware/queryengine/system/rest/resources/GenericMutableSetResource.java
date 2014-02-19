@@ -16,7 +16,10 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
+import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
+import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -30,11 +33,15 @@ import javax.ws.rs.core.Response;
  *
  * @author dyuen
  */
-public abstract class GenericMutableSetResource<T extends Atom> extends GenericSetResource<T> {
+public abstract class GenericMutableSetResource<T extends MolSetInterface, S extends Atom> extends GenericSetResource<T> {
     
     /**
      * Create a totally new element inside the set given a specification without an associated
      * ID.
+     * 
+     * Unfortunately, you will need to copy these annotations and add a response of class S in your subclass.
+     * Java annotations do not inherit and Swagger doesn't seem to handle generic response classes 
+     * https://groups.google.com/forum/#!topic/swagger-swaggersocket/eO2d6qD9K9g
      *
      * @param element
      * @return
@@ -42,14 +49,20 @@ public abstract class GenericMutableSetResource<T extends Atom> extends GenericS
     @POST
     @Path("/{sgid}")
     @ApiOperation(value = "Create an element in the set" , notes = "This can only be done by an authenticated user.")
+    //,response=User.class)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
-    public final Response addElement(
-            @ApiParam(value = "set to add an element to", required = true) 
-            @PathParam("sgid") String sgid,
-            @ApiParam(value = "element that needs to be added to the store", required = true) Atom element) {
+    public Response addElement(
+            @ApiParam(value = "set to add an element to", required = true)  @PathParam("rowKey") String rowKey,
+            @ApiParam(value = "element that needs to be added to the store", required = true) S element) {
         // make this an overrideable method in the real version
-        //petData.addPet(pet);
-        return Response.ok().entity("SUCCESS").build();
+        CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+        MolSetInterface oldSet = (MolSetInterface)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(rowKey, getModelClass());
+        MolSetInterface newSet = (MolSetInterface)SWQEFactory.getQueryInterface().getLatestAtomByRowKey(rowKey, getModelClass());
+        newSet.add(element);
+        modelManager.objectCreated(element);
+        modelManager.update(oldSet, newSet);
+        modelManager.close();
+        return Response.ok().entity(element).build();
     }
 }

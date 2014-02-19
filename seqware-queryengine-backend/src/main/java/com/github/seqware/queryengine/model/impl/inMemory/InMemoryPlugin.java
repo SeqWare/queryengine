@@ -4,6 +4,7 @@ import com.github.seqware.queryengine.model.PluginRun;
 import com.github.seqware.queryengine.model.Plugin;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An in-memory representation of a Plugin.
@@ -25,6 +26,12 @@ public class InMemoryPlugin extends AbstractInMemorySet<Plugin, PluginRun> imple
     @Override 
     public String getDescription(){
         return description;
+    }
+    
+    @Override
+    @XmlElement(name = "displayName")
+    public String getDisplayName() {
+      return name;
     }
 
     

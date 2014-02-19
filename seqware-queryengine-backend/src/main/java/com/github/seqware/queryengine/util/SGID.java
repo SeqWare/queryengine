@@ -20,6 +20,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import java.io.Serializable;
 import java.util.Date;
@@ -143,6 +144,7 @@ public class SGID implements Serializable, KryoSerializable {
      *
      * @return a {@link java.util.UUID} object.
      */
+    @JsonIgnore
     public UUID getUuid() {
         return uuid;
     }
@@ -193,6 +195,7 @@ public class SGID implements Serializable, KryoSerializable {
      *
      * @param uuiD a {@link java.util.UUID} object.
      */
+    @JsonIgnore
     protected void setUuid(UUID uuiD) {
         this.uuid = uuiD;
     }
