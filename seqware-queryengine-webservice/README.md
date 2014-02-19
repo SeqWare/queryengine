@@ -2,7 +2,7 @@
 
 The web service can be started by running 
 
-    mvn tomcat6:run
+    mvn tomcat7:run
 
 Then access the root of the Swagger documentation [here](http://localhost:8889/seqware-queryengine-webservice/api/api-docs)
 This json file describes all the available web resources. 
