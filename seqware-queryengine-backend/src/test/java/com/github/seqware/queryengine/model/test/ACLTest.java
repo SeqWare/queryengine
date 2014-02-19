@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import junit.framework.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,8 +38,8 @@ public class ACLTest {
     /**
      * <p>setupTests.</p>
      */
-    @BeforeClass
-    public static void setupTests() {
+    @Before
+    public void setupTests() {
 //        Logger.getLogger(ACLTest.class.getName()).info( "@BeforeClass");
         CreateUpdateManager mManager = SWQEFactory.getModelManager();
         // test ACL on every possible class that can be ACLed
