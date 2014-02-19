@@ -1,23 +1,17 @@
+
 ## Introduction 
 
-This README is just a quick overview of building SeqWare. See our
-[project homepage](http://seqware.github.com) for much more documentation.
+This README is just a quick overview of building the SeqWare Query Engine. See our
+[project homepage](http://seqware.github.io/docs/8-query-engine/) for much more documentation.
 
-This is top level of the [SeqWare Project](http://seqware.github.com).
-This contains the 5 major components of the SeqWare project along with
+This contains the 3 major components of the query engine project along with
 documentation:
 
-* seqware-meta-db
-* seqware-webservice
-* seqware-portal
-* seqware-pipeline
-* seqware-queryengine
-* seqware-common
-* the http://seqware.github.com website and manual
-* seqware-ext-testing
+* seqware-queryengine-backend
+* seqware-queryengine-legacy
+* seqware-queryengine-webservice
 
-The seqware-common sub-project provides a location for common code
-and most of the other sub-projects have this as a dependency.
+The seqware-distribution sub-project provides a location for building a "fat" distribution jar. 
 
 ## Prerequisites 
 
@@ -47,7 +41,7 @@ Our source code is available from [GitHub](https://github.com/SeqWare/seqware) o
 To get a copy of of our source code you will first need to install Git (<code>sudo apt-get install git</code> in Ubuntu) and then clone our repository.
 
 <pre title="Cloning the git repository">
-<span class="prompt">~$</span> <kbd>git clone git://github.com/SeqWare/seqware.git</kbd>
+<span class="prompt">~$</span> <kbd>git clone git@github.com:SeqWare/queryengine.git</kbd>
 Cloning into 'seqware'...
 remote: Counting objects: 8984, done.
 remote: Compressing objects: 100% (2908/2908), done.
@@ -60,38 +54,33 @@ By default, this will land you on the default branch. You will want to check-out
 
 For example:
 
-	~$ cd seqware_github/
-	~/seqware_github$ git checkout 0.13.6.5
-	HEAD is now at f8698e9... Merge branch 'hotfix/0.13.6.5'
+	~$ cd queryengine/
+	~/seqware_github$ git checkout 1.0.4
 
 ### Building and Automated Testing 
 
 We're moving to Maven for our builds, this is currently how
-you do it in the trunk directory:
+you build without running any tests in the trunk directory:
 
-    mvn clean install
+    mvn clean install -DskipTests
 
-Maven now runs unit tests as follows.
+Maven now runs unit tests as follows (unit tests in the SeqWare context are quick tests that do not require the embedded HBase or Tomcat instance):
 
-    mvn clean install # (runs unit tests but skips integration tests, HBase for query engine and Jetty for web service by default) 
-    mvn clean install -DskipTests # (skips all unit tests and integration tests)
-
-In order to run the integration tests on the entire project, please ensure that you have followed the steps in each of the integration testing guides for our sub-projects. This includes [MetaDB](http://seqware.github.com/docs/github_readme/3-metadb/) , [Web Service](http://seqware.github.com/docs/github_readme/4-webservice/) , and [Query Engine](http://seqware.github.com/docs/github_readme/2-queryengine/). 
+    mvn clean install  
 
 When this is complete: 
 
-    export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=512m" (ensures enough memory for integration tests)
-    mvn clean install -DskipITs=false # (runs all unit tests and integration tests that only require postgres as a prerequisite)
-    mvn clean install -DskipITs=false -P extITs # (runs all unit tests and all integration tests including those that require Condor/Globus/Pegasus)
+    export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=512m" 
 
-In the last case, the extended integration tests profile is used to trigger integration tests that run our command line utilities. 
-In order to point your command-line tools at the web service brought up by the integration tests, you will need to comment out your crontab and modify your SeqWare ~/.seqware/settings to include:
+(This ensures that enough memory is allocated for integration tests)
 
-    SW_REST_URL=http://localhost:8889/seqware-webservice
+    mvn clean install -DskipITs=false
 
-You can also build individual components such as the new query engine with: 
+(This runs all unit tests and integration tests)
 
-    cd seqware-queryengine
+You can also build individual components such as the query engine web service with: 
+
+    cd seqware-queryengine-webservice
     mvn clean install
 
 ###Problems with Maven
@@ -99,6 +88,29 @@ You can also build individual components such as the new query engine with:
 Sometimes we run into problems when building, strange missing dependency issues
 and broken packages. A lot of the time this is an issue with Maven, try
 deleting your ~/.m2 directory and running the build process again.
+
+## Trying It Out
+
+Now that you have run the tests you might want to kick the tires yourself.  Currently this project
+has a backend that works with HBase (seqware-queryengine-backend) along with a RESTful web service
+(seqware-queryengine-webservice) that can be used programmatically or via a nice Swagger web 
+GUI to read, write, and query the interface for BAM/SAM files (ReadSets) or VCF files (FeatureSets).
+
+For the examples below start the web service by doing:
+
+    cd seqware-queryengine-webservice
+    mvn tomcat6:run
+
+At this point the web service is running.  The examples below will use the command line to interact with
+it. See the seqware-queryengine-webservice for information on how to use the Swagger UI instead.
+
+### Upload a VCF
+
+### Downloading a VCF
+
+### Uploading a BAM/SAM
+
+### Downloading a BAM/SAM
 
 
 ## Installing

@@ -1,5 +1,6 @@
 *.class
 .svn
+*.swp
 
 # Nanoc files #
 *.sassc
@@ -23,10 +24,6 @@ target
 # /seqware-queryengine/.settings/
 /.settings/org.eclipse.m2e.core.prefs
 /.settings/org.eclipse.core.resources.prefs
-
-# seqware-webservice documentation
-seqware-webservice/docs/webservice-spec/output
-seqware-webservice/docs/webservice-spec/tmp
 
 # seqware-queryengine documentation
 seqware-queryengine/docs/webservice-spec/output
