@@ -11,7 +11,7 @@ public class TableSetupTest {
 	static FeatureSet aSet;
 	static Feature a1;
 	@Test
-	public static void setupTest(){
+	public void setupTest(){
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
 		a1 = manager.buildFeature().setSeqid("chr1").setStart(100).setStop(101).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
