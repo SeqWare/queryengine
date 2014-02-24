@@ -1,7 +1,6 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +13,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.seqware.queryengine.model.TagSet;
-import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -69,25 +67,13 @@ public class TagSetResourceTest {
     String output = response.getEntity(String.class);
     Assert.assertTrue("Request entity incorrect: " + output, output!=null);
   }
-  /**
-   * Test of getElements method, of class TagSetResource.
-   */
-  @Test
-  public void testFeatureByIDRequest() {
-    TagResource instance = new TagResource();
-    SeqWareIterable expResult = null;
-    SeqWareIterable result = instance.getElements();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
   
   @Test
   public void testAddSet() {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
-            + "  \"name\": \"Funky TagSet\",\n"
+            + "  \"name\": \"Funky TagSet\"\n"
             + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
@@ -108,7 +94,7 @@ public class TagSetResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
-            + "  \"name\": \"TagSet Version Test\",\n"
+            + "  \"name\": \"TagSet Version Test\"\n"
             + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
