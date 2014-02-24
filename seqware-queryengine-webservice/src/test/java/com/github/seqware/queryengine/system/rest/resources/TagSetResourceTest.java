@@ -81,7 +81,7 @@ public class TagSetResourceTest {
     System.out.println(output);
     String rowkey = extractRowKey(output);
     
-    Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky TagSet"));
+    Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
     client.resource(WEBSERVICE_URL + "tagset").delete(rowkey);
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
@@ -105,7 +105,9 @@ public class TagSetResourceTest {
     WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey + "/version");
     ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response.getStatus() == 200);
-    String version = extractVersion(response2.getEntity(String.class));
+    String output2 = response2.getEntity(String.class);
+    
+    String version = extractVersion(output2);
     System.out.println(version);
     Assert.assertTrue("Invalid Version returned: " + version, Integer.parseInt(version)==1);
     webResource.delete(rowkey);
@@ -127,7 +129,7 @@ public class TagSetResourceTest {
     Pattern pattern = Pattern.compile("version\":\"(.*?)\"");
     Matcher matcher = pattern.matcher(output);
     matcher.find();
-    String rowkey = matcher.group(1);
-    return rowkey;
+    String version = matcher.group(1);
+    return version;
   }
 }
