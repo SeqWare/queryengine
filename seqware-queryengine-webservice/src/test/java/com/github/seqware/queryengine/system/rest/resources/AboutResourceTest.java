@@ -1,5 +1,7 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
+import static org.junit.Assert.fail;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -57,6 +59,7 @@ public class AboutResourceTest {
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    Assert.assertTrue("Returned entity incorrect: " + output, output=="");
+    Assert.assertTrue("Returned entity incorrect: " + output, output==getClass().getPackage().getImplementationVersion());
+    fail("Currently the versionRequest is not functional.");
   }
 }

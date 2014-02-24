@@ -5,26 +5,29 @@ import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.seqware.queryengine.model.Tag;
+import com.github.seqware.queryengine.model.TagSet;
 import com.github.seqware.queryengine.util.SeqWareIterable;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
-public class TagResourceTest {
+public class TagSetResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
-  public TagResourceTest() {
+
+  public TagSetResourceTest() {
   }
   
   @BeforeClass
   public static void setUpClass() {
-    //Create some Tags
   }
   
   @AfterClass
   public static void tearDownClass() {
-    //Disable and Drop the created tags
   }
   
   @Before
@@ -35,24 +38,21 @@ public class TagResourceTest {
   public void tearDown() {
   }
 
-  /**
-   * Test of getClassName method, of class TagResource.
-   */
   @Test
   public void testGetClassName() {
     TagResource instance = new TagResource();
-    String expResult = "Tag";
+    String expResult = "TagSet";
     String result = instance.getClassName();
     assertEquals(expResult, result);
   }
 
   /**
-   * Test of getModelClass method, of class TagResource.
+   * Test of getModelClass method, of class TagSetResource.
    */
   @Test
   public void testGetModelClass() {
     TagResource instance = new TagResource();
-    Class expResult = Tag.class;
+    Class expResult = TagSet.class;
     Class result = instance.getModelClass();
     assertEquals(expResult, result);
   }
@@ -62,7 +62,7 @@ public class TagResourceTest {
     
   }
   /**
-   * Test of getElements method, of class TagResource.
+   * Test of getElements method, of class TagSetResource.
    */
   @Test
   public void testFeatureByIDRequest() {
@@ -72,5 +72,18 @@ public class TagResourceTest {
     assertEquals(expResult, result);
     // TODO review the generated test code and remove the default call to fail.
     fail("The test case is a prototype.");
+  }
+  
+  @Test
+  public void testAddSet() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    String group = "{\n"
+            + "  \"name\": \"Funky TagSet\",\n"
+            + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+    Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky TagSet"));
   }
 }
