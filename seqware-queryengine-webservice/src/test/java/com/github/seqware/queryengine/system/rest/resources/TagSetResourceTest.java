@@ -43,7 +43,7 @@ public class TagSetResourceTest {
 
   @Test
   public void testGetClassName() {
-    TagResource instance = new TagResource();
+    TagSetResource instance = new TagSetResource();
     String expResult = "TagSet";
     String result = instance.getClassName();
     assertEquals(expResult, result);
@@ -54,7 +54,7 @@ public class TagSetResourceTest {
    */
   @Test
   public void testGetModelClass() {
-    TagResource instance = new TagResource();
+    TagSetResource instance = new TagSetResource();
     Class expResult = TagSet.class;
     Class result = instance.getModelClass();
     assertEquals(expResult, result);
