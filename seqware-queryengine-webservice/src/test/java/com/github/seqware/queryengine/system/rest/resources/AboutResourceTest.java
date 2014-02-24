@@ -1,10 +1,5 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import javax.ws.rs.core.Response;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,20 +39,12 @@ public class AboutResourceTest {
   @Test
   public void testBackendRequest() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset");
-    String group = "{\n"
-        + "  \"name\": \"Funky name\",\n"
-        + "  \"organism\": \"Funky organism\"\n"
-        + "}";
-    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+    WebResource webResource = client.resource(WEBSERVICE_URL + "about/debug");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    Assert.assertTrue("Returned entity incorrect" + output, output.contains("Funky name") && output.contains("Funky organism"));
-    
-    AboutResource instance = new AboutResource();
-    Response expResult = null;
-    Response result = instance.backendRequest();
-    assertEquals(expResult, result);
+    // Could change to adhere to json schema
+    Assert.assertTrue("Returned entity incorrect: " + output, output.contains("backend") && output.contains("modelManager"));
   }
 
   /**
@@ -65,11 +52,11 @@ public class AboutResourceTest {
    */
   @Test
   public void testVersionRequest() {
-    AboutResource instance = new AboutResource();
-    Response expResult = null;
-    Response result = instance.versionRequest();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "about/versions");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    Assert.assertTrue("Returned entity incorrect: " + output, output=="");
   }
 }

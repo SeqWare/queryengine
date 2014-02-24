@@ -8,8 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         // Comma-separated testing classes and queries
-        /*net.sourceforge.seqware.webservice.resources.tables.DummyExperimentIDResourceTest.class,
-        net.sourceforge.seqware.webservice.resources.tables.ExperimentIDResourceTest.class,
+        com.github.seqware.queryengine.system.rest.resources.AboutResourceTest.class,
+        /*net.sourceforge.seqware.webservice.resources.tables.ExperimentIDResourceTest.class,
         net.sourceforge.seqware.webservice.resources.tables.ExperimentLibraryDesignResourceTest.class,
         net.sourceforge.seqware.webservice.resources.tables.ExperimentSpotDesignResourceTest.class,
         net.sourceforge.seqware.webservice.resources.tables.ExperimentSpotDesignReadSpecResourceTest.class,
