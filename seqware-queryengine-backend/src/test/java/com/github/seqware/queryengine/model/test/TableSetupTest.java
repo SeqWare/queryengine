@@ -27,14 +27,15 @@ public class TableSetupTest {
 		aSet.add(a1);
 		manager.flush();
 	}
-	@Test
-	public void testVCFImport(){
-        SecureRandom random = new SecureRandom();
-		CreateUpdateManager manager = SWQEFactory.getModelManager();
-		randomRef = "Random_ref_" + new BigInteger(20, random).toString(32);
-		testVCFFile = new File("/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-		SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", randomRef, testVCFFile.getAbsolutePath()});        
-        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-        
-	}
+//	@Test
+//	public void testVCFImport(){
+//        SecureRandom random = new SecureRandom();
+//        SWQEFactory.getSerialization();
+//		CreateUpdateManager manager = SWQEFactory.getModelManager();
+//		randomRef = "Random_ref_" + new BigInteger(20, random).toString(32);
+//		testVCFFile = new File("/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
+//		SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", randomRef, testVCFFile.getAbsolutePath()});        
+//        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+//        
+//	}
 }
