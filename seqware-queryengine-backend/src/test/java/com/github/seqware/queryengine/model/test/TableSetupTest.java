@@ -94,7 +94,7 @@ public class TableSetupTest {
 		Iterator<FeatureSet> fsIter = fsIterable.iterator();
 		System.out.println("There are "+fsIterable.getCount()+" feature sets.");
 		while (fsIter.hasNext()){
-			System.out.println(fsIter.next().getDisplayName());
+			System.out.println(fsIter.next().getDescription());
 		}
 	}
 	
