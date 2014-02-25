@@ -70,7 +70,7 @@ public class TableSetupTest {
 		arbPlugin = OverlappingMutationsAggregationPlugin.class;
 		
 	}
-	
+	@Test
 	public void storageAndRetrieval(){
 		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
 		backend.store(aSet);
