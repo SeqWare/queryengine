@@ -26,7 +26,7 @@ import com.github.seqware.queryengine.kernel.RPNStack.Operation;
 
 public class TableSetupTest {
 	static FeatureSet aSet;
-	static Feature a1;
+	static Feature a1,a2,a3;
 	static File testVCFFile = null;
 	static String randomRef = null;
 	@Test
@@ -34,7 +34,9 @@ public class TableSetupTest {
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
 		a1 = manager.buildFeature().setSeqid("chr1").setStart(100).setType("type1").setStop(101).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
+		a2 = manager.buildFeature().setSeqid("chr1").setStart(101).setType("type1").setStop(101).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
 		aSet.add(a1);
+		aSet.add(a2);
 		manager.flush();
 	}
 	
