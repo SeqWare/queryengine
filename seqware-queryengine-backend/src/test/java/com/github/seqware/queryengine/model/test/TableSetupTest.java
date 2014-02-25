@@ -35,6 +35,13 @@ public class TableSetupTest {
 	static File testVCFFile = null;
 	static String refName = null;
 	
+	@Test
+	//this will reset all the tables
+	public void tearDownBackend(){
+		StorageInterface storage = SWQEFactory.getStorage();
+		storage.clearStorage();
+	}
+	
 //	@Test
 	public void setupTest(){
 		SWQEFactory.getStorage().clearStorage();
@@ -89,7 +96,7 @@ public class TableSetupTest {
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
 	}
 	
-	@Test
+//	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
         SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
@@ -106,7 +113,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-	@Test
+//	@Test
 //	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
@@ -115,6 +122,7 @@ public class TableSetupTest {
 		while (atomIter.hasNext()){
 			System.out.println(storage.deserializeTargetToAtom(atomIter.next()).getDisplayName());
 		}
-		
 	}
+	
+
 }
