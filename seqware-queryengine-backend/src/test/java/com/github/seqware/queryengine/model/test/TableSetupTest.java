@@ -1,10 +1,16 @@
 package com.github.seqware.queryengine.model.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Iterator;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.MasterNotRunningException;
+import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,12 +40,23 @@ public class TableSetupTest {
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
 	static String refName = null;
-	
+    private Configuration config;
+    
 	@Test
 	//this will reset all the tables
-	public void tearDownBackend(){
-		StorageInterface storage = SWQEFactory.getStorage();
-		storage.clearStorage();
+	public void tearDownBackend() throws IOException{
+        this.config = HBaseConfiguration.create();
+		try {
+			HBaseAdmin hba = new HBaseAdmin(config);
+			hba.disableTables("b.*");
+			hba.deleteTables("b.*");
+		} catch (MasterNotRunningException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ZooKeeperConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 //	@Test
@@ -55,6 +72,7 @@ public class TableSetupTest {
 	}
 	
 //	@Test
+	//Test some implemented plugin that is working
     public void testInstallAndRunArbitraryPlugin() {
         Class<? extends PluginInterface> arbitraryPlugin;
         // only use the M/R plugin for this test if using MR
@@ -77,6 +95,8 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 	
+//  @Test
+    //Write a Test the OverlapMutationsAggregationPlugin plugin
 	public void testOLapPlugin(){
 		Class<? extends PluginInterface> arbPlugin;
 		arbPlugin = OverlappingMutationsAggregationPlugin.class;
@@ -88,7 +108,9 @@ public class TableSetupTest {
 	public void throughFeatureSets(){
 
 	}
-	@Test
+	
+//	@Test
+	//Setup variables for importing vcf
 	public void setuptestVCFImport(){
         SecureRandom random = new SecureRandom();
 		String curDir = System.getProperty("user.dir");
@@ -114,7 +136,7 @@ public class TableSetupTest {
 	}
 	
 //	@Test
-//	loop through hbase table to retrieve features in feature sets
+	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
 		
