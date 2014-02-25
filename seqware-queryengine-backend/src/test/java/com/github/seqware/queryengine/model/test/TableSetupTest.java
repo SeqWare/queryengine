@@ -109,7 +109,7 @@ public class TableSetupTest {
 
 	}
 	
-//	@Test
+	@Test
 	//Setup variables for importing vcf
 	public void setuptestVCFImport(){
         SecureRandom random = new SecureRandom();
@@ -118,7 +118,7 @@ public class TableSetupTest {
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
 	}
 	
-//	@Test
+	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
         SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
@@ -135,7 +135,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-//	@Test
+	@Test
 	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
