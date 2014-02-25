@@ -82,7 +82,8 @@ public class TagSetResourceTest {
     String rowkey = extractRowKey(output);
     
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
-    client.resource(WEBSERVICE_URL + "tagset").delete(rowkey);
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    webResource2.delete();
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
@@ -99,7 +100,6 @@ public class TagSetResourceTest {
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    System.out.println(output);
     String rowkey = extractRowKey(output);
     
     WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey + "/version");
@@ -110,9 +110,46 @@ public class TagSetResourceTest {
     String version = extractVersion(output2);
     System.out.println(version);
     Assert.assertTrue("Invalid Version returned: " + version, Integer.parseInt(version)==1);
-    webResource.delete(rowkey);
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    webResource3.delete();
+    ClientResponse response3 = webResource2.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() != 200);
   }
   
+  @Test
+  public void testPut() {
+    //Create a new TagSet
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"Funky TagSet\"\n"
+            + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    System.out.println(output);
+    String rowkey = extractRowKey(output);
+    Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
+    
+    //Update the TagSet
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    String put = "{\n"
+            + "\"name\": \"Funkier Set\"\n"
+            + "}";  
+    ClientResponse response2 = webResource2.type("application/json").put(ClientResponse.class, put);
+    Assert.assertTrue("Put failed:" + response.getStatus(), response2.getStatus() == 200);
+    String output2 =  response2.getEntity(String.class);
+    Assert.assertTrue("Output does not contain the PUT update: " + output2, output2.contains(rowkey) && output2.contains("Funkier Set"));
+    
+    //Delete the TagSet
+    webResource2.delete();
+    ClientResponse response3 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
+    String output3 = response3.getEntity(String.class);
+    Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output3.contains(rowkey));
+  }
+  
+  //Todo: Test OBO Files
   
   protected String extractRowKey(String output) {
     // now create a Tag using the returned rowkey
@@ -126,7 +163,7 @@ public class TagSetResourceTest {
   
   protected String extractVersion(String output) {
     // grab version via regular expression
-    Pattern pattern = Pattern.compile("version\":\"(.*?)\"");
+    Pattern pattern = Pattern.compile("version\":(.*?)}");
     Matcher matcher = pattern.matcher(output);
     matcher.find();
     String version = matcher.group(1);
