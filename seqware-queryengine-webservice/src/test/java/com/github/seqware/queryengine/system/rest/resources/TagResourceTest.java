@@ -56,8 +56,8 @@ public class TagResourceTest {
   public static void tearDownClass() {
     //Drop the created tagset
     Client client = Client.create();
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
-    webResource2.delete();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    webResource.delete();
     client.destroy();
   }
   
