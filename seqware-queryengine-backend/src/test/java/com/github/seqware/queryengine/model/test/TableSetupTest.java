@@ -28,6 +28,7 @@ import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.github.seqware.queryengine.model.QueryFuture;
+import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
 import com.github.seqware.queryengine.kernel.RPNStack;
@@ -139,16 +140,14 @@ public class TableSetupTest {
 	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
-		
 		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
-		while (atomIter.hasNext()){
-			Atom a = storage.deserializeTargetToAtom(atomIter.next());
-			if (a.equals(null)){
-				storage.deleteAtom(a);
-			} else {
-				System.out.println(a.getClass());
+		Iterator<FeatureList> flIter = storage.getAllFeatureListsForFeatureSet(aSet).iterator();
+		Iterator<Feature> fIter;
+		while (flIter.hasNext()){
+			fIter = flIter.next().getFeatures().iterator();
+			while (fIter.hasNext()){
+				System.out.println(fIter.next().getDisplayName());
 			}
-
 		}
 	}
 	
