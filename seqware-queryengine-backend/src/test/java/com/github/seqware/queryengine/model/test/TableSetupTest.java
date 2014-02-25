@@ -78,7 +78,8 @@ public class TableSetupTest {
 		backend.store(aSet);
 		Atom a = backend.getAtomBySGID(aSet.getSGID());
 		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
-		System.out.println(storage.deserializeTargetToAtom(aSet.getSGID()).getDisplayName());
+		Atom deserialized = storage.deserializeTargetToAtom(aSet.getSGID());
+		System.out.println(deserialized.toString());
 	}
 	
 //	@Test
