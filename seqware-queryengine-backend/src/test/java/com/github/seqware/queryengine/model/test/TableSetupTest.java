@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.seqware.queryengine.backInterfaces.StorageInterface;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Atom;
@@ -72,10 +73,12 @@ public class TableSetupTest {
 	}
 	@Test
 	public void storageAndRetrieval(){
-		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
+		StorageInterface storage = SWQEFactory.getStorage();
+		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(storage);
 		backend.store(aSet);
 		Atom a = backend.getAtomBySGID(aSet.getSGID());
 		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
+		System.out.println(storage.deserializeTargetToAtom(aSet.getSGID()).getDisplayName());
 	}
 	
 //	@Test
