@@ -19,16 +19,32 @@ import com.sun.jersey.api.client.WebResource;
 
 public class TagSetResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
-
+  public static String setKey;
+  
   public TagSetResourceTest() {
   }
   
   @BeforeClass
   public static void setUpClass() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"GenericTestTagSet\"\n"
+            + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String rowkey = extractRowKey(output);
+    setKey = rowkey;
+    client.destroy();
   }
   
   @AfterClass
   public static void tearDownClass() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    webResource.delete();
+    client.destroy();
   }
   
   @Before
@@ -66,6 +82,7 @@ public class TagSetResourceTest {
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
     Assert.assertTrue("Request entity incorrect: " + output, output!=null);
+    client.destroy();
   }
   
   @Test
@@ -78,7 +95,6 @@ public class TagSetResourceTest {
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    System.out.println(output);
     String rowkey = extractRowKey(output);
     
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
@@ -88,32 +104,19 @@ public class TagSetResourceTest {
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
     Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output2.contains(rowkey));
+    client.destroy();
     }
   
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
-    String tagset = "{\n"
-            + "  \"name\": \"TagSet Version Test\"\n"
-            + "}";
-    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/version");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    String output = response.getEntity(String.class);
-    String rowkey = extractRowKey(output);
-    
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey + "/version");
-    ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response2.getStatus(), response.getStatus() == 200);
-    String output2 = response2.getEntity(String.class);
-    
+    String output2 = response.getEntity(String.class);
     String version = extractVersion(output2);
-    System.out.println(version);
     Assert.assertTrue("Invalid Version returned: " + version, Integer.parseInt(version)==1);
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
-    webResource3.delete();
-    ClientResponse response3 = webResource2.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() != 200);
+    client.destroy();
   }
   
   @Test
@@ -127,7 +130,6 @@ public class TagSetResourceTest {
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    System.out.println(output);
     String rowkey = extractRowKey(output);
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
     
@@ -147,11 +149,81 @@ public class TagSetResourceTest {
     Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
     String output3 = response3.getEntity(String.class);
     Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output3.contains(rowkey));
+    client.destroy();
   }
   
+  @Test
+  public void testGetTags() {
+    //Create a Tagset
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"testGetTags\"\n"
+            + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String rowkey = extractRowKey(output);
+    Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("testGetTags"));
+    
+    WebResource webTagsResource = client.resource(WEBSERVICE_URL + "tagset/" + rowkey + "/tags");
+    ClientResponse tagsResponse = webTagsResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed:" + tagsResponse.getStatus(), tagsResponse.getStatus() == 200);
+    
+    //Delete Tags
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    webResource2.delete();
+    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output2.contains(rowkey));
+    client.destroy();
+  }
+  
+  @Test
+  public void testGetTags2() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    String tag = "{\n"
+        + "\"predicate\": \"Test_GetTag\",\n"
+        + "\"key\": \"TagSetTest\"\n"
+        + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tag);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String rowkey = extractRowKey(output);
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/tags?tagset_id=" + setKey + "&tag_key=TagSetTest" );
+    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    client.destroy();
+  }
+  
+  @Test
+  public void testGetPermissions() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/permissions");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  /*
+  @Test
+  public void testPutPermissions() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/permissions");
+    String permissions = "{\n"
+            + ",\n" 
+            + ",\n"
+            + "\n"
+            + "}"
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+  }*/
   //Todo: Test OBO Files
   
-  protected String extractRowKey(String output) {
+  protected static String extractRowKey(String output) {
     // now create a Tag using the returned rowkey
     // grab rowkey via regular expression
     Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
@@ -161,7 +233,7 @@ public class TagSetResourceTest {
     return rowkey;
   }
   
-  protected String extractVersion(String output) {
+  protected static String extractVersion(String output) {
     // grab version via regular expression
     Pattern pattern = Pattern.compile("version\":(.*?)}");
     Matcher matcher = pattern.matcher(output);
