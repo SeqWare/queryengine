@@ -90,8 +90,12 @@ public class TableSetupTest {
 	public void throughFeatureSets(){
 		StorageInterface storage = SWQEFactory.getStorage();
 		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(storage);
-		SeqWareIterable<FeatureSet> fsIter = backend.getFeatureSets();
-		System.out.println("There are "+fsIter.getCount()+" feature sets.");
+		SeqWareIterable<FeatureSet> fsIterable = backend.getFeatureSets();
+		Iterator<FeatureSet> fsIter = fsIterable.iterator();
+		System.out.println("There are "+fsIterable.getCount()+" feature sets.");
+		while (fsIter.hasNext()){
+			System.out.println(fsIter.next().getDisplayName());
+		}
 	}
 	
 //	@Test
