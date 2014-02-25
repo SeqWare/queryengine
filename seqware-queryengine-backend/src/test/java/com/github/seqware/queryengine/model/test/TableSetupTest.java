@@ -140,7 +140,6 @@ public class TableSetupTest {
 	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
-		storage.
 		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
 		Iterator<FeatureList> flIter = storage.getAllFeatureListsForFeatureSet(aSet).iterator();
 		Iterator<Feature> fIter;
