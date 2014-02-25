@@ -140,24 +140,15 @@ public class TableSetupTest {
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
 		
-//		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
-//		while (atomIter.hasNext()){
-//			Atom a = storage.deserializeTargetToAtom(atomIter.next());
-//			if (a.equals(null)){
-//				storage.deleteAtom(a);
-//			} else {
-//				SWQEFactory.getQueryInterface().get
-//				storage.getAllFeatureListsForFeatureSet(a.)
-//			}
-//			System.out.println();
-//		}
-		Iterator<FeatureSet> fsIter = SWQEFactory.getQueryInterface().getFeatureSets().iterator();
-		while (fsIter.hasNext()){
-			Iterator<Feature> fIter = fsIter.next().iterator();
-			System.out.println(fsIter.next().getDisplayName());
-			while (fIter.hasNext()){
-				System.out.println(fIter.next().getDisplayName());
+		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
+		while (atomIter.hasNext()){
+			Atom a = storage.deserializeTargetToAtom(atomIter.next());
+			if (a.equals(null)){
+				storage.deleteAtom(a);
+			} else {
+				System.out.println(a.getClass());
 			}
+
 		}
 	}
 	
