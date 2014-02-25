@@ -31,7 +31,7 @@ public class TableSetupTest {
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
 	static String randomRef = null;
-//	@Test
+	@Test
 	public void setupTest(){
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
