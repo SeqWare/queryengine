@@ -9,9 +9,11 @@ import org.junit.Test;
 
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.PluginInterface;
+import com.github.seqware.queryengine.plugins.contribs.OverlappingMutationsAggregationPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
@@ -29,7 +31,7 @@ public class TableSetupTest {
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
 	static String randomRef = null;
-	@Test
+//	@Test
 	public void setupTest(){
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
@@ -40,7 +42,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-	@Test
+//	@Test
     public void testInstallAndRunArbitraryPlugin() {
         Class<? extends PluginInterface> arbitraryPlugin;
         // only use the M/R plugin for this test if using MR
@@ -62,6 +64,19 @@ public class TableSetupTest {
         int count = (int) result.getCount();
         Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
+	
+	public void testOLapPlugin(){
+		Class<? extends PluginInterface> arbPlugin;
+		arbPlugin = OverlappingMutationsAggregationPlugin.class;
+		
+	}
+	
+	public void storageAndRetrieval(){
+		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
+		backend.store(aSet);
+		Atom a = backend.getAtomBySGID(aSet.getSGID());
+		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
+	}
 	
 //	@Test
 //	public void testVCFImport(){
