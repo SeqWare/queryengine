@@ -33,7 +33,7 @@ public class TableSetupTest {
 	static FeatureSet aSet;
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
-	static String randomRef = null;
+	static String refName = null;
 	
 //	@Test
 	public void setupTest(){
@@ -75,45 +75,26 @@ public class TableSetupTest {
 		arbPlugin = OverlappingMutationsAggregationPlugin.class;
 		
 	}
-//	@Test
-//	loop through hbase table to retrieve features in feature sets
-	public void storageAndRetrieval(){
-		StorageInterface storage = SWQEFactory.getStorage();
-		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(storage);
-		backend.store(aSet);
-		Atom a = backend.getAtomBySGID(aSet.getSGID());
-		
-		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
-		
-		Iterator<Feature> fIter = aSet.getFeatures();
-		while (fIter.hasNext()){
-			System.out.println(fIter.next().getDisplayName());
-		}
-	}
+
 //	@Test
 	//loop through hbase table to retrieve feature set count
 	public void throughFeatureSets(){
-		StorageInterface storage = SWQEFactory.getStorage();
-		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(storage);
-		SeqWareIterable<FeatureSet> fsIterable = backend.getFeatureSets();
-		Iterator<FeatureSet> fsIter = fsIterable.iterator();
-		
-		System.out.println("There are "+fsIterable.getCount()+" feature sets.");
-		while (fsIter.hasNext()){
-			Iterator<Feature> fIter = fsIter.next().getFeatures();
-			while (fIter.hasNext()){
-				System.out.println(fIter.next().getDisplayName());
-			}
-		}
+
 	}
 	@Test
-	public void testVCFImport(){
-		String curDir = System.getProperty("user.dir");
+	public void setuptestVCFImport(){
         SecureRandom random = new SecureRandom();
-        randomRef = "Random_ref_" + new BigInteger(20, random).toString(32);
+		String curDir = System.getProperty("user.dir");
+        refName = "Random_ref_" + new BigInteger(20, random).toString(32);
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-        SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", randomRef, testVCFFile.getAbsolutePath()});        
+	}
+	
+	@Test
+	//This imports the features from a vcf file into HBase
+	public void testVCFImport(){
+        SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
         FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+        
         CreateUpdateManager manager = SWQEFactory.getModelManager();
         Iterator<Feature> fIter = fSet.getFeatures();
         
@@ -124,15 +105,16 @@ public class TableSetupTest {
         
 		manager.flush();
 	}
-//	@Test
-//	public void testVCFImport(){
-//        SecureRandom random = new SecureRandom();
-//        SWQEFactory.getSerialization();
-//		CreateUpdateManager manager = SWQEFactory.getModelManager();
-//		randomRef = "Random_ref_" + new BigInteger(20, random).toString(32);
-//		testVCFFile = new File("/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-//		SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", randomRef, testVCFFile.getAbsolutePath()});        
-//        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-//        
-//	}
+	
+	@Test
+//	loop through hbase table to retrieve features in feature sets
+	public void storageAndRetrieval(){
+		StorageInterface storage = SWQEFactory.getStorage();
+		
+		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
+		while (atomIter.hasNext()){
+			System.out.println(storage.deserializeTargetToAtom(atomIter.next()).getDisplayName());
+		}
+		
+	}
 }
