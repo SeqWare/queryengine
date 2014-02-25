@@ -36,6 +36,7 @@ public class TableSetupTest {
 	static String randomRef = null;
 	@Test
 	public void setupTest(){
+		SWQEFactory.getStorage().clearStorage();
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
 		a1 = manager.buildFeature().setSeqid("chr1").setStart(100).setType("type1").setStop(101).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
@@ -80,7 +81,6 @@ public class TableSetupTest {
 		backend.store(aSet);
 		Atom a = backend.getAtomBySGID(aSet.getSGID());
 		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
-		Atom deserialized = storage.deserializeTargetToAtom(aSet.getSGID());
 		Iterator<Feature> fIter = aSet.getFeatures();
 		while (fIter.hasNext()){
 			System.out.println(fIter.next().getDisplayName());
@@ -94,7 +94,10 @@ public class TableSetupTest {
 		Iterator<FeatureSet> fsIter = fsIterable.iterator();
 		System.out.println("There are "+fsIterable.getCount()+" feature sets.");
 		while (fsIter.hasNext()){
-			System.out.println(fsIter.next().getHBasePrefix());
+			Iterator<Feature> fIter = fsIter.next().getFeatures();
+			while (fIter.hasNext()){
+				System.out.println(fIter.next());
+			}
 		}
 	}
 	
