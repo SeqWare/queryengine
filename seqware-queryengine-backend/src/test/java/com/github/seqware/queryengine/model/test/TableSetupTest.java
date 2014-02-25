@@ -109,6 +109,8 @@ public class TableSetupTest {
 	@Test
 	public void testVCFImport(){
 		String curDir = System.getProperty("user.dir");
+        SecureRandom random = new SecureRandom();
+        randomRef = "Random_ref_" + new BigInteger(20, random).toString(32);
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
         SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", randomRef, testVCFFile.getAbsolutePath()});        
         FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
