@@ -3,6 +3,7 @@ package com.github.seqware.queryengine.model.test;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Iterator;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,7 +80,10 @@ public class TableSetupTest {
 		Atom a = backend.getAtomBySGID(aSet.getSGID());
 		Assert.assertTrue("The table does not contain this atom.", a.getSGID().equals(aSet.getSGID()));
 		Atom deserialized = storage.deserializeTargetToAtom(aSet.getSGID());
-		System.out.println(deserialized.toString());
+		Iterator<Feature> fIter = aSet.getFeatures();
+		while (fIter.hasNext()){
+			System.out.println(fIter.next().getDisplayName());
+		}
 	}
 	
 //	@Test
