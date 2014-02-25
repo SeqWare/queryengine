@@ -143,6 +143,7 @@ public class TableSetupTest {
 		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
 		Iterator<FeatureList> flIter = storage.getAllFeatureListsForFeatureSet(aSet).iterator();
 		Iterator<Feature> fIter;
+		System.out.println("adfad");
 		while (flIter.hasNext()){
 			fIter = flIter.next().getFeatures().iterator();
 			while (fIter.hasNext()){
