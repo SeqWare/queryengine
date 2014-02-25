@@ -45,7 +45,7 @@ public class TableSetupTest {
 	@Test
 	//this will reset all the tables
 	public void tearDownBackend() throws IOException{
-        this.config = HBaseConfiguration.create();
+        config = HBaseConfiguration.create();
 		try {
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
