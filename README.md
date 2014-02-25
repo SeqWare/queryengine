@@ -99,7 +99,7 @@ GUI to read, write, and query the interface for BAM/SAM files (ReadSets) or VCF 
 For the examples below start the web service by doing:
 
     cd seqware-queryengine-webservice
-    mvn tomcat6:run
+    mvn tomcat7:run
 
 At this point the web service is running.  The examples below will use the command line to interact with
 it. See the seqware-queryengine-webservice for information on how to use the Swagger UI instead.
