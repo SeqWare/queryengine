@@ -20,6 +20,7 @@ import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.SGID;
+import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
@@ -84,6 +85,13 @@ public class TableSetupTest {
 		while (fIter.hasNext()){
 			System.out.println(fIter.next().getDisplayName());
 		}
+	}
+	@Test
+	public void throughFeatureSets(){
+		StorageInterface storage = SWQEFactory.getStorage();
+		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(storage);
+		SeqWareIterable<FeatureSet> fsIter = backend.getFeatureSets();
+		System.out.println("There are "+fsIter.getCount()+" feature sets.");
 	}
 	
 //	@Test
