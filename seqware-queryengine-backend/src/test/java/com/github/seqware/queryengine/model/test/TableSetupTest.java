@@ -131,6 +131,7 @@ public class TableSetupTest {
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
         	aSet.add(fIter.next());
+        	
         }
         
 		manager.flush();
@@ -140,16 +141,12 @@ public class TableSetupTest {
 	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		StorageInterface storage = SWQEFactory.getStorage();
-		Iterator<SGID> atomIter = storage.getAllAtoms().iterator();
-		Iterator<FeatureList> flIter = storage.getAllFeatureListsForFeatureSet(aSet).iterator();
-		Iterator<Feature> fIter;
-		System.out.println(flIter.hasNext());
-		while (flIter.hasNext()){
-			fIter = flIter.next().getFeatures().iterator();
-			while (fIter.hasNext()){
-				System.out.println(fIter.next().getDisplayName());
-			}
+		FeatureSet atomBySGID = SWQEFactory.getQueryInterface().getAtomBySGID(FeatureSet.class, aSet.getSGID());
+		Iterator<Feature> fIter = atomBySGID.iterator();
+		while (fIter.hasNext()){
+			System.out.println(fIter.next().getDisplayName());
 		}
+		
 	}
 	
 
