@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,7 +42,7 @@ import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
 import com.github.seqware.queryengine.kernel.RPNStack.Operation;
 
 public class TableSetupTest {
-	static FeatureSet aSet, bSet;
+	static FeatureSet aSet, bSet, cSet;
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
 	static File testSecondVCFFile = null;
@@ -49,7 +50,7 @@ public class TableSetupTest {
 	static String refName2 = null;
     private Configuration config;
     
-	@Before
+	@BeforeClass
 	//this will reset all the tables and load the vcf file paths for testiing
 	public void setUpTest() throws IOException{
         config = HBaseConfiguration.create();
@@ -108,7 +109,7 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-	@Test
+	@Before
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
@@ -140,7 +141,21 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-	@After
+	@Test
+	public void complexQueryTest(){
+		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
+		CreateUpdateManager manager = SWQEFactory.getModelManager();
+		QueryFuture<FeatureSet> queryFuture = backend.getFeaturesByAttributes(1, aSet, new RPNStack(
+				new Constant("chr1"),
+		        new FeatureAttribute("seqid"),
+                Operation.EQUAL));
+		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
+		for (Feature f : cSet){
+			System.out.println(f.getDisplayName());
+		}
+	}
+	
+	@AfterClass
 	//	loop through hbase table to retrieve features in feature sets
 	public void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
