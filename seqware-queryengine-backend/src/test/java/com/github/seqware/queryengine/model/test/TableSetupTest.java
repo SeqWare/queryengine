@@ -102,6 +102,7 @@ public class TableSetupTest {
         // check that Features are present match
         FeatureSet result = future.get();
         System.out.println("This is the plugin result for FeatureSet " + result.getReference().getDisplayName() + " : ");
+        System.out.println("This is the length of the feature set " + result.getReference().getDisplayName() + " : " + result.getCount());
         for (Feature f : result) {
 			System.out.println(f.getDisplayName() + 
 					", Seqid: " + f.getSeqid() + 
