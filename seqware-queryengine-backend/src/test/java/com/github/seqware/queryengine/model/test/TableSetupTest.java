@@ -128,7 +128,6 @@ public class TableSetupTest {
         	aSet.add(fIter.next());
         	
         }
-		manager.flush();
 		
         main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
         fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
