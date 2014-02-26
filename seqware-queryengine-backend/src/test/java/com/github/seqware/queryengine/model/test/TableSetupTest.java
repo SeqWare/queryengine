@@ -110,12 +110,6 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-//	@Test
-	//loop through hbase table to retrieve feature set count
-	public void throughFeatureSets(){
-
-	}
-
 	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
@@ -152,14 +146,11 @@ public class TableSetupTest {
 	
 	@After
 	//	loop through hbase table to retrieve features in feature sets
-	public void storageAndRetrieval(){
-		SWQEFactory.getModelManager();
-		StorageInterface storage = SWQEFactory.getStorage();
-		FeatureSet atomBySGID = SWQEFactory.getQueryInterface().getAtomBySGID(FeatureSet.class, aSet.getSGID());
-		for (Feature f : atomBySGID){
-			FSGID fsgid = (FSGID) f.getSGID();
-			
-			System.out.println(fsgid.getRowKey());
+	public void featureRetrieval(){		
+		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
+			for (Feature f : fSet){
+				System.out.println(f.getDisplayName());
+			}
 		}
 	}
 	
