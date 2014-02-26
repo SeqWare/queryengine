@@ -98,7 +98,7 @@ public class TableSetupTest {
         }
         // get a FeatureSet from the back-end
         QueryFuture<FeatureSet> future = SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbitraryPlugin, null, aSet, new RPNStack(
-                new Constant("type1"), new FeatureAttribute("type"), Operation.EQUAL));
+                new Constant("1"), new FeatureAttribute("seqid"), Operation.EQUAL));
         // check that Features are present match
         FeatureSet result = future.get();
         System.out.println("This is the plugin result for FeatureSet " + result.getReference().getDisplayName() + " : ");
