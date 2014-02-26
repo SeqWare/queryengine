@@ -48,12 +48,11 @@ public class TableSetupTest {
 	static File testSecondVCFFile = null;
 	static String refName = null;
 	static String refName2 = null;
-    private Configuration config;
     
 	@BeforeClass
 	//this will reset all the tables and load the vcf file paths for testiing
-	public void setUpTest() throws IOException{
-        config = HBaseConfiguration.create();
+	public static void setUpTest() throws IOException{
+		Configuration config = HBaseConfiguration.create();
 		try {
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
