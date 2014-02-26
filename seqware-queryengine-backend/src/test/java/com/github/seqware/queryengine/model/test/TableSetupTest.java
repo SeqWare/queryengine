@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.seqware.queryengine.backInterfaces.StorageInterface;
@@ -46,7 +47,7 @@ public class TableSetupTest {
 	static String refName2 = null;
     private Configuration config;
     
-	@Test
+	@Before
 	//this will reset all the tables
 	public void tearDownBackend() throws IOException{
         config = HBaseConfiguration.create();
@@ -61,6 +62,14 @@ public class TableSetupTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		String curDir = System.getProperty("user.dir");
+        SecureRandom random = new SecureRandom();
+        refName = "Random_ref_" + new BigInteger(20, random).toString(32);
+        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
+        testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
+        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
+
 	}
 	
 //	@Test
@@ -104,26 +113,20 @@ public class TableSetupTest {
 	public void throughFeatureSets(){
 
 	}
-	
-	@Test
-	//Setup variables for importing vcf
-	public void setuptestVCFImport(){
-		String curDir = System.getProperty("user.dir");
-        SecureRandom random = new SecureRandom();
-        refName = "Random_ref_" + new BigInteger(20, random).toString(32);
-        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
-        testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
-	}
-	
+
 	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
-        SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
-        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+		SGID main;
+		FeatureSet fSet;
+		CreateUpdateManager manager;
+		Iterator<Feature> fIter;
+		
+        main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
+        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
-        CreateUpdateManager manager = SWQEFactory.getModelManager();
-        Iterator<Feature> fIter = fSet.getFeatures();
+        manager = SWQEFactory.getModelManager();
+        fIter = fSet.getFeatures();
         
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
@@ -131,16 +134,12 @@ public class TableSetupTest {
         	
         }
 		manager.flush();
-	}
-	
-	@Test
-	//This imports a second vcf File into HBase
-	public void testSecondVCFImport(){
-        SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
-        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+		
+        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
+        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
-        CreateUpdateManager manager = SWQEFactory.getModelManager();
-        Iterator<Feature> fIter = fSet.getFeatures();
+        manager = SWQEFactory.getModelManager();
+        fIter = fSet.getFeatures();
         
         bSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
@@ -149,7 +148,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-	@Test
+	@After
 	//	loop through hbase table to retrieve features in feature sets
 	public void storageAndRetrieval(){
 		SWQEFactory.getModelManager();
