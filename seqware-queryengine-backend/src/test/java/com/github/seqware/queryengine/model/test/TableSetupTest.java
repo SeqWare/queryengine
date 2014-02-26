@@ -154,7 +154,12 @@ public class TableSetupTest {
 	public void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
 			for (Feature f : fSet){
-				System.out.println(f.getDisplayName());
+				System.out.println(f.getDisplayName() + 
+						", Seqid: " + f.getSeqid() + 
+						", Source: " + f.getSource() + 
+						", Start: " + f.getStart() + 
+						", Stop: " + f.getStop() + 
+						", Strand: " + f.getStrand());
 			}
 		}
 	}
