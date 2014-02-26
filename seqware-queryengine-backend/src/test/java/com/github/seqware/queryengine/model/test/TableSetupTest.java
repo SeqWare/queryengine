@@ -137,22 +137,19 @@ public class TableSetupTest {
         while(fIter.hasNext()){
         	bSet.add(fIter.next());
         }
-		manager.flush();
+        complexQueryTest();
+        manager.flush();
 	}
 	
-	@Test
+//	@Test
 	public void complexQueryTest(){
 		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
 		QueryFuture<FeatureSet> queryFuture = backend.getFeaturesByAttributes(1, aSet, new RPNStack(
 				new Constant("chr1"),
-		        new FeatureAttribute("seqid"),
                 Operation.EQUAL));
 		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
-		System.out.println("showing plugin-ran result...");
-		for (Feature f : cSet){
-			System.out.println(f.getDisplayName());
-		}
+		System.out.println("Plugin has run.");
 	}
 	
 	@AfterClass
