@@ -120,9 +120,6 @@ public class TableSetupTest {
 		
         main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
         fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-        refName = fSet.getReference().getDisplayName();
-        main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
-        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
         manager = SWQEFactory.getModelManager();
         fIter = fSet.getFeatures();
@@ -134,9 +131,6 @@ public class TableSetupTest {
 		manager.flush();
 		
         main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
-        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-        refName = fSet.getReference().getDisplayName();
-        main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
         fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
         manager = SWQEFactory.getModelManager();
@@ -153,6 +147,7 @@ public class TableSetupTest {
 	//	loop through hbase table to retrieve features in feature sets
 	public void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
+			System.out.println(fSet.getReference().getDisplayName());
 			for (Feature f : fSet){
 				System.out.println(f.getDisplayName() + 
 						", Seqid: " + f.getSeqid() + 
