@@ -27,12 +27,12 @@ public class GroupResourceTest {
   
   @BeforeClass
   public static void setUpClass() {
-   //Create a Test Group
+    //Create a Test Group
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "group" );
     String group = "{"
-        + "\"name\": \"string\","
-        + "\"description\": \"string\""
+        + "\"name\": \"TestGroup\","
+        + "\"description\": \"Testing the Group Resource\""
         + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
@@ -88,9 +88,96 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  @Test
+  public void testGetGroup() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey);
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  @Test
+  public void testPutGroup() {
+    //Create a new Group
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group");
+    String group = "{"
+            + "\"name\": \"TestPutGroup\",\n"
+            + "\"description\": \"TestDescription\"\n"
+            + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, group);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String rowkey = extractRowKey(output);
+    Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("TestPutGroup"));
+    
+    //Update the Group
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "group/" + rowkey);
+    String put = "{\n"
+            + "\"name\": \"ChangedGroupName\",\n"
+            + "\"description\": \"ChangedDescription\"\n"
+            + "}";  
+    ClientResponse response2 = webResource2.type("application/json").put(ClientResponse.class, put);
+    Assert.assertTrue("Put failed:" + response.getStatus(), response2.getStatus() == 200);
+    String output2 =  response2.getEntity(String.class);
+    Assert.assertTrue("Output does not contain the PUT update: " + output2, output2.contains(rowkey) && output2.contains("ChangedGroupName"));
+    
+    //Delete the Group
+    webResource2.delete();
+    ClientResponse response3 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
+    String output3 = response3.getEntity(String.class);
+    Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output3.contains(rowkey));
+    client.destroy();
+  }
+  
+  @Test
+  public void testGetPermissions() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey + "/permissions");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  @Test
+  public void testGetTags() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey + "/tags");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  @Test
+  public void testGetVersion() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey + "/version");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  @Test
+  public void testCreateElement() {
+   //Create a Test Group
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey );
+    String user = "{"
+        + "\"emailAddress\": \"testEmail@email.com\","
+        + "\"firstName\": \"testFirstName\""
+        + "\"lastName\": \"testLastName\","
+        + "\"password\": \"testPassword\""
+        + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, user);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String userKey = extractRowKey(output);
+    client.destroy();
+  }
+  
   protected static String extractRowKey(String output) {
-    // now create a Tag using the returned rowkey
-    // grab rowkey via regular expression
     Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
     Matcher matcher = pattern.matcher(output);
     matcher.find();

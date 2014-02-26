@@ -181,7 +181,7 @@ public class TagSetResourceTest {
   }
   
   @Test
-  public void testGetTags2() {
+  public void testGetTag() {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
     String tag = "{\n"
@@ -224,8 +224,6 @@ public class TagSetResourceTest {
   //Todo: Test OBO Files
   
   protected static String extractRowKey(String output) {
-    // now create a Tag using the returned rowkey
-    // grab rowkey via regular expression
     Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
     Matcher matcher = pattern.matcher(output);
     matcher.find();
@@ -234,7 +232,6 @@ public class TagSetResourceTest {
   }
   
   protected static String extractVersion(String output) {
-    // grab version via regular expression
     Pattern pattern = Pattern.compile("version\":(.*?)}");
     Matcher matcher = pattern.matcher(output);
     matcher.find();

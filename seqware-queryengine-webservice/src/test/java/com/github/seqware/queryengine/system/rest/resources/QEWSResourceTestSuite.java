@@ -14,7 +14,9 @@ import org.junit.runners.Suite;
         com.github.seqware.queryengine.system.rest.resources.GroupResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.UserResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.ReferenceResourceTest.class,
-        com.github.seqware.queryengine.system.rest.resources.ReferenceSetResourceTest.class
+        com.github.seqware.queryengine.system.rest.resources.ReferenceSetResourceTest.class,
+        com.github.seqware.queryengine.system.rest.resources.FeatureSetResourceTest.class,
+        com.github.seqware.queryengine.system.rest.resources.ReadSetResourceTest.class
 })
 
 public class QEWSResourceTestSuite {

@@ -210,8 +210,6 @@ public class TagResourceTest {
   }*/
   
   protected static String extractRowKey(String output) {
-    // now create a Tag using the returned rowkey
-    // grab rowkey via regular expression
     Pattern pattern = Pattern.compile("rowKey\":\"(.*?)\"");
     Matcher matcher = pattern.matcher(output);
     matcher.find();
