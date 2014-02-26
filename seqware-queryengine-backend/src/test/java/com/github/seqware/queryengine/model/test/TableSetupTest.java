@@ -137,8 +137,7 @@ public class TableSetupTest {
         while(fIter.hasNext()){
         	bSet.add(fIter.next());
         }
-        complexQueryTest();
-        manager.flush();
+        manager.close();
 	}
 	
 //	@Test
@@ -150,6 +149,7 @@ public class TableSetupTest {
                 Operation.EQUAL));
 		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
 		System.out.println("Plugin has run.");
+		manager.close();
 	}
 	
 	@AfterClass
