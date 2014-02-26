@@ -137,6 +137,15 @@ public class TableSetupTest {
         while(fIter.hasNext()){
         	bSet.add(fIter.next());
         }
+        
+		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
+		QueryFuture<FeatureSet> queryFuture = backend.getFeaturesByAttributes(1, aSet, new RPNStack(
+				new Constant("chr1"),
+                Operation.EQUAL));
+		System.out.println(queryFuture.get().getCount());
+		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
+		System.out.println("Plugin has run.");
+		
         manager.close();
 	}
 	
