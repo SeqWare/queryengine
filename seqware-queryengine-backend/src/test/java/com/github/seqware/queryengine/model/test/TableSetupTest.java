@@ -120,10 +120,12 @@ public class TableSetupTest {
 		
         main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
         fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+        refName = fSet.getReference().getDisplayName();
+        main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
+        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
         manager = SWQEFactory.getModelManager();
         fIter = fSet.getFeatures();
-        
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
         	aSet.add(fIter.next());
@@ -132,6 +134,9 @@ public class TableSetupTest {
 		manager.flush();
 		
         main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
+        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+        refName = fSet.getReference().getDisplayName();
+        main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName, testVCFFile.getAbsolutePath()});        
         fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
         manager = SWQEFactory.getModelManager();
