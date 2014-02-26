@@ -68,8 +68,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat6-maven-plugin</artifactId>
-                <version>2.2</version>
+                <artifactId>tomcat7-maven-plugin</artifactId>
                 <configuration>
 		    <port>8889</port>
                     <useNaming>true</useNaming>
@@ -163,7 +162,7 @@ never
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
-                    <targetJdk>1.6</targetJdk>
+                    <targetJdk>1.7</targetJdk>
                 </configuration>
             </plugin>
         </plugins>

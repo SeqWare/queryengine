@@ -34,7 +34,7 @@ For our tutorial, use the following values in your ~/.seqware/settings
     # SEQWARE QUERY ENGINE SETTINGS
     #
     QE_NAMESPACE=batman
-    QE_DEVELOPMENT_DEPENDENCY=file:/home/<your user>/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar.jar
+    QE_DEVELOPMENT_DEPENDENCY=file:/home/<your user>/seqware_github/seqware-distribution/target/seqware-distribution-0.13.6-qe-full.jar
     QE_PERSIST=true
     QE_HBASE_REMOTE_TESTING=false
     # Connect to either HBOOT, SQWDEV, or an implicit localhost
