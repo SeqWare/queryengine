@@ -50,18 +50,16 @@ public class TableSetupTest {
     private Configuration config;
     
 	@Before
-	//this will reset all the tables
-	public void tearDownBackend() throws IOException{
+	//this will reset all the tables and load the vcf file paths for testiing
+	public void setUpTest() throws IOException{
         config = HBaseConfiguration.create();
 		try {
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
 			hba.deleteTables("b.*");
 		} catch (MasterNotRunningException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ZooKeeperConnectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
