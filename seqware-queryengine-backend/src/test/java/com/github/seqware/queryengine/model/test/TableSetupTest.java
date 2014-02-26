@@ -113,7 +113,7 @@ public class TableSetupTest {
         refName = "Random_ref_" + new BigInteger(20, random).toString(32);
         refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annoated.vcf");
+        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
 	}
 	
 	@Test
