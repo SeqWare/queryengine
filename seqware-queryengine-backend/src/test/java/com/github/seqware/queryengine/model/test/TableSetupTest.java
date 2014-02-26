@@ -108,7 +108,7 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-	@Before
+	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
