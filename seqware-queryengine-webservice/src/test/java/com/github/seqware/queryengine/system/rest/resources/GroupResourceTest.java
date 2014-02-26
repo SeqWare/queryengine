@@ -21,6 +21,8 @@ import com.sun.jersey.api.client.WebResource;
 public class GroupResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
+  public static String tagKey;
+  public static String tagSetKey;
   
   public GroupResourceTest() {
   }
@@ -38,6 +40,27 @@ public class GroupResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
     setKey = extractRowKey(output);
+    
+    //Create a TagSet for this test
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"TestGroupTagSet\"\n"
+            + "}";
+    ClientResponse response2 = webResource2.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    tagSetKey = extractRowKey(output2);
+    
+    //Create a Tag for the test
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    String tag = "{\n"
+        + "\"predicate\": \"GroupTagPredicate\",\n"
+        + "\"key\": \"TestGroup\"\n"
+        + "}";
+    ClientResponse response3 = webResource3.type("application/json").post(ClientResponse.class, tag);
+    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
+    String output3 = response3.getEntity(String.class);
+    tagKey = extractRowKey(output3);
     client.destroy();
   }
   
@@ -46,6 +69,10 @@ public class GroupResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey);
     webResource.delete();
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    webResource2.delete();
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + tagKey);
+    webResource3.delete();
     client.destroy();
   }
   
@@ -161,12 +188,12 @@ public class GroupResourceTest {
   
   @Test
   public void testCreateElement() {
-   //Create a Test Group
+    //Create a Test User
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey );
     String user = "{"
-        + "\"emailAddress\": \"testEmail@email.com\","
-        + "\"firstName\": \"testFirstName\""
+        + "\"emailAddress\": \"testDummyEmail@email.com\","
+        + "\"firstName\": \"TestName\","
         + "\"lastName\": \"testLastName\","
         + "\"password\": \"testPassword\""
         + "}";
@@ -174,7 +201,24 @@ public class GroupResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
     String userKey = extractRowKey(output);
+    
+    //Delete the User
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "user/" + userKey );
+    ClientResponse response2 = webResource2.delete(ClientResponse.class);
+    Assert.assertTrue("Delete failed: "+ response2.getStatus(), response.getStatus() == 200);
     client.destroy();
+  }
+  
+  @Test
+  public void testTagGroup() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey + "/tag?tagset_id=" + tagSetKey +"&key=" + tagKey);
+    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "group/tags?tagset_id=" + tagSetKey + "&key=" + tagKey);
+    ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
   }
   
   protected static String extractRowKey(String output) {

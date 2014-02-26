@@ -120,7 +120,7 @@ public class TagSetResourceTest {
   }
   
   @Test
-  public void testPut() {
+  public void testPutTagSet() {
     //Create a new TagSet
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
@@ -152,6 +152,9 @@ public class TagSetResourceTest {
     client.destroy();
   }
   
+  //POST   tagset/
+  //DELETE tagset/{sgid}
+  //GET    tagset/{sgid}/tags
   @Test
   public void testGetTags() {
     //Create a Tagset
@@ -180,20 +183,43 @@ public class TagSetResourceTest {
     client.destroy();
   }
   
+  //POST tagset/{sgid}
+  //GET  tagset/tags
   @Test
   public void testGetTag() {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
     String tag = "{\n"
-        + "\"predicate\": \"Test_GetTag\",\n"
-        + "\"key\": \"TagSetTest\"\n"
+        + "\"predicate\": \"TestGetTag\",\n"
+        + "\"key\": \"TagSetTest1\"\n"
         + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tag);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
     String rowkey = extractRowKey(output);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/tags?tagset_id=" + setKey + "&tag_key=TagSetTest" );
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/tags?tagset_id=" + setKey + "&tag_key=TagSetTest1" );
+    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    client.destroy();
+  }
+  
+  //PUT /tagset/{sgid}/tag
+  @Test
+  public void testTagTagSet() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    String tag = "{\n"
+        + "\"predicate\": \"TagSetResourceTest.testTagTagSet\",\n"
+        + "\"key\": \"TagSetTest2\"\n"
+        + "}";
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, tag);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String output = response.getEntity(String.class);
+    String rowkey = extractRowKey(output);
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/tags?tagset_id=" + setKey + "&tag_key=TagSetTest" );
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
@@ -208,19 +234,7 @@ public class TagSetResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
-  /*
-  @Test
-  public void testPutPermissions() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/permissions");
-    String permissions = "{\n"
-            + ",\n" 
-            + ",\n"
-            + "\n"
-            + "}"
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-  }*/
+
   //Todo: Test OBO Files
   
   protected static String extractRowKey(String output) {
