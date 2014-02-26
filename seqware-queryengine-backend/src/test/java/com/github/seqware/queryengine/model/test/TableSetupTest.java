@@ -103,7 +103,6 @@ public class TableSetupTest {
         FeatureSet result = future.get();
         System.out.println("This is the plugin result for FeatureSet " + result.getReference().getDisplayName() + " : ");
         for (Feature f : result) {
-            Assert.assertTrue(f.getType().equals("type1"));
 			System.out.println(f.getDisplayName() + 
 					", Seqid: " + f.getSeqid() + 
 					", Source: " + f.getSource() + 
