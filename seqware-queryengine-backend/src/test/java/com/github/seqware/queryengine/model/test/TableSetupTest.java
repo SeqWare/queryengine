@@ -84,7 +84,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-//	@Test
+	@Test
 	//Test some implemented plugin that is working
     public void testInstallAndRunArbitraryPlugin() {
         Class<? extends PluginInterface> arbitraryPlugin;
@@ -101,14 +101,20 @@ public class TableSetupTest {
                 new Constant("type1"), new FeatureAttribute("type"), Operation.EQUAL));
         // check that Features are present match
         FeatureSet result = future.get();
+        System.out.println("This is the plugin result for FeatureSet " + result.getReference().getDisplayName() + " : ");
         for (Feature f : result) {
             Assert.assertTrue(f.getType().equals("type1"));
+			System.out.println(f.getDisplayName() + 
+					", Seqid: " + f.getSeqid() + 
+					", Source: " + f.getSource() + 
+					", Start: " + f.getStart() + 
+					", Stop: " + f.getStop() + 
+					", Strand: " + f.getStrand());
         }
-        int count = (int) result.getCount();
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-	@Test
+	@Before
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
@@ -137,15 +143,6 @@ public class TableSetupTest {
         while(fIter.hasNext()){
         	bSet.add(fIter.next());
         }
-        
-		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
-		QueryFuture<FeatureSet> queryFuture = backend.getFeaturesByAttributes(1, aSet, new RPNStack(
-				new Constant("chr1"),
-                Operation.EQUAL));
-		System.out.println(queryFuture.get().getCount());
-		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
-		System.out.println("Plugin has run.");
-		
         manager.close();
 	}
 	
