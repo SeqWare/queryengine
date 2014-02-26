@@ -25,6 +25,7 @@ import com.github.seqware.queryengine.plugins.contribs.OverlappingMutationsAggre
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
+import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.github.seqware.queryengine.model.QueryFuture;
@@ -37,10 +38,12 @@ import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
 import com.github.seqware.queryengine.kernel.RPNStack.Operation;
 
 public class TableSetupTest {
-	static FeatureSet aSet;
+	static FeatureSet aSet, bSet;
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
+	static File testSecondVCFFile = null;
 	static String refName = null;
+	static String refName2 = null;
     private Configuration config;
     
 	@Test
@@ -95,14 +98,6 @@ public class TableSetupTest {
         int count = (int) result.getCount();
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
-	
-//  @Test
-    //Write a Test the OverlapMutationsAggregationPlugin plugin
-	public void testOLapPlugin(){
-		Class<? extends PluginInterface> arbPlugin;
-		arbPlugin = OverlappingMutationsAggregationPlugin.class;
-		
-	}
 
 //	@Test
 	//loop through hbase table to retrieve feature set count
@@ -113,10 +108,12 @@ public class TableSetupTest {
 	@Test
 	//Setup variables for importing vcf
 	public void setuptestVCFImport(){
-        SecureRandom random = new SecureRandom();
 		String curDir = System.getProperty("user.dir");
+        SecureRandom random = new SecureRandom();
         refName = "Random_ref_" + new BigInteger(20, random).toString(32);
+        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
+        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annoated.vcf");
 	}
 	
 	@Test
@@ -133,7 +130,22 @@ public class TableSetupTest {
         	aSet.add(fIter.next());
         	
         }
+		manager.flush();
+	}
+	
+	@Test
+	//This imports a second vcf File into HBase
+	public void testSecondVCFImport(){
+        SGID main = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
+        FeatureSet fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
         
+        CreateUpdateManager manager = SWQEFactory.getModelManager();
+        Iterator<Feature> fIter = fSet.getFeatures();
+        
+        bSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
+        while(fIter.hasNext()){
+        	bSet.add(fIter.next());
+        }
 		manager.flush();
 	}
 	
@@ -144,10 +156,18 @@ public class TableSetupTest {
 		StorageInterface storage = SWQEFactory.getStorage();
 		FeatureSet atomBySGID = SWQEFactory.getQueryInterface().getAtomBySGID(FeatureSet.class, aSet.getSGID());
 		for (Feature f : atomBySGID){
-			System.out.println(f.getDisplayName());
+			FSGID fsgid = (FSGID) f.getSGID();
+			
+			System.out.println(fsgid.getRowKey());
 		}
-		
 	}
 	
-
+//  @Test
+    //Write a Test the OverlapMutationsAggregationPlugin plugin
+	public void testOLapPlugin(){
+		Class<? extends PluginInterface> arbPlugin;
+		arbPlugin = OverlappingMutationsAggregationPlugin.class;
+		SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbPlugin, null, null);
+	}
+	
 }
