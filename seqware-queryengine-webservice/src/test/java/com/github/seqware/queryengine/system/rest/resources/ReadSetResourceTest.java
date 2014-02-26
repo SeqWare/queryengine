@@ -75,6 +75,7 @@ public class ReadSetResourceTest {
     assertEquals(expResult, result);
   }
   
+  //GET readset
   @Test
   public void testGetReadSets() {
     Client client = Client.create();

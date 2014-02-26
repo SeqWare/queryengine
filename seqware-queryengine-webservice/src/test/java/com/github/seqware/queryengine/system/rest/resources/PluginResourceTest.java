@@ -60,6 +60,7 @@ public class PluginResourceTest {
     assertEquals(expResult, result);
   }
   
+  //GET plugin
   @Test
   public void testGetPlugins() {
     Client client = Client.create();

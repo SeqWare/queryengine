@@ -75,6 +75,7 @@ public class ReferenceSetResourceTest {
     assertEquals(expResult, result);
   }
   
+  // GET referenceset/
   @Test
   public void testGetReferenceSets() {
     Client client = Client.create();
@@ -84,7 +85,7 @@ public class ReferenceSetResourceTest {
     client.destroy();
   }
   
-  
+  // GET referenceset/{sgid}
   @Test
   public void testGetReferenceSet() {
     Client client = Client.create();
@@ -94,6 +95,9 @@ public class ReferenceSetResourceTest {
     client.destroy();
   }
   
+  //POST   referenceset/
+  //PUT    referenceset/{sgid}
+  //DELETE referenceset/{sgid}
   @Test
   public void testPutReferenceSet() {
     //Create a new ReferenceSet
@@ -129,6 +133,7 @@ public class ReferenceSetResourceTest {
     client.destroy();
   }
   
+  //GET referenceset/{sgid}/tags
   @Test
   public void testGetTags() {
     Client client = Client.create();
@@ -138,6 +143,7 @@ public class ReferenceSetResourceTest {
     client.destroy();
   }
   
+  //GET referenceset/{sgid}/permissions  
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
@@ -146,20 +152,8 @@ public class ReferenceSetResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
-  /*
-  @Test
-  public void testPutPermissions() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey + "/permissions");
-    String permissions = "{\n"
-            + ",\n" 
-            + ",\n"
-            + "\n"
-            + "}"
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-  }
-  */
+
+  //GET referenceset/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();

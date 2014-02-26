@@ -106,6 +106,7 @@ public class GroupResourceTest {
     Assert.assertEquals(expResult, result);
   }
   
+  // GET group
   @Test
   public void testGetGroups() {
     Client client = Client.create();
@@ -115,6 +116,7 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // GET group/{sgid}
   @Test
   public void testGetGroup() {
     Client client = Client.create();
@@ -124,6 +126,9 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // POST   group
+  // PUT    group/{sgid}
+  // DELETE group/{sgid}
   @Test
   public void testPutGroup() {
     //Create a new Group
@@ -159,6 +164,7 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // GET group/{sgid}/permissions
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
@@ -168,6 +174,7 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // GET group/{sgid}/tags
   @Test
   public void testGetTags() {
     Client client = Client.create();
@@ -177,6 +184,7 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // GET group/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
@@ -186,6 +194,8 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // POST   group/{sgid}
+  // DELETE user/{sgid}
   @Test
   public void testCreateElement() {
     //Create a Test User
@@ -209,6 +219,8 @@ public class GroupResourceTest {
     client.destroy();
   }
   
+  // PUT group/{sgid}/tag
+  // GET group/{sgid}/tags
   @Test
   public void testTagGroup() {
     Client client = Client.create();

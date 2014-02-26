@@ -97,6 +97,7 @@ public class UserResourceTest {
   public void tearDown() {
   }
   
+  // PUT user/{sgid}/tag
   @Test
   public void testTagUser() {
     Client client = Client.create();
@@ -109,6 +110,10 @@ public class UserResourceTest {
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
   }
   
+  
+  // POST group/{sgid}
+  // PUT user/{sgid}
+  // DELETE user/{sgid}
   @Test
   public void testPutUser() {
     //Create a new User
@@ -147,6 +152,7 @@ public class UserResourceTest {
     client.destroy();
   }
   
+  // GET user/{sgid}
   @Test
   public void testGetUser() {
     Client client = Client.create();
@@ -156,6 +162,7 @@ public class UserResourceTest {
     client.destroy();
   }
   
+  // GET user
   @Test
   public void testGetUsers() {
     Client client = Client.create();
@@ -165,6 +172,7 @@ public class UserResourceTest {
     client.destroy();
   }
   
+  // GET user/{sgid}/tags
   @Test
   public void testGetTags() {
     Client client = Client.create();
@@ -174,6 +182,7 @@ public class UserResourceTest {
     client.destroy();
   }
   
+  // GET user/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
@@ -183,6 +192,7 @@ public class UserResourceTest {
     client.destroy();
   }
   
+  // GET user/{sgid}/permissions
   @Test
   public void testGetPermissions() {
     Client client = Client.create();

@@ -74,6 +74,7 @@ public class TagSetResourceTest {
     assertEquals(expResult, result);
   }
 
+  // GET tagset
   @Test
   public void testGetElements() {
     Client client = Client.create();
@@ -85,6 +86,9 @@ public class TagSetResourceTest {
     client.destroy();
   }
   
+  // POST   tagset
+  // GET    tagset/{sgid}
+  // DELETE tagset/{sgid}
   @Test
   public void testAddSet() {
     Client client = Client.create();
@@ -107,6 +111,7 @@ public class TagSetResourceTest {
     client.destroy();
     }
   
+  // GET tagset/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
@@ -119,6 +124,9 @@ public class TagSetResourceTest {
     client.destroy();
   }
   
+  // POST   tagset
+  // PUT    tagset/{sgid}
+  // DELETE tagset/{sgid}
   @Test
   public void testPutTagSet() {
     //Create a new TagSet

@@ -91,6 +91,8 @@ public class TagResourceTest {
     assertEquals(expResult, result);
   }
   
+  // POST   tagset/{sgid}
+  // DELETE tag/{sgid}
   @Test
   public void testCreateTag() {
     //Create the Tag in Tagset
@@ -114,6 +116,7 @@ public class TagResourceTest {
     Assert.assertTrue("Deletion failed: " + output2, !output2.contains(rowkey));
   }
   
+  // GET tag
   @Test
   public void testGetTag() {
     Client client = Client.create();
@@ -124,6 +127,9 @@ public class TagResourceTest {
     client.destroy();
   }
   
+  // POST   tagset/{sgid}
+  // GET    tag/tags
+  // DELETE tag/{sgid}
   @Test
   public void testGetTagsInTagSet() {
     //Create Tag
@@ -139,7 +145,7 @@ public class TagResourceTest {
     Assert.assertTrue("Returned entity incorrect" + output, output.contains("Testing") && output.contains("Test_Tag"));
     String rowkey = extractRowKey(output);
     
-    //GET tags/tag
+    //Get the tag
     WebResource webResource2 = client.resource(WEBSERVICE_URL + "tag/tags?tagset_id=" + tagSetKey + "&tag_key=Testing" );
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
@@ -154,6 +160,7 @@ public class TagResourceTest {
     Assert.assertTrue("Deletion failed: " + output3, !output3.contains(rowkey));
   }
   
+  // GET tag/{sgid}/tags
   @Test 
   public void testGetTagsByRowkey() {
     Client client = Client.create();
@@ -163,6 +170,7 @@ public class TagResourceTest {
     client.destroy();
   }
   
+  // GET tag/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
@@ -172,6 +180,7 @@ public class TagResourceTest {
     client.destroy();
   }
   
+  // GET tag/{sgid}/permissions
   @Test
   public void testGetPermissions() {
     Client client = Client.create();

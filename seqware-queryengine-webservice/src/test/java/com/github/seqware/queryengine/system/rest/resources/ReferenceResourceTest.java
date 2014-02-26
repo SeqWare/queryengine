@@ -90,6 +90,7 @@ public class ReferenceResourceTest {
     Assert.assertEquals(expResult, result);
   }
   
+  // GET reference/
   @Test
   public void testGetReferences() {
     Client client = Client.create();
@@ -99,6 +100,7 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
+  // GET reference/{sgid}
   @Test
   public void testGetReference() {
     Client client = Client.create();
@@ -108,6 +110,9 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
+  // POST   referenceset/{sgid}
+  // PUT    reference/{sgid}
+  // DELETE reference/{sgid}
   @Test
   public void testPutReference() {
     //Create Reference
@@ -137,6 +142,7 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
+  // GET reference/{sgid}/tags
   @Test
   public void testGetTags() {
     Client client = Client.create();
@@ -146,7 +152,7 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
-  
+  // GET reference/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
@@ -157,6 +163,7 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
+  //GET reference/{sgid}/permissions
   @Test
   public void testGetPermissions() {
     Client client = Client.create();

@@ -37,6 +37,7 @@ public class AboutResourceTest {
 
   /**
    * Test of backendRequest method, of class AboutResource.
+   * GET about/debug
    */
   @Test
   public void testBackendRequest() {
@@ -51,6 +52,7 @@ public class AboutResourceTest {
 
   /**
    * Test of versionRequest method, of class AboutResource.
+   * GET about/versions
    */
   @Test
   public void testVersionRequest() {

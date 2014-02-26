@@ -74,6 +74,7 @@ public class FeatureSetResourceTest {
     assertEquals(expResult, result);
   }
   
+  // GET featureset
   @Test
   public void testGetFeatureSets() {
     Client client = Client.create();
@@ -83,7 +84,7 @@ public class FeatureSetResourceTest {
     client.destroy();
   }
   
-  
+  // GET featureset/{sgid}
   @Test
   public void testGetFeatureSet() {
     Client client = Client.create();
@@ -93,6 +94,10 @@ public class FeatureSetResourceTest {
     client.destroy();
   }
   
+  
+  // POST   featureset
+  // PUT    featureset/{sgid}
+  // DELETE featureset/{sgid}
   @Test
   public void testPutFeatureSet() {
     //Create a new FeatureSet
@@ -122,6 +127,7 @@ public class FeatureSetResourceTest {
     client.destroy();
   }
   
+  // GET featureset/{sgid}/tags
   @Test
   public void testGetTags() {
     Client client = Client.create();
@@ -131,6 +137,7 @@ public class FeatureSetResourceTest {
     client.destroy();
   }
   
+  // GET featureset/{sgid}/permissions
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
@@ -139,20 +146,8 @@ public class FeatureSetResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
-  /*
-  @Test
-  public void testPutPermissions() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey + "/permissions");
-    String permissions = "{\n"
-            + ",\n" 
-            + ",\n"
-            + "\n"
-            + "}"
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-  }
-  */
+  
+  //GET featureset/{sgid}/version
   @Test
   public void testGetVersion() {
     Client client = Client.create();
