@@ -12,7 +12,9 @@ import org.junit.runners.Suite;
         com.github.seqware.queryengine.system.rest.resources.TagSetResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.PluginResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.GroupResourceTest.class,
-        com.github.seqware.queryengine.system.rest.resources.UserResourceTest.class
+        com.github.seqware.queryengine.system.rest.resources.UserResourceTest.class,
+        com.github.seqware.queryengine.system.rest.resources.ReferenceResourceTest.class,
+        com.github.seqware.queryengine.system.rest.resources.ReferenceSetResourceTest.class
 })
 
 public class QEWSResourceTestSuite {
