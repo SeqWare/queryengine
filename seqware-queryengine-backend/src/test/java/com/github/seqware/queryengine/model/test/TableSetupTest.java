@@ -149,6 +149,7 @@ public class TableSetupTest {
 		        new FeatureAttribute("seqid"),
                 Operation.EQUAL));
 		cSet = manager.buildFeatureSet().setReference(queryFuture.get().getReference()).build();
+		System.out.println("showing plugin-ran result...");
 		for (Feature f : cSet){
 			System.out.println(f.getDisplayName());
 		}
@@ -156,7 +157,7 @@ public class TableSetupTest {
 	
 	@AfterClass
 	//	loop through hbase table to retrieve features in feature sets
-	public void featureRetrieval(){		
+	public static void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
 			System.out.println(fSet.getReference().getDisplayName());
 			for (Feature f : fSet){
