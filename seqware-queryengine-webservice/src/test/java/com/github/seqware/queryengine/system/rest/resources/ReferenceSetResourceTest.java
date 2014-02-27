@@ -20,6 +20,7 @@ import com.sun.jersey.api.client.WebResource;
 public class ReferenceSetResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
+  public static String tagSetKey;
   
   public ReferenceSetResourceTest() {
   }
@@ -38,6 +39,16 @@ public class ReferenceSetResourceTest {
     String output = response.getEntity(String.class);
     setKey = extractRowKey(output);
     client.destroy();
+    
+    //Create a TagSet for this test
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"TestReferenceSetTagSet\"\n"
+            + "}";
+    ClientResponse response2 = webResource2.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    tagSetKey = extractRowKey(output2);
   }
   
   @AfterClass
@@ -45,6 +56,8 @@ public class ReferenceSetResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey);
     webResource.delete();
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    webResource2.delete();
     client.destroy();
   }
   
@@ -130,6 +143,15 @@ public class ReferenceSetResourceTest {
     //Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
     //String output3 = response3.getEntity(String.class);
     //Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output3.contains(rowkey));
+    client.destroy();
+  }
+  
+  @Test
+  public void testPutTag() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey + "/tag?tagset_id=" + tagSetKey + "&key=referenceset");
+    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
   

@@ -58,6 +58,8 @@ public class TagResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
     webResource.delete();
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tag/" + tagKey);
+    webResource2.delete();
     client.destroy();
   }
   

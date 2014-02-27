@@ -22,6 +22,7 @@ public class ReferenceResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   public static String elementKey;
+  public static String tagSetKey;
   
   public ReferenceResourceTest() {
   }
@@ -50,6 +51,16 @@ public class ReferenceResourceTest {
     String output2 = response2.getEntity(String.class);
     elementKey = extractRowKey(output2);
     client.destroy();
+    
+    //Create a TagSet for this test
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"TestReferenceTagSet\"\n"
+            + "}";
+    ClientResponse response3 = webResource3.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response3.getStatus(), response3.getStatus() == 200);
+    String output3 = response3.getEntity(String.class);
+    tagSetKey = extractRowKey(output3);
   }
   
   @AfterClass
@@ -57,6 +68,10 @@ public class ReferenceResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey);
     webResource.delete();
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/" + elementKey);
+    webResource2.delete();
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    webResource3.delete();
     client.destroy();
   }
   
@@ -139,6 +154,21 @@ public class ReferenceResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output3 = response3.getEntity(String.class);
     Assert.assertTrue("Could not delete entity:" + response.getStatus(), !output3.contains(referenceKey));
+    client.destroy();
+  }
+  
+  // PUT reference/{sgid}/tag
+  // GET reference/tags
+  @Test
+  public void testPutTag() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey + "/tag?tagset_id=" + tagSetKey + "&key=reference");
+    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&tag_key=reference");
+    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     client.destroy();
   }
   
