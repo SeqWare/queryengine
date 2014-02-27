@@ -49,6 +49,17 @@ public class TableSetupTest {
 	static String refName = null;
 	static String refName2 = null;
     
+	public static void main(String[] args){
+		try {
+			setUpTest();
+			testVCFImport();
+			featureRetrieval();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	@BeforeClass
 	//this will reset all the tables and load the vcf file paths for testiing
 	public static void setUpTest() throws IOException{
@@ -116,7 +127,7 @@ public class TableSetupTest {
 
 	@Before
 	//This imports the features from a vcf file into HBase
-	public void testVCFImport(){
+	public static void testVCFImport(){
 		SGID main;
 		FeatureSet fSet;
 		CreateUpdateManager manager;
