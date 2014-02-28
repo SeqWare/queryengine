@@ -140,7 +140,9 @@ public class TableSetupTest {
         fIter = fSet.getFeatures();
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
-        	aSet.add(fIter.next());
+        	Feature f = fIter.next();
+        	aSet.add(f);
+        	System.out.println("Stop: " + f.getStop());
         }
 		
 //        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
@@ -153,7 +155,7 @@ public class TableSetupTest {
 //        while(fIter.hasNext()){
 //        	bSet.add(fIter.next());
 //        }
-        manager.close();
+        manager.flush();
 	}
 	
 //	@Test
