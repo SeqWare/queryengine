@@ -148,7 +148,7 @@ The above emits the results back into HBase.  To print the results to stdout:
 
 ###RUNNING BRIANS CO-OP CODE (this is just for testing purposes)
 
-#Steps to import data (these are the steps I used from http://seqware.github.io/docs/8-query-engine/#loading-data):
+####Steps to import data (these are the steps I used from http://seqware.github.io/docs/8-query-engine/#loading-data):
 
 After provisioning from the branch MRPluginLayerTest:
 ````
@@ -176,7 +176,7 @@ scan 'batman.hbaseTestTable_v2.Feature.hg_19'
 ````
 There should be 4 rows of data as it was a 3 base deletion that was specified in the smallTest.vcf.
 
-#Steps to run a dumper plugin:
+####Steps to run a dumper plugin:
 
 ````
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner hg_19 YOUR_CUSTOM_PLUGIN OUT_PUT_PARAMETERS
