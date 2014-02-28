@@ -140,8 +140,7 @@ public class TableSetupTest {
         fIter = fSet.getFeatures();
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
-        	Feature f = fIter.next();
-        	aSet.add(f);
+        	aSet.add(fIter.next());
         }
 		
 //        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
