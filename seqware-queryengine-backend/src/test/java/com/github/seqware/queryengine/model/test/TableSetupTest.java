@@ -174,7 +174,7 @@ public class TableSetupTest {
 //	@AfterClass
 	@Test
 	//	loop through hbase table to retrieve features in feature sets
-	public static void featureRetrieval(){		
+	public void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
 			System.out.println(fSet.getReference().getDisplayName());
 			for (Feature f : fSet){
