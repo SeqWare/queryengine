@@ -225,15 +225,15 @@ public class TableSetupTest {
 			for (Get g : getList){
 				System.out.println(hg19Table.exists(g));
 				Result r = hg19Table.get(g);
-				System.out.println(r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715")));
-//				FeatureListIO fLio = new FeatureListIO();
-//				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier"));
-//				byte[] value = columnLatest.getValue();
-//				fL = fLio.byteArr2m(value);
-//				for (Feature f : fL.getFeatures()){
-//					System.out.println("Row: " + g.getId());
-//					System.out.println(f.getStart() + " " + f.getStop());
-//				}
+//				System.out.println(r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715")));
+				FeatureListIO fLio = new FeatureListIO();
+				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
+				byte[] value = columnLatest.getValue();
+				fL = fLio.byteArr2m(value);
+				for (Feature f : fL.getFeatures()){
+					System.out.println("Row: " + g.getId());
+					System.out.println(f.getStart() + " " + f.getStop());
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
