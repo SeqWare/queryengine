@@ -188,7 +188,7 @@ There should be 4 rows of data as it was a 3 base deletion that was specified in
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner hg_19 YOUR_CUSTOM_PLUGIN OUT_PUT_PARAMETERS
 ````
 
-In this case you may try to run a plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking, albeit not returning information in the txt output. 
+In this case you may try to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking with my ArbitraryPluginRunner, albeit not returning information in the txt output (I will fix this on monday, there seems to be some lower level issue which is causing this). 
 
 ````
 com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
