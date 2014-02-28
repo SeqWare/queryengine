@@ -43,6 +43,7 @@ import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.github.seqware.queryengine.model.QueryFuture;
+import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
@@ -230,7 +231,7 @@ public class TableSetupTest {
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
 				byte[] value = columnLatest.getValue();
 				fL = fLio.byteArr2m(value);
-				System.out.println(fL.getDisplayName() + fL.getClass());
+				System.out.println(fL);
 //				for (Feature f : fL.getFeatures()){
 //					System.out.println("Row: " + g.getId());
 //					System.out.println(f.getStart() + " " + f.getStop());
