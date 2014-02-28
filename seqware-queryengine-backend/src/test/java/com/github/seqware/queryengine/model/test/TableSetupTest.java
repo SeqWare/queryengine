@@ -77,9 +77,9 @@ public class TableSetupTest {
 		String curDir = System.getProperty("user.dir");
         SecureRandom random = new SecureRandom();
         refName = "Random_ref_" + new BigInteger(20, random).toString(32);
-        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
-        testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf");
-        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
+//        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
+        testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTest.vcf");
+//        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
 
 	}
 	
@@ -141,19 +141,18 @@ public class TableSetupTest {
         aSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
         while(fIter.hasNext()){
         	aSet.add(fIter.next());
-        	
         }
 		
-        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
-        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-        
-        manager = SWQEFactory.getModelManager();
-        fIter = fSet.getFeatures();
-        
-        bSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
-        while(fIter.hasNext()){
-        	bSet.add(fIter.next());
-        }
+//        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
+//        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
+//        
+//        manager = SWQEFactory.getModelManager();
+//        fIter = fSet.getFeatures();
+//        
+//        bSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
+//        while(fIter.hasNext()){
+//        	bSet.add(fIter.next());
+//        }
         manager.close();
 	}
 	
