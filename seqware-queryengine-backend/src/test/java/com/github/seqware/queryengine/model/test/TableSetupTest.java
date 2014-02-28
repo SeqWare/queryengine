@@ -225,7 +225,7 @@ public class TableSetupTest {
 			for (Get g : getList){
 				System.out.println(hg19Table.exists(g));
 				Result r = hg19Table.get(g);
-				System.out.println(r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier")).getValue());
+				System.out.println(r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier")));
 //				FeatureListIO fLio = new FeatureListIO();
 //				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier"));
 //				byte[] value = columnLatest.getValue();
