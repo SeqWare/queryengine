@@ -37,11 +37,11 @@ public class ArbitraryPluginRunner {
 		try {
 			arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(args[1]);
 //	        // aggregations of donors/project counts by mutation
-//	        System.out.println("Finding Mutations to affected donors/project count aggregation");
+	        System.out.println("Finding Mutations to affected donors/project count aggregation");
 	        long start = new Date().getTime();
-//	        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
-			System.out.println("Running plugin: " + args[1]);
-			Utility.dumpFromMapReducePlugin(args[1], ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
+	        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
+//			System.out.println("Running plugin: " + args[1]);
+//			Utility.dumpFromMapReducePlugin(args[1], ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
 	        long stop = new Date().getTime();
 	        float diff = ((stop - start) / 1000) / 60;
 	        System.out.println("Minutes to query: "+diff);
