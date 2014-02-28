@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.Get;
@@ -223,7 +224,9 @@ public class TableSetupTest {
 			for (Get g : getList){
 				Result r = hg19Table.get(g);
 				FeatureListIO fLio = new FeatureListIO();
-				fL = fLio.byteArr2m(r.getValue(Bytes.toBytes("d"), Bytes.toBytes("qualifier")));
+				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier"));
+				byte[] value = columnLatest.getValue();
+				fL = fLio.byteArr2m(value);
 				for (Feature f : fL.getFeatures()){
 					System.out.println("Row: " + g.getId());
 					System.out.println(f.getStart() + " " + f.getStop());
