@@ -215,6 +215,7 @@ public class TableSetupTest {
 			FeatureList fL = null;
 			Configuration config = HBaseConfiguration.create();
 			HTableInterface hg19Table = new HTable(config, "batman.hbaseTestTable_v2.Feature.hg_19");
+			
 			List<Get> getList = new ArrayList<Get>();
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000012")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000013")));
@@ -222,15 +223,16 @@ public class TableSetupTest {
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000015")));
 
 			for (Get g : getList){
-				Result r = hg19Table.get(g);
-				FeatureListIO fLio = new FeatureListIO();
-				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier"));
-				byte[] value = columnLatest.getValue();
-				fL = fLio.byteArr2m(value);
-				for (Feature f : fL.getFeatures()){
-					System.out.println("Row: " + g.getId());
-					System.out.println(f.getStart() + " " + f.getStop());
-				}
+				System.out.println(hg19Table.exists(g));
+//				Result r = hg19Table.get(g);
+//				FeatureListIO fLio = new FeatureListIO();
+//				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("qualifier"));
+//				byte[] value = columnLatest.getValue();
+//				fL = fLio.byteArr2m(value);
+//				for (Feature f : fL.getFeatures()){
+//					System.out.println("Row: " + g.getId());
+//					System.out.println(f.getStart() + " " + f.getStop());
+//				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
