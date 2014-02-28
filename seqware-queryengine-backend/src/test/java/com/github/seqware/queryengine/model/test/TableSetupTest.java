@@ -222,7 +222,7 @@ public class TableSetupTest {
 			for (Get g : getList){
 				Result r = hg19Table.get(g);
 				FeatureListIO fLio = new FeatureListIO();
-				fL = fLio.byteArr2m(r.getRow());
+				fL = fLio.byteArr2m(r.getValue(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715")));
 				for (Feature f : fL.getFeatures()){
 					System.out.println("Row: " + g.getId());
 					System.out.println(f.getStart() + " " + f.getStop());
