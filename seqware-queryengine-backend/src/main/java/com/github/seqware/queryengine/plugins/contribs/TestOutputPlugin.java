@@ -42,23 +42,28 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
     Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
     @Override
 	public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+    	System.out.println("Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
 				if (f.getStart() == position){
+					System.out.println("Feature at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
 			}
 		}
 		
 		for (FeatureSet fs : atoms.keySet()){
+			System.out.println(fs.getReference().getDisplayName());
 			for (Feature f : atoms.get(fs)){
-				
+				System.out.println(f.getStart());
 				for (Feature positionFeature : featuresAtCurrentLocation){
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
 					String indelStart = convertLongToString(positionFeature.getStart());
 					text.set(indelRange);
 					textKey.set(indelStart);
+					System.out.println("Running mapperInterface");
 					mapperInterface.write(textKey, text);
+					System.out.println(indelRange);
 				}
 			}
 		}
@@ -66,16 +71,20 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 	}
 	@Override
 	public void reduce(Text reduceKey, Iterable<Text> reduceValues, ReducerInterface<Text, Text> reducerInterface) {
+		System.out.println("Reducing.......");
 		Set<Text> seenSet = new HashSet<Text>();
 		String newFeatStr = "";
 		for (Text val : reduceValues){
+			System.out.println(val.toString());
 			seenSet.add(val);
 			String[] fsArr = val.toString().split(",");
 			for (String curr : fsArr){
 				newFeatStr += curr;
 			}
+			System.out.println("REDUCED: "+ newFeatStr);
 		}
 		text.set(reduceKey.toString() + "\t" + newFeatStr);
+		System.out.println("Running reducerInterface");
 		reducerInterface.write(text,null);
 		
 	}
