@@ -5,12 +5,19 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.HTableInterface;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Row;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -36,6 +43,7 @@ import com.github.seqware.queryengine.model.QueryFuture;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.impl.MRHBaseModelManager;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
+import com.github.seqware.queryengine.impl.protobufIO.FeatureListIO;
 import com.github.seqware.queryengine.kernel.RPNStack;
 import com.github.seqware.queryengine.kernel.RPNStack.Constant;
 import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
@@ -172,7 +180,7 @@ public class TableSetupTest {
 	}
 	
 //	@AfterClass
-	@Test
+//	@Test
 	//	loop through hbase table to retrieve features in feature sets
 	public void featureRetrieval(){		
 		Atom a,b,c,d,e;
@@ -194,13 +202,36 @@ public class TableSetupTest {
 //						", Start: " + f.getStart() + 
 //						", Stop: " + f.getStop() + 
 //						", Strand: " + f.getStrand());
-				for (String fs :f.getAdditionalAttributeNames()){
-					System.out.println(fs);
-				}
 			}
 		}
 	}
 	
+	@Test
+	public void lowLevelRetrieval(){
+		try {
+			FeatureList fL = null;
+			Configuration config = HBaseConfiguration.create();
+			HTableInterface hg19Table = new HTable(config, "batman.hbaseTestTable_v2.Feature.hg_19");
+			List<Get> getList = null;
+			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000012")));
+			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000013")));
+			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000014")));
+			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000015")));
+			
+			for (Get g : getList){
+				Result r = hg19Table.get(g);
+				FeatureListIO fLio = new FeatureListIO();
+				fL = fLio.byteArr2m(r.getRow());
+				for (Feature f : fL.getFeatures()){
+					System.out.println("Row: " + g.getId());
+					System.out.println(f.getStart() + " " + f.getStop());
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 //  @Test
     //Write a Test the OverlapMutationsAggregationPlugin plugin
 	public void testOLapPlugin(){
