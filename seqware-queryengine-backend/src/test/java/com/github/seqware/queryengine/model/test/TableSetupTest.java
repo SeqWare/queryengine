@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -212,7 +213,7 @@ public class TableSetupTest {
 			FeatureList fL = null;
 			Configuration config = HBaseConfiguration.create();
 			HTableInterface hg19Table = new HTable(config, "batman.hbaseTestTable_v2.Feature.hg_19");
-			List<Get> getList = null;
+			List<Get> getList = new ArrayList<Get>();
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000012")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000013")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000014")));
