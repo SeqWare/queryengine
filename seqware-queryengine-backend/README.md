@@ -175,7 +175,12 @@ hbase shell
 list
 scan 'batman.hbaseTestTable_v2.Feature.hg_19'
 ````
-There should be 4 rows of data as it was a 3 base deletion that was specified in the smallTest.vcf.
+There should be 4 rows of data as it was a 3 base deletion that was specified in the smallTest.vcf:
+
+````
+#CHROM  POS ID  REF ALT QUAL    FILTER  INFO
+1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
+````
 
 ####Steps to run a dumper plugin:
 
