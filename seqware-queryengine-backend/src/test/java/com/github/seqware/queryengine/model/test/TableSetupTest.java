@@ -219,7 +219,7 @@ public class TableSetupTest {
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000013")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000014")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000015")));
-			UUID uuid = new UUID();
+
 			for (Get g : getList){
 				Result r = hg19Table.get(g);
 				FeatureListIO fLio = new FeatureListIO();
