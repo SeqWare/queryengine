@@ -60,7 +60,7 @@ public class TableSetupTest {
 //		}
 //	}
 	
-	@BeforeClass
+//	@BeforeClass
 	//this will reset all the tables and load the vcf file paths for testiing
 	public static void setUpTest() throws IOException{
 		Configuration config = HBaseConfiguration.create();
@@ -125,7 +125,7 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-	@Test
+//	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
@@ -171,7 +171,8 @@ public class TableSetupTest {
 		manager.close();
 	}
 	
-	@AfterClass
+//	@AfterClass
+	@Test
 	//	loop through hbase table to retrieve features in feature sets
 	public static void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
