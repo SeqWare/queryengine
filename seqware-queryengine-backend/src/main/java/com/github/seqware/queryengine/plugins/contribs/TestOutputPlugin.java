@@ -48,6 +48,8 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 				if (f.getStart() == position){
 					System.out.println("Feature at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
+				} else {
+					System.out.println ("f.getStart: " + f.getStart() + ", " + "position:" + position);
 				}
 			}
 		}
