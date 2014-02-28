@@ -69,7 +69,7 @@ public class Constants {
     // this outputs all sorts of metrics about the byte sizes of lines and serialized objects to log4j
     public static final boolean OUTPUT_METRICS = false;
     // this setting means that features will be stored at all positions instead of just where they start
-    public static final boolean NAIVE_OVERLAPS = true;
+    public static final boolean NAIVE_OVERLAPS = false;
     
 
     /**
