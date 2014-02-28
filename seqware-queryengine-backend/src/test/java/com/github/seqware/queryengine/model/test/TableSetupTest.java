@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -218,11 +219,11 @@ public class TableSetupTest {
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000013")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000014")));
 			getList.add(new Get(Bytes.toBytes("hg_19.1:000000000000015")));
-			
+			UUID uuid = new UUID();
 			for (Get g : getList){
 				Result r = hg19Table.get(g);
 				FeatureListIO fLio = new FeatureListIO();
-				fL = fLio.byteArr2m(r.getValue(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715")));
+				fL = fLio.byteArr2m(r.getValue(Bytes.toBytes("d"), Bytes.toBytes("qualifier")));
 				for (Feature f : fL.getFeatures()){
 					System.out.println("Row: " + g.getId());
 					System.out.println(f.getStart() + " " + f.getStop());
