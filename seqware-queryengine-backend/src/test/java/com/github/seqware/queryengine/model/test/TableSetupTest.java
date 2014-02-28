@@ -213,7 +213,6 @@ public class TableSetupTest {
 	@Test
 	public void lowLevelRetrieval(){
 		try {
-			FeatureList fL = null;
 			Configuration config = HBaseConfiguration.create();
 			HTableInterface hg19Table = new HTable(config, "batman.hbaseTestTable_v2.Feature.hg_19");
 			
@@ -230,7 +229,7 @@ public class TableSetupTest {
 				FeatureListIO fLio = new FeatureListIO();
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
 				byte[] value = columnLatest.getValue();
-				fL = fLio.byteArr2m(value);
+				FeatureList fL = fLio.byteArr2m(value);
 				System.out.println(fL);
 //				for (Feature f : fL.getFeatures()){
 //					System.out.println("Row: " + g.getId());

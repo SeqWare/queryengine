@@ -145,3 +145,47 @@ The above emits the results back into HBase.  To print the results to stdout:
 
     java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
+
+###RUNNING BRIANS CO-OP CODE (this is just for testing purposes)
+
+#Steps to import data (these are the steps I used from http://seqware.github.io/docs/8-query-engine/#loading-data):
+
+After provisioning from the branch MRPluginLayerTest:
+````
+cd ~/gitroot/seqware
+mvn clean install
+cd seqware-distribution/target
+````
+
+Create a reference in the HBase backend
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
+````
+
+Naive import of the feature from smallTest.vcf in the test reources to the HBase Backend
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTest.vcf -r hg_19 -w VCFVariantImportWorker
+````
+
+At this point you can open up Hbase shell and listing the imported data by running :
+
+````
+hbase shell
+list
+scan 'batman.hbaseTestTable_v2.Feature.hg_19'
+````
+There should be 4 rows of data as it was a 3 base deletion that was specified in the smallTest.vcf.
+
+#Steps to run a dumper plugin:
+
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner hg_19 YOUR_CUSTOM_PLUGIN OUT_PUT_PARAMETERS
+````
+
+In this case you may try to run a plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking, albeit not returning information in the txt output. 
+
+````
+com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
+````
+
+Unfortunately this "TestOutputPlugin" that I have written does not output what is expected as of yet (a simple map and reduce of the naively imported data in the HBase backend). I am to clear this up on Monday.
