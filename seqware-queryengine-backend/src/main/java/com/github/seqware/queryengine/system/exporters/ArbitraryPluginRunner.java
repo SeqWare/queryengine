@@ -13,7 +13,7 @@ public class ArbitraryPluginRunner {
 	private String[] args;
 	
 	//Change this package path to match where your plugin class is located
-	private String PACKAGE_PATH = "com.github.seqware.queryengine.plugins.contribs.";
+	private String PACKAGE_PATH = "com.github.seqware.queryengine.plugins.plugins.";
 	
 	public static void main(String[] args) {
 		ArbitraryPluginRunner dump = new ArbitraryPluginRunner(args);
