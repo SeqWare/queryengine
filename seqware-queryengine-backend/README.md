@@ -146,7 +146,8 @@ The above emits the results back into HBase.  To print the results to stdout:
     java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
 
-###RUNNING BRIANS CO-OP CODE (this is just for testing purposes)
+##RUNNING BRIANS CO-OP CODE 
+#(this is just for testing purposes)
 
 ####Steps to import data (these are the steps I used from http://seqware.github.io/docs/8-query-engine/#loading-data):
 
