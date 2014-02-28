@@ -62,7 +62,7 @@ public class TableSetupTest {
 	
 	@BeforeClass
 	//this will reset all the tables and load the vcf file paths for testiing
-	public void setUpTest() throws IOException{
+	public static void setUpTest() throws IOException{
 		Configuration config = HBaseConfiguration.create();
 		try {
 			HBaseAdmin hba = new HBaseAdmin(config);
@@ -95,7 +95,7 @@ public class TableSetupTest {
 		manager.flush();
 	}
 	
-	@Test
+//	@Test
 	//Test some implemented plugin that is working
     public void testInstallAndRunArbitraryPlugin() {
         Class<? extends PluginInterface> arbitraryPlugin;
@@ -125,7 +125,7 @@ public class TableSetupTest {
 //        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
 
-	@Before
+	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
@@ -172,7 +172,7 @@ public class TableSetupTest {
 	
 	@AfterClass
 	//	loop through hbase table to retrieve features in feature sets
-	public void featureRetrieval(){		
+	public static void featureRetrieval(){		
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
 			System.out.println(fSet.getReference().getDisplayName());
 			for (Feature f : fSet){
