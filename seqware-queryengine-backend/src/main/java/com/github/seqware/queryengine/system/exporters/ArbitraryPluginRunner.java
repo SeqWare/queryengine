@@ -3,6 +3,7 @@ package com.github.seqware.queryengine.system.exporters;
 import java.util.Date;
 
 import com.github.seqware.queryengine.model.Reference;
+import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.contribs.MutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.factory.SWQEFactory;
@@ -32,13 +33,21 @@ public class ArbitraryPluginRunner {
 			}
 		}
 		
-        // aggregations of donors/project counts by mutation
-        System.out.println("Finding Mutations to affected donors/project count aggregation");
-        long start = new Date().getTime();
-        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, MutationsToDonorsAggregationPlugin.class, (args.length == 3 ? args[2] : null));
-        long stop = new Date().getTime();
-        float diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: "+diff);
+		Class<? extends PluginInterface> mrClass;
+		try {
+			mrClass = (Class<? extends PluginInterface>) Class.forName(args[1]);
+	        // aggregations of donors/project counts by mutation
+	        System.out.println("Finding Mutations to affected donors/project count aggregation");
+	        long start = new Date().getTime();
+	        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, mrClass, (args.length == 3 ? args[2] : null));
+	        long stop = new Date().getTime();
+	        float diff = ((stop - start) / 1000) / 60;
+	        System.out.println("Minutes to query: "+diff);
+		
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (ref == null){
 			System.out.println("Reference was not found.");
