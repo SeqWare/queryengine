@@ -12,9 +12,6 @@ public class ArbitraryPluginRunner {
 
 	private String[] args;
 	
-	//Change this package path to match where your plugin class is located
-	private String PACKAGE_PATH = "com.github.seqware.queryengine.plugins.plugins.";
-	
 	public static void main(String[] args) {
 		ArbitraryPluginRunner dump = new ArbitraryPluginRunner(args);
 		dump.export();
@@ -38,7 +35,7 @@ public class ArbitraryPluginRunner {
 
 		Class<? extends PluginInterface> arbitraryPluginClass;
 		try {
-			arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(PACKAGE_PATH + args[1]);
+			arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(args[1]);
 //	        // aggregations of donors/project counts by mutation
 //	        System.out.println("Finding Mutations to affected donors/project count aggregation");
 //	        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
