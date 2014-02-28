@@ -175,16 +175,26 @@ public class TableSetupTest {
 	@Test
 	//	loop through hbase table to retrieve features in feature sets
 	public void featureRetrieval(){		
+		Atom a,b,c,d,e;
 		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
 			System.out.println(fSet.getReference().getDisplayName());
-			for (Feature f : fSet){
-				System.out.println(f.getDisplayName() + 
-						", Seqid: " + f.getSeqid() + 
-						", Source: " + f.getSource() + 
-						", Start: " + f.getStart() + 
-						", Stop: " + f.getStop() + 
-						", Strand: " + f.getStrand());
-			}
+			a = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000012", Feature.class);
+			b = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000013", Feature.class);
+			c = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000014", Feature.class);
+			d = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000015", Feature.class);
+			System.out.println(a.getDisplayName());
+			System.out.println(b.getDisplayName());
+			System.out.println(c.getDisplayName());
+			System.out.println(d.getDisplayName());
+			
+//			for (Feature f : fSet){
+//				System.out.println(f.getDisplayName() + 
+//						", Seqid: " + f.getSeqid() + 
+//						", Source: " + f.getSource() + 
+//						", Start: " + f.getStart() + 
+//						", Stop: " + f.getStop() + 
+//						", Strand: " + f.getStrand());
+//			}
 		}
 	}
 	
