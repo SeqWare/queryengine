@@ -47,7 +47,7 @@ public class ArbitraryPluginRunner {
 	public static SGID runArbitraryPluginRunner(String[] args){
 
 		Options options = new Options();
-		Option option1 = OptionBuilder.withArgName("outputFile").withDescription("(required output file").hasArgs(1).isRequired().create(OUTPUT_FILE_PARAM);
+		Option option1 = OptionBuilder.withArgName("outputFile").withDescription("(required) output file").hasArgs(1).isRequired().create(OUTPUT_FILE_PARAM);
 		options.addOption(option1);
 		Option option2 = OptionBuilder.withArgName("reference").withDescription("(required) the reference ID of the FeatureSet to run plugin on").hasArgs(1).isRequired().create(REFERENCE_ID_PARAM);
 		options.addOption(option2);
