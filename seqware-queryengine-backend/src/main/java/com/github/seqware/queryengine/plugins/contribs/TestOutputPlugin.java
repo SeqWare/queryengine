@@ -47,7 +47,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
     	System.out.println("[INFO] Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
-				if ((f.getStart() < position && f.getStop() < position) || (f.getStart() == position)){
+				if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
 					System.out.println("[INFO] Adding feature for mapping at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
