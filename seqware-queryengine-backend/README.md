@@ -185,7 +185,7 @@ There should be 4 rows of data as it was a 3 base deletion that was specified in
 ####Steps to run a dumper plugin:
 
 ````
-java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner hg_19 YOUR_CUSTOM_PLUGIN OUT_PUT_PARAMETERS
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
 ````
 
 In this case you may try to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking with my ArbitraryPluginRunner, albeit not returning information in the txt output (I will fix this on monday, there seems to be some lower level issue which is causing this). 
@@ -194,4 +194,4 @@ In this case you may try to run any plugin under com.github.seqware.queryengine.
 com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
 ````
 
-Unfortunately this "TestOutputPlugin" that I have written does not output what is expected as of yet (a simple map and reduce of the naively imported data in the HBase backend). I am to clear this up on Monday.
+~~Unfortunately this "TestOutputPlugin" that I have written does not output what is expected as of yet (a simple map and reduce of the naively imported data in the HBase backend). I am to clear this up on Monday.~~ FIXED
