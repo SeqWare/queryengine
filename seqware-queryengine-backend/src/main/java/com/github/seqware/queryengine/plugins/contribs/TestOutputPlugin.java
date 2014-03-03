@@ -87,11 +87,11 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 			seenSet.add(val);
 			String[] fsArr = val.toString().split(",");
 			for (String curr : fsArr){
-				newFeatStr += curr;
+				newFeatStr += curr + ", ";
 			}
 			System.out.println("REDUCED: "+ newFeatStr);
 		}
-		text.set(reduceKey.toString() + "\t" + newFeatStr + "\n");
+		text.set(reduceKey.toString() + "\t" + newFeatStr);
 		System.out.println("Running reducerInterface");
 		reducerInterface.write(text,null);
 		
