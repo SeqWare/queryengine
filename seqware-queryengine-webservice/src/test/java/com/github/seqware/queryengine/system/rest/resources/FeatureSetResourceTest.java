@@ -88,6 +88,7 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetFeatureSet() {
     Client client = Client.create();
+    System.out.println(WEBSERVICE_URL + "featureset/" + setKey);
     WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey);
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);

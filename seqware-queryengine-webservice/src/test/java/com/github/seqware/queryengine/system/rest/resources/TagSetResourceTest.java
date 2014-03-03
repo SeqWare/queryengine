@@ -210,7 +210,8 @@ public class TagSetResourceTest {
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
-    webResource.delete();
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + rowkey);
+    webResource3.delete();
     client.destroy();
   }
   
@@ -232,7 +233,8 @@ public class TagSetResourceTest {
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
-    webResource.delete();
+    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + rowkey);
+    webResource3.delete();
     client.destroy();
   }
   

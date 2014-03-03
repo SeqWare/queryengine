@@ -27,17 +27,16 @@ public class ReadSetResourceTest {
   @BeforeClass
   public static void setUpClass() {
     //Create a Test ReadSet
-   /* Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset" );
+    Client client = Client.create();
+    /*WebResource webResource = client.resource(WEBSERVICE_URL + "readset" );
     String readSet = "{"
         + "\"description\": \"TestReadSet\""
         + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, readSet);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    setKey = extractRowKey(output);
+    setKey = extractRowKey(output); */
     client.destroy();
-    */
   }
   
   @AfterClass
