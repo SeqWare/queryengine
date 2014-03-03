@@ -60,6 +60,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 				System.out.println(f.getStart());
 				System.out.println("Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
+					System.out.println("In the loop.. getting start pos: " + positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
 					String indelStart = convertLongToString(positionFeature.getStart());
 					text.set(indelRange);
