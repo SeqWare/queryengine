@@ -60,7 +60,7 @@ public class ArbitraryPluginRunner {
 			CommandLineParser parser = new PosixParser();
 			CommandLine cmd = parser.parse(options, args);
 			String referenceName = cmd.getOptionValue(REFERENCE_ID_PARAM);
-			String plugin = cmd.getOptionValue(REFERENCE_ID_PARAM);
+			String plugin = cmd.getOptionValue(PLUGIN_CLASS_PARAM);
 			String outputFile = cmd.getOptionValue(OUTPUT_FILE_PARAM);
 			Class<? extends PluginInterface> arbitraryPluginClass;
 
