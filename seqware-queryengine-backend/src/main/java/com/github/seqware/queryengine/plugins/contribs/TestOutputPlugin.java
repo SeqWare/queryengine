@@ -100,6 +100,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 	public static String convertToIndelRange(long start, long stop){
 		String startPos = String.valueOf(start);
 		String endPos = String.valueOf(stop);
+		System.out.println("ConvertingIndelRange..");
 		return(startPos.substring(0, startPos.indexOf(".")) + 
 				endPos.substring(0, endPos.indexOf(".")));
 	}
