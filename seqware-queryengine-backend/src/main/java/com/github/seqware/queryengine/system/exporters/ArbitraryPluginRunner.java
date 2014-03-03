@@ -36,9 +36,6 @@ public class ArbitraryPluginRunner {
 		Class<? extends PluginInterface> arbitraryPluginClass;
 		try {
 			arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(args[1]);
-//	        // aggregations of donors/project counts by mutation
-//	        System.out.println("Finding Mutations to affected donors/project count aggregation");
-//	        Utility.dumpFromMapReducePlugin("MUTATION\tMUTATION_ID\tDONORS/PROJECTS_AFFECTED\n", ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
 	        long start = new Date().getTime();
 			System.out.println("Running plugin: " + args[1]);
 			Utility.dumpFromMapReducePlugin(args[1], ref, null, arbitraryPluginClass, (args.length == 3 ? args[2] : null));
@@ -55,9 +52,7 @@ public class ArbitraryPluginRunner {
 			System.exit(-2);
 		}
 	}
-	
 
-	
 	public ArbitraryPluginRunner(String[] args){
 		this.args = args;
 	}
