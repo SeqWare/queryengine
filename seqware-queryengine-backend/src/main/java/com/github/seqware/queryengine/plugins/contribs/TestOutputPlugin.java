@@ -40,9 +40,10 @@ import org.apache.hadoop.io.Text;
 public class TestOutputPlugin extends FilteredFileOutputPlugin{
    	private Text text = new Text();
     private Text textKey = new Text();
-    Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
     @Override
 	public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+        Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
+
     	System.out.println("[INFO] Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
