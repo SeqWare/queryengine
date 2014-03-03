@@ -53,9 +53,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 		}
 		
 		for (FeatureSet fs : atoms.keySet()){
-			System.out.println(fs.getReference().getDisplayName());
 			for (Feature f : atoms.get(fs)){
-				System.out.println(f.getStart());
 				System.out.println("[INFO] Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
 					System.out.println("[INFO] In the loop.. getting start pos: " +positionFeature.getStart());
