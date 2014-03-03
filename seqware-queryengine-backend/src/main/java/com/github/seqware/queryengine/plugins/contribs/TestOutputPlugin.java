@@ -60,11 +60,15 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 				System.out.println(f.getStart());
 				System.out.println("Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
-					System.out.println("In the loop.. getting start pos: " + positionFeature.getStart());
+					System.out.println("In the loop.. getting start pos: " +positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
+					System.out.println("indelRange..: " + indelRange);
 					String indelStart = convertLongToString(positionFeature.getStart());
+					System.out.println("indelStart..: " + indelStart);
 					text.set(indelRange);
+					System.out.println("ran text.set.. do you see me?");
 					textKey.set(indelStart);
+					System.out.println("ran textKey.set.. do you see me?");
 					System.out.println("Running mapperInterface");
 					mapperInterface.write(textKey, text);
 					System.out.println(indelRange);
