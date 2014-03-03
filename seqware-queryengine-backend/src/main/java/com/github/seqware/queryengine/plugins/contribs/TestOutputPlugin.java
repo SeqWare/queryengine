@@ -40,14 +40,14 @@ import org.apache.hadoop.io.Text;
 public class TestOutputPlugin extends FilteredFileOutputPlugin{
    	private Text text = new Text();
     private Text textKey = new Text();
+    
     @Override
 	public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
-        Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
-
+    	Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
     	System.out.println("[INFO] Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
-				if (f.getStart() == position){
+				if ((f.getStart() < position && f.getStop() < position) || (f.getStart() == position)){
 					System.out.println("[INFO] Adding feature for mapping at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
