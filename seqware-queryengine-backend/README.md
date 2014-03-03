@@ -190,12 +190,14 @@ usage: ArbitraryPluginRunner
  -p <pluginClass>   (required) the plugin to be run, full package path
  -r <reference>     (required) the reference ID of the FeatureSet to run
                     plugin on
-                    
+
 seqware@master:~/gitroot/seqware/seqware-distribution/target$ 
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
 ````
 
 In this case you may try to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking with my ArbitraryPluginRunner, albeit not returning information in the txt output (I will fix this on monday, there seems to be some lower level issue which is causing this). 
+
+However, the plugin I have written below works (this is the plugin I used to verify that the map reduce of naive overlaps is working as expected).
 
 ````
 com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
