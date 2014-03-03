@@ -1,10 +1,6 @@
 package com.github.seqware.queryengine.system.exporters;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -17,11 +13,9 @@ import org.apache.commons.cli.PosixParser;
 
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.PluginInterface;
-import com.github.seqware.queryengine.plugins.contribs.MutationsToDonorsAggregationPlugin;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
-import com.github.seqware.queryengine.util.SGID;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 
 public class ArbitraryPluginRunner {
