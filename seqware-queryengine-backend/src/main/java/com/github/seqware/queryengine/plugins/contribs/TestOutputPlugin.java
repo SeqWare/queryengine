@@ -58,6 +58,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 			System.out.println(fs.getReference().getDisplayName());
 			for (Feature f : atoms.get(fs)){
 				System.out.println(f.getStart());
+				System.out.println("Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
 					String indelStart = convertLongToString(positionFeature.getStart());
