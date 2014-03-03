@@ -26,8 +26,6 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 
 public class ArbitraryPluginRunner {
 
-    /** Constant <code>INPUT_FILES_PARAM='i'</code> */
-    public static final char INPUT_FILES_PARAM = 'i';
     /** Constant <code>OUTPUT_FILE_PARAM='o'</code> */
     public static final char OUTPUT_FILE_PARAM = 'o';
     /** Constant <code>REFERENCE_ID_PARAM='r'</code> */
