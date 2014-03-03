@@ -239,10 +239,10 @@ public class TableSetupTest {
 //				System.out.println(value);
 //				FeatureList fL = fLio.byteArr2m(value);
 //				Feature f = fIo.byteArr2m(value);
-				FeatureSet fS = fSIo.byteArr2m(value);
+//				FeatureSet fS = fSIo.byteArr2m(value);
 //				System.out.println("fL has a class of: " + fL.getClass());
 //				System.out.println("f has a class of: " + f.getClass());
-				System.out.println("fS has a class of: " + fS.getClass());
+//				System.out.println("fS has a class of: " + fS.getClass());
 				
 //				for (Feature f : fL.getFeatures()){
 //					System.out.println("Row: " + g.getId());
