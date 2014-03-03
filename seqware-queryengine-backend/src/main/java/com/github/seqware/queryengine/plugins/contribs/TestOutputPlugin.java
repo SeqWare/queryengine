@@ -42,11 +42,11 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
     Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
     @Override
 	public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
-    	System.out.println("Mapping.........");
+    	System.out.println("[INFO] Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
 				if (f.getStart() == position){
-					System.out.println("Adding feature for mapping at valid position: " +  f.getDisplayName());
+					System.out.println("[INFO] Adding feature for mapping at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
 			}
@@ -56,17 +56,17 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 			System.out.println(fs.getReference().getDisplayName());
 			for (Feature f : atoms.get(fs)){
 				System.out.println(f.getStart());
-				System.out.println("Size of added features...: "+  featuresAtCurrentLocation.size());
+				System.out.println("[INFO] Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
-					System.out.println("In the loop.. getting start pos: " +positionFeature.getStart());
+					System.out.println("[INFO] In the loop.. getting start pos: " +positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
-					System.out.println("indelRange...(VALUE): " + indelRange);
+					System.out.println("[INFO] indelRange...(VALUE): " + indelRange);
 //					String indelStart = convertLongToString(positionFeature.getStart());
-					String indelStart = positionFeature.getDisplayName();
-					System.out.println("indelStart...(KEY): " + indelStart);
+					String indelStart = positionFeature.getSGID().toString();
+					System.out.println("[INFO] indelStart...(KEY): " + indelStart);
 					text.set(indelRange);
 					textKey.set(indelStart);
-					System.out.println("Running mapperInterface");
+					System.out.println("[INFO] Running mapperInterface");
 					mapperInterface.write(textKey, text);
 					System.out.println(indelRange);
 				}
@@ -76,7 +76,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 	}
 	@Override
 	public void reduce(Text reduceKey, Iterable<Text> reduceValues, ReducerInterface<Text, Text> reducerInterface) {
-		System.out.println("Reducing.......");
+		System.out.println("[INFO] Reducing.......");
 		Set<Text> seenSet = new HashSet<Text>();
 		String newFeatStr = "";
 		for (Text val : reduceValues){
@@ -89,10 +89,10 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 			for (String curr : fsArr){
 				newFeatStr += curr + "; ";
 			}
-			System.out.println("REDUCED: "+ newFeatStr);
+			System.out.println("[INFO] REDUCED: "+ newFeatStr);
 		}
 		text.set("\n" + reduceKey.toString() + "\t" + newFeatStr);
-		System.out.println("Running reducerInterface");
+		System.out.println("[INFO] Running reducerInterface");
 		reducerInterface.write(text,null);
 		
 	}
@@ -100,7 +100,6 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 	public static String convertToIndelRange(long start, long stop){
 		String startPos = String.valueOf(start);
 		String endPos = String.valueOf(stop);
-		System.out.println("Converted IndelRange..");
 		return(startPos + "-" + endPos);
 	}
 	
