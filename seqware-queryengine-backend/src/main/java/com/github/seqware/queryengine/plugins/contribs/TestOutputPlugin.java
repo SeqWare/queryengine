@@ -38,6 +38,7 @@ import org.apache.hadoop.io.Text;
  * @version $Id: $Id
  */
 public class TestOutputPlugin extends FilteredFileOutputPlugin{
+    
    	private Text text = new Text();
     private Text textKey = new Text();
     
