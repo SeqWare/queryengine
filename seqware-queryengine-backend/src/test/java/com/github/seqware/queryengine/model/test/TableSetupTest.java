@@ -229,8 +229,10 @@ public class TableSetupTest {
 				FeatureListIO fLio = new FeatureListIO();
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
 				byte[] value = columnLatest.getValue();
+				System.out.println(columnLatest);
+				System.out.println(value);
 				FeatureList fL = fLio.byteArr2m(value);
-				System.out.println(fL);
+//				System.out.println(fL);
 //				for (Feature f : fL.getFeatures()){
 //					System.out.println("Row: " + g.getId());
 //					System.out.println(f.getStart() + " " + f.getStop());
