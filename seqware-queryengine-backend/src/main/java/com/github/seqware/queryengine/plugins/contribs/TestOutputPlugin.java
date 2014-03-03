@@ -84,7 +84,6 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
             if (seenSet.contains(val)){
                 continue;
             }
-			System.out.println(val.toString());
 			seenSet.add(val);
 			String[] fsArr = val.toString().split(",");
 			for (String curr : fsArr){
