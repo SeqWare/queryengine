@@ -62,6 +62,7 @@ public class ArbitraryPluginRunner {
 			String referenceName = cmd.getOptionValue(REFERENCE_ID_PARAM);
 			String plugin = cmd.getOptionValue(REFERENCE_ID_PARAM);
 			String outputFile = cmd.getOptionValue(OUTPUT_FILE_PARAM);
+			Class<? extends PluginInterface> arbitraryPluginClass;
 
 			Reference ref = null;
 			for (Reference r : SWQEFactory.getQueryInterface().getReferences()){
@@ -71,28 +72,20 @@ public class ArbitraryPluginRunner {
 				}
 			}
 
-			Class<? extends PluginInterface> arbitraryPluginClass;
-			try {
-
-				arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(plugin);
-		        long start = new Date().getTime();
-				System.out.println("Running plugin: " + plugin);
-				Utility.dumpFromMapReducePlugin(plugin, ref, null, arbitraryPluginClass, outputFile);
-		        long stop = new Date().getTime();
-		        float diff = ((stop - start) / 1000) / 60;
-		        System.out.println("Minutes to query: "+diff);
-		        return SUCCESS;
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(plugin);
+	        long start = new Date().getTime();
+			System.out.println("Running plugin: " + plugin);
+			Utility.dumpFromMapReducePlugin(plugin, ref, null, arbitraryPluginClass, outputFile);
+	        long stop = new Date().getTime();
+	        float diff = ((stop - start) / 1000) / 60;
+	        System.out.println("Minutes to query: "+diff);
 			
 			if (ref == null){
 				System.out.println("Reference was not found.");
 				System.exit(-2);
 			}
 			
-			
+			return SUCCESS;
 		} catch (MissingOptionException e) {
             // automatically generate the help statement
             HelpFormatter formatter = new HelpFormatter();
@@ -103,7 +96,10 @@ public class ArbitraryPluginRunner {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp(SOFeatureImporter.class.getSimpleName(), options);
             System.exit(FeatureImporter.EXIT_CODE_INVALID_ARGS);
-        }
+        } catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		}
         return FAILIURE;
 	}
 }
