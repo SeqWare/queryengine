@@ -48,8 +48,6 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 				if (f.getStart() == position){
 					System.out.println("Feature at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
-				} else {
-					System.out.println ("f.getStart: " + f.getStart() + ", " + "position:" + position);
 				}
 			}
 		}
@@ -100,15 +98,12 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 	public static String convertToIndelRange(long start, long stop){
 		String startPos = String.valueOf(start);
 		String endPos = String.valueOf(stop);
-//		String converted = startPos.substring(0, startPos.indexOf(".")) + 
-//				endPos.substring(0, endPos.indexOf("."));
 		System.out.println("Converted IndelRange..");
 		return(startPos + "-" + endPos);
 	}
 	
 	public static String convertLongToString(long start){
 		String startPos = String.valueOf(start);
-//		return(startPos.substring(0, startPos.indexOf(".")));
 		return (startPos);
 	}
 }
