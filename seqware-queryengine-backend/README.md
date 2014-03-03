@@ -185,11 +185,12 @@ There should be 4 rows of data stored in HBase as it was a 3 base deletion that 
 
 ````
 seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
-usage: SOFeatureImporter
+usage: ArbitraryPluginRunner
  -o <outputFile>    (required) output file
  -p <pluginClass>   (required) the plugin to be run, full package path
  -r <reference>     (required) the reference ID of the FeatureSet to run
                     plugin on
+                    
 seqware@master:~/gitroot/seqware/seqware-distribution/target$ 
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
 ````
