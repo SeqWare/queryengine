@@ -232,7 +232,7 @@ public class TableSetupTest {
 				FeatureIO fIo = new FeatureIO();
 				FeatureSetIO fSIo = new FeatureSetIO();
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
-				byte[] value = columnLatest.getRow();
+				byte[] value = columnLatest.getValue();
 				System.out.println(Bytes.toString(value));
 				//Test what serializer to use
 //				System.out.println(columnLatest);
