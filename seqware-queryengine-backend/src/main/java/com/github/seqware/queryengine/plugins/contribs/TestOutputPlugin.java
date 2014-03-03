@@ -81,6 +81,9 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 		Set<Text> seenSet = new HashSet<Text>();
 		String newFeatStr = "";
 		for (Text val : reduceValues){
+            if (seenSet.contains(val)){
+                continue;
+            }
 			System.out.println(val.toString());
 			seenSet.add(val);
 			String[] fsArr = val.toString().split(",");
