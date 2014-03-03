@@ -46,7 +46,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
 				if (f.getStart() == position){
-					System.out.println("Feature at valid position: " +  f.getDisplayName());
+					System.out.println("Adding feature for mapping at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
 			}
@@ -60,13 +60,12 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 				for (Feature positionFeature : featuresAtCurrentLocation){
 					System.out.println("In the loop.. getting start pos: " +positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
-					System.out.println("indelRange..: " + indelRange);
-					String indelStart = convertLongToString(positionFeature.getStart());
-					System.out.println("indelStart..: " + indelStart);
+					System.out.println("indelRange...(VALUE): " + indelRange);
+//					String indelStart = convertLongToString(positionFeature.getStart());
+					String indelStart = positionFeature.getDisplayName();
+					System.out.println("indelStart...(KEY): " + indelStart);
 					text.set(indelRange);
-					System.out.println("ran text.set.. do you see me?");
 					textKey.set(indelStart);
-					System.out.println("ran textKey.set.. do you see me?");
 					System.out.println("Running mapperInterface");
 					mapperInterface.write(textKey, text);
 					System.out.println(indelRange);
