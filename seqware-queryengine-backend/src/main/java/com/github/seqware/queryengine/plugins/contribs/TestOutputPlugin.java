@@ -91,7 +91,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 			}
 			System.out.println("REDUCED: "+ newFeatStr);
 		}
-		text.set(reduceKey.toString() + "\t" + newFeatStr);
+		text.set(reduceKey.toString() + "\t" + newFeatStr + "\n");
 		System.out.println("Running reducerInterface");
 		reducerInterface.write(text,null);
 		
@@ -103,7 +103,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 //		String converted = startPos.substring(0, startPos.indexOf(".")) + 
 //				endPos.substring(0, endPos.indexOf("."));
 		System.out.println("Converted IndelRange..");
-		return(startPos + " " + endPos);
+		return(startPos + "-" + endPos);
 	}
 	
 	public static String convertLongToString(long start){
