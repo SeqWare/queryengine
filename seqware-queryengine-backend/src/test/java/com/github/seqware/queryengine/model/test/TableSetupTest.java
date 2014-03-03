@@ -232,16 +232,16 @@ public class TableSetupTest {
 				FeatureIO fIo = new FeatureIO();
 				FeatureSetIO fSIo = new FeatureSetIO();
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
-				byte[] value = columnLatest.getRow();
+				byte[] value = columnLatest.getValue();
 				
 				//Test what serializer to use
 //				System.out.println(columnLatest);
 //				System.out.println(value);
 //				FeatureList fL = fLio.byteArr2m(value);
-//				Feature f = fIo.byteArr2m(value);
+				Feature f = fIo.byteArr2m(value);
 //				FeatureSet fS = fSIo.byteArr2m(value);
 //				System.out.println("fL has a class of: " + fL.getClass());
-//				System.out.println("f has a class of: " + f.getClass());
+				System.out.println("f has a class of: " + f.getClass());
 //				System.out.println("fS has a class of: " + fS.getClass());
 				
 //				for (Feature f : fL.getFeatures()){
