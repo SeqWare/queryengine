@@ -63,7 +63,7 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
 					System.out.println("[INFO] indelRange...(VALUE): " + indelRange);
 //					String indelStart = convertLongToString(positionFeature.getStart());
-					String indelStart = positionFeature.getSeqid();
+					String indelStart = positionFeature.getSGID().getUuid().toString();
 					System.out.println("[INFO] indelStart...(KEY): " + indelStart);
 					text.set(indelRange);
 					textKey.set(indelStart);
