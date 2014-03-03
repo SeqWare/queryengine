@@ -69,7 +69,6 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 					textKey.set(indelStart);
 					System.out.println("[INFO] Running mapperInterface");
 					mapperInterface.write(textKey, text);
-					System.out.println(indelRange);
 				}
 			}
 		}
