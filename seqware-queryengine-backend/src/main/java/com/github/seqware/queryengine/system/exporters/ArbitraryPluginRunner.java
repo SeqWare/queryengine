@@ -83,12 +83,12 @@ public class ArbitraryPluginRunner {
 		} catch (MissingOptionException e) {
             // automatically generate the help statement
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(SOFeatureImporter.class.getSimpleName(), options);
+            formatter.printHelp("ArbitraryPluginRunner usage:", options);
             System.exit(FeatureImporter.EXIT_CODE_INVALID_ARGS);
         } catch (ParseException e) {
             // automatically generate the help statement
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(SOFeatureImporter.class.getSimpleName(), options);
+            formatter.printHelp("ArbitraryPluginRunner usage:", options);
             System.exit(FeatureImporter.EXIT_CODE_INVALID_ARGS);
         } catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
