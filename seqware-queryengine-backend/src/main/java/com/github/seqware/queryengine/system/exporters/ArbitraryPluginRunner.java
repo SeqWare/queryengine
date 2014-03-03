@@ -32,17 +32,21 @@ public class ArbitraryPluginRunner {
     public static final char REFERENCE_ID_PARAM = 'r';
     /** Constant <code>PLUGIN_CLASS_PARAM='p'</code>*/
     public static final char PLUGIN_CLASS_PARAM = 'p';
+    /** Constant <code>SUCCESS</code>*/
+    private static final int SUCCESS = 1;
+    /** Constant <code>FAILIURE</code>*/
+    private static final int FAILIURE = 1;
     
 	private String[] args;
 	
 	public static void main(String[] args) {
-		SGID mainMethod = ArbitraryPluginRunner.runArbitraryPluginRunner(args);
-        if (mainMethod == null) {
+		int mainMethod = ArbitraryPluginRunner.runArbitraryPluginRunner(args);
+        if (mainMethod == FAILIURE) {
             System.exit(FeatureImporter.EXIT_CODE_INVALID_FILE);
         }
 	}
 
-	public static SGID runArbitraryPluginRunner(String[] args){
+	public static int runArbitraryPluginRunner(String[] args){
 
 		Options options = new Options();
 		Option option1 = OptionBuilder.withArgName("outputFile").withDescription("(required) output file").hasArgs(1).isRequired().create(OUTPUT_FILE_PARAM);
@@ -77,6 +81,7 @@ public class ArbitraryPluginRunner {
 		        long stop = new Date().getTime();
 		        float diff = ((stop - start) / 1000) / 60;
 		        System.out.println("Minutes to query: "+diff);
+		        return SUCCESS;
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -86,6 +91,8 @@ public class ArbitraryPluginRunner {
 				System.out.println("Reference was not found.");
 				System.exit(-2);
 			}
+			
+			
 		} catch (MissingOptionException e) {
             // automatically generate the help statement
             HelpFormatter formatter = new HelpFormatter();
@@ -97,6 +104,6 @@ public class ArbitraryPluginRunner {
             formatter.printHelp(SOFeatureImporter.class.getSimpleName(), options);
             System.exit(FeatureImporter.EXIT_CODE_INVALID_ARGS);
         }
-        return null;
+        return FAILIURE;
 	}
 }
