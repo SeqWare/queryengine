@@ -55,15 +55,12 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 		
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
-				String fOverlapID = f.getTagByKey("id").getValue().toString();
 				System.out.println("[INFO] Size of added features...: "+  featuresAtCurrentLocation.size());
-				System.out.println("[INFO] id of over lapped feature...: " + fOverlapID);
 				for (Feature positionFeature : featuresAtCurrentLocation){
 					System.out.println("[INFO] In the loop.. getting start pos: " +positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
 					System.out.println("[INFO] indelRange...(VALUE): " + indelRange);
 					String indelStart = convertLongToString(position);
-//					String indelStart = positionFeature.getSGID().getUuid().toString();
 					System.out.println("[INFO] indelStart...(KEY): " + indelStart);
 					text.set(indelRange);
 					textKey.set(indelStart);
