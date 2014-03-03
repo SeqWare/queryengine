@@ -97,14 +97,14 @@ public class TestOutputPlugin extends FilteredFileOutputPlugin{
 		
 	}
 	
-	private String convertToIndelRange(long start, long stop){
+	public static String convertToIndelRange(long start, long stop){
 		String startPos = String.valueOf(start);
 		String endPos = String.valueOf(stop);
 		return(startPos.substring(0, startPos.indexOf(".")) + 
 				endPos.substring(0, endPos.indexOf(".")));
 	}
 	
-	private String convertLongToString(long start){
+	public static String convertLongToString(long start){
 		String startPos = String.valueOf(start);
 		return(startPos.substring(0, startPos.indexOf(".")));
 	}
