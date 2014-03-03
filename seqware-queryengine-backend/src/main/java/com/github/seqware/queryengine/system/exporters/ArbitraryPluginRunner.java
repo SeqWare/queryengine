@@ -77,7 +77,7 @@ public class ArbitraryPluginRunner {
 				arbitraryPluginClass = (Class<? extends PluginInterface>) Class.forName(plugin);
 		        long start = new Date().getTime();
 				System.out.println("Running plugin: " + plugin);
-				Utility.dumpFromMapReducePlugin(plugin, ref, null, arbitraryPluginClass, (args.length == 3 ? outputFile : null));
+				Utility.dumpFromMapReducePlugin(plugin, ref, null, arbitraryPluginClass, outputFile);
 		        long stop = new Date().getTime();
 		        float diff = ((stop - start) / 1000) / 60;
 		        System.out.println("Minutes to query: "+diff);
