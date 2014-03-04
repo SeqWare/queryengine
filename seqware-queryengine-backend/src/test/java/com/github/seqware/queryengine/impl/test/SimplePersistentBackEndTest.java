@@ -32,7 +32,7 @@ public class SimplePersistentBackEndTest extends FeatureStoreInterfaceTest {
     @Test
     public void storageAndRetrievalTest() {
         UUID testID = UUID.randomUUID();
-//        System.out.println("running subclass test in testID: " + testID.toString());
+        //System.out.println("running subclass test in testID: " + testID.toString());
         
         // storage type needs to match the default set in the base class of the test otherwise bad things happen
         SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
@@ -61,7 +61,7 @@ public class SimplePersistentBackEndTest extends FeatureStoreInterfaceTest {
         FeatureSet returnedSet = (FeatureSet)atom;
 
         Assert.assertTrue("Returned feature set does not contain the same amount of features as were stored.", aSet.getCount() == returnedSet.getCount());
-//        System.out.println("ending subclass test in testID: " + testID.toString());
+        //System.out.println("ending subclass test in testID: " + testID.toString());
     }
 
     /**

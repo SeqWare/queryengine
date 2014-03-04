@@ -72,8 +72,8 @@ public class VCFImportDataManipulationTestSuite {
     /**
      * <p>setUpTest.</p>
      */
-//	@BeforeClass
-	//this will reset all the tables and load the vcf file paths for testing
+	//@BeforeClass
+	// this will reset all the tables and load the vcf file paths for testing
 	public static void setUpTest() throws IOException{
 		Configuration config = HBaseConfiguration.create();
 		try {
@@ -96,8 +96,8 @@ public class VCFImportDataManipulationTestSuite {
     /**
      * <p>testInstallAndRunArbitraryPlugin.</p>
      */
-//	@Test
-	//Test some implemented plugin that is working
+	//@Test
+	// Test some implemented plugin that is working
     public void testInstallAndRunArbitraryPlugin() {
         Class<? extends PluginInterface> arbitraryPlugin;
         // only use the M/R plugin for this test if using MR
@@ -129,8 +129,8 @@ public class VCFImportDataManipulationTestSuite {
     /**
      * <p>testVCFImport.</p>
      */
-//	@Test
-	//This imports the features from a vcf file into HBase
+	//@Test
+	// This imports the features from a vcf file into HBase
 	public void testVCFImport(){
 		SGID main;
 		FeatureSet fSet;
@@ -154,7 +154,7 @@ public class VCFImportDataManipulationTestSuite {
     /**
      * <p>complexQueryTest.</p>
      */
-//	@Test
+    //@Test
 	public void complexQueryTest(){
 		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
 		CreateUpdateManager manager = SWQEFactory.getModelManager();
@@ -170,7 +170,7 @@ public class VCFImportDataManipulationTestSuite {
     /**
      * <p>verifyNaiveImport.</p>
      */
-//	@Test
+	//@Test
 	public void verifyNaiveImport(){
 		try {
 			Configuration config = HBaseConfiguration.create();
