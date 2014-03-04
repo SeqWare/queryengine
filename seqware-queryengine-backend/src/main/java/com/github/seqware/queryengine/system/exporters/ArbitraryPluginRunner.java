@@ -15,7 +15,6 @@ import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
-import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 
 public class ArbitraryPluginRunner {
@@ -42,6 +41,7 @@ public class ArbitraryPluginRunner {
 
 	public static int runArbitraryPluginRunner(String[] args){
 
+		//Adding options for command line usage
 		Options options = new Options();
 		Option option1 = OptionBuilder.withArgName("outputFile").withDescription("(required) output file").hasArgs(1).isRequired().create(OUTPUT_FILE_PARAM);
 		options.addOption(option1);
@@ -59,6 +59,7 @@ public class ArbitraryPluginRunner {
 			Class<? extends PluginInterface> arbitraryPluginClass;
 
 			Reference ref = null;
+			//Make sure reference exists
 			for (Reference r : SWQEFactory.getQueryInterface().getReferences()){
 				if (referenceName.equals(r.getName())){
 					ref = r;

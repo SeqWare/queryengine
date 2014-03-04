@@ -31,8 +31,8 @@ import java.util.Set;
 import org.apache.hadoop.io.Text;
 
 /**
- * This plug-in implements a quick and dirty export using Map/Reduce
- *
+ * This plug-in implements exporting using Map/Reduce, to prove that there can be naively imported 
+ * data in the backend and a plugin that recognizes this.
  *
  * @author bso
  * @version $Id: $Id
