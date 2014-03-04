@@ -57,27 +57,23 @@ import com.github.seqware.queryengine.kernel.RPNStack.Constant;
 import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
 import com.github.seqware.queryengine.kernel.RPNStack.Operation;
 
-public class TableSetupTest {
+/**
+ * Unit tests of some plugin runners and basic importing/querying of vcf data.
+ * 
+ * @author bso
+ * @version $Id: $Id
+ */
+public class VCFImportDataManipulationTestSuite {
 	static FeatureSet aSet, bSet, cSet;
 	static Feature a1,a2,a3;
 	static File testVCFFile = null;
-	static File testSecondVCFFile = null;
 	static String refName = null;
-	static String refName2 = null;
-    
-//	public static void main(String[] args){
-//		try {
-//			setUpTest();
-//			testVCFImport();
-//			featureRetrieval();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
+
+    /**
+     * <p>setUpTest.</p>
+     */
 //	@BeforeClass
-	//this will reset all the tables and load the vcf file paths for testiing
+	//this will reset all the tables and load the vcf file paths for testing
 	public static void setUpTest() throws IOException{
 		Configuration config = HBaseConfiguration.create();
 		try {
@@ -93,24 +89,13 @@ public class TableSetupTest {
 		String curDir = System.getProperty("user.dir");
         SecureRandom random = new SecureRandom();
         refName = "Random_ref_" + new BigInteger(20, random).toString(32);
-//        refName2 = "Random_ref_" + new BigInteger(20, random).toString(32);
         testVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTest.vcf");
-//        testSecondVCFFile = new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf");
 
 	}
 	
-//	@Test
-	public void setupTest(){
-		SWQEFactory.getStorage().clearStorage();
-		CreateUpdateManager manager = SWQEFactory.getModelManager();
-		aSet = manager.buildFeatureSet().setReference(manager.buildReference().setName("DummyReference").build()).build();
-		a1 = manager.buildFeature().setSeqid("chr1").setStart(100).setType("type1").setStop(101).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
-		a2 = manager.buildFeature().setSeqid("chr1").setStart(101).setType("type2").setStop(102).setScore(100.0).setStrand(Feature.Strand.NEGATIVE).setSource("human").setPhase(".").build();
-		aSet.add(a1);
-		aSet.add(a2);
-		manager.flush();
-	}
-	
+    /**
+     * <p>testInstallAndRunArbitraryPlugin.</p>
+     */
 //	@Test
 	//Test some implemented plugin that is working
     public void testInstallAndRunArbitraryPlugin() {
@@ -138,9 +123,12 @@ public class TableSetupTest {
 					", Stop: " + f.getStop() + 
 					", Strand: " + f.getStrand());
         }
-//        Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
+        //Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
-
+	
+    /**
+     * <p>testVCFImport.</p>
+     */
 //	@Test
 	//This imports the features from a vcf file into HBase
 	public void testVCFImport(){
@@ -160,20 +148,12 @@ public class TableSetupTest {
         	aSet.add(f);
         	System.out.println("Stop: " + f.getStop());
         }
-		
-//        main= FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", refName2, testSecondVCFFile.getAbsolutePath()});        
-//        fSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(main, FeatureSet.class);
-//        
-//        manager = SWQEFactory.getModelManager();
-//        fIter = fSet.getFeatures();
-//        
-//        bSet = manager.buildFeatureSet().setReference(fSet.getReference()).build();
-//        while(fIter.hasNext()){
-//        	bSet.add(fIter.next());
-//        }
         manager.flush();
 	}
 	
+    /**
+     * <p>complexQueryTest.</p>
+     */
 //	@Test
 	public void complexQueryTest(){
 		SimplePersistentBackEnd backend = new SimplePersistentBackEnd(SWQEFactory.getStorage());
@@ -187,35 +167,11 @@ public class TableSetupTest {
 		manager.close();
 	}
 	
-//	@AfterClass
+    /**
+     * <p>verifyNaiveImport.</p>
+     */
 //	@Test
-	//	loop through hbase table to retrieve features in feature sets
-	public void featureRetrieval(){		
-		Atom a,b,c,d,e;
-		for (FeatureSet fSet : SWQEFactory.getQueryInterface().getFeatureSets()){
-//			System.out.println(fSet.getReference().getDisplayName());
-//			a = SWQEFactory.getQueryInterface().;
-//			b = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000013", Feature.class);
-//			c = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000014", Feature.class);
-//			d = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19.1:000000000000015", Feature.class);
-//			System.out.println(a.getDisplayName());
-//			System.out.println(b.getDisplayName());
-//			System.out.println(c.getDisplayName());
-//			System.out.println(d.getDisplayName());
-			
-			for (Feature f : fSet){
-//				System.out.println(f.getDisplayName() + 
-//						", Seqid: " + f.getSeqid() + 
-//						", Source: " + f.getSource() + 
-//						", Start: " + f.getStart() + 
-//						", Stop: " + f.getStop() + 
-//						", Strand: " + f.getStrand());
-			}
-		}
-	}
-	
-	@Test
-	public void lowLevelRetrieval(){
+	public void verifyNaiveImport(){
 		try {
 			Configuration config = HBaseConfiguration.create();
 			HTableInterface hg19Table = new HTable(config, "batman.hbaseTestTable_v2.Feature.hg_19");
@@ -229,39 +185,17 @@ public class TableSetupTest {
 			for (Get g : getList){
 				System.out.println(hg19Table.exists(g));
 				Result r = hg19Table.get(g);
-//				System.out.println(r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715")));
 				FeatureListIO fLio = new FeatureListIO();
 				FeatureIO fIo = new FeatureIO();
 				FeatureSetIO fSIo = new FeatureSetIO();
 				KeyValue columnLatest = r.getColumnLatest(Bytes.toBytes("d"), Bytes.toBytes("2682ee4b-5d7b-4ad8-b632-a897b5043715"));
 				byte[] value = columnLatest.getValue();
 				System.out.println(Bytes.toString(value));
-				//Test what serializer to use
-//				System.out.println(columnLatest);
-//				System.out.println(value);
-//				FeatureList fL = fLio.byteArr2m(value);
-//				Feature f = fIo.byteArr2m(value);
-//				FeatureSet fS = fSIo.byteArr2m(value);
-//				System.out.println("fL has a class of: " + fL.getClass());
-//				System.out.println("f has a class of: " + f.getClass());
-//				System.out.println("fS has a class of: " + fS.getClass());
-				
-//				for (Feature f : fL.getFeatures()){
-//					System.out.println("Row: " + g.getId());
-//					System.out.println(f.getStart() + " " + f.getStop());
-//				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-//  @Test
-    //Write a Test the OverlapMutationsAggregationPlugin plugin
-	public void testOLapPlugin(){
-		Class<? extends PluginInterface> arbPlugin;
-		arbPlugin = OverlappingMutationsAggregationPlugin.class;
-		SWQEFactory.getQueryInterface().getFeaturesByPlugin(0, arbPlugin, null, null);
 	}
 	
 }
