@@ -146,11 +146,11 @@ The above emits the results back into HBase.  To print the results to stdout:
     java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
 
-##Lifecycle of importing data, then running an Arbitrary Plugin on it.
+##Lifecycle of importing data and running an Arbitrary Plugin on it.
 
 Note: The Imported data can contain indels or snv, or a combination of both. Naive import still works properly regardless.
 
-#####Steps to import data (these are the steps used from http://seqware.github.io/docs/8-query-engine/#loading-data):
+#####Import data:
 
 After provisioning from the branch MRPluginLayerTest:
 ````
@@ -169,6 +169,8 @@ Naive import of the feature from smallTestOverlap.vcf in the test reources to th
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
 ````
 
+#####Accessing imported Data:
+
 At this point you can open up Hbase shell and list the imported data by running :
 
 ````
@@ -183,7 +185,7 @@ There should be 4 rows of data stored in HBase as it was a 3 base deletion that 
 1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
 ````
 
-####Steps to run a dumper plugin:
+#####Using the ArbitraryPluginRunner:
 
 ````
 seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
@@ -197,12 +199,10 @@ seqware@master:~/gitroot/seqware/seqware-distribution/target$
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
 ````
 
-In this case you may try to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking with my ArbitraryPluginRunner, albeit not returning information in the txt output (I will fix this on monday, there seems to be some lower level issue which is causing this). 
+In this case you may try to use this runner to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking it, albeit not returning information in the txt output. 
 
-However, the plugin I have written below works (this is the plugin I used to verify that the map reduce of naive overlaps is working as expected).
+However, the plugin written below works (this is the plugin used to verify that the map reduce of naive overlaps is working as expected).
 
 ````
 com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
 ````
-
-~~Unfortunately this "TestOutputPlugin" that I have written does not output what is expected as of yet (a simple map and reduce of the naively imported data in the HBase backend). I am to clear this up on Monday.~~ FIXED
