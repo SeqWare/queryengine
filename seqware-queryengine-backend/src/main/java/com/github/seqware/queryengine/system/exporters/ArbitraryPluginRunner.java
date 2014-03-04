@@ -17,6 +17,13 @@ import com.github.seqware.queryengine.system.Utility;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 
+/**
+ * This plug-in runner implements the instantiation and running of an 
+ * arbitrary input dumper plugin class.
+ *
+ * @author bso
+ * @version $Id: $Id
+ */
 public class ArbitraryPluginRunner {
 
     /** Constant <code>OUTPUT_FILE_PARAM='o'</code> */
