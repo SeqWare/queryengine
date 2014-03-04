@@ -146,9 +146,11 @@ The above emits the results back into HBase.  To print the results to stdout:
     java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
 
-##RUNNING BRIANS CO-OP CODE 
+##Lifecycle of importing data, then running an Arbitrary Plugin on it.
 
-#####Steps to import data (these are the steps I used from http://seqware.github.io/docs/8-query-engine/#loading-data):
+Note: The Imported data can contain indels or snv, or a combination of both. Naive import still works properly regardless.
+
+#####Steps to import data (these are the steps used from http://seqware.github.io/docs/8-query-engine/#loading-data):
 
 After provisioning from the branch MRPluginLayerTest:
 ````
@@ -162,9 +164,9 @@ Create a reference in the HBase backend
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
 ````
 
-Naive import of the feature from smallTest.vcf in the test reources to the HBase Backend
+Naive import of the feature from smallTestOverlap.vcf in the test reources to the HBase Backend
 ````
-java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTest.vcf -r hg_19 -w VCFVariantImportWorker
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
 ````
 
 At this point you can open up Hbase shell and list the imported data by running :
@@ -174,7 +176,7 @@ hbase shell
 list
 scan 'batman.hbaseTestTable_v2.Feature.hg_19'
 ````
-There should be 4 rows of data stored in HBase as it was a 3 base deletion that was specified in the smallTest.vcf:
+There should be 4 rows of data stored in HBase as it was a 3 base deletion that was specified in the smallTestOverlap.vcf:
 
 ````
 #CHROM  POS ID  REF ALT QUAL    FILTER  INFO
