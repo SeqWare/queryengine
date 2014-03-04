@@ -164,7 +164,7 @@ Create a reference in the HBase backend
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
 ````
 
-Naive import of the feature from smallTestOverlap.vcf in the test reources to the HBase Backend
+Naive import of the indel containing feature from smallTestOverlap.vcf in the test resources to the HBase Backend
 ````
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
 ````
