@@ -38,6 +38,7 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
 
     private Text text = new Text();
     private Text textKey = new Text();
+    private long count = 0; 
     
     /** {@inheritDoc} */
     @Override
