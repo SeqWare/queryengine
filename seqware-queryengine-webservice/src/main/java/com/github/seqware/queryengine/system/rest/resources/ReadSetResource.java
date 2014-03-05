@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
@@ -33,12 +34,15 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.BAMFileWriter;
@@ -183,4 +187,18 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
     return (null);
   }
   
+  //Currently not complete, but a rough POST method
+  // This is currently not set to have child elements...
+  @POST
+  @ApiOperation(value = "Create a totally new ReadSet by JSON", notes = "This can only be done by an authenticated user.")
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addSet(
+      @ApiParam(value = "ReadSet that needs to be added to the store", required = true) ReadSet set) {
+    CreateUpdateManager modelManager = SWQEFactory.getModelManager();
+    modelManager.objectCreated(set);
+    modelManager.close();
+    return Response.ok().entity(set).build();
+  }
 }

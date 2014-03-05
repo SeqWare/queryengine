@@ -26,7 +26,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,6 +39,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
+import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
 
 /**
  * Plugin resource.
@@ -43,39 +51,18 @@ import javax.ws.rs.core.Response;
 @Path("/plugin")
 @Api(value = "/plugin", description = "Operations about plugins"/*, listingPath="/resources/plugin"*/)
 @Produces({"application/json"})
-public class PluginResource extends GenericSetResource<Plugin> {
+public class PluginResource {
 
-    @Override
     public final String getClassName() {
         return "Plugin";
     }
 
-    @Override
     public final Class getModelClass() {
         return Plugin.class;
     }
     
-    @Override
     public final SeqWareIterable getElements() {
         return SWQEFactory.getQueryInterface().getPlugins();
-    }
-    
-    /**
-     * Upload a jar file to create a new plugin
-     * @return 
-     */
-    @POST
-    @ApiOperation(value = "Create new plugin from jarfile", notes = "This can only be done by an authenticated user.")
-    @ApiResponses(value = {
-        @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    public Response uploadOBO(
-            @ApiParam(value = "rowkey that needs to be updated", required = false) 
-            @QueryParam("sgid") String sgid
-            ) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
-        return Response.ok().entity("").build();
     }
     
     /**
@@ -108,4 +95,41 @@ public class PluginResource extends GenericSetResource<Plugin> {
         return Response.ok("ok".toString())/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
     }
     
+    @GET
+    @ApiOperation(value = "List all available elements by rowkey", notes = "This lists the raw rowkeys used to uniquely identify each chain of entities.")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response pluginsRequest() {
+        List<HashMap<String, String>> stringList = new ArrayList<HashMap<String, String>>();
+        
+//        for (Atom ts : getElements()) {
+//            HashMap<String, String> obj = new HashMap<String, String>();
+//            obj.put("sgid", ts.getSGID().getUuid().toString());
+//            obj.put("displayName", ts.getDisplayName());
+//            obj.put("timestamp", ts.getTimestamp().toString());
+//            stringList.add(obj);
+//        }
+        return Response.ok().entity(stringList)/*.header("Access-Control-Allow-Origin", "*").header("X-DAS-Status", "200")*/.build();
+    }
+//    
+//    @GET
+//    @Path(value = "/{sgid}")
+//    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", position = 20)
+//    @ApiResponses(value = {
+//        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+//        @ApiResponse(code = INVALID_SET, message = "set not found")})
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response featureByIDRequest(
+//            @ApiParam(value = "id of set to be fetched", required = true)
+//            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+//        // Check whether the dsn contains the type of store, or not:
+//        //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
+//        //            return this.getUnsupportedOperationResponse();
+//        //Atom latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
+//        //if (latestAtomByRowKey == null) {
+//            // A genuinely bad request:
+//            // (see also http://www.biodas.org/documents/spec-1.6.html#response)
+//        //    throw new InvalidIDException(INVALID_ID, "ID not found");
+//       // }
+//        return Response.ok().entity(latestAtomByRowKey)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+//    }
 }
