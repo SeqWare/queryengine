@@ -218,7 +218,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
             
-            for (Object o : parameter){
+            for (Object o : parameters){
                 System.out.println(o);
             }
 
