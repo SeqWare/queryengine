@@ -527,13 +527,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 sourceSetIDs.add(sSet.getSGID());
             }
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+"featuresets");
-            System.out.println("Dealing with "+sourceSetIDs.size()+" featuresets");
+            System.out.println("[INFO] Dealing with "+sourceSetIDs.size()+" featuresets");
             Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
             Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
                Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(e.getValue());
                Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
-               System.out.println("Consolidated to  " + consolidateRow.size() + " features");
+               System.out.println("[INFO] Consolidated to  " + consolidateRow.size() + " features");
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
@@ -542,7 +542,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
-            System.out.println(mapReducePlugin.getClass().getSimpleName());
+            System.out.println("[INFO] MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
