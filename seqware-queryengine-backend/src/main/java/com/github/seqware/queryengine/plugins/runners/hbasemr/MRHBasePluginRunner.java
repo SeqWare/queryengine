@@ -215,7 +215,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             conf.set("mapred.child.java.opts", "-Xmx2048m -verbose:gc");
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
-
+            
+            String[] strings = conf.getStrings(EXT_PARAMETERS);
+            final String mapParameter = strings[SETTINGS_MAP];
+            Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[EXTERNAL_PARAMETERS];
+            System.out.println(settingsMap);
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
             
             Scan scan = new Scan();
