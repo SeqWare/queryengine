@@ -191,7 +191,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
 
-            System.out.println("this is the param: " + Base64.decodeBase64(str_params[EXTERNAL_PARAMETERS]));
+            System.out.println("this is the param: " + SerializationUtils.deserialize(Base64.decodeBase64(str_params[EXTERNAL_PARAMETERS]));
             File file = new File(new URI(Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class)));
             if (file.exists()) {
                 conf.setStrings("tmpjars", Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class));
