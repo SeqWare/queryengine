@@ -48,6 +48,7 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
 
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
+        count++;
         for (Feature f : atoms.values().iterator().next()) {
             
             if (f.getStart() != position){
@@ -61,6 +62,7 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
             // the map function emits SGID , rows of a VCF file in pairs
             mapperInterface.write(textKey, text);
         }
+        System.out.println(count);
     }
 
     @Override
