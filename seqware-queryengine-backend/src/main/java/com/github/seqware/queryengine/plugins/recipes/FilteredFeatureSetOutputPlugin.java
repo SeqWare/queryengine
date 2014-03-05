@@ -83,7 +83,7 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
             modelManager.persist(mapperInterface.getDestSet());
             Logger.getLogger(FilteredFeatureSetOutputPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
         }
-        System.out.println(count);
+        System.out.println(position);
     }
 
     @Override
