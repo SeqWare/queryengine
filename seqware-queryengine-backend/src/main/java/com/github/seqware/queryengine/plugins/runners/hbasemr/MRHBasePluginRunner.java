@@ -219,7 +219,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
             
             for (Object o : parameters){
-                System.out.println(o);
+                System.out.println(o.getClass());
             }
 
             Scan scan = new Scan();
