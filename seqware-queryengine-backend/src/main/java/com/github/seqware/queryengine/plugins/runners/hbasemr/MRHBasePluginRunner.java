@@ -539,8 +539,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             String rowKey = Bytes.toString(row.get());
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
-            System.out.println(mapReducePlugin.getClass().getSimpleName());
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
+            System.out.println(mapReducePlugin.getClass().getSimpleName());
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
