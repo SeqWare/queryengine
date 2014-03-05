@@ -22,6 +22,8 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
+import com.github.seqware.queryengine.kernel.RPNStack;
+import com.github.seqware.queryengine.kernel.RPNStack.Parameter;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
@@ -191,7 +193,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             String[] str_params = serializeParametersToString(parameters, mapReducePlugin, sSet, dSet);
 
-            System.out.println("this is the param: " + SerializationUtils.deserialize(Base64.decodeBase64(str_params[EXTERNAL_PARAMETERS])));
             File file = new File(new URI(Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class)));
             if (file.exists()) {
                 conf.setStrings("tmpjars", Constants.Term.DEVELOPMENT_DEPENDENCY.getTermValue(String.class));
@@ -216,11 +217,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
             
-            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
-            
+            RPNStack rpnStack = new RPNStack();
             for (Object o : parameters){
-                System.out.println(o.getClass());
+            	if (o instanceof RPNStack){
+            		rpnStack = (RPNStack) ((RPNStack) o).evaluate();
+            		for (Parameter parameter : rpnStack.getParameters()){
+            			System.out.println(parameter.getName() + " an instance of " + parameter.getClass());
+            		}
+            	}
             }
+            
+            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
