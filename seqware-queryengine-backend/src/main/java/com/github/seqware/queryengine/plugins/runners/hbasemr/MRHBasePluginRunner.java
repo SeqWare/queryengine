@@ -218,20 +218,20 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             
             String[] strings = conf.getStrings(EXT_PARAMETERS);
             final String externalParameters = strings[EXTERNAL_PARAMETERS];
-            System.out.println("EXTERNAL_PARAMETERS : " + (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)));
+            System.out.println("EXTERNAL_PARAMETERS : " + SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)).getClass());
             
             final String internalParameters = strings[INTERNAL_PARAMETERS];
             if (internalParameters != null && !internalParameters.isEmpty()) {
-                System.out.println("INTERNAL_PARAMETERS : " + (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)));
+                System.out.println("INTERNAL_PARAMETERS : " + SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)).getClass());
             }
             final String sourceSets = strings[NUM_AND_SOURCE_FEATURE_SETS];
             if (sourceSets != null && !sourceSets.isEmpty()) {
                 List<FeatureSet> sSets = convertBase64StrToFeatureSets(sourceSets);
-                System.out.println("NUM_AND_SOURCE_FEATURE_SETS : " + sSets);
+                System.out.println("NUM_AND_SOURCE_FEATURE_SETS : " + sSets.getClass());
             }
             final String destSetParameter = strings[DESTINATION_FEATURE_SET];
             if (destSetParameter != null && !destSetParameter.isEmpty()) {
-            	 System.out.println("DESTINATION_FEATURE_SET : " + SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class));
+            	 System.out.println("DESTINATION_FEATURE_SET : " + SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class).getClass());
             }
             
             
