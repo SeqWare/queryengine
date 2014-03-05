@@ -23,6 +23,7 @@ import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
 import com.github.seqware.queryengine.kernel.RPNStack;
+import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
 import com.github.seqware.queryengine.kernel.RPNStack.Parameter;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
@@ -222,7 +223,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             	if (o instanceof RPNStack){
             		rpnStack = (RPNStack) o;
             		for (Parameter parameter : rpnStack.getParameters()){
-            			System.out.println("[INFO] " + parameter.getName() + " an instance of " + parameter.getClass() + " with value " + parameter.getUniqueName());
+            			if (parameter instanceof FeatureAttribute){
+                			System.out.println("[INFO] " + parameter.getName() + " an instance of " + parameter.getClass());
+
+            			}
             		}
             	}
             }
