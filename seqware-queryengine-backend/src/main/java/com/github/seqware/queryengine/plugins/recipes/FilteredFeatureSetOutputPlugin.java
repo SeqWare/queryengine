@@ -64,6 +64,7 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
             for (Feature f : e.getValue()) {
                 // ignore features that do not start at this position
+                System.out.println(f.getStart());
                 if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
                     f.setManager(modelManager);
                     results.add(f);
@@ -85,7 +86,6 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
             modelManager.persist(mapperInterface.getDestSet());
             Logger.getLogger(FilteredFeatureSetOutputPlugin.class.getName()).info(new Date().toString() + " cleaning up with total lines: " + count);
         }
-        System.out.println(position);
     }
 
     @Override
