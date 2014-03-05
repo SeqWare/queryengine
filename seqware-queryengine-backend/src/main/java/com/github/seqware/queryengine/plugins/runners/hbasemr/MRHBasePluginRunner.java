@@ -216,27 +216,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
             
-            String[] strings = conf.getStrings(EXT_PARAMETERS);
-            final String externalParameters = strings[EXTERNAL_PARAMETERS];
-            System.out.println("EXTERNAL_PARAMETERS : " + SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)).getClass());
-            
-            final String internalParameters = strings[INTERNAL_PARAMETERS];
-            if (internalParameters != null && !internalParameters.isEmpty()) {
-                System.out.println("INTERNAL_PARAMETERS : " + SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)).getClass());
-            }
-            final String sourceSets = strings[NUM_AND_SOURCE_FEATURE_SETS];
-            if (sourceSets != null && !sourceSets.isEmpty()) {
-                List<FeatureSet> sSets = convertBase64StrToFeatureSets(sourceSets);
-                System.out.println("NUM_AND_SOURCE_FEATURE_SETS : " + sSets.getClass());
-            }
-            final String destSetParameter = strings[DESTINATION_FEATURE_SET];
-            if (destSetParameter != null && !destSetParameter.isEmpty()) {
-            	 System.out.println("DESTINATION_FEATURE_SET : " + SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class).getClass());
-            }
-            
-            
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
             
+            for (Object o : parameter){
+                System.out.println(o);
+            }
+
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
