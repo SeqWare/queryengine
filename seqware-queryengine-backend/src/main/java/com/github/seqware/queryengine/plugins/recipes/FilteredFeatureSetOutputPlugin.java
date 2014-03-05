@@ -64,7 +64,7 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
             for (Feature f : e.getValue()) {
                 // ignore features that do not start at this position
-                if (f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
+                if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
                     f.setManager(modelManager);
                     results.add(f);
                 } else {
