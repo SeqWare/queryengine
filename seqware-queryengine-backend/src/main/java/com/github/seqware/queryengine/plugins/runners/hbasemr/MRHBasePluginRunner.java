@@ -527,7 +527,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 sourceSetIDs.add(sSet.getSGID());
             }
             Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+"featuresets");
-            System.out.println("Dealing with "+sourceSetIDs.size()+"featuresets");
+            System.out.println("Dealing with "+sourceSetIDs.size()+" featuresets");
             Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
             Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
