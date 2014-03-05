@@ -220,7 +220,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             RPNStack rpnStack = new RPNStack();
             for (Object o : parameters){
             	if (o instanceof RPNStack){
-            		rpnStack = (RPNStack) ((RPNStack) o).evaluate();
+            		rpnStack = (RPNStack) o;
             		for (Parameter parameter : rpnStack.getParameters()){
             			System.out.println(parameter.getName() + " an instance of " + parameter.getClass());
             		}
