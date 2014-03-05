@@ -217,9 +217,24 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
             
             String[] strings = conf.getStrings(EXT_PARAMETERS);
-            final String mapParameter = strings[SETTINGS_MAP];
-            Map<String, String> settingsMap = (Map<String, String>) ((Object[]) SerializationUtils.deserialize(Base64.decodeBase64(mapParameter)))[EXTERNAL_PARAMETERS];
-            System.out.println(settingsMap);
+            final String externalParameters = strings[EXTERNAL_PARAMETERS];
+            System.out.println("EXTERNAL_PARAMETERS : " + (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(externalParameters)));
+            
+            final String internalParameters = strings[INTERNAL_PARAMETERS];
+            if (internalParameters != null && !internalParameters.isEmpty()) {
+                System.out.println("INTERNAL_PARAMETERS : " + (Object[]) SerializationUtils.deserialize(Base64.decodeBase64(internalParameters)));
+            }
+            final String sourceSets = strings[NUM_AND_SOURCE_FEATURE_SETS];
+            if (sourceSets != null && !sourceSets.isEmpty()) {
+                List<FeatureSet> sSets = convertBase64StrToFeatureSets(sourceSets);
+                System.out.println("NUM_AND_SOURCE_FEATURE_SETS : " + sSets);
+            }
+            final String destSetParameter = strings[DESTINATION_FEATURE_SET];
+            if (destSetParameter != null && !destSetParameter.isEmpty()) {
+            	 System.out.println("DESTINATION_FEATURE_SET : " + SWQEFactory.getSerialization().deserialize(Base64.decodeBase64(destSetParameter), FeatureSet.class));
+            }
+            
+            
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
             
             Scan scan = new Scan();
