@@ -13,14 +13,15 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.util.CloseableIterator;
-
+import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
+import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
 /**
  * A ReadSet object that allows access to reads from a BAM/SAM file.
  *
  * @author boconnor
  * @version $Id: $Id
  */
-public class ReadSet extends MoleculeImpl<ReadSet> {
+public abstract class ReadSet extends MoleculeImpl<ReadSet> implements MolSetInterface<ReadSet, Read>, ReadSetFacade {
 
   /**
    * Constant
@@ -227,7 +228,7 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
 
   public static class Builder extends BaseBuilder {
 
-    private ReadSet readset = new ReadSet();
+    public ReadSet readset;
 
     public ReadSet.Builder setReadSetName(String readSetName) {
       readset.readSetName = readSetName;

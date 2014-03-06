@@ -48,7 +48,7 @@ import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.BAMFileWriter;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
-
+import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
 /**
  * Readset resource.
  *
@@ -57,8 +57,9 @@ import net.sf.samtools.util.CloseableIterator;
 @Path("/readset")
 @Api(value = "/readset", description = "Operations about readsets"/*, listingPath="/resources/readset"*/)
 @Produces({"application/json"})
-public class ReadSetResource extends GenericElementResource<ReadSet> {
-
+//public class ReadSetResource extends GenericElementResource<ReadSet> {
+public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
+  
   @Override
   public final String getClassName() {
     return "ReadSet";
