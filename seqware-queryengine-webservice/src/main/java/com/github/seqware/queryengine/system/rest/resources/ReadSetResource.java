@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -57,7 +58,6 @@ import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
 @Path("/readset")
 @Api(value = "/readset", description = "Operations about readsets"/*, listingPath="/resources/readset"*/)
 @Produces({"application/json"})
-//public class ReadSetResource extends GenericElementResource<ReadSet> {
 public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
   
   @Override
@@ -188,18 +188,30 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
     return (null);
   }
   
-  //Currently not complete, but a rough POST method
-  // This is currently not set to have child elements...
+  @PUT
+  @Path("/{sgid}")
+  @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+    @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  @Override
+  public Response updateElement(
+          @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
+          @ApiParam(value = "Updated user object", required = true) ReadSetFacade group) {
+
+    return super.updateElement(sgid, group);
+
+  }
+  
   @POST
-  @ApiOperation(value = "Create a totally new ReadSet by JSON", notes = "This can only be done by an authenticated user.")
+  @ApiOperation(value = "Create a totally new ReadSet by JSON", notes = "This can only be done by an authenticated user.", position = 50000)
   @ApiResponses(value = {
     @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
   @Consumes(MediaType.APPLICATION_JSON)
+  @Override
   public Response addSet(
-      @ApiParam(value = "ReadSet that needs to be added to the store", required = true) ReadSet set) {
-    CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-    modelManager.objectCreated(set);
-    modelManager.close();
-    return Response.ok().entity(set).build();
+          @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) ReadSetFacade set) {
+    return super.addSet(set);
   }
+  
 }
