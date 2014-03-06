@@ -326,10 +326,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
             
             //Apply scan filter only for non write plugin
-            if (mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-                scan.setFilter(finalFilterList);
-            }
-            
+//            if (mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+//                scan.setFilter(finalFilterList);
+//            }
+            System.out.println("SIMPLE NAME: " + mapReducePlugin.getClass().getSimpleName());
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
                 scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
