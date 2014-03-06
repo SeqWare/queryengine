@@ -257,15 +257,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		List<String> seqIDs = new ArrayList<String>();
     		String referenceString = outputSet.getReference().getDisplayName();
         	for (Feature f : outputSet){
-        		if (!seqIDs.contains(f.getSeqid())){
+//        		if (!seqIDs.contains(f.getSeqid())){
         			seqIDs.add(f.getSeqid());
-        		}
+//        		}
         	}
         	
         	System.out.println(referenceString + "." + seqIDs + ":" + "000000000000000");
             
-            
-    		String row = new String(reference.getName() + ".");
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
