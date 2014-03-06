@@ -24,6 +24,8 @@ public class RPNStack implements Serializable {
 
     private List<Object> stack;
     private Map<Parameter, Integer> parameters = new HashMap<Parameter, Integer>();
+    static List<String> startList = new ArrayList<String>();
+    static List<String> stopList = new ArrayList<String>();
 
     /**
      * Operations for combining query constraints.
@@ -532,6 +534,7 @@ public class RPNStack implements Serializable {
         }
 
         String text = node.getText();
+        System.out.println(text);
         switch (node.getType()) {
             // Boolean operators:
             case SeqWareQueryLanguageParser.AND:
