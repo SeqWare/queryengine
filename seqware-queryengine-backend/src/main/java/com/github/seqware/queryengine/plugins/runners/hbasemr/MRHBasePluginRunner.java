@@ -259,6 +259,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	for (Feature f : outputSet){
 //        		if (!seqIDs.contains(f.getSeqid())){
         			seqIDs.add(f.getSeqid());
+        			System.out.println(f.getSeqid());
 //        		}
         	}
         	
