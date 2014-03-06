@@ -252,8 +252,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //    			System.out.println(startPos);
 //    			System.out.println(stopPos);
     		}
-            
     		
+    		List<String> seqIDs = new ArrayList<String>();
+    		System.out.println("reference.getDisplayName: " + reference.getDisplayName());
+            for (FeatureSet fs : inputSet){
+            	System.out.println("FeatureSet.getDisplayName: " + fs.getDisplayName());
+            	System.out.println("FeatureSet.getDescription: " + fs.getDescription());
+//            	for (Feature f : fs){
+//            		if (f.getSeqid())
+//            		f.getSeqid();
+//            	}
+            }
+            
+    		String row = new String(reference.getName() + ".");
            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
