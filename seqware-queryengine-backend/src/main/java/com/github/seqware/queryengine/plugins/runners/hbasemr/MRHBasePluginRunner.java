@@ -254,7 +254,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		}
             
     		
-           Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER, new RegexStringComparator("hg_19smallTestNoOverlap.1:000000000013200"));
+           Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new RegexStringComparator("hg_19smallTestNoOverlap.1:000000000013200"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
