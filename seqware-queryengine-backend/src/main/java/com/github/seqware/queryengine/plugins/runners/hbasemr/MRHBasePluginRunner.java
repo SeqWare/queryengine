@@ -255,18 +255,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		
     		
     		List<String> seqIDs = new ArrayList<String>();
-    		System.out.println("This is the reference: "+outputSet.getReference().getDisplayName());
-    		for (FeatureSet fs : inputSet){
-            	System.out.println("FeatureSet.getDisplayName: " + fs.getDisplayName());
-            	System.out.println("FeatureSet.getDescription: " + fs.getDescription());
-//            	for (Feature f : fs){
-//            		if (f.getSeqid())
-//            		f.getSeqid();
-//            	}
-            }
+    		String referenceString = outputSet.getReference().getDisplayName();
+        	for (Feature f : outputSet){
+        		if (!seqIDs.contains(f.getSeqid())){
+        			seqIDs.add(f.getSeqid());
+        		}
+        	}
+        	
+        	System.out.println(referenceString + "." + seqIDs + ":" + "000000000000000");
+            
             
     		String row = new String(reference.getName() + ".");
-           Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
+            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
