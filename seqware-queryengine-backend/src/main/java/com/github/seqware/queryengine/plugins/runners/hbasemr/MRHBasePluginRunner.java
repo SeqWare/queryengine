@@ -256,11 +256,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		
     		List<String> seqIDs = new ArrayList<String>();
     		String referenceString = outputSet.getReference().getDisplayName();
-        	for (Feature f : outputSet){
-//        		if (!seqIDs.contains(f.getSeqid())){
+        	for (FeatureSet fs : inputSet){
+        		for (Feature f : fs){
         			seqIDs.add(f.getSeqid());
-        			System.out.println(f.getSeqid());
-//        		}
+        			System.out.println("The seqid: " + f.getSeqid());
+        		}
+//        		if (!seqIDs.contains(f.getSeqid())){
         	}
         	
         	System.out.println(referenceString + "." + seqIDs + ":" + "000000000000000");
