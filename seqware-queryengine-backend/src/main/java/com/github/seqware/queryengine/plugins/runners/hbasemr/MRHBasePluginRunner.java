@@ -255,8 +255,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		
     		
     		List<String> seqIDs = new ArrayList<String>();
-    		System.out.println("is reference null?: " + reference.equals(null));
-            for (FeatureSet fs : inputSet){
+    		System.out.println("This is the reference: "+outputSet.getReference().getDisplayName());
+    		for (FeatureSet fs : inputSet){
             	System.out.println("FeatureSet.getDisplayName: " + fs.getDisplayName());
             	System.out.println("FeatureSet.getDescription: " + fs.getDescription());
 //            	for (Feature f : fs){
