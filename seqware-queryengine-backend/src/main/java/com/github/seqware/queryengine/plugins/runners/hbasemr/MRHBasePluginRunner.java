@@ -217,21 +217,43 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             conf.set("mapred.child.java.opts", "-Xmx2048m -verbose:gc");
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
-            
+
             RPNStack rpnStack = new RPNStack();
             for (Object o : parameters){
             	if (o instanceof RPNStack){
             		rpnStack = (RPNStack) o;
-            		for (Parameter parameter : rpnStack.getParameters()){
-            			if (parameter instanceof FeatureAttribute){
-                			System.out.println("[INFO] " + parameter.getName() + " an instance of " + parameter.getClass());
-
-            			}
-            		}
-            	}
+            		break;
+            	} 
             }
             
-            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
+            FeatureAttribute thisFeature = null;
+            List<String> startList = null;
+            List<String> stopList = null;
+            
+    		for (Parameter parameter : rpnStack.getParameters()){
+    			if (parameter instanceof FeatureAttribute){
+    				thisFeature = (FeatureAttribute) parameter;
+    				if (parameter.getName().equals("start")){
+        				startList = thisFeature.getStartList();
+    				} else if (parameter.getName().equals("stop")){
+        				stopList = thisFeature.getStopList();
+    				}
+//        			System.out.println("[INFO] " + parameter.getName() + " an instance of " + parameter.getClass());
+//        			System.out.println("[INFO] " + (FeatureAttreibute) parameter)
+    			}
+    		}
+    		
+    		String startPos = null;
+    		String stopPos = null;
+    		if (!startList.isEmpty() && !stopList.isEmpty()){
+    			startPos = startList.get(1);
+    			stopPos = stopList.get(1);
+    			System.out.println(startPos);
+    			System.out.println(stopPos);
+    		}
+            
+    		
+//            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator("0012"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
