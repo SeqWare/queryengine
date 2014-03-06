@@ -248,8 +248,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		if (!startList.isEmpty() && !stopList.isEmpty()){
     			startPos = startList.get(1);
     			stopPos = stopList.get(1);
-    			System.out.println(startPos);
-    			System.out.println(stopPos);
+//    			System.out.println(startPos);
+//    			System.out.println(stopPos);
     		}
             
     		
