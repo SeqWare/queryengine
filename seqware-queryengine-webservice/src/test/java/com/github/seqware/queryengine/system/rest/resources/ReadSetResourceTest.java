@@ -28,22 +28,21 @@ public class ReadSetResourceTest {
   public static void setUpClass() {
     //Create a Test ReadSet
     Client client = Client.create();
-    /*WebResource webResource = client.resource(WEBSERVICE_URL + "readset" );
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" );
     String readSet = "{"
-        + "\"description\": \"TestReadSet\""
         + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, readSet);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
-    setKey = extractRowKey(output); */
+    setKey = extractRowKey(output);
     client.destroy();
   }
   
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-    //WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
-    //webResource.delete();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
+    webResource.delete();
     client.destroy();
   }
   
@@ -79,6 +78,46 @@ public class ReadSetResourceTest {
   public void testGetReadSets() {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //GET readset/{sgid}
+  @Test
+  public void testGetReadSet() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //GET readset/{sgid}/tags
+  @Test
+  public void testGetTags() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/tags");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //GET readset/{sgid}/version
+  @Test
+  public void testGetVersion() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/version");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //GET readset/{sgid}/permissions
+  @Test
+  public void testGetPermissions() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
