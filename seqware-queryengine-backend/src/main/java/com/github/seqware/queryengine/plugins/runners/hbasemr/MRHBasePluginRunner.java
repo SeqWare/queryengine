@@ -317,7 +317,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         		filterHolder.add(startRowFilter);
         		finalList.add(filterHolder);
         	}
-            FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ONE, finalList.get(0));
+            FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
 //            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
