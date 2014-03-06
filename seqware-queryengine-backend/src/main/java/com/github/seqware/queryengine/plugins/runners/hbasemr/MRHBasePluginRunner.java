@@ -256,7 +256,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //    			System.out.println(stopPos);
     		}
     		
-    		
     		List<String> seqIDs = new ArrayList<String>();
         	for (FeatureSet fs : inputSet){
         		for (Feature f : fs){
@@ -267,7 +266,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         		}
         	}
         	
-        	//Generate 15 digit start and end position.
+        	//Generate 15 digit start and end position for use in comparator.
         	String zeroPad = new String();
         	if (startPos != null && stopPos != null){
             	int startDigitLength = startPos.length();
@@ -301,8 +300,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         						finalStopString));
         	}
         	
+        	//Put together the List of list<Filter>
         	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
-
         	for (String seqID : comparatorStrings.keySet()){
         		finalStartString = comparatorStrings.get(seqID).get(0);
         		finalStopString = comparatorStrings.get(seqID).get(1);
@@ -317,8 +316,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         		filterHolder.add(startRowFilter);
         		finalList.add(filterHolder);
         	}
+        	
+        	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
             FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
-//            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
@@ -329,7 +329,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
                 scan.setFilter(finalFilterList);
             }
-            System.out.println("SIMPLE NAME: " + mapReducePlugin.getClass().getSimpleName());
+            
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
                 scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
