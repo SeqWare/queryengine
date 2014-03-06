@@ -119,6 +119,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int DESTINATION_FEATURE_SET = 3;
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
+    public static final int PADDED_POSITION_DIGIT_LEN = 15;
 
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
@@ -255,7 +256,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		
     		
     		List<String> seqIDs = new ArrayList<String>();
-    		String referenceString = outputSet.getReference().getDisplayName();
         	for (FeatureSet fs : inputSet){
         		for (Feature f : fs){
         			if (!seqIDs.contains(f.getSeqid())){
@@ -265,7 +265,37 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         		}
         	}
         	
-        	System.out.println(referenceString + "." + seqIDs + ":" + "000000000000000");
+        	//Generate 15 digit start and end position.
+        	String zeroPad = new String();
+        	if (startPos != null && stopPos != null){
+            	int startDigitLength = startPos.length();
+            	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
+            	int stopDigitLength = stopPos.length();
+            	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
+        		for (int i=0; i<startDigitLengthDifference; i++){
+        			zeroPad += "0";
+        		}
+        		startPos = zeroPad + startPos;
+        		zeroPad = "";
+        		for (int i=0; i<stopDigitLengthDifference; i++){
+        			zeroPad += "0";
+        		}
+        		stopPos = zeroPad + stopPos;
+        		zeroPad = "";
+        	}
+
+        	
+        	//Generate the list of comparator inputs
+    		List<String> comparatorStrings = new ArrayList<String>();
+    		String referenceString = outputSet.getReference().getDisplayName();
+        	for (String seqID : seqIDs){
+        		comparatorStrings.add(referenceString + "." + seqID + ":" + startPos);
+        		comparatorStrings.add(referenceString + "." + seqID + ":" + stopPos);
+        	}
+        	
+        	for (String s : comparatorStrings){
+        		System.out.println(s);
+        	}
             
             Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
