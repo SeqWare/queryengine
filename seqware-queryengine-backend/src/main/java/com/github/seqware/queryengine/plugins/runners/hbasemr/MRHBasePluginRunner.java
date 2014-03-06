@@ -52,12 +52,14 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,7 +79,9 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
@@ -240,8 +244,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     				} else if (parameter.getName().equals("stop")){
         				stopList = thisFeature.getStopList();
     				}
-//        			System.out.println("[INFO] " + parameter.getName() + " an instance of " + parameter.getClass());
-//        			System.out.println("[INFO] " + (FeatureAttreibute) parameter)
     			}
     		}
     		
@@ -286,24 +288,43 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
         	
         	//Generate the list of comparator inputs
-    		List<String> comparatorStrings = new ArrayList<String>();
+    		Map<String, List<String>> comparatorStrings = new HashMap<String, List<String>>();
     		String referenceString = outputSet.getReference().getDisplayName();
+    		String finalStartString = new String();
+    		String finalStopString = new String();
         	for (String seqID : seqIDs){
-        		comparatorStrings.add(referenceString + "." + seqID + ":" + startPos);
-        		comparatorStrings.add(referenceString + "." + seqID + ":" + stopPos);
+        		finalStartString = referenceString + "." + seqID + ":" + startPos;
+        		finalStopString = referenceString + "." + seqID + ":" + stopPos;
+        		comparatorStrings.put(seqID, 
+        				Arrays.asList(
+        						finalStartString,
+        						finalStopString));
         	}
         	
-        	for (String s : comparatorStrings){
-        		System.out.println(s);
+        	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
+
+        	for (String seqID : comparatorStrings.keySet()){
+        		finalStartString = comparatorStrings.get(seqID).get(0);
+        		finalStopString = comparatorStrings.get(seqID).get(1);
+        		List<Filter> filterHolder= new ArrayList<Filter>();
+        		
+        		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+        				new BinaryComparator(finalStartString.getBytes()));
+
+        		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+        				new BinaryComparator(finalStopString.getBytes()));
+        		filterHolder.add(stopRowFilter);
+        		filterHolder.add(startRowFilter);
+        		finalList.add(filterHolder);
         	}
-            
-            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
+            FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ONE, finalList.get(0));
+//            Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-//            scan.setFilter(rowFilter);
+            scan.setFilter(finalFilterList);
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
                 scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
