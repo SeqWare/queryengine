@@ -534,7 +534,7 @@ public class RPNStack implements Serializable {
         }
 
         String text = node.getText();
-        System.out.println("[INFO] " + text + " type: " + node.getType);
+        System.out.println("[INFO] " + text + " type: " + node.getType());
         switch (node.getType()) {
             // Boolean operators:
             case SeqWareQueryLanguageParser.AND:
