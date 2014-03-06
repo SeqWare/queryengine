@@ -254,7 +254,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		}
             
     		
-           Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubStringComparator(":000000000079032"));
+           Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new SubstringComparator(":000000000079032"));
 
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
