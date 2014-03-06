@@ -258,10 +258,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		String referenceString = outputSet.getReference().getDisplayName();
         	for (FeatureSet fs : inputSet){
         		for (Feature f : fs){
-        			seqIDs.add(f.getSeqid());
-        			System.out.println("The seqid: " + f.getSeqid());
+        			if (!seqIDs.contains(f.getSeqid())){
+            			seqIDs.add(f.getSeqid());
+            			System.out.println("The seqid: " + f.getSeqid());
+            		}
         		}
-//        		if (!seqIDs.contains(f.getSeqid())){
         	}
         	
         	System.out.println(referenceString + "." + seqIDs + ":" + "000000000000000");
