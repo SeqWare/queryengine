@@ -103,16 +103,17 @@ public class ReferenceResourceTest {
     Class result = instance.getModelClass();
     Assert.assertEquals(expResult, result);
   }
-  
-  // GET reference/
-  @Test
-  public void testGetReferences() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference" );
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    client.destroy();
-  }
+
+// Not implemented
+//  // GET reference/
+//  @Test
+//  public void testGetReferences() {
+//    Client client = Client.create();
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference" );
+//    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    client.destroy();
+//  }
   
   // GET reference/{sgid}
   @Test
@@ -156,20 +157,21 @@ public class ReferenceResourceTest {
     client.destroy();
   }
   
-  // PUT reference/{sgid}/tag
-  // GET reference/tags
-  @Test
-  public void testPutTag() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/tag?tagset_id=" + tagSetKey + "&key=reference");
-    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    
-    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&key=reference");
-    ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
-    client.destroy();
-  }
+  // Not implemented
+//  // PUT reference/{sgid}/tag
+//  // GET reference/tags
+//  @Test
+//  public void testPutTag() {
+//    Client client = Client.create();
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/tag?tagset_id=" + tagSetKey + "&key=reference");
+//    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    
+//    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&tag_key=reference");
+//    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+//    client.destroy();
+//  }
   
   // GET reference/{sgid}/tags
   @Test
