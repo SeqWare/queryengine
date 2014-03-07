@@ -166,8 +166,8 @@ public class ReferenceResourceTest {
     ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&tag_key=reference");
-    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&key=reference");
+    ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     client.destroy();
   }

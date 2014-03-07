@@ -20,6 +20,7 @@ import com.sun.jersey.api.client.WebResource;
 public class ReadSetResourceTest {
   public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
+  public static String tagSetKey;
   
   public ReadSetResourceTest() {
   }
@@ -30,12 +31,23 @@ public class ReadSetResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" );
     String readSet = "{"
+        + "\"readSetName\": \"ReadSetResourceTest\"}"
         + "}";
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, readSet);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
     setKey = extractRowKey(output);
     client.destroy();
+    
+    //Create a TagSet for this test
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset");
+    String tagset = "{\n"
+            + "  \"name\": \"TestReferenceSetTagSet\"\n"
+            + "}";
+    ClientResponse response2 = webResource2.type("application/json").post(ClientResponse.class, tagset);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    String output2 = response2.getEntity(String.class);
+    tagSetKey = extractRowKey(output2);
   }
   
   @AfterClass
@@ -43,6 +55,8 @@ public class ReadSetResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
     webResource.delete();
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    webResource2.delete();
     client.destroy();
   }
   
@@ -93,6 +107,26 @@ public class ReadSetResourceTest {
     client.destroy();
   }
   
+  //PUT    readset/{sgid}
+  //DELETE readset/{sgid}
+  @Test
+  public void testPutReadSet() {
+    Client client = Client.create();
+    String readset = "{\"readSetName\": \"TestPutReadSet\"}";
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/");
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, readset);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    String rowKey = extractRowKey(response.getEntity(String.class));
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "readset/" + rowKey);
+    String put = "{\"readSetName\": \"ChangedReadSet\"}";
+    ClientResponse response2 = webResource2.type("application/json").put(ClientResponse.class, put);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
+    
+    webResource2.delete();
+    client.destroy();
+  }
+  
   //GET readset/{sgid}/tags
   @Test
   public void testGetTags() {
@@ -120,6 +154,21 @@ public class ReadSetResourceTest {
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //PUT readset/{sgid}/tag
+  //GET readset/tags
+  @Test
+  public void testPutTag() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/tag?tagset_id=" + tagSetKey + "&key=test");
+    ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    
+    WebResource webResource2 = client.resource(WEBSERVICE_URL + "readset/tags?tagset_id=" + tagSetKey + "&key=test");
+    ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     client.destroy();
   }
  
