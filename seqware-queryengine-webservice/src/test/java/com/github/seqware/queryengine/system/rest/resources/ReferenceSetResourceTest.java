@@ -87,15 +87,16 @@ public class ReferenceSetResourceTest {
     assertEquals(expResult, result);
   }
   
-  // GET referenceset/
-  @Test
-  public void testGetReferenceSets() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset");
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    client.destroy();
-  }
+// Not implemented
+//  // GET referenceset/
+//  @Test
+//  public void testGetReferenceSets() {
+//    Client client = Client.create();
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset");
+//    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    client.destroy();
+//  }
   
   // GET referenceset/{sgid}
   @Test
