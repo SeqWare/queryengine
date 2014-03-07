@@ -145,3 +145,64 @@ The above emits the results back into HBase.  To print the results to stdout:
 
     java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
+
+##Lifecycle of importing data and running an Arbitrary Plugin on it.
+
+Note: The Imported data can contain indels or snv, or a combination of both. Naive import still works properly regardless.
+
+#####Import data:
+
+After provisioning from the branch MRPluginLayerTest:
+````
+cd ~/gitroot/seqware
+mvn clean install
+cd seqware-distribution/target
+````
+
+Create a reference in the HBase backend
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
+````
+
+Naive import of the indel containing feature from smallTestOverlap.vcf in the test resources to the HBase Backend
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
+````
+
+#####Accessing imported Data:
+
+At this point you can open up Hbase shell and list the imported data by running :
+
+````
+hbase shell
+list
+scan 'batman.hbaseTestTable_v2.Feature.hg_19'
+````
+There should be 4 rows of data stored in HBase as it was a 3 base deletion that was specified in the smallTestOverlap.vcf:
+
+````
+#CHROM  POS ID  REF ALT QUAL    FILTER  INFO
+1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
+````
+
+#####Using the ArbitraryPluginRunner:
+
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
+usage: ArbitraryPluginRunner
+ -o <outputFile>    (required) output file
+ -p <pluginClass>   (required) the plugin to be run, full package path
+ -r <reference>     (required) the reference ID of the FeatureSet to run
+                    plugin on
+
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ 
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
+````
+
+In this case you may try to use this runner to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking it, albeit not returning information in the txt output. 
+
+However, the plugin written below works (this is the plugin used to verify that the map reduce of naive overlaps is working as expected).
+
+````
+com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin
+````
