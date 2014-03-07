@@ -18,7 +18,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class FeatureSetResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   
   public FeatureSetResourceTest() {
@@ -28,7 +27,7 @@ public class FeatureSetResourceTest {
   public static void setUpClass() {
     //Create a Test FeatureSet
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset" );
     String featureSet = "{"
         + "\"description\": \"TestFeatureSet\""
         + "}";
@@ -42,7 +41,7 @@ public class FeatureSetResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
     webResource.delete();
     client.destroy();
   }
@@ -78,7 +77,7 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetFeatureSets() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -88,8 +87,8 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetFeatureSet() {
     Client client = Client.create();
-    System.out.println(WEBSERVICE_URL + "featureset/" + setKey);
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey);
+    System.out.println(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -103,7 +102,7 @@ public class FeatureSetResourceTest {
   public void testPutFeatureSet() {
     //Create a new FeatureSet
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset");
     String featureSet = "{\n"
             + "  \"description\": \"TestPutFeatureSet\"\n"
             + "}";
@@ -114,7 +113,7 @@ public class FeatureSetResourceTest {
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("TestPutFeatureSet"));
     
     //Update the FeatureSet
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "featureset/" + rowkey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + rowkey);
     String put = "{\n"
             + "  \"description\": \"ChangedDescription\"\n"
             + "}"; 
@@ -132,7 +131,7 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetTags() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey + "/tags");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey + "/tags");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -142,7 +141,7 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey + "/permissions");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -152,7 +151,7 @@ public class FeatureSetResourceTest {
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "featureset/" + setKey + "/version");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey + "/version");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
