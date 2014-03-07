@@ -124,6 +124,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
     private static final int PADDED_POSITION_DIGIT_LEN = 15;
+    private static final int LENGTH_OF_SINGLE_PAIR = 2;
     private static boolean START_STOP_PAIR_EXISTS = false;
 
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
@@ -374,9 +375,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 			}
 		}
-		System.out.println(startList.size());
-		System.out.println(stopList.size());
-		if (startList.size() == stopList.size() && startList.size() == 1){
+		
+		if (startList.size() == stopList.size() && startList.size() == LENGTH_OF_SINGLE_PAIR){
 			START_STOP_PAIR_EXISTS = true;
 		}
 		
