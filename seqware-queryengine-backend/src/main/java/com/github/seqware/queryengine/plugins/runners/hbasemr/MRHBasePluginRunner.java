@@ -373,7 +373,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 			}
 		}
-		
+		System.out.println(startList.size());
+		System.out.println(stopList.size());
 		if (startList.size() == stopList.size() && startList.size() == 1){
 			START_STOP_PAIR_EXISTS = true;
 		}
