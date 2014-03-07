@@ -39,7 +39,7 @@ public class ReadSetResourceTest {
     client.destroy();
     
     //Create a TagSet for this test
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"TestReferenceSetTagSet\"\n"
             + "}";
