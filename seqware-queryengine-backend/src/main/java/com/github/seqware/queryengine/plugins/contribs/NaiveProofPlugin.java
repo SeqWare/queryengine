@@ -37,7 +37,7 @@ import org.apache.hadoop.io.Text;
  * @author bso
  * @version $Id: $Id
  */
-public class TestOutputPlugin extends FilteredFileOutputPlugin{
+public class NaiveProofPlugin extends FilteredFileOutputPlugin{
     
    	private Text text = new Text();
     private Text textKey = new Text();
