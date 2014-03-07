@@ -574,10 +574,10 @@ public class RPNStack implements Serializable {
                 arguments.add(new Constant(Integer.parseInt(text)));
                 if (startList.size() % 2 != 0){
                 	startList.add(text);
-//                	System.out.println("[INFO] added start value");
+                	System.out.println("[INFO] added start value");
                 } else if (stopList.size() % 2 != 0) {
                 	stopList.add(text);
-//                	System.out.println("[INFO] added stop value");
+                	System.out.println("[INFO] added stop value");
                 }
                 break;
             case SeqWareQueryLanguageParser.STRING:
