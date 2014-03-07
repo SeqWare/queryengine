@@ -206,3 +206,48 @@ However, the plugin written below works (this is the plugin used to verify that 
 ````
 com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
 ````
+
+This will output each position of the genome (as a key) stored in the backend with their respective indel/snv start and stop ranges (as the value) which are stored in the backend (naively).
+
+#####Using the new Single range query:
+
+A new feature implemented is that now given a single start and stop position in the query, the HBase scanner instance will not scan through the entire database. It will only scan through the specified range.
+
+Let us start by importing a slightly larger vcf file into the database.
+
+Create a new reference:
+
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_20
+````
+
+Import the data into a new table:
+
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
+````
+
+Note: take note of the FeatureSet ID that this data was written to. Here are some ways to retreive them:
+1. It should be displayed after running the above as:
+    ````
+    FeatureSet written with an ID of:
+    *your_featureset_ID_*
+    ````
+2. You can check by scanning the featureset table in the hbase shell:
+    ````
+    hbase shell
+    list
+    scan 'batman.hbaseTestTable_v2.Feature.hg_20'
+    ````
+    In the column+cell column displayed:
+    ````
+    column=d:*your_featureset_ID*,
+    ````
+
+3. Running the range query:
+
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"
+````
+
+The exporter "QueryVCFDumper" being run here will apply the map to only positions within specified range.
