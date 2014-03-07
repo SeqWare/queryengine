@@ -606,10 +606,10 @@ public class RPNStack implements Serializable {
 //                System.out.println(text);
                 if (text.equals("start")){
                 	startList.add("start");
-//                	System.out.println("[INFO] added start key");
+                	System.out.println("[INFO] added start key");
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-//                	System.out.println("[INFO] added stop key");
+                	System.out.println("[INFO] added stop key");
                 }
                 break;
 
