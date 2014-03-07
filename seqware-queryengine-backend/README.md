@@ -230,11 +230,14 @@ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.quer
 **Note:** take note of the FeatureSet ID that this data was written to. Here are some ways to retreive them:
 
 1. It should be displayed after running the above as:
+
     ````
     FeatureSet written with an ID of:
     *your_featureset_ID_*
     ````
+    
 2. You can check by scanning the featureset table in the hbase shell:
+
     ````
     hbase shell
     list
