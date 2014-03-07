@@ -204,7 +204,7 @@ In this case you may try to use this runner to run any plugin under com.github.s
 However, the plugin written below works (this is the plugin used to verify that the map reduce of naive overlaps is working as expected).
 
 ````
-com.github.seqware.queryengine.plugins.contribs.TestOutputPlugin
+com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin
 ````
 
 This will output each position of the genome (as a key) stored in the backend with their respective indel/snv start and stop ranges (as the value) which are stored in the backend (naively).
