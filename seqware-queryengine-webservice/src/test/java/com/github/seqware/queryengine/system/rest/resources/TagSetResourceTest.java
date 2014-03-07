@@ -18,7 +18,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class TagSetResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   
   public TagSetResourceTest() {
@@ -27,7 +26,7 @@ public class TagSetResourceTest {
   @BeforeClass
   public static void setUpClass() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"GenericTestTagSet\"\n"
             + "}";
@@ -42,7 +41,7 @@ public class TagSetResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey);
     webResource.delete();
     client.destroy();
   }
@@ -78,7 +77,7 @@ public class TagSetResourceTest {
   @Test
   public void testGetElements() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
@@ -92,7 +91,7 @@ public class TagSetResourceTest {
   @Test
   public void testAddSet() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"Funky TagSet\"\n"
             + "}";
@@ -102,7 +101,7 @@ public class TagSetResourceTest {
     String rowkey = extractRowKey(output);
     
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + rowkey);
     webResource2.delete();
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
@@ -115,7 +114,7 @@ public class TagSetResourceTest {
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/version");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey + "/version");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output2 = response.getEntity(String.class);
@@ -131,7 +130,7 @@ public class TagSetResourceTest {
   public void testPutTagSet() {
     //Create a new TagSet
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"Funky TagSet\"\n"
             + "}";
@@ -142,7 +141,7 @@ public class TagSetResourceTest {
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("Funky TagSet"));
     
     //Update the TagSet
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + rowkey);
     String put = "{\n"
             + "\"name\": \"Funkier Set\"\n"
             + "}";  
@@ -167,7 +166,7 @@ public class TagSetResourceTest {
   public void testGetTags() {
     //Create a Tagset
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"testGetTags\"\n"
             + "}";
@@ -177,12 +176,12 @@ public class TagSetResourceTest {
     String rowkey = extractRowKey(output);
     Assert.assertTrue("Returned entity incorrect" + output, output.contains(rowkey) && output.contains("testGetTags"));
     
-    WebResource webTagsResource = client.resource(WEBSERVICE_URL + "tagset/" + rowkey + "/tags");
+    WebResource webTagsResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + rowkey + "/tags");
     ClientResponse tagsResponse = webTagsResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + tagsResponse.getStatus(), tagsResponse.getStatus() == 200);
     
     //Delete Tags
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + rowkey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + rowkey);
     webResource2.delete();
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
@@ -196,7 +195,7 @@ public class TagSetResourceTest {
   @Test
   public void testGetTag() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey);
     String tag = "{\n"
         + "\"predicate\": \"TestGetTag\",\n"
         + "\"key\": \"TagSetTest1\"\n"
@@ -206,11 +205,11 @@ public class TagSetResourceTest {
     String output = response.getEntity(String.class);
     String rowkey = extractRowKey(output);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/tags?tagset_id=" + setKey + "&tag_key=TagSetTest1" );
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/tags?tagset_id=" + setKey + "&tag_key=TagSetTest1" );
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + rowkey);
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + rowkey);
     webResource3.delete();
     client.destroy();
   }
@@ -219,7 +218,7 @@ public class TagSetResourceTest {
   @Test
   public void testTagTagSet() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey);
     String tag = "{\n"
         + "\"predicate\": \"TagSetResourceTest.testTagTagSet\",\n"
         + "\"key\": \"TagSetTest2\"\n"
@@ -229,11 +228,11 @@ public class TagSetResourceTest {
     String output = response.getEntity(String.class);
     String rowkey = extractRowKey(output);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/tags?tagset_id=" + setKey + "&tag_key=TagSetTest" );
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey + "/tags?tagset_id=" + setKey + "&tag_key=TagSetTest" );
     ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     String output2 = response2.getEntity(String.class);
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + rowkey);
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + rowkey);
     webResource3.delete();
     client.destroy();
   }
@@ -241,7 +240,7 @@ public class TagSetResourceTest {
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "tagset/" + setKey + "/permissions");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + setKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();

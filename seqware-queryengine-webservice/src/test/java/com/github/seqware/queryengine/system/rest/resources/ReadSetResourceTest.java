@@ -18,7 +18,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class ReadSetResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   public static String tagSetKey;
   
@@ -29,7 +28,11 @@ public class ReadSetResourceTest {
   public static void setUpClass() {
     //Create a Test ReadSet
     Client client = Client.create();
+<<<<<<< HEAD
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" );
+=======
+    /*WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset" );
+>>>>>>> feature/webservice_tests
     String readSet = "{"
         + "\"readSetName\": \"ReadSetResourceTest\"}"
         + "}";
@@ -53,10 +56,15 @@ public class ReadSetResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
+<<<<<<< HEAD
     WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
     webResource.delete();
     WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
     webResource2.delete();
+=======
+    //WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey);
+    //webResource.delete();
+>>>>>>> feature/webservice_tests
     client.destroy();
   }
   
@@ -91,7 +99,7 @@ public class ReadSetResourceTest {
   @Test
   public void testGetReadSets() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();

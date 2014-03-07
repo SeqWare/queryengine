@@ -7,7 +7,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        com.github.seqware.queryengine.system.rest.resources.AboutResourceTest.class,
+        /*com.github.seqware.queryengine.system.rest.resources.AboutResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.TagResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.TagSetResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.PluginResourceTest.class,
@@ -16,10 +16,11 @@ import org.junit.runners.Suite;
         com.github.seqware.queryengine.system.rest.resources.ReferenceResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.ReferenceSetResourceTest.class,
         com.github.seqware.queryengine.system.rest.resources.FeatureSetResourceTest.class,
-        com.github.seqware.queryengine.system.rest.resources.ReadSetResourceTest.class
+        com.github.seqware.queryengine.system.rest.resources.ReadSetResourceTest.class*/
 })
 
 public class QEWSResourceTestSuite {
+    public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
 
     @BeforeClass
     public static void setUpClass() throws Exception {

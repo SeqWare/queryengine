@@ -15,7 +15,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class UserResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   public static String elementKey;
   public static String tagKey;
@@ -27,7 +26,7 @@ public class UserResourceTest {
   @BeforeClass
   public static void setUpClass() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "group");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "group");
     String group = "{"
         + "\"name\": \"TestUsers\","
         + "\"description\": \"Testing the User Resource\""
@@ -38,7 +37,7 @@ public class UserResourceTest {
     String rowkey = extractRowKey(output);
     setKey = rowkey;
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "group/" + rowkey );
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "group/" + rowkey );
     String user = "{\n"
         + "\"firstName\": \"string\","
         + "\"emailAddress\": \"string\","
@@ -52,7 +51,7 @@ public class UserResourceTest {
     client.destroy();
     
     //Create a TagSet for this test
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"TestGroupTagSet\"\n"
             + "}";
@@ -62,7 +61,7 @@ public class UserResourceTest {
     tagSetKey = extractRowKey(output3);
     
     //Create a Tag for the test
-    WebResource webResource4 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    WebResource webResource4 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + tagSetKey);
     String tag = "{\n"
         + "\"predicate\": \"GroupTagPredicate\",\n"
         + "\"key\": \"TestGroup\"\n"
@@ -77,14 +76,14 @@ public class UserResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "user/" + elementKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey);
     webResource2.delete();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "group/" + setKey);
     webResource.delete();
     
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tag/" + tagKey);
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + tagKey);
     webResource3.delete();
-    WebResource webResource4 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    WebResource webResource4 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + tagSetKey);
     webResource4.delete();
     client.destroy();
   }
@@ -101,11 +100,11 @@ public class UserResourceTest {
   @Test
   public void testTagUser() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user/" + elementKey + "/tag?tagset_id=" + tagSetKey +"&key=" + tagKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey + "/tag?tagset_id=" + tagSetKey +"&key=" + tagKey);
     ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "group/tags?tagset_id=" + tagSetKey + "&key=" + tagKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "group/tags?tagset_id=" + tagSetKey + "&key=" + tagKey);
     ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
   }
@@ -118,7 +117,7 @@ public class UserResourceTest {
   public void testPutUser() {
     //Create a new User
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "group/" + setKey );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "group/" + setKey );
     String user = "{\n"
             + "\"firstName\": \"string\","
             + "\"emailAddress\": \"string\","
@@ -131,7 +130,7 @@ public class UserResourceTest {
     String rowkey = extractRowKey(output);
     
     //Update the User
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "user/" + rowkey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + rowkey);
     String put = "{\n"
             + "\"firstName\": \"ChangedFirstName\","
             + "\"emailAddress\": \"ChangedEmail@email.com\","
@@ -156,7 +155,7 @@ public class UserResourceTest {
   @Test
   public void testGetUser() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user/" + elementKey );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -166,7 +165,7 @@ public class UserResourceTest {
   @Test
   public void testGetUsers() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user" );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -176,7 +175,7 @@ public class UserResourceTest {
   @Test
   public void testGetTags() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user/" + elementKey + "/tags" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey + "/tags" );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -186,7 +185,7 @@ public class UserResourceTest {
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user/" + elementKey + "/version" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey + "/version" );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -196,7 +195,7 @@ public class UserResourceTest {
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "user/" + elementKey + "/permissions" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "user/" + elementKey + "/permissions" );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();

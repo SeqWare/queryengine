@@ -14,7 +14,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class AboutResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
 
   public AboutResourceTest() {
   }
@@ -42,7 +41,7 @@ public class AboutResourceTest {
   @Test
   public void testBackendRequest() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "about/debug");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "about/debug");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
@@ -57,7 +56,7 @@ public class AboutResourceTest {
   @Test
   public void testVersionRequest() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "about/versions");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "about/versions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed:" + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);

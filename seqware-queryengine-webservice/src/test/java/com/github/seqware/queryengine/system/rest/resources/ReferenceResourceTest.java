@@ -19,7 +19,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class ReferenceResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   public static String setKey;
   public static String elementKey;
   public static String tagSetKey;
@@ -31,7 +30,7 @@ public class ReferenceResourceTest {
   public static void setUpClass() {
     //Create a Test ReferenceSet
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset" );
     String referenceSet = "{"
         + "\"organism\": \"TestOraganism\","
         + "\"name\": \"TestReferenceSet\""
@@ -42,7 +41,7 @@ public class ReferenceResourceTest {
     setKey = extractRowKey(output);
     
     //Create a test Reference
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "referenceset/" + setKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset/" + setKey);
     String reference = "{"
         + "\"name\": \"TestReference\""
         + "}";
@@ -53,7 +52,7 @@ public class ReferenceResourceTest {
     client.destroy();
     
     //Create a TagSet for this test
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset");
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset");
     String tagset = "{\n"
             + "  \"name\": \"TestReferenceTagSet\"\n"
             + "}";
@@ -66,11 +65,11 @@ public class ReferenceResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset/" + setKey);
     webResource.delete();
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/" + elementKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey);
     webResource2.delete();
-    WebResource webResource3 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    WebResource webResource3 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + tagSetKey);
     webResource3.delete();
     client.destroy();
   }
@@ -109,7 +108,7 @@ public class ReferenceResourceTest {
   @Test
   public void testGetReferences() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference" );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference" );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -119,7 +118,7 @@ public class ReferenceResourceTest {
   @Test
   public void testGetReference() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey );
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey );
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -132,7 +131,7 @@ public class ReferenceResourceTest {
   public void testPutReference() {
     //Create Reference
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "referenceset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "referenceset/" + setKey);
     String reference = "{"
         + "\"name\": \"TestPutReference\""
         + "}";
@@ -141,7 +140,7 @@ public class ReferenceResourceTest {
     String referenceKey = extractRowKey(response.getEntity(String.class));
     
     //Update Reference
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/" + referenceKey );
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + referenceKey );
     String put = "{"
         + "\"name\": \"ChangedReference\""
         + "}";
@@ -162,12 +161,17 @@ public class ReferenceResourceTest {
   @Test
   public void testPutTag() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey + "/tag?tagset_id=" + tagSetKey + "&key=reference");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/tag?tagset_id=" + tagSetKey + "&key=reference");
     ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     
+<<<<<<< HEAD
     WebResource webResource2 = client.resource(WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&key=reference");
     ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
+=======
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/tags?tagset_id=" + tagSetKey + "&tag_key=reference");
+    ClientResponse response2 = webResource.type("application/json").get(ClientResponse.class);
+>>>>>>> feature/webservice_tests
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     client.destroy();
   }
@@ -176,7 +180,7 @@ public class ReferenceResourceTest {
   @Test
   public void testGetTags() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey + "/tags");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/tags");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -186,7 +190,7 @@ public class ReferenceResourceTest {
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey + "/version");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/version");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);
@@ -197,7 +201,7 @@ public class ReferenceResourceTest {
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "reference/" + elementKey + "/permissions");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "reference/" + elementKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String output = response.getEntity(String.class);

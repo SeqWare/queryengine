@@ -120,9 +120,10 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Suite.java</include>
                     </includes>
                     <excludes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Suite.java</include>
                         <include>**/*HBase*.java</include>
                         <include>**/*System*.java</include>
                         <include>**/*Impl*.java</include>
@@ -137,6 +138,12 @@ never
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Suite.java</include>
+                    </includes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -184,8 +191,7 @@ never
         <profile>
             <id>embeddedHBase</id>
             <activation>
-                <!-- until we have actual tests  <activeByDefault>true</activeByDefault> -->
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>

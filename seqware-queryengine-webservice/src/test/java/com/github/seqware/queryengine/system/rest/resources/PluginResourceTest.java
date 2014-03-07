@@ -17,7 +17,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class PluginResourceTest {
-  public static final String WEBSERVICE_URL = "http://localhost:8889/seqware-queryengine-webservice/api/";
   
   public PluginResourceTest() {
   }
@@ -64,7 +63,7 @@ public class PluginResourceTest {
   @Test
   public void testGetPlugins() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "plugin");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
