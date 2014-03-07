@@ -123,7 +123,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int DESTINATION_FEATURE_SET = 3;
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
-    public static final int PADDED_POSITION_DIGIT_LEN = 15;
+    private static final int PADDED_POSITION_DIGIT_LEN = 15;
+    private static boolean START_STOP_PAIR_EXISTS = false;
 
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
@@ -224,110 +225,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             this.job = new Job(conf, mapReducePlugin.getClass().getSimpleName());
 
-            RPNStack rpnStack = new RPNStack();
-            for (Object o : parameters){
-            	if (o instanceof RPNStack){
-            		rpnStack = (RPNStack) o;
-            		break;
-            	} 
-            }
-            
-            FeatureAttribute thisFeature = null;
-            List<String> startList = new ArrayList<String>();
-            List<String> stopList = new ArrayList<String>();
-            
-    		for (Parameter parameter : rpnStack.getParameters()){
-    			if (parameter instanceof FeatureAttribute){
-    				thisFeature = (FeatureAttribute) parameter;
-    				if (parameter.getName().equals("start")){
-        				startList = thisFeature.getStartList();
-    				} else if (parameter.getName().equals("stop")){
-        				stopList = thisFeature.getStopList();
-    				}
-    			}
-    		}
-    		
-    		String startPos = null;
-    		String stopPos = null;
-    		if (!startList.isEmpty() && !stopList.isEmpty()){
-    			startPos = startList.get(1);
-    			stopPos = stopList.get(1);
-//    			System.out.println(startPos);
-//    			System.out.println(stopPos);
-    		}
-    		
-    		List<String> seqIDs = new ArrayList<String>();
-        	for (FeatureSet fs : inputSet){
-        		for (Feature f : fs){
-        			if (!seqIDs.contains(f.getSeqid())){
-            			seqIDs.add(f.getSeqid());
-            			System.out.println("The seqid: " + f.getSeqid());
-            		}
-        		}
-        	}
-        	
-        	//Generate 15 digit start and end position for use in comparator.
-        	String zeroPad = new String();
-        	if (startPos != null && stopPos != null){
-            	int startDigitLength = startPos.length();
-            	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
-            	int stopDigitLength = stopPos.length();
-            	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
-        		for (int i=0; i<startDigitLengthDifference; i++){
-        			zeroPad += "0";
-        		}
-        		startPos = zeroPad + startPos;
-        		zeroPad = "";
-        		for (int i=0; i<stopDigitLengthDifference; i++){
-        			zeroPad += "0";
-        		}
-        		stopPos = zeroPad + stopPos;
-        		zeroPad = "";
-        	}
-
-        	
-        	//Generate the list of comparator inputs
-    		Map<String, List<String>> comparatorStrings = new HashMap<String, List<String>>();
-    		String referenceString = outputSet.getReference().getDisplayName();
-    		String finalStartString = new String();
-    		String finalStopString = new String();
-        	for (String seqID : seqIDs){
-        		finalStartString = referenceString + "." + seqID + ":" + startPos;
-        		finalStopString = referenceString + "." + seqID + ":" + stopPos;
-        		comparatorStrings.put(seqID, 
-        				Arrays.asList(
-        						finalStartString,
-        						finalStopString));
-        	}
-        	
-        	//Put together the List of list<Filter>
-        	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
-        	for (String seqID : comparatorStrings.keySet()){
-        		finalStartString = comparatorStrings.get(seqID).get(0);
-        		finalStopString = comparatorStrings.get(seqID).get(1);
-        		List<Filter> filterHolder= new ArrayList<Filter>();
-        		
-        		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
-        				new BinaryComparator(finalStartString.getBytes()));
-
-        		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
-        				new BinaryComparator(finalStopString.getBytes()));
-        		filterHolder.add(stopRowFilter);
-        		filterHolder.add(startRowFilter);
-        		finalList.add(filterHolder);
-        	}
-        	
-        	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
-            FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
-
             Scan scan = new Scan();
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
             
-            //Apply scan filter only for non write plugin
+            //Generate the filter list only for a non write plugin run
             if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-                scan.setFilter(finalFilterList);
+                //Get the filter list using a single range query (start + stop)
+                FilterList finalFilterList = generateFilterList(inputSet, parameters);
+                if (START_STOP_PAIR_EXISTS == true){
+                    scan.setFilter(finalFilterList);
+                }
             }
             
             for(FeatureSet set : inputSet){
@@ -440,6 +349,112 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
+    public FilterList generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    	RPNStack rpnStack = new RPNStack();
+        for (Object o : parameters){
+        	if (o instanceof RPNStack){
+        		rpnStack = (RPNStack) o;
+        		break;
+        	} 
+        }
+        
+        FeatureAttribute thisFeature = null;
+        List<String> startList = new ArrayList<String>();
+        List<String> stopList = new ArrayList<String>();
+        
+        //Assumes that there is always a start and stop pair in query
+		for (Parameter parameter : rpnStack.getParameters()){
+			if (parameter instanceof FeatureAttribute){
+				thisFeature = (FeatureAttribute) parameter;
+				if (parameter.getName().equals("start")){
+    				startList = thisFeature.getStartList();
+				} else if (parameter.getName().equals("stop")){
+    				stopList = thisFeature.getStopList();
+				}
+			}
+		}
+		
+		if (startList.size() == stopList.size() && startList.size() == 1){
+			START_STOP_PAIR_EXISTS = true;
+		}
+		
+		if (START_STOP_PAIR_EXISTS == true){
+			String startPos = new String();
+			String stopPos = new String();
+			if (!startList.isEmpty() && !stopList.isEmpty()){
+				startPos = startList.get(1);
+				stopPos = stopList.get(1);
+			}
+			
+			List<String> seqIDs = new ArrayList<String>();
+	    	for (FeatureSet fs : inputSet){
+	    		for (Feature f : fs){
+	    			if (!seqIDs.contains(f.getSeqid())){
+	        			seqIDs.add(f.getSeqid());
+	        		}
+	    		}
+	    	}
+	    	
+	    	//Generate 15 digit start and end position for use in comparator.
+	    	String zeroPad = new String();
+	    	if (startPos != null && stopPos != null){
+	        	int startDigitLength = startPos.length();
+	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
+	        	int stopDigitLength = stopPos.length();
+	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
+	    		for (int i=0; i<startDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		startPos = zeroPad + startPos;
+	    		zeroPad = "";
+	    		for (int i=0; i<stopDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		stopPos = zeroPad + stopPos;
+	    		zeroPad = "";
+	    	}
+
+	    	
+	    	//Generate the list of comparator inputs
+			Map<String, List<String>> comparatorStrings = new HashMap<String, List<String>>();
+			String referenceString = outputSet.getReference().getDisplayName();
+			String finalStartString = new String();
+			String finalStopString = new String();
+	    	for (String seqID : seqIDs){
+	    		finalStartString = referenceString + "." + seqID + ":" + startPos;
+	    		finalStopString = referenceString + "." + seqID + ":" + stopPos;
+	    		comparatorStrings.put(seqID, 
+	    				Arrays.asList(
+	    						finalStartString,
+	    						finalStopString));
+	    	}
+	    	
+	    	//Put together the List of list<Filter>
+	    	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
+	    	for (String seqID : comparatorStrings.keySet()){
+	    		finalStartString = comparatorStrings.get(seqID).get(0);
+	    		finalStopString = comparatorStrings.get(seqID).get(1);
+	    		List<Filter> filterHolder= new ArrayList<Filter>();
+	    		
+	    		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+	    				new BinaryComparator(finalStartString.getBytes()));
+
+	    		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+	    				new BinaryComparator(finalStopString.getBytes()));
+	    		filterHolder.add(stopRowFilter);
+	    		filterHolder.add(startRowFilter);
+	    		finalList.add(filterHolder);
+	    	}
+	    	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
+	        FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
+	    	return finalFilterList;
+		} else {
+			return null;
+		}
+		
+
+    }
+    
     public static FeatureSet updateAndGet(FeatureSet outputSet) {
         // after processing, outputSet will actually have been versioned several times, we need the latest one
         FeatureSet latestAtomBySGID = SWQEFactory.getQueryInterface().getLatestAtomBySGID(outputSet.getSGID(), FeatureSet.class);
