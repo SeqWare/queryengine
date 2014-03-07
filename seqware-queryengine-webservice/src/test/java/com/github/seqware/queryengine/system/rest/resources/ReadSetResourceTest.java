@@ -28,11 +28,7 @@ public class ReadSetResourceTest {
   public static void setUpClass() {
     //Create a Test ReadSet
     Client client = Client.create();
-<<<<<<< HEAD
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" );
-=======
-    /*WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset" );
->>>>>>> feature/webservice_tests
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset" );
     String readSet = "{"
         + "\"readSetName\": \"ReadSetResourceTest\"}"
         + "}";
@@ -56,15 +52,10 @@ public class ReadSetResourceTest {
   @AfterClass
   public static void tearDownClass() {
     Client client = Client.create();
-<<<<<<< HEAD
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey);
     webResource.delete();
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "tagset/" + tagSetKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tagset/" + tagSetKey);
     webResource2.delete();
-=======
-    //WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey);
-    //webResource.delete();
->>>>>>> feature/webservice_tests
     client.destroy();
   }
   
@@ -109,7 +100,7 @@ public class ReadSetResourceTest {
   @Test
   public void testGetReadSet() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey);
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey);
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -121,12 +112,12 @@ public class ReadSetResourceTest {
   public void testPutReadSet() {
     Client client = Client.create();
     String readset = "{\"readSetName\": \"TestPutReadSet\"}";
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/");
     ClientResponse response = webResource.type("application/json").post(ClientResponse.class, readset);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     String rowKey = extractRowKey(response.getEntity(String.class));
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "readset/" + rowKey);
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + rowKey);
     String put = "{\"readSetName\": \"ChangedReadSet\"}";
     ClientResponse response2 = webResource2.type("application/json").put(ClientResponse.class, put);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
@@ -139,7 +130,7 @@ public class ReadSetResourceTest {
   @Test
   public void testGetTags() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/tags");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey + "/tags");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -149,7 +140,7 @@ public class ReadSetResourceTest {
   @Test
   public void testGetVersion() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/version");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey + "/version");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -159,7 +150,7 @@ public class ReadSetResourceTest {
   @Test
   public void testGetPermissions() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/permissions");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey + "/permissions");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
@@ -170,11 +161,11 @@ public class ReadSetResourceTest {
   @Test
   public void testPutTag() {
     Client client = Client.create();
-    WebResource webResource = client.resource(WEBSERVICE_URL + "readset/" + setKey + "/tag?tagset_id=" + tagSetKey + "&key=test");
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/" + setKey + "/tag?tagset_id=" + tagSetKey + "&key=test");
     ClientResponse response = webResource.type("application/json").put(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     
-    WebResource webResource2 = client.resource(WEBSERVICE_URL + "readset/tags?tagset_id=" + tagSetKey + "&key=test");
+    WebResource webResource2 = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "readset/tags?tagset_id=" + tagSetKey + "&key=test");
     ClientResponse response2 = webResource2.type("application/json").get(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response2.getStatus(), response2.getStatus() == 200);
     client.destroy();
