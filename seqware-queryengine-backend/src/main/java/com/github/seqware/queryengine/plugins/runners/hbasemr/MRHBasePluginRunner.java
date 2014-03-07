@@ -235,6 +235,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 //Get the filter list using a single range query (start + stop)
                 FilterList finalFilterList = generateFilterList(inputSet, parameters);
                 if (START_STOP_PAIR_EXISTS == true){
+                	System.out.println("setting filter...");
                     scan.setFilter(finalFilterList);
                 }
             }
@@ -452,8 +453,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		} else {
 			return null;
 		}
-		
-
     }
     
     public static FeatureSet updateAndGet(FeatureSet outputSet) {
