@@ -224,7 +224,7 @@ seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-d
 **Import the data into a new table:**
 
 ````
-java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
 ````
 
 **Note:** take note of the FeatureSet ID that this data was written to. Here are some ways to retreive them:
@@ -235,13 +235,13 @@ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.quer
     FeatureSet written with an ID of:
     *your_featureset_ID_*
     ````
-    
+
 2. You can check by scanning the featureset table in the hbase shell:
 
     ````
-    hbase shell
-    list
-    scan 'batman.hbaseTestTable_v2.Feature.hg_20'
+    seqware@master:~/gitroot/seqware/seqware-distribution/target$ hbase shell
+    hbase(main):013:0> list
+    hbase(main):013:0> scan 'batman.hbaseTestTable_v2.Feature.hg_20'
     ````
     In the column+cell column displayed:
     ````
@@ -251,7 +251,8 @@ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.quer
 **Running the range query:**
 
 ````
-java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ **java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"**
 ````
 
-The exporter "QueryVCFDumper" being run here will apply the map to only positions within specified range.
+The exporter "QueryVCFDumper" being run here will only scan the positions in the database for this featureset table within specified range, instead of running through the entire database.
+
