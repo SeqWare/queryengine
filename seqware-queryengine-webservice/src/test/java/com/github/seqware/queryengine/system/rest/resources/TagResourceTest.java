@@ -170,26 +170,27 @@ public class TagResourceTest {
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
+// Need to implement  
+//  // GET tag/{sgid}/version
+//  @Test
+//  public void testGetVersion() {
+//    Client client = Client.create();
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + tagKey + "/version");
+//    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    client.destroy();
+//  }
   
-  // GET tag/{sgid}/version
-  @Test
-  public void testGetVersion() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + tagKey + "/version");
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    client.destroy();
-  }
-  
-  // GET tag/{sgid}/permissions
-  @Test
-  public void testGetPermissions() {
-    Client client = Client.create();
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + tagKey + "/permissions");
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    client.destroy();
-  }
+// Need to implement
+//  // GET tag/{sgid}/permissions
+//  @Test
+//  public void testGetPermissions() {
+//    Client client = Client.create();
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "tag/" + tagKey + "/permissions");
+//    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    client.destroy();
+//  }
   /*
   @Test
   public void testPutTag() {

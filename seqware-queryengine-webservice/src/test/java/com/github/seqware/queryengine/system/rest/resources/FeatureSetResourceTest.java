@@ -83,16 +83,17 @@ public class FeatureSetResourceTest {
     client.destroy();
   }
   
-  // GET featureset/{sgid}
-  @Test
-  public void testGetFeatureSet() {
-    Client client = Client.create();
-    System.out.println(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
-    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
-    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
-    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
-    client.destroy();
-  }
+// Not implemented
+//  // GET featureset/{sgid}
+//  @Test
+//  public void testGetFeatureSet() {
+//    Client client = Client.create();
+//    System.out.println(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
+//    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "featureset/" + setKey);
+//    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+//    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+//    client.destroy();
+//  }
   
   
   // POST   featureset
