@@ -230,13 +230,16 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-            
+
             //Generate the filter list only for a non write plugin run
             if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
                 //Get the filter list using a single range query (start + stop)
-                FilterList finalFilterList = generateFilterList(inputSet, parameters);
+                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
+            	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
                 if (START_STOP_PAIR_EXISTS == true){
-                    scan.setFilter(finalFilterList);
+                    //scan.setFilter(finalFilterList);
+                	scan.setStartRow(finalScan.get(0).get(0).getBytes());
+                	scan.setStopRow(finalScan.get(0).get(1).getBytes());
                 }
             }
             
@@ -350,7 +353,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
-    public FilterList generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    public List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
     	RPNStack rpnStack = new RPNStack();
         for (Object o : parameters){
         	if (o instanceof RPNStack){
@@ -431,24 +434,30 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	}
 	    	
 	    	//Put together the List of list<Filter>
-	    	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
+//	    	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
+	    	List<List<String>> scanPositions = new ArrayList<List<String>>();
 	    	for (String seqID : comparatorStrings.keySet()){
 	    		finalStartString = comparatorStrings.get(seqID).get(0);
 	    		finalStopString = comparatorStrings.get(seqID).get(1);
-	    		List<Filter> filterHolder= new ArrayList<Filter>();
-	    		
-	    		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
-	    				new BinaryComparator(finalStartString.getBytes()));
-
-	    		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
-	    				new BinaryComparator(finalStopString.getBytes()));
-	    		filterHolder.add(stopRowFilter);
-	    		filterHolder.add(startRowFilter);
-	    		finalList.add(filterHolder);
+	    		List<String> stringHolder = new ArrayList<String>();
+	    		stringHolder.add(finalStartString);
+	    		stringHolder.add(finalStopString);
+	    		scanPositions.add(stringHolder);
+//	    		List<Filter> filterHolder= new ArrayList<Filter>();
+//	    		
+//	    		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+//	    				new BinaryComparator(finalStartString.getBytes()));
+//
+//	    		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+//	    				new BinaryComparator(finalStopString.getBytes()));
+//	    		filterHolder.add(stopRowFilter);
+//	    		filterHolder.add(startRowFilter);
+//	    		finalList.add(filterHolder);
 	    	}
 	    	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
-	        FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
-	    	return finalFilterList;
+//	        FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
+//	    	return finalFilterList;
+	        return scanPositions;
 		} else {
 			return null;
 		}
