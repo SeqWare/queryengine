@@ -33,7 +33,7 @@ public class ArbitraryPluginRunner {
     /** Constant <code>PLUGIN_CLASS_PARAM='p'</code>*/
     public static final char PLUGIN_CLASS_PARAM = 'p';
     /** Constant <code>SUCCESS</code>*/
-    private static final int SUCCESS = 1;
+    private static final int SUCCESS = 0;
     /** Constant <code>FAILIURE</code>*/
     private static final int FAILIURE = 1;
     
