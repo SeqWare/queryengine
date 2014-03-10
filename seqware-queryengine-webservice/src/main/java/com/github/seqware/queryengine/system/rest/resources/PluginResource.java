@@ -17,6 +17,8 @@
 package com.github.seqware.queryengine.system.rest.resources;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
+
+import com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Plugin;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
@@ -42,6 +44,8 @@ import javax.ws.rs.core.Response;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
+import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
+import com.github.seqware.queryengine.plugins.PluginList;
 
 /**
  * Plugin resource.
@@ -81,7 +85,9 @@ public class PluginResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public final Response runPlugin(
             @ApiParam(value = "id of plugin to run", required = true)
-            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+            @PathParam(value = "sgid") String sgid,
+            @ApiParam(value = "Parameters of the Plugin to be run", required = true) FeatureSetFacade set) throws InvalidIDException {
+        ArbitraryPluginRunner pluginRunner = new ArbitraryPluginRunner();
         // Check whether the dsn contains the type of store, or not:
         //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
         //            return this.getUnsupportedOperationResponse();
@@ -99,8 +105,16 @@ public class PluginResource {
     @ApiOperation(value = "List all available elements by rowkey", notes = "This lists the raw rowkeys used to uniquely identify each chain of entities.")
     @Produces(MediaType.APPLICATION_JSON)
     public Response pluginsRequest() {
+        PluginList plugins = new PluginList();
         List<HashMap<String, String>> stringList = new ArrayList<HashMap<String, String>>();
-        
+        List<String> pluginList = plugins.list;
+        for (String ts : pluginList) {
+        HashMap<String, String> obj = new HashMap<String, String>();
+        //obj.put("sgid", ts.getSGID().getUuid().toString());
+        obj.put("displayName", ts);
+        //obj.put("timestamp", ts.getTimestamp().toString());
+        stringList.add(obj);
+        }
 //        for (Atom ts : getElements()) {
 //            HashMap<String, String> obj = new HashMap<String, String>();
 //            obj.put("sgid", ts.getSGID().getUuid().toString());

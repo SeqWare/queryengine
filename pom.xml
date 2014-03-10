@@ -400,7 +400,11 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
             <dependency>
                 <groupId>org.restlet.jee</groupId>
                 <artifactId>org.restlet</artifactId>
