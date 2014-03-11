@@ -24,6 +24,8 @@ public class RPNStack implements Serializable {
 
     private List<Object> stack;
     private Map<Parameter, Integer> parameters = new HashMap<Parameter, Integer>();
+    static List<String> startList = new ArrayList<String>();
+    static List<String> stopList = new ArrayList<String>();
 
     /**
      * Operations for combining query constraints.
@@ -121,6 +123,14 @@ public class RPNStack implements Serializable {
 
         public FeatureAttribute(String name) {
             super(name);
+        }
+        
+        public List<String> getStartList(){
+        	return startList;
+        }
+        
+        public List<String> getStopList(){
+        	return stopList;
         }
     }
 
@@ -561,6 +571,11 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.INT:
                 arguments.add(new Constant(Integer.parseInt(text)));
+                if (startList.size() % 2 != 0){
+                	startList.add(text);
+                } else if (stopList.size() % 2 != 0) {
+                	stopList.add(text);
+                }
                 break;
             case SeqWareQueryLanguageParser.STRING:
                 arguments.add(new Constant(text.replaceFirst("^\"", "").replaceFirst("\"$", "")));
@@ -585,6 +600,11 @@ public class RPNStack implements Serializable {
             // Variables:
             case SeqWareQueryLanguageParser.ID:
                 arguments.add(new FeatureAttribute(text));
+                if (text.equals("start")){
+                	startList.add("start");
+                } else if (text.equals("stop")){
+                	stopList.add("stop");
+                }
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {

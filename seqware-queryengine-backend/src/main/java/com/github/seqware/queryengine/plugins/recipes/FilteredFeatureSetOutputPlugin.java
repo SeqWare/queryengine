@@ -60,15 +60,21 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
+        Logger.getLogger(this.getClass()).debug("Mapper Called... at position : " + position);
         count++;
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
+            Logger.getLogger(this.getClass()).debug("Size of features : " + e.getValue().size());
             for (Feature f : e.getValue()) {
                 // ignore features that do not start at this position
-                if (f.getStart() != position){
-                    continue;
+                Logger.getLogger(this.getClass()).debug("Start: " + f.getStart() + "; Position: "+ position + "; End: " + f.getStop());
+                if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
+                    f.setManager(modelManager);
+                    results.add(f);
+                    Logger.getLogger(this.getClass()).debug(" Added this feature!: " + position);
+                } else {
+                    Logger.getLogger(this.getClass()).debug("Skipped this feature: " + position);
                 }
-                f.setManager(modelManager);
-                results.add(f);
+                
             }
         }
         mapperInterface.getDestSet().add(results);

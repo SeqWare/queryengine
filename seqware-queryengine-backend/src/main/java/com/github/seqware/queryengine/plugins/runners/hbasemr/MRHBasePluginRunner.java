@@ -22,6 +22,9 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.impl.SimplePersistentBackEnd;
+import com.github.seqware.queryengine.kernel.RPNStack;
+import com.github.seqware.queryengine.kernel.RPNStack.FeatureAttribute;
+import com.github.seqware.queryengine.kernel.RPNStack.Parameter;
 import com.github.seqware.queryengine.model.Atom;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
@@ -38,20 +41,25 @@ import com.github.seqware.queryengine.plugins.runners.ReducerInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeatureFilter;
 import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
+
 import static com.github.seqware.queryengine.util.FSGID.PositionSeparator;
+
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +67,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
 import net.sourceforge.seqware.common.util.Rethrow;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -69,6 +79,13 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
@@ -106,6 +123,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int DESTINATION_FEATURE_SET = 3;
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
+    private static final int PADDED_POSITION_DIGIT_LEN = 15;
+    private static final int LENGTH_OF_SINGLE_PAIR = 2;
+    private static boolean START_STOP_PAIR_EXISTS = false;
 
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
@@ -210,6 +230,16 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
+            
+            //Generate the filter list only for a non write plugin run
+            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+                //Get the filter list using a single range query (start + stop)
+                FilterList finalFilterList = generateFilterList(inputSet, parameters);
+                if (START_STOP_PAIR_EXISTS == true){
+                    scan.setFilter(finalFilterList);
+                }
+            }
+            
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
                 scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
@@ -320,6 +350,110 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
+    public FilterList generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    	RPNStack rpnStack = new RPNStack();
+        for (Object o : parameters){
+        	if (o instanceof RPNStack){
+        		rpnStack = (RPNStack) o;
+        		break;
+        	} 
+        }
+        
+        FeatureAttribute thisFeature = null;
+        List<String> startList = new ArrayList<String>();
+        List<String> stopList = new ArrayList<String>();
+        
+        //Assumes that there is always a start and stop pair in query
+		for (Parameter parameter : rpnStack.getParameters()){
+			if (parameter instanceof FeatureAttribute){
+				thisFeature = (FeatureAttribute) parameter;
+				if (parameter.getName().equals("start")){
+    				startList = thisFeature.getStartList();
+				} else if (parameter.getName().equals("stop")){
+    				stopList = thisFeature.getStopList();
+				}
+			}
+		}
+		
+		if (startList.size() == stopList.size() && startList.size() == LENGTH_OF_SINGLE_PAIR){
+			START_STOP_PAIR_EXISTS = true;
+		}
+		
+		if (START_STOP_PAIR_EXISTS == true){
+			String startPos = new String();
+			String stopPos = new String();
+			if (!startList.isEmpty() && !stopList.isEmpty()){
+				startPos = startList.get(1);
+				stopPos = stopList.get(1);
+			}
+			
+			List<String> seqIDs = new ArrayList<String>();
+	    	for (FeatureSet fs : inputSet){
+	    		for (Feature f : fs){
+	    			if (!seqIDs.contains(f.getSeqid())){
+	        			seqIDs.add(f.getSeqid());
+	        		}
+	    		}
+	    	}
+	    	
+	    	//Generate 15 digit start and end position for use in comparator.
+	    	String zeroPad = new String();
+	    	if (startPos != null && stopPos != null){
+	        	int startDigitLength = startPos.length();
+	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
+	        	int stopDigitLength = stopPos.length();
+	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
+	    		for (int i=0; i<startDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		startPos = zeroPad + startPos;
+	    		zeroPad = "";
+	    		for (int i=0; i<stopDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		stopPos = zeroPad + stopPos;
+	    		zeroPad = "";
+	    	}
+
+	    	
+	    	//Generate the list of comparator inputs
+			Map<String, List<String>> comparatorStrings = new HashMap<String, List<String>>();
+			String referenceString = outputSet.getReference().getDisplayName();
+			String finalStartString = new String();
+			String finalStopString = new String();
+	    	for (String seqID : seqIDs){
+	    		finalStartString = referenceString + "." + seqID + ":" + startPos;
+	    		finalStopString = referenceString + "." + seqID + ":" + stopPos;
+	    		comparatorStrings.put(seqID, 
+	    				Arrays.asList(
+	    						finalStartString,
+	    						finalStopString));
+	    	}
+	    	
+	    	//Put together the List of list<Filter>
+	    	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
+	    	for (String seqID : comparatorStrings.keySet()){
+	    		finalStartString = comparatorStrings.get(seqID).get(0);
+	    		finalStopString = comparatorStrings.get(seqID).get(1);
+	    		List<Filter> filterHolder= new ArrayList<Filter>();
+	    		
+	    		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+	    				new BinaryComparator(finalStartString.getBytes()));
+
+	    		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+	    				new BinaryComparator(finalStopString.getBytes()));
+	    		filterHolder.add(stopRowFilter);
+	    		filterHolder.add(startRowFilter);
+	    		finalList.add(filterHolder);
+	    	}
+	    	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
+	        FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
+	    	return finalFilterList;
+		} else {
+			return null;
+		}
+    }
+    
     public static FeatureSet updateAndGet(FeatureSet outputSet) {
         // after processing, outputSet will actually have been versioned several times, we need the latest one
         FeatureSet latestAtomBySGID = SWQEFactory.getQueryInterface().getLatestAtomBySGID(outputSet.getSGID(), FeatureSet.class);
@@ -539,8 +673,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             String rowKey = Bytes.toString(row.get());
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
-
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
+            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
@@ -651,7 +785,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                             filteredMap.put(e.getKey(), new ArrayList<Feature>());
                         }
                         filteredMap.get(e.getKey()).add(f);
-                        
                     }
                 }
                 consolidatedMap = filteredMap;
