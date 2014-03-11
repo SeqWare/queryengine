@@ -60,20 +60,19 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
-        System.out.println("[INFO] Mapper Called... at position : " + position);
+        Logger.getLogger(this.getClass()).debug("Mapper Called... at position : " + position);
         count++;
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
-//        	System.out.println("[INFO] Size of features : " + e.getValue().size());
+            Logger.getLogger(this.getClass()).debug("Size of features : " + e.getValue().size());
             for (Feature f : e.getValue()) {
                 // ignore features that do not start at this position
-//                System.out.println("[INFO] Start: " + f.getStart() + "; Position: "+ position + "; End: " + f.getStop());
+                Logger.getLogger(this.getClass()).debug("Start: " + f.getStart() + "; Position: "+ position + "; End: " + f.getStop());
                 if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
                     f.setManager(modelManager);
                     results.add(f);
-                    System.out.println("[INFO] Added this feature!");
+                    Logger.getLogger(this.getClass()).debug(" Added this feature!: " + position);
                 } else {
-//                    System.out.println("[INFO] Skipped this feature!");
-                    continue;
+                    Logger.getLogger(this.getClass()).debug("Skipped this feature: " + position);
                 }
                 
             }
