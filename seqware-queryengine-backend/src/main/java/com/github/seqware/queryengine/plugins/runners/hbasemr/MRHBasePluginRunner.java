@@ -240,7 +240,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 if (START_STOP_PAIR_EXISTS == true){
                     //scan.setFilter(finalFilterList);
                 	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-                	 scan.setStopRow("".getBytes());
+                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
                 }
             }
             
