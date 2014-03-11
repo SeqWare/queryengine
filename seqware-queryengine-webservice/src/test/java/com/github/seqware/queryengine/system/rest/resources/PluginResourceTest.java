@@ -69,6 +69,26 @@ public class PluginResourceTest {
     client.destroy();
   }
   
+  //GET plugin/{name}
+  @Test
+  public void testGetPlugin() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin/" + "com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //POST plugin/{name}
+  @Test
+  public void testRunPlugin() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin/" + "com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin/run?reference=hg_19&output=TestOutput");
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
   protected static String extractRowKey(String output) {
     // now create a Tag using the returned rowkey
     // grab rowkey via regular expression
