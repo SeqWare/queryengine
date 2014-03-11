@@ -38,7 +38,7 @@ public class VCFDumperPlugin extends FilteredFileOutputPlugin {
 
     private Text text = new Text();
     private Text textKey = new Text();
-    
+
     /** {@inheritDoc} */
     @Override
     public FeatureFilter getFilter() {
