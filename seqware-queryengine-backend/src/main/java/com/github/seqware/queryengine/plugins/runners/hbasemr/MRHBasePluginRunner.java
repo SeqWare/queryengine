@@ -32,6 +32,7 @@ import com.github.seqware.queryengine.model.QueryInterface;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
+import com.github.seqware.queryengine.plugins.recipes.FilteredFileOutputPlugin;
 import com.github.seqware.queryengine.plugins.runners.JobRunParameterInterface;
 import com.github.seqware.queryengine.plugins.MapReducePlugin;
 import com.github.seqware.queryengine.plugins.runners.MapperInterface;
@@ -685,8 +686,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
-            System.out.println("[INFO] MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
-            System.out.println("[INFO] extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.isAssignableFrom(mapReducePlugin.class()));
+            Logger.getLogger(MRHBasePluginRunner.class.getName()).info("MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
+            Logger.getLogger(MRHBasePluginRunner.class.getName()).info("extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.class.isAssignableFrom(mapReducePlugin.getClass()));;
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
