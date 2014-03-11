@@ -685,6 +685,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             String rowKey = Bytes.toString(row.get());
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
+            
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
             Logger.getLogger(MRHBasePluginRunner.class.getName()).info("MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
             Logger.getLogger(MRHBasePluginRunner.class.getName()).info("extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.class.isAssignableFrom(mapReducePlugin.getClass()));;

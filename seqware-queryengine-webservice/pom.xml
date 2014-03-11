@@ -120,9 +120,10 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Suite.java</include>
                     </includes>
                     <excludes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Suite.java</include>
                         <include>**/*HBase*.java</include>
                         <include>**/*System*.java</include>
                         <include>**/*Impl*.java</include>
@@ -133,11 +134,16 @@ never
                 		  -->
                 </configuration>
             </plugin>
-<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Suite.java</include>
+                    </includes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -147,7 +153,6 @@ never
                     </execution>
                 </executions>
             </plugin>
--->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -181,50 +186,6 @@ never
              </exclusions>
          </dependency>
     </dependencies>
-
-   <profiles>
-        <profile>
-            <id>embeddedHBase</id>
-            <activation>
-                <!-- until we have actual tests  <activeByDefault>true</activeByDefault> -->
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-  		<plugin>
-                <!-- thanks to wibidata, this plugin allows us to spin up and shut down a mini-hbase cluster for hbase testing -->
-                <groupId>com.wibidata.maven.plugins</groupId>
-                <artifactId>hbase-maven-plugin</artifactId>
-                <version>1.0.7-cdh4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>start</goal>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skip>${skipITs}</skip>
-                    <mapReduceEnabled>true</mapReduceEnabled>
-                    <hadoopConfiguration>
-                        <!-- scanners seem to timeout more often when using this mini-cluster, possible for performance reasons -->
-                        <property>
-                            <name>hbase.client.scanner.timeout.period</name>
-                            <value>120000</value>
-                        </property>
-                        <property>
-                            <name>hbase.regionserver.lease.period</name>
-                            <value>120000</value>
-                        </property>
-                    </hadoopConfiguration>
-                </configuration>
-            	</plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>
 
 <!--
