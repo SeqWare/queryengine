@@ -44,7 +44,6 @@ import javax.ws.rs.core.Response;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
-import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
 import com.github.seqware.queryengine.plugins.PluginList;
 
 /**
@@ -76,29 +75,39 @@ public class PluginResource {
      * @return listing of resources
      */
     @POST
-    @Path(value = "/{sgid}/run")
-    @ApiOperation(value = "Run a specific plugin by rowkey with JSON parameters", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @Path(value = "/{name}/run")
+    @ApiOperation(value = "Run a specific plugin by name with JSON parameters", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
     @ApiResponses(value = {
-        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_ID, message = "Invalid name supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public final Response runPlugin(
             @ApiParam(value = "id of plugin to run", required = true)
-            @PathParam(value = "sgid") String sgid,
-            @ApiParam(value = "Parameters of the Plugin to be run", required = true) FeatureSetFacade set) throws InvalidIDException {
+            @PathParam(value = "name") String name,
+            @ApiParam(value = "reference dataset to use", required = true)
+            @QueryParam(value = "reference") String reference,
+            @ApiParam(value = "output", required = true)
+            @QueryParam(value = "output") String output) throws InvalidIDException {
         ArbitraryPluginRunner pluginRunner = new ArbitraryPluginRunner();
-        // Check whether the dsn contains the type of store, or not:
-        //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
-        //            return this.getUnsupportedOperationResponse();
-        Atom latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
-        if (latestAtomByRowKey == null) {
-            // A genuinely bad request:
-            // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-            throw new InvalidIDException(INVALID_ID, "ID not found");
+        //Construct the command
+        //String currentSnapshot = "";
+        
+        //String cmd = "java -cp " + currentSnapshot + " com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner " + referenceParam + pluginParam + outputParam;
+        String[] cd = new String[6];
+        cd[0] = "-p";
+        cd[1] = name;
+        cd[2] = "-r";
+        cd[3] = reference;
+        cd[4] = "-o";
+        cd[5] = output;
+        int process = 0;
+        try {
+          process = pluginRunner.runArbitraryPluginRunner(cd);
+        } catch (Exception ex) {
+          System.out.println(ex.getMessage());
+          return Response.ok(ex.getMessage()).build(); //("Error running Plugin: " + ex.getMessage()).toString()
         }
-
-        return Response.ok("ok".toString())/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+        return Response.ok().entity(Integer.toString(process)).build();
     }
     
     @GET
@@ -109,41 +118,38 @@ public class PluginResource {
         List<HashMap<String, String>> stringList = new ArrayList<HashMap<String, String>>();
         List<String> pluginList = plugins.list;
         for (String ts : pluginList) {
-        HashMap<String, String> obj = new HashMap<String, String>();
-        //obj.put("sgid", ts.getSGID().getUuid().toString());
-        obj.put("displayName", ts);
-        //obj.put("timestamp", ts.getTimestamp().toString());
-        stringList.add(obj);
+          HashMap<String, String> obj = new HashMap<String, String>();
+          //obj.put("sgid", ts.getSGID().getUuid().toString());
+          obj.put("pluginName", ts);
+          //obj.put("timestamp", ts.getTimestamp().toString());
+          stringList.add(obj);
         }
-//        for (Atom ts : getElements()) {
-//            HashMap<String, String> obj = new HashMap<String, String>();
-//            obj.put("sgid", ts.getSGID().getUuid().toString());
-//            obj.put("displayName", ts.getDisplayName());
-//            obj.put("timestamp", ts.getTimestamp().toString());
-//            stringList.add(obj);
-//        }
         return Response.ok().entity(stringList)/*.header("Access-Control-Allow-Origin", "*").header("X-DAS-Status", "200")*/.build();
     }
-//    
-//    @GET
-//    @Path(value = "/{sgid}")
-//    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", position = 20)
-//    @ApiResponses(value = {
-//        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
-//        @ApiResponse(code = INVALID_SET, message = "set not found")})
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response featureByIDRequest(
-//            @ApiParam(value = "id of set to be fetched", required = true)
-//            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
-//        // Check whether the dsn contains the type of store, or not:
-//        //        if (!dsn.matches("^[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*\\.[a-zA-Z]+[0-9a-zA-Z_]*$"))
-//        //            return this.getUnsupportedOperationResponse();
-//        //Atom latestAtomByRowKey = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, getModelClass());
-//        //if (latestAtomByRowKey == null) {
-//            // A genuinely bad request:
-//            // (see also http://www.biodas.org/documents/spec-1.6.html#response)
-//        //    throw new InvalidIDException(INVALID_ID, "ID not found");
-//       // }
-//        return Response.ok().entity(latestAtomByRowKey)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
-//    }
+    
+    @GET
+    @Path(value = "/{name}")
+    @ApiOperation(value = "Find a specific plugin by name", notes = "Add extra notes here", position = 20)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid name supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response pluginRequest(
+            @ApiParam(value = "id of set to be fetched", required = true)
+            @PathParam(value = "name") String name) throws InvalidIDException {
+        PluginList plugins = new PluginList();
+        HashMap<String, String> requestedPlugin = new HashMap<String, String>();
+        List<String> pluginList = plugins.list;
+        for (String ts : pluginList) {
+          if (ts.equals(name)) {
+            HashMap<String, String> obj = new HashMap<String, String>();
+            //obj.put("sgid", ts.getSGID().getUuid().toString());
+            obj.put("pluginName", ts);
+            //obj.put("timestamp", ts.getTimestamp().toString());
+            requestedPlugin = obj;
+            break;
+          }
+        }
+        return Response.ok().entity(requestedPlugin)/*.header("Access-Control-Allow-Origin", "*").header("QE-Status", "200")*/.build();
+    }
 }
