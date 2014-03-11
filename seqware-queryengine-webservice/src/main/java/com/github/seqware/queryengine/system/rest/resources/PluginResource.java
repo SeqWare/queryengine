@@ -45,6 +45,12 @@ import static com.github.seqware.queryengine.system.rest.resources.GenericElemen
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
 import com.github.seqware.queryengine.plugins.PluginList;
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.io.File;
+import java.nio.file.Paths;
 
 /**
  * Plugin resource.
@@ -53,6 +59,7 @@ import com.github.seqware.queryengine.plugins.PluginList;
  */
 @Path("/plugin")
 @Api(value = "/plugin", description = "Operations about plugins"/*, listingPath="/resources/plugin"*/)
+//@Produces({"application/json"})
 @Produces({"application/json"})
 public class PluginResource {
 
@@ -76,7 +83,7 @@ public class PluginResource {
      */
     @POST
     @Path(value = "/{name}/run")
-    @ApiOperation(value = "Run a specific plugin by name with JSON parameters", notes = "Add extra notes here"/*, responseClass = "com.github.seqware.queryengine.model.Atom"*/)
+    @ApiOperation(value = "Run a specific plugin by name with specific parameters", notes = "Add extra notes here")
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid name supplied"),
         @ApiResponse(code = INVALID_SET, message = "set not found")})
@@ -89,17 +96,15 @@ public class PluginResource {
             @ApiParam(value = "output", required = true)
             @QueryParam(value = "output") String output) throws InvalidIDException {
         ArbitraryPluginRunner pluginRunner = new ArbitraryPluginRunner();
-        //Construct the command
-        //String currentSnapshot = "";
         
-        //String cmd = "java -cp " + currentSnapshot + " com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner " + referenceParam + pluginParam + outputParam;
+        //Construct the command to the ArbitraryPluginRunner
         String[] cd = new String[6];
         cd[0] = "-p";
         cd[1] = name;
         cd[2] = "-r";
         cd[3] = reference;
         cd[4] = "-o";
-        cd[5] = output;
+        cd[5] = "tmp/" + output;
         int process = 0;
         try {
           process = pluginRunner.runArbitraryPluginRunner(cd);
@@ -107,7 +112,27 @@ public class PluginResource {
           System.out.println(ex.getMessage());
           return Response.ok(ex.getMessage()).build(); //("Error running Plugin: " + ex.getMessage()).toString()
         }
-        return Response.ok().entity(Integer.toString(process)).build();
+        
+        String status = Integer.toString(process);
+        String response = "";
+        Charset charset = Charset.forName("UTF-8");
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("tmp/" + output), charset)) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                response = response + line + " ";
+            }
+            reader.close();
+            //Delete the temporary output file
+            File temp = new File("tmp/" + output);
+            temp.delete();
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
+        }
+        HashMap<String, String> jsonResp = new HashMap<String, String>();
+        jsonResp.put("status", status);
+        jsonResp.put("output", response);
+        
+        return Response.ok().entity(jsonResp).build();
     }
     
     @GET
