@@ -686,6 +686,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Long position = Long.valueOf(rowKey);
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
             System.out.println("[INFO] MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
+            System.out.println("[INFO] extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.isAssignableFrom(mapReducePlugin.class()));
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
