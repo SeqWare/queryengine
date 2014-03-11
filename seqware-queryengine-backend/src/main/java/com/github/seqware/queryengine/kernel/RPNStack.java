@@ -575,7 +575,7 @@ public class RPNStack implements Serializable {
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
                 	stopList.add(text);
-                }
+                } else
                 break;
             case SeqWareQueryLanguageParser.STRING:
                 arguments.add(new Constant(text.replaceFirst("^\"", "").replaceFirst("\"$", "")));
@@ -604,7 +604,7 @@ public class RPNStack implements Serializable {
                 	startList.add("start");
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-                }
+                } else
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {
