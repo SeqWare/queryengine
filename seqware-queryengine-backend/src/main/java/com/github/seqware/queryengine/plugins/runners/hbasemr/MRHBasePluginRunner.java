@@ -239,8 +239,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
                 if (START_STOP_PAIR_EXISTS == true){
                     //scan.setFilter(finalFilterList);
-                	// scan.setStartRow(finalScan.get(0).get(0).getBytes());
-                	// scan.setStopRow(finalScan.get(0).get(1).getBytes());
+                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
+                	 scan.setStopRow("".getBytes());
                 }
             }
             
