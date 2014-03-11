@@ -6,6 +6,12 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Retrieves the list of plugins which extend the
+ * FilteredFileOutputPlugin class 
+ * @author jho
+ *
+ */
 public class PluginList {
   public static List<String> list = new ArrayList<String>();
   
