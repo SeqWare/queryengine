@@ -152,7 +152,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         
     protected Job job;
     private MapReducePlugin mapReducePlugin;
-    private FeatureSet outputSet;
+    private static FeatureSet outputSet;
 
     /**
      * 
@@ -370,7 +370,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
-    public List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    public static List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
     	RPNStack rpnStack = new RPNStack();
         for (Object o : parameters){
         	if (o instanceof RPNStack){
@@ -523,7 +523,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return str_params;
     }
     
-    public class QueryRegionTableInput extends TableInputFormatBase{
+    public static class QueryRegionTableInput extends TableInputFormatBase{
     	
     	@Override
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
