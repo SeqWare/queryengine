@@ -92,6 +92,7 @@ import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
+import org.apache.hadoop.hbase.mapreduce.TableSplit;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
@@ -99,6 +100,7 @@ import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -241,11 +243,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 //FilterList finalFilterList = generateFilterList(inputSet, parameters);
             	thisInputSet = inputSet;
             	thisParameter = parameters;
-            	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
                 if (START_STOP_PAIRS_EXIST == true){
                     //scan.setFilter(finalFilterList);
-                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+//                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
+//                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+                	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
+
                 }
             }
             
@@ -264,7 +267,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     PluginRunnerMapper.class, // mapper
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                    job);
+                    job,
+                    false,
+            		MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -515,18 +520,32 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public class QueryRegionTableInput extends TableInputFormat{
     	
     	@Override
-    	public List<InputSplit> getSplits(JobContext context){
-    		List<InputSplit> inputSplit = new ArrayList<InputSplit>();
-    		List<List<String>> listList = new ArrayList<List<String>>();
-    		Scan scan = getScan();
-    		
-    		byte[] startRowByte = scan.getStartRow();
-    		byte[] stopRowByte = scan.getStopRow();
-    		
-    		listList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-    		
-    		
-    		return null;
+    	public List<InputSplit> getSplits(JobContext context) throws IOException{
+    		try{
+	    		List<InputSplit> splits = new ArrayList<InputSplit>();
+	    		List<List<String>> listList = new ArrayList<List<String>>();
+	    		Scan scan = getScan();
+	    		
+	    		listList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+	    		
+	    		byte[] startRowByte = listList.get(0).get(0).getBytes();
+	    		byte[] stopRowByte = listList.get(0).get(1).getBytes();
+	
+	    		
+	    		scan.setStartRow(startRowByte);
+	    		scan.setStopRow(stopRowByte);
+	    		
+	    		setScan(scan);
+	    		
+	    		for(InputSplit subSplit : super.getSplits(context))
+	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	    					(TableSplit) subSplit, new TableSplit()));
+	    		
+	    		return splits;
+    		} catch (Exception e){
+    			e.printStackTrace();
+    			return null;
+    		}
     	}
     }
     
