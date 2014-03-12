@@ -239,6 +239,14 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
             List scans = new ArrayList<Scan>();
             
+        	thisInputSet = inputSet;
+        	thisParameter = parameters;
+            
+            for(FeatureSet set : inputSet){
+                byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
+                scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
+            }
+            
             //Generate the filter list only for a non write plugin run
             if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
                 //Get the filter list using a single range query (start + stop)
@@ -257,14 +265,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 	scans.add(scan);
                 }
                 	
-            }
-            
-        	thisInputSet = inputSet;
-        	thisParameter = parameters;
-            
-            for(FeatureSet set : inputSet){
-                byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
-                scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
             }
             // this might be redundant, check this!!!! 
             // scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
