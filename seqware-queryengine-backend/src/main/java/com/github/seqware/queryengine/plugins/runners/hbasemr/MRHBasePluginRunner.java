@@ -237,10 +237,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-//            List scans = new ArrayList<Scan>();
-            
-        	thisInputSet = inputSet;
-        	thisParameter = parameters;
             
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
@@ -248,24 +244,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             }
             
             //Generate the filter list only for a non write plugin run
-//            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-//                //Get the filter list using a single range query (start + stop)
-//                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
-//            	scans = getScanList(tableName, inputSet, parameters);
-//            	scans.add(scan);
-//            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Scan list has been made");
-//            	//TODO: if there is no proper query, you will run into error.
-//                if (START_STOP_PAIRS_EXIST == true){
-//                    //scan.setFilter(finalFilterList);
-////                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-////                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
-//                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
-//
-//                } else{
-//                	scans.add(scan);
-//                }
-//                	
-//            }
+            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+            	thisInputSet = inputSet;
+            	thisParameter = parameters;
+            } else {
+            	thisInputSet = new ArrayList<FeatureSet>();
+            	thisParameter = new Object[0];
+            }
             // this might be redundant, check this!!!! 
             // scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
