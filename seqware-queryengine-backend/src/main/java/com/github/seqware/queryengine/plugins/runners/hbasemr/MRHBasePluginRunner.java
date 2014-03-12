@@ -268,7 +268,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
                     job,
-                    false,
+                    true,
             		MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
