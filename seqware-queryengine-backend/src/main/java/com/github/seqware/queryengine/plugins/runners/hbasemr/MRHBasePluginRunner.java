@@ -152,7 +152,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         
     protected Job job;
     private MapReducePlugin mapReducePlugin;
-    private static FeatureSet outputSet;
+    private FeatureSet outputSet;
 
     /**
      * 
@@ -237,23 +237,27 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
+            List scans = new ArrayList<Scan>();
+            
+            //Generate the filter list only for a non write plugin run
+            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+                //Get the filter list using a single range query (start + stop)
+                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
+            	scans = getScanList(tableName, inputSet, parameters);
+            	scans.add(scan);
+            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Scan list has been made");
+            	//TODO: if there is no proper query, you will run into error.
+                if (START_STOP_PAIRS_EXIST == true){
+                    //scan.setFilter(finalFilterList);
+//                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
+//                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
 
-//            //Generate the filter list only for a non write plugin run
-//            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-//                //Get the filter list using a single range query (start + stop)
-//                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
-//
-//            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Parameters have been set");
-//            	List<List<String>> finalScan = generateFilterList(inputSet, parameters); // check for complete start stop query
-//            	//TODO: if there is no proper query, you will run into error.
-//                if (START_STOP_PAIRS_EXIST == true){
-//                    //scan.setFilter(finalFilterList);
-////                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-////                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
-//                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
-//
-//                }
-//            }
+                } else{
+                	scans.add(scan);
+                }
+                	
+            }
             
         	thisInputSet = inputSet;
         	thisParameter = parameters;
@@ -268,14 +272,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
             TableMapReduceUtil.initTableMapperJob(
-                    tableName, // input HBase table name
-                    scan, // Scan instance to control CF and attribute selection
+                    scans, // Scan instance to control CF and attribute selection
                     PluginRunnerMapper.class, // mapper
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                    job,
-                    true,
-            		MRHBasePluginRunner.QueryRegionTableInput.class);
+                    job);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -370,7 +371,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
-    public static List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    public List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
     	RPNStack rpnStack = new RPNStack();
         for (Object o : parameters){
         	if (o instanceof RPNStack){
@@ -523,7 +524,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return str_params;
     }
     
-    public static class QueryRegionTableInput extends TableInputFormatBase{
+    public class QueryRegionTableInput extends TableInputFormat{
     	
     	@Override
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
@@ -543,9 +544,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		
 	    		setScan(scan);
 	    		
-	    		for(InputSplit subSplit : super.getSplits(context))
+	    		for(InputSplit subSplit : super.getSplits(context)){
 	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
 	    					(TableSplit) subSplit, new TableSplit()));
+	    		}
 	    		
 	    		return splits;
     		} catch (Exception e){
@@ -553,6 +555,21 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     			return null;
     		}
     	}
+    }
+    
+    public List<Scan> getScanList(String tableName, List<FeatureSet> inputSet, Object... parameters){
+    	List scans = new ArrayList<Scan>();
+    	Scan scan = new Scan();
+    	List<List<String>> listList = new ArrayList<List<String>>();
+    	
+    	listList = generateFilterList(inputSet, parameters);
+    	
+    	scan.setStartRow(listList.get(0).get(0).getBytes());
+    	scan.setStopRow(listList.get(0).get(1).getBytes());
+    	
+    	scans.add(scan);
+    	
+    	return scans;
     }
     
     public static class PluginRunnerReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends TableReducer<KEYIN, VALUEIN, KEYOUT> implements ReducerInterface<KEYOUT, VALUEOUT> {
