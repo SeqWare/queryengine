@@ -533,13 +533,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
     		try{
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
-	    		List<List<String>> listList = new ArrayList<List<String>>();
+	    		List<List<String>> rowList = new ArrayList<List<String>>();
 	    		Scan scan = getScan();
 	    		
-	    		listList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+	    		rowList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
 	    		
-	    		byte[] startRowByte = listList.get(0).get(0).getBytes();
-	    		byte[] stopRowByte = listList.get(0).get(1).getBytes();
+	    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
+	    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
 	    	
 	    		
 	    		scan.setStartRow(startRowByte);
