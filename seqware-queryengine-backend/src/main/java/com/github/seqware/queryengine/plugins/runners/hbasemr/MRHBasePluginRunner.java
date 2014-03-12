@@ -131,7 +131,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int PLUGIN_CLASS = 5;
     private static final int PADDED_POSITION_DIGIT_LEN = 15;
     private static boolean START_STOP_PAIRS_EXIST = false;
-
+    private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
+    private static Object[] thisParameter = new Object[0];
+    
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
         ByteBuffer buf = ByteBuffer.wrap(data);
@@ -235,7 +237,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setMaxVersions();       // we need all version data
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
-            List scans = new ArrayList<Scan>();
+//            List scans = new ArrayList<Scan>();
+            
+        	thisInputSet = inputSet;
+        	thisParameter = parameters;
             
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
@@ -243,35 +248,38 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             }
             
             //Generate the filter list only for a non write plugin run
-            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-                //Get the filter list using a single range query (start + stop)
-                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
-            	scans = getScanList(tableName, inputSet, parameters);
-            	scans.add(scan);
-            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Scan list has been made");
-            	//TODO: if there is no proper query, you will run into error.
-                if (START_STOP_PAIRS_EXIST == true){
-                    //scan.setFilter(finalFilterList);
-//                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-//                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
-                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
-
-                } else{
-                	scans.add(scan);
-                }
-                	
-            }
+//            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+//                //Get the filter list using a single range query (start + stop)
+//                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
+//            	scans = getScanList(tableName, inputSet, parameters);
+//            	scans.add(scan);
+//            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Scan list has been made");
+//            	//TODO: if there is no proper query, you will run into error.
+//                if (START_STOP_PAIRS_EXIST == true){
+//                    //scan.setFilter(finalFilterList);
+////                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
+////                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+//                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
+//
+//                } else{
+//                	scans.add(scan);
+//                }
+//                	
+//            }
             // this might be redundant, check this!!!! 
             // scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
             TableMapReduceUtil.initTableMapperJob(
-                    scans, // Scan instance to control CF and attribute selection
+                    tableName,
+            		scan, // Scan instance to control CF and attribute selection
                     PluginRunnerMapper.class, // mapper
                     mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
                     mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                    job);
+                    job,
+                    true, 
+                    MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -517,6 +525,39 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         str_params[PLUGIN_CLASS] = Base64.encodeBase64String(SerializationUtils.serialize(mapReducePlugin.getClass()));
 
         return str_params;
+    }
+    
+    public class QueryRegionTableInput extends TableInputFormat{
+    	
+    	@Override
+    	public List<InputSplit> getSplits(JobContext context) throws IOException{
+    		try{
+	    		List<InputSplit> splits = new ArrayList<InputSplit>();
+	    		List<List<String>> listList = new ArrayList<List<String>>();
+	    		Scan scan = getScan();
+	    		
+	    		listList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+	    		
+	    		byte[] startRowByte = listList.get(0).get(0).getBytes();
+	    		byte[] stopRowByte = listList.get(0).get(1).getBytes();
+	    	
+	    		
+	    		scan.setStartRow(startRowByte);
+	    		scan.setStopRow(stopRowByte);
+	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+	    		setScan(scan);
+	    		
+	    		for(InputSplit subSplit : super.getSplits(context)){
+	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	    					(TableSplit) subSplit, new TableSplit()));
+	    		}
+	    		
+	    		return splits;
+    		} catch (Exception e){
+    			e.printStackTrace();
+    			return null;
+    		}
+    	}
     }
     
     public List<Scan> getScanList(String tableName, List<FeatureSet> inputSet, Object... parameters){
