@@ -88,10 +88,12 @@ import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -125,9 +127,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
     private static final int PADDED_POSITION_DIGIT_LEN = 15;
-    private static final int LENGTH_OF_SINGLE_PAIR = 2;
-    private static boolean START_STOP_PAIR_EXISTS = false;
-
+    private static boolean START_STOP_PAIRS_EXIST = false;
+    private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
+    private static Object[] thisParameter = new Object[0];
+    
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
         ByteBuffer buf = ByteBuffer.wrap(data);
@@ -236,8 +239,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
                 //Get the filter list using a single range query (start + stop)
                 //FilterList finalFilterList = generateFilterList(inputSet, parameters);
+            	thisInputSet = inputSet;
+            	thisParameter = parameters;
             	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
-                if (START_STOP_PAIR_EXISTS == true){
+                if (START_STOP_PAIRS_EXIST == true){
                     //scan.setFilter(finalFilterList);
                 	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
                 	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
@@ -379,11 +384,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			}
 		}
 		
-		if (startList.size() == stopList.size() && startList.size() == LENGTH_OF_SINGLE_PAIR){
-			START_STOP_PAIR_EXISTS = true;
+		if (startList.size() == stopList.size() && startList.size()%2 == 0){
+			START_STOP_PAIRS_EXIST = true;
 		}
 		
-		if (START_STOP_PAIR_EXISTS == true){
+		if (START_STOP_PAIRS_EXIST == true){
 			String startPos = new String();
 			String stopPos = new String();
 			if (!startList.isEmpty() && !stopList.isEmpty()){
@@ -506,7 +511,25 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
         return str_params;
     }
-
+    
+    public class QueryRegionTableInput extends TableInputFormat{
+    	
+    	@Override
+    	public List<InputSplit> getSplits(JobContext context){
+    		List<InputSplit> inputSplit = new ArrayList<InputSplit>();
+    		List<List<String>> listList = new ArrayList<List<String>>();
+    		Scan scan = getScan();
+    		
+    		byte[] startRowByte = scan.getStartRow();
+    		byte[] stopRowByte = scan.getStopRow();
+    		
+    		listList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+    		
+    		
+    		return null;
+    	}
+    }
+    
     public static class PluginRunnerReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends TableReducer<KEYIN, VALUEIN, KEYOUT> implements ReducerInterface<KEYOUT, VALUEOUT> {
 
         public PluginRunnerReducer() {
