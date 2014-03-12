@@ -243,10 +243,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 //FilterList finalFilterList = generateFilterList(inputSet, parameters);
             	thisInputSet = inputSet;
             	thisParameter = parameters;
+            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Parameters have been set");
                 if (START_STOP_PAIRS_EXIST == true){
                     //scan.setFilter(finalFilterList);
 //                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
 //                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
                 	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
 
                 }
