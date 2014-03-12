@@ -89,6 +89,7 @@ import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.hbase.mapreduce.TableInputFormatBase;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
@@ -237,22 +238,25 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
             scan.setCacheBlocks(false);  // don't set to true for MR jobs
 
-            //Generate the filter list only for a non write plugin run
-            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-                //Get the filter list using a single range query (start + stop)
-                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
-            	thisInputSet = inputSet;
-            	thisParameter = parameters;
-            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Parameters have been set");
-                if (START_STOP_PAIRS_EXIST == true){
-                    //scan.setFilter(finalFilterList);
-//                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
-//                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
-                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
-                	List<List<String>> finalScan = generateFilterList(inputSet, parameters);
-
-                }
-            }
+//            //Generate the filter list only for a non write plugin run
+//            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
+//                //Get the filter list using a single range query (start + stop)
+//                //FilterList finalFilterList = generateFilterList(inputSet, parameters);
+//
+//            	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("Parameters have been set");
+//            	List<List<String>> finalScan = generateFilterList(inputSet, parameters); // check for complete start stop query
+//            	//TODO: if there is no proper query, you will run into error.
+//                if (START_STOP_PAIRS_EXIST == true){
+//                    //scan.setFilter(finalFilterList);
+////                	 scan.setStartRow(finalScan.get(0).get(0).getBytes());
+////                	 scan.setStopRow(finalScan.get(0).get(1).getBytes());
+//                	Logger.getLogger(MRHBasePluginRunner.class.getName()).info("START_STOP_PARIS_EXISTS==TRUE!!!!!");;
+//
+//                }
+//            }
+            
+        	thisInputSet = inputSet;
+        	thisParameter = parameters;
             
             for(FeatureSet set : inputSet){
                 byte[] qualiferBytes = Bytes.toBytes(set.getSGID().getUuid().toString());
@@ -519,9 +523,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return str_params;
     }
     
-    public class QueryRegionTableInput extends TableInputFormat{
+    public class QueryRegionTableInput extends TableInputFormatBase{
     	
-    	
+    	@Override
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
     		try{
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
@@ -532,7 +536,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		
 	    		byte[] startRowByte = listList.get(0).get(0).getBytes();
 	    		byte[] stopRowByte = listList.get(0).get(1).getBytes();
-	
+	    	
 	    		
 	    		scan.setStartRow(startRowByte);
 	    		scan.setStopRow(stopRowByte);
