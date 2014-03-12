@@ -58,7 +58,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
-
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+import com.sun.jersey.multipart.FormDataParam;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import java.util.HashMap;
 /**
  * FeatureSet
  * resource.
@@ -293,16 +297,15 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
    * @return
    */
   @POST
+  @Path("/upload")
   @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
   @ApiResponses(value = {
     @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
-  @Consumes(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.MULTIPART_FORM_DATA) 
+  //@Produces( MediaType.APPLICATION_JSON )
   public Response uploadRawVCFfile(
-          @ApiParam(value = "format of input", required = true, allowableValues = "VCF,GFF3,GVF")
-          @DefaultValue(value = "VCF")
-          @QueryParam(value = "format") String format,
-          @ApiParam(value = "VCF-formated body that needs to be created", required = true) String body) {
-
+          @ApiParam(value = "file to upload") @FormDataParam("upload") InputStream file,
+          @ApiParam(value = "file detail") @FormDataParam("upload") FormDataContentDisposition fileDisposition) {
     try {
       /*
        * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -311,17 +314,32 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
        * the upload should take place as a plugin, reporting back a token that the calling 
        * user can occationally check in on.
        */
-      BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/foo.vcf"));
-      bw.write(body);
+      
+      String fileName = fileDisposition.getName();
+      BufferedWriter bw = new BufferedWriter(new FileWriter("tmp/" + fileName));
+      IOUtils.copy(file, bw, "UTF-8");
+      //bw.write(body);
       bw.close();
-      // FIXME: totally hard coded!
-      FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "hg19", "/tmp/foo.vcf"});
+      
 
+//      BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+//      BufferedWriter bw = new BufferedWriter(new FileWriter("tmp/" + fileName));
+//      String line = null;
+//      while ((line = reader.readLine())!= null) {
+//        bw.write(line + "\n");
+//      }
+//      //bw.write(file);
+//      bw.close();
+//      file.close();
+      FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "hg19", "tmp/" + fileName});
+
+      //saveToFile(file, "tmp/abc");
     } catch (IOException ex) {
       Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
     }
-
-    return Response.ok().entity("").build();
+    HashMap<String,String> map = new HashMap<String, String>();
+    map.put("entry", "ok");
+    return Response.ok().entity(map).build();
 
     /* CreateUpdateManager modelManager = SWQEFactory.getModelManager();
      modelManager.objectCreated(set);
