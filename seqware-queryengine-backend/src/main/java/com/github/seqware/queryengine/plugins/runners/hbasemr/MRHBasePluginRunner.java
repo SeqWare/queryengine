@@ -530,7 +530,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	
 	    		
 	    		scan.setStartRow(startRowByte);
-	    		scan.setStopRow(stopRowByte);
+	    		scan.setStopRow(" ".getBytes());
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	    		setScan(scan);
 	    		
