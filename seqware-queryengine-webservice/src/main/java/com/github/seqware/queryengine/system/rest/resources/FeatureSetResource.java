@@ -63,6 +63,8 @@ import org.apache.commons.io.IOUtils;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import java.util.HashMap;
+import com.github.seqware.queryengine.util.SGID;
+import java.io.File;
 /**
  * FeatureSet
  * resource.
@@ -304,8 +306,10 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
   @Consumes(MediaType.MULTIPART_FORM_DATA) 
   //@Produces( MediaType.APPLICATION_JSON )
   public Response uploadRawVCFfile(
+          @ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
           @ApiParam(value = "file to upload") @FormDataParam("upload") InputStream file,
           @ApiParam(value = "file detail") @FormDataParam("upload") FormDataContentDisposition fileDisposition) {
+    SGID sgid = null;
     try {
       /*
        * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -318,34 +322,20 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
       String fileName = fileDisposition.getName();
       BufferedWriter bw = new BufferedWriter(new FileWriter("tmp/" + fileName));
       IOUtils.copy(file, bw, "UTF-8");
-      //bw.write(body);
       bw.close();
       
-
-//      BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-//      BufferedWriter bw = new BufferedWriter(new FileWriter("tmp/" + fileName));
-//      String line = null;
-//      while ((line = reader.readLine())!= null) {
-//        bw.write(line + "\n");
-//      }
-//      //bw.write(file);
-//      bw.close();
-//      file.close();
-      FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "hg19", "tmp/" + fileName});
-
+      sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", featureSet, "tmp/" + fileName});
+      //Delete the uploaded vcf file
+      File temp = new File("tmp/" + fileName);
+      temp.delete();
       //saveToFile(file, "tmp/abc");
     } catch (IOException ex) {
       Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
     }
+    
     HashMap<String,String> map = new HashMap<String, String>();
-    map.put("entry", "ok");
+    map.put("sgid", sgid.toString());
     return Response.ok().entity(map).build();
-
-    /* CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-     modelManager.objectCreated(set);
-     modelManager.close();
-     return Response.ok().entity(set).build();*/
-
   }
 
   @GET
