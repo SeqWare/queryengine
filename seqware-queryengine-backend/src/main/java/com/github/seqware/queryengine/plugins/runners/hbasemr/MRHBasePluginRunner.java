@@ -529,6 +529,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     
     public class QueryRegionTableInput extends TableInputFormat{
     	
+    	QueryRegionTableInput(){}
+    	
     	@Override
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
     		try{
