@@ -359,7 +359,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     /**
      * 
      * @param parameters This is taken from the MRHBasePluginRunner constructor
-     * @return List of lists. First list is the start range lists, second list is stop range lists.
+     * @return List of lists. First list is the start range lists, second list is stop range lists. Third is list of possible seqID(s).
      * @return Switches the START_STOP_PAIRS_EXIST on for splitting the table
      */
     public static List<List<String>> determineRangeQueryExists(Object... parameters){
