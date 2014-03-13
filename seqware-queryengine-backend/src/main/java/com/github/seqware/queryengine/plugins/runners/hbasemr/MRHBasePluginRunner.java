@@ -129,7 +129,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int DESTINATION_FEATURE_SET = 3;
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
-    private static final int PADDED_POSITION_DIGIT_LEN = 15;
     private static boolean START_STOP_PAIRS_EXIST = false;
     private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
     private static Object[] thisParameter = new Object[0];
@@ -427,9 +426,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	String zeroPad = new String();
 	    	if (startPos != null && stopPos != null){
 	        	int startDigitLength = startPos.length();
-	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
+	        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
 	        	int stopDigitLength = stopPos.length();
-	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
+	        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
 
 	    		for (int i=0; i<startDigitLengthDifference; i++){
 	    			zeroPad += "0";
