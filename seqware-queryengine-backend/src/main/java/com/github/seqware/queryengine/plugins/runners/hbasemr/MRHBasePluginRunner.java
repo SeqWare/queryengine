@@ -399,7 +399,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			String stopPos = new String();
 			
 			if (!seqIDList.isEmpty()){
-				for (int i = 0; i<seqIDList.size(); i +=2){
+				for (int i = 0; i<seqIDList.size(); i++){
 					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqIDList.get(i));
 				}
 			}
