@@ -571,6 +571,7 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.INT:
                 arguments.add(new Constant(Integer.parseInt(text)));
+                Logger.getLogger(RPNStack.class).info("This CONSTANT ______: " + text);
                 if (startList.size() % 2 != 0){
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
@@ -600,6 +601,7 @@ public class RPNStack implements Serializable {
             // Variables:
             case SeqWareQueryLanguageParser.ID:
                 arguments.add(new FeatureAttribute(text));
+                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
                 } else if (text.equals("stop")){
