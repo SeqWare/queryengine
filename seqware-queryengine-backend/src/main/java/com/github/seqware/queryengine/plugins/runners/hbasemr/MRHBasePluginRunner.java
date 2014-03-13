@@ -54,6 +54,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -69,6 +70,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import junit.framework.Assert;
 import net.sourceforge.seqware.common.util.Rethrow;
 
 import org.apache.commons.codec.binary.Base64;
@@ -413,9 +415,15 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        	int stopDigitLength = stopPos.length();
 	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
 	        	byte[] startPosInByte = Bytes.padHead(startPos.getBytes(), startDigitLengthDifference);
-	        	startPos = Bytes.toString(startPosInByte);
 	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
-	        	stopPos = Bytes.toString(stopPosInByte);
+	        	try {
+					startPos = new String(startPosInByte, "UTF-8");
+					stopPos = new String(stopPosInByte, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos:" + startPos);
+	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos" + stopPos);
 //	    		for (int i=0; i<startDigitLengthDifference; i++){
 //	    			zeroPad += "0";
 //	    		}
