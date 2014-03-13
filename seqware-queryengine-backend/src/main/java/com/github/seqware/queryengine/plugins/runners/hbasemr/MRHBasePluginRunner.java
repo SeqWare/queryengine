@@ -359,7 +359,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
-    public static List<List<String>> generateFilterList(List<FeatureSet> inputSet, Object... parameters) {
+    public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, Object... parameters) {
     	RPNStack rpnStack = new RPNStack();
         for (Object o : parameters){
         	if (o instanceof RPNStack){
@@ -406,22 +406,26 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	}
 	    	
 	    	//Generate 15 digit start and end position for use in comparator.
-	    	String zeroPad = new String();
+//	    	String zeroPad = new String();
 	    	if (startPos != null && stopPos != null){
 	        	int startDigitLength = startPos.length();
 	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
 	        	int stopDigitLength = stopPos.length();
 	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
-	    		for (int i=0; i<startDigitLengthDifference; i++){
-	    			zeroPad += "0";
-	    		}
-	    		startPos = zeroPad + startPos;
-	    		zeroPad = "";
-	    		for (int i=0; i<stopDigitLengthDifference; i++){
-	    			zeroPad += "0";
-	    		}
-	    		stopPos = zeroPad + stopPos;
-	    		zeroPad = "";
+	        	byte[] startPosInByte = Bytes.padHead(startPos.getBytes(), startDigitLengthDifference);
+	        	startPos = Bytes.toString(startPosInByte);
+	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
+	        	stopPos = Bytes.toString(stopPosInByte);
+//	    		for (int i=0; i<startDigitLengthDifference; i++){
+//	    			zeroPad += "0";
+//	    		}
+//	    		startPos = zeroPad + startPos;
+//	    		zeroPad = "";
+//	    		for (int i=0; i<stopDigitLengthDifference; i++){
+//	    			zeroPad += "0";
+//	    		}
+//	    		stopPos = zeroPad + stopPos;
+//	    		zeroPad = "";
 	    	}
 
 	    	
@@ -523,7 +527,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		List<List<String>> rowList = new ArrayList<List<String>>();
 	    		Scan scan = getScan();
 	    		
-	    		rowList = generateFilterList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+	    		rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
 	    		
 	    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
 	    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
@@ -552,7 +556,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	Scan scan = new Scan();
     	List<List<String>> listList = new ArrayList<List<String>>();
     	
-    	listList = generateFilterList(inputSet, parameters);
+    	listList = generateRegionList(inputSet, parameters);
     	
     	scan.setStartRow(listList.get(0).get(0).getBytes());
     	scan.setStopRow(listList.get(0).get(1).getBytes());
