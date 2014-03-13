@@ -612,7 +612,7 @@ public class RPNStack implements Serializable {
                 	startList.add("start");
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-                } else if ()
+                } 
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {
