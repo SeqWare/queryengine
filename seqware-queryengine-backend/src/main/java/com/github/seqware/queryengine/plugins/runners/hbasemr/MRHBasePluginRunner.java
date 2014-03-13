@@ -384,7 +384,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 			}
 		}
-		
+
 		//All start and stop positions are paired.
 		if (startList.size() == stopList.size() && startList.size()%2 == 0){
 			START_STOP_PAIRS_EXIST = true;
@@ -398,9 +398,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			String startPos = new String();
 			String stopPos = new String();
 			
-			if (!seqIDList.isEmpty()){
-				for (int i = 0; i<seqIDList.size(); i++){
-					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqIDList.get(i));
+			if (!seqList.isEmpty()){
+				for (int i = 0; i<seqList.size(); i += 2){
+					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqList.get(i));
 				}
 			}
 			
