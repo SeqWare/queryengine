@@ -406,33 +406,33 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	}
 	    	
 	    	//Generate 15 digit start and end position for use in comparator.
-//	    	String zeroPad = new String();
+	    	String zeroPad = new String();
 	    	if (startPos != null && stopPos != null){
 	        	int startDigitLength = startPos.length();
 	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
 	        	int stopDigitLength = stopPos.length();
 	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
 	        	
-	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
-	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
-	        	
-	        	byte[] startPosInByte = Bytes.padHead(startPos.getBytes(), startDigitLengthDifference);
-	        	startPos = Bytes.toString(startPosInByte);
-	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
-	        	stopPos = Bytes.toString(stopPosInByte);
-	        	
-	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
-	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
-//	    		for (int i=0; i<startDigitLengthDifference; i++){
-//	    			zeroPad += "0";
-//	    		}
-//	    		startPos = zeroPad + startPos;
-//	    		zeroPad = "";
-//	    		for (int i=0; i<stopDigitLengthDifference; i++){
-//	    			zeroPad += "0";
-//	    		}
-//	    		stopPos = zeroPad + stopPos;
-//	    		zeroPad = "";
+//	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
+//	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
+//	        	
+//	        	byte[] startPosInByte = Bytes.padHead(startPos.getBytes(), startDigitLengthDifference);
+//	        	startPos = Bytes.toString(startPosInByte);
+//	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
+//	        	stopPos = Bytes.toString(stopPosInByte);
+//	        	
+//	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
+//	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
+	    		for (int i=0; i<startDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		startPos = zeroPad + startPos;
+	    		zeroPad = "";
+	    		for (int i=0; i<stopDigitLengthDifference; i++){
+	    			zeroPad += "0";
+	    		}
+	    		stopPos = zeroPad + stopPos;
+	    		zeroPad = "";
 	    	}
 
 	    	
