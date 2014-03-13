@@ -70,7 +70,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 import net.sourceforge.seqware.common.util.Rethrow;
 
 import org.apache.commons.codec.binary.Base64;
