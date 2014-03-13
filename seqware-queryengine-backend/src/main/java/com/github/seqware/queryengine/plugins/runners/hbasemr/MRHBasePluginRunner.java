@@ -243,14 +243,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 scan.addColumn(HBaseStorage.getTEST_FAMILY_INBYTES(), qualiferBytes);
             }
             
-            //Generate the filter list only for a non write plugin run
-            if (!mapReducePlugin.getClass().getSimpleName().equals("VCFDumperPlugin")){
-            	thisInputSet = inputSet;
-            	thisParameter = parameters;
-            } else {
-            	thisInputSet = new ArrayList<FeatureSet>();
-            	thisParameter = new Object[0];
-            }
+        	thisInputSet = inputSet;
+        	thisParameter = parameters;
+
             // this might be redundant, check this!!!! 
             // scan.setFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL, new BinaryComparator(qualiferBytes)));
 
@@ -507,17 +502,26 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	@Override
     	public List<InputSplit> getSplits(JobContext context) throws IOException{
     		try{
+    			Scan scan = getScan();
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
-	    		List<List<String>> rowList = new ArrayList<List<String>>();
-	    		Scan scan = getScan();
+	    		String currentMapperName = new String();
+	    		currentMapperName = MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName();
+	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
 	    		
-	    		rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-	    		
-	    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
-	    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current class as...: " + super.getClass().getName());
-	    		scan.setStartRow(startRowByte);
-	    		scan.setStopRow(stopRowByte);
+	    		if (!currentMapperName.equals("VCFDumperPlugin")){
+	    			//Use the multiple range input, we want the shortened scan range.
+		    		List<List<String>> rowList = new ArrayList<List<String>>();
+		    		rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+		    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
+		    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
+		    		scan.setStartRow(startRowByte);
+		    		scan.setStopRow(stopRowByte);
+	    		} else {
+	    			//Assume VCFDumperPlugin is running, we want the entire scan range.
+	    			scan.setStartRow(scan.getStartRow());
+	    			scan.setStopRow(scan.getStopRow());
+	    		}
+
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	    		setScan(scan);
 	    		
