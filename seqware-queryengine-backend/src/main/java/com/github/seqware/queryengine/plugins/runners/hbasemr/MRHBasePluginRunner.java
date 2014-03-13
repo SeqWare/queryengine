@@ -412,17 +412,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        	int startDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - startDigitLength;
 	        	int stopDigitLength = stopPos.length();
 	        	int stopDigitLengthDifference = PADDED_POSITION_DIGIT_LEN - stopDigitLength;
-	        	
-//	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
-//	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
-//	        	
-//	        	byte[] startPosInByte = Bytes.padHead(startPos.getBytes(), startDigitLengthDifference);
-//	        	startPos = Bytes.toString(startPosInByte);
-//	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
-//	        	stopPos = Bytes.toString(stopPosInByte);
-//	        	
-//	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
-//	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
+
 	    		for (int i=0; i<startDigitLengthDifference; i++){
 	    			zeroPad += "0";
 	    		}
@@ -525,7 +515,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		
 	    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
 	    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-	    	
+	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current class as...: " + super.getClass().getName());
 	    		scan.setStartRow(startRowByte);
 	    		scan.setStopRow(stopRowByte);
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
