@@ -394,22 +394,26 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			List<String> startPosList = new ArrayList<String>();
 			List<String> stopPosList = new ArrayList<String>();
 			List<String> seqIDList = new ArrayList<String>();
-			seqList.add("seqid");
-			seqList.add("12");
+
 			String startPos = new String();
 			String stopPos = new String();
 			
-			if (!seqList.isEmpty()){
-				for (int i = 1; i<seqList.size(); i += 2){
-					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqList.get(i));
-				}
-			}
-			
 			if (!startList.isEmpty() && !stopList.isEmpty()){
+				for (int i = 1; i<startList.size(); i += 2){
+					startPosList.add(startList.get(i));
+					stopPosList.add(stopList.get(i));
+				}
 				startPos = startList.get(1);
 				stopPos = stopList.get(1);
 			}
 			
+			if (!seqList.isEmpty()){
+				for (int i = 1; i<seqList.size(); i += 2){
+					seqIDList.add(seqList.get(i));
+				}
+			}
+			
+			//Fix this, make 2 conditions.
 			List<String> seqIDs = new ArrayList<String>();
 	    	for (FeatureSet fs : inputSet){
 	    		for (Feature f : fs){
