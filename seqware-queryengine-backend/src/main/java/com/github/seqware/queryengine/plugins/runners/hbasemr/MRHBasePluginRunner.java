@@ -416,6 +416,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        	startPos = Bytes.toString(startPosInByte);
 	        	byte[] stopPosInByte = Bytes.padHead(stopPos.getBytes(), stopDigitLengthDifference);
 	        	stopPos = Bytes.toString(stopPosInByte);
+	        	
+	        	Logger.getLogger(MRHBasePluginRunner.class).info("startPos: " + startPos);
+	        	Logger.getLogger(MRHBasePluginRunner.class).info("stopPos: " + stopPos);
 //	    		for (int i=0; i<startDigitLengthDifference; i++){
 //	    			zeroPad += "0";
 //	    		}
@@ -444,7 +447,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    	}
 	    	
 	    	//Put together the List of list<Filter>
-//	    	List<List<Filter>> finalList = new ArrayList<List<Filter>>();
 	    	List<List<String>> scanPositions = new ArrayList<List<String>>();
 	    	for (String seqID : comparatorStrings.keySet()){
 	    		finalStartString = comparatorStrings.get(seqID).get(0);
@@ -453,20 +455,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		stringHolder.add(finalStartString);
 	    		stringHolder.add(finalStopString);
 	    		scanPositions.add(stringHolder);
-//	    		List<Filter> filterHolder= new ArrayList<Filter>();
-//	    		
-//	    		Filter startRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
-//	    				new BinaryComparator(finalStartString.getBytes()));
-//
-//	    		Filter stopRowFilter = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
-//	    				new BinaryComparator(finalStopString.getBytes()));
-//	    		filterHolder.add(stopRowFilter);
-//	    		filterHolder.add(startRowFilter);
-//	    		finalList.add(filterHolder);
 	    	}
 	    	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
-//	        FilterList finalFilterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, finalList.get(0));
-//	    	return finalFilterList;
 	        return scanPositions;
 		} else {
 			return null;
@@ -532,9 +522,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
 	    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
 	    	
-	    		
 	    		scan.setStartRow(startRowByte);
-	    		scan.setStopRow(" ".getBytes());
+	    		scan.setStopRow(stopRowByte);
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	    		setScan(scan);
 	    		
