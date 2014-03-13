@@ -251,6 +251,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
+        	
+        	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
+        	
         	if (!MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName().equals("VCFDumperPlugin")){
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
@@ -517,7 +520,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
 	    		String currentMapperName = new String();
 	    		currentMapperName = MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName();
-	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
+//	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
 	    		
 	    		if (!currentMapperName.equals("VCFDumperPlugin")){
 	    			//Use the multiple range input, we want the shortened scan range.
