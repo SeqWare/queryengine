@@ -356,8 +356,16 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         return mapReducePlugin;
     }
 
-    public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, Object... parameters) {
-    	try {
+    /**
+     * 
+     * @param parameters This is taken from the MRHBasePluginRunner constructor
+     * @return List of lists. First list is the start range lists, second list is stop range lists.
+     * @return Switches the START_STOP_PAIRS_EXIST on for splitting the table
+     */
+    public static List<List<String>> determineRangeQueryExists(Object... parameters){
+    	try{
+    		List<List<String>> ranges = new ArrayList<List<String>>();
+    		
 	    	RPNStack rpnStack = new RPNStack();
 	        for (Object o : parameters){
 	        	if (o instanceof RPNStack){
@@ -385,6 +393,36 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 			}
 	
+			//All start and stop positions are paired.
+			if (startList.size() == stopList.size() && startList.size()%2 == 0){
+				START_STOP_PAIRS_EXIST = true;
+				ranges.add(startList);
+				ranges.add(stopList);
+				ranges.add(seqList);
+				return ranges;
+			} else {
+				return null;
+			}
+    	} catch (Exception e){
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
+    
+    public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, Object... parameters) {
+    	try {
+    		List<List<String>> ranges = new ArrayList<List<String>>();
+	        List<String> startList = new ArrayList<String>();
+	        List<String> stopList = new ArrayList<String>();
+	        List<String> seqList = new ArrayList<String>();
+	        
+	    	ranges = determineRangeQueryExists(parameters);
+	    	if (ranges!=null){
+		    	startList = ranges.get(0);
+		    	stopList = ranges.get(1);
+		    	seqList = ranges.get(2);
+	    	}
+	    	
 			//All start and stop positions are paired.
 			if (startList.size() == stopList.size() && startList.size()%2 == 0){
 				START_STOP_PAIRS_EXIST = true;
@@ -531,10 +569,14 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		try{
     			Scan scan = getScan();
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
+	    		List<List<String>> check = new ArrayList<List<String>>();
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-                if (!currentMapperName.equals("VCFDumperPlugin")){
+	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+	    		
+                if (!currentMapperName.equals("VCFDumperPlugin") && 
+                		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
