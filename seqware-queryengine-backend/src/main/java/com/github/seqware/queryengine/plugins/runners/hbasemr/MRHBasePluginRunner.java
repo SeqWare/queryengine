@@ -394,12 +394,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			List<String> startPosList = new ArrayList<String>();
 			List<String> stopPosList = new ArrayList<String>();
 			List<String> seqIDList = new ArrayList<String>();
-			
+			seqList.add("seqid");
+			seqList.add("12");
 			String startPos = new String();
 			String stopPos = new String();
 			
 			if (!seqList.isEmpty()){
-				for (int i = 0; i<seqList.size(); i += 2){
+				for (int i = 1; i<seqList.size(); i += 2){
 					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqList.get(i));
 				}
 			}
