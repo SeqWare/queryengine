@@ -510,22 +510,22 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-	    		if (!currentMapperName.equals("VCFDumperPlugin")){
-	    			//Use the multiple range input, we want the shortened scan range.
-		    		List<List<String>> rowList = new ArrayList<List<String>>();
-		    		rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-		    		byte[] startRowByte = rowList.get(0).get(0).getBytes();
-		    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-		    		scan.setStartRow(startRowByte);
-		    		scan.setStopRow(stopRowByte);
-                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStartRow()));
-                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStopRow()));
+                if (!currentMapperName.equals("VCFDumperPlugin")){
+                    //Use the multiple range input, we want the shortened scan range.
+                    List<List<String>> rowList = new ArrayList<List<String>>();
+                    rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+                    byte[] startRowByte = rowList.get(0).get(0).getBytes();
+                    byte[] stopRowByte = rowList.get(0).get(1).getBytes();
+                    scan.setStartRow(startRowByte);
+                    scan.setStopRow(stopRowByte);
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
                 } else {
-                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStartRow()));
-                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStopRow()));
-	    			scan.setStartRow(scan.getStartRow());
-	    			scan.setStopRow(scan.getStopRow());
-	    		}
+                    scan.setStartRow(scan.getStartRow());
+                    scan.setStopRow(scan.getStopRow());
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
+                }
 
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	    		setScan(scan);
