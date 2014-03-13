@@ -26,6 +26,7 @@ public class RPNStack implements Serializable {
     private Map<Parameter, Integer> parameters = new HashMap<Parameter, Integer>();
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
+    static List<String>	seqIDList = new ArrayList<String>();
 
     /**
      * Operations for combining query constraints.
@@ -131,6 +132,10 @@ public class RPNStack implements Serializable {
         
         public List<String> getStopList(){
         	return stopList;
+        }
+        
+        public List<String> getSeqIDList(){
+        	return seqIDList;
         }
     }
 
@@ -540,9 +545,10 @@ public class RPNStack implements Serializable {
         for (int i = 0; i < node.getChildCount(); i++) {
             abstractSyntaxTreeTraversal(node.getChild(i), arguments);
         }
-
+        Logger.getLogger(RPNStack.class).info("___TYPE: " + node.getType() + " __TEXT: " + node.getText() );
         String text = node.getText();
         switch (node.getType()) {
+        	
             // Boolean operators:
             case SeqWareQueryLanguageParser.AND:
                 arguments.add(Operation.AND);
@@ -571,7 +577,7 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.INT:
                 arguments.add(new Constant(Integer.parseInt(text)));
-                Logger.getLogger(RPNStack.class).info("This CONSTANT ______: " + text);
+//                Logger.getLogger(RPNStack.class).info("This CONSTANT ______: " + text);
                 if (startList.size() % 2 != 0){
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
@@ -601,12 +607,12 @@ public class RPNStack implements Serializable {
             // Variables:
             case SeqWareQueryLanguageParser.ID:
                 arguments.add(new FeatureAttribute(text));
-                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
+//                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-                }
+                } else if ()
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {

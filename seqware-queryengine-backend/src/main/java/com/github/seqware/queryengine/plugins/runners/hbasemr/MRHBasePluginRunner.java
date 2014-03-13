@@ -369,7 +369,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         FeatureAttribute thisFeature = null;
         List<String> startList = new ArrayList<String>();
         List<String> stopList = new ArrayList<String>();
-        
+        List<String> seqList = new ArrayList<String>();
         //Assumes that there is always a start and stop pair in query
 		for (Parameter parameter : rpnStack.getParameters()){
 			if (parameter instanceof FeatureAttribute){
@@ -387,6 +387,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		}
 		
 		if (START_STOP_PAIRS_EXIST == true){
+			List<String> startPosList = new ArrayList<String>();
+			List<String> stopPosList = new ArrayList<String>();
 			String startPos = new String();
 			String stopPos = new String();
 			if (!startList.isEmpty() && !stopList.isEmpty()){
