@@ -509,7 +509,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
-//	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
 	    		
 	    		if (!currentMapperName.equals("VCFDumperPlugin")){
 	    			//Use the multiple range input, we want the shortened scan range.
@@ -519,7 +518,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
 		    		scan.setStartRow(startRowByte);
 		    		scan.setStopRow(stopRowByte);
-	    		} else {
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStartRow()));
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStopRow()));
+                } else {
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStartRow()));
+                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + Bytes.toString(scan.getStopRow()));
 	    			scan.setStartRow(scan.getStartRow());
 	    			scan.setStopRow(scan.getStopRow());
 	    		}
