@@ -251,15 +251,26 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
-            TableMapReduceUtil.initTableMapperJob(
-                    tableName,
-            		scan, // Scan instance to control CF and attribute selection
-                    PluginRunnerMapper.class, // mapper
-                    mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                    mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                    job,
-                    true, 
-                    MRHBasePluginRunner.QueryRegionTableInput.class);
+        	if (!MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName().equals("VCFDumperPlugin")){
+                TableMapReduceUtil.initTableMapperJob(
+                        tableName,
+                		scan, // Scan instance to control CF and attribute selection
+                        PluginRunnerMapper.class, // mapper
+                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                        job,
+                        true, 
+                        MRHBasePluginRunner.QueryRegionTableInput.class);
+        	} else {
+        		//Assume plugin runner is running VCFDumper
+                TableMapReduceUtil.initTableMapperJob(
+                        tableName,
+                		scan, // Scan instance to control CF and attribute selection
+                        PluginRunnerMapper.class, // mapper
+                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                        job);
+        	}
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -516,10 +527,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
 		    		scan.setStartRow(startRowByte);
 		    		scan.setStopRow(stopRowByte);
-	    		} else {
-	    			//Assume VCFDumperPlugin is running, we want the entire scan range.
-	    			scan.setStartRow(scan.getStartRow());
-	    			scan.setStopRow(scan.getStopRow());
 	    		}
 
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
