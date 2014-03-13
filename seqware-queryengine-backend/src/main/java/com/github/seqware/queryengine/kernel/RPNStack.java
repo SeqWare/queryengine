@@ -589,6 +589,7 @@ public class RPNStack implements Serializable {
                 if (seqIDList.size() % 2 != 0){
                 	seqIDList.add(text);
                 }
+                Logger.getLogger(RPNStack.class).info("______ SEQID id :  " + text);
                 break;
              case SeqWareQueryLanguageParser.NULL:
                 arguments.add(null);
