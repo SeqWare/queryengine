@@ -151,7 +151,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     }
         
     protected Job job;
-    private MapReducePlugin mapReducePlugin;
+    private static MapReducePlugin mapReducePlugin;
     private static FeatureSet outputSet;
 
     /**
@@ -252,28 +252,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // handle the part that changes from job to job
             // pluginInterface.performVariableInit(tableName, destTableName, scan);
         	
-        	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
+        	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + mapReducePlugin.getClass().getSimpleName());
         	
-        	if (!MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName().equals("VCFDumperPlugin")){
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job,
-                        true, 
-                        MRHBasePluginRunner.QueryRegionTableInput.class);
-        	} else {
-        		//Assume plugin runner is running VCFDumper
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job);
-        	}
+            TableMapReduceUtil.initTableMapperJob(
+                    tableName,
+            		scan, // Scan instance to control CF and attribute selection
+                    PluginRunnerMapper.class, // mapper
+                    mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                    mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                    job,
+                    true, 
+                    MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -519,7 +508,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     			Scan scan = getScan();
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
 	    		String currentMapperName = new String();
-	    		currentMapperName = MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName();
+	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 //	    		Logger.getLogger(MRHBasePluginRunner.class).info("getSplits recognizes current mapper class as...: " + MRHBasePluginRunner.PluginRunnerMapper.class.getSimpleName());
 	    		
 	    		if (!currentMapperName.equals("VCFDumperPlugin")){
@@ -530,6 +519,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		byte[] stopRowByte = rowList.get(0).get(1).getBytes();
 		    		scan.setStartRow(startRowByte);
 		    		scan.setStopRow(stopRowByte);
+	    		} else {
+	    			scan.setStartRow(scan.getStartRow());
+	    			scan.setStopRow(scan.getStopRow());
 	    		}
 
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
