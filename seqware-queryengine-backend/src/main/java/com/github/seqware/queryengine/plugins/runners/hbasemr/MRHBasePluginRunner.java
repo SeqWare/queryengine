@@ -370,6 +370,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         List<String> startList = new ArrayList<String>();
         List<String> stopList = new ArrayList<String>();
         List<String> seqList = new ArrayList<String>();
+        
         //Assumes that there is always a start and stop pair in query
 		for (Parameter parameter : rpnStack.getParameters()){
 			if (parameter instanceof FeatureAttribute){
@@ -378,10 +379,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     				startList = thisFeature.getStartList();
 				} else if (parameter.getName().equals("stop")){
     				stopList = thisFeature.getStopList();
+				} else if (parameter.getName().equals("seqid")){
+					seqList = thisFeature.getSeqIDList();
 				}
 			}
 		}
 		
+		//All start and stop positions are paired.
 		if (startList.size() == stopList.size() && startList.size()%2 == 0){
 			START_STOP_PAIRS_EXIST = true;
 		}
@@ -389,8 +393,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		if (START_STOP_PAIRS_EXIST == true){
 			List<String> startPosList = new ArrayList<String>();
 			List<String> stopPosList = new ArrayList<String>();
+			List<String> seqIDList = new ArrayList<String>();
+			
 			String startPos = new String();
 			String stopPos = new String();
+			
+			if (!seqIDList.isEmpty()){
+				for (int i = 0; i<seqIDList.size(); i +=2){
+					Logger.getLogger(MRHBasePluginRunner.class).info("___GETTING SEQID SKIP??:" + seqIDList.get(i));
+				}
+			}
+			
 			if (!startList.isEmpty() && !stopList.isEmpty()){
 				startPos = startList.get(1);
 				stopPos = stopList.get(1);

@@ -545,7 +545,7 @@ public class RPNStack implements Serializable {
         for (int i = 0; i < node.getChildCount(); i++) {
             abstractSyntaxTreeTraversal(node.getChild(i), arguments);
         }
-        Logger.getLogger(RPNStack.class).info("___TYPE: " + node.getType() + " __TEXT: " + node.getText() );
+        
         String text = node.getText();
         switch (node.getType()) {
         	
@@ -586,6 +586,9 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.STRING:
                 arguments.add(new Constant(text.replaceFirst("^\"", "").replaceFirst("\"$", "")));
+                if (seqIDList.size() % 2 != 0){
+                	seqIDList.add(text);
+                }
                 break;
              case SeqWareQueryLanguageParser.NULL:
                 arguments.add(null);
@@ -612,7 +615,9 @@ public class RPNStack implements Serializable {
                 	startList.add("start");
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-                } 
+                } else if (text.equals("seqid")){
+                	seqIDList.add("seqid");
+                }
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {
