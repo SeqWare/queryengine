@@ -335,7 +335,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     
     HashMap<String,String> map = new HashMap<String, String>();
     map.put("sgid", sgid.toString());
-    return Response.ok().header("Access-Control-Allow-Origin", "*").entity(map).build();
+    return Response.ok().entity(map).build();
   }
 
   @GET
