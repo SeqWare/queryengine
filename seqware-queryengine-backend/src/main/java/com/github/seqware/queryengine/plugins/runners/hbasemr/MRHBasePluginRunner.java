@@ -608,33 +608,25 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     	scan.setStopRow(stopRowByte);
                     	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     	setScan(scan);
-        	    		for(InputSplit subSplit : super.getSplits(context)){
-        	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-        	    					(TableSplit) subSplit, new TableSplit()));
-        	    		}
                     }
                 } else {
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
                     scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     setScan(scan);
-    	    		for(InputSplit subSplit : super.getSplits(context)){
-    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-    	    					(TableSplit) subSplit, new TableSplit()));
-    	    		}
                 }
                 
-                List<List<String>> rowList = new ArrayList<List<String>>();
-                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-              byte[] startRowByte = rowList.get(0).get(0).getBytes();
-              byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-              scan.setStartRow(startRowByte);
-              scan.setStopRow(stopRowByte);
-              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
-              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
-	    		for(InputSplit subSplit : super.getSplits(context)){
-	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-	    					(TableSplit) subSplit, new TableSplit()));
+//                List<List<String>> rowList = new ArrayList<List<String>>();
+//                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+//              byte[] startRowByte = rowList.get(0).get(0).getBytes();
+//              byte[] stopRowByte = rowList.get(0).get(1).getBytes();
+//              scan.setStartRow(startRowByte);
+//              scan.setStopRow(stopRowByte);
+//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
+//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
+//	    		for(InputSplit subSplit : super.getSplits(context)){
+//	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+//	    					(TableSplit) subSplit, new TableSplit()));
 	    		}
 	    		return splits;
     		} catch (Exception e){
