@@ -592,7 +592,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+//	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
 	    		
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
