@@ -592,7 +592,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+//	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
 	    		
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
@@ -617,18 +617,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     setScan(scan);
                 }
                 
-//                List<List<String>> rowList = new ArrayList<List<String>>();
-//                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-//              byte[] startRowByte = rowList.get(0).get(0).getBytes();
-//              byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-//              scan.setStartRow(startRowByte);
-//              scan.setStopRow(stopRowByte);
-//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
-//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
-//	    		for(InputSplit subSplit : super.getSplits(context)){
-//	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-//	    					(TableSplit) subSplit, new TableSplit()));
-//	    		}
+                List<List<String>> rowList = new ArrayList<List<String>>();
+                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+              byte[] startRowByte = rowList.get(0).get(0).getBytes();
+              byte[] stopRowByte = "NON_EXISTING_ROW".getBytes();
+              scan.setStartRow(startRowByte);
+              scan.setStopRow(stopRowByte);
+              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
+              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
+	    		for(InputSplit subSplit : super.getSplits(context)){
+	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	    					(TableSplit) subSplit, new TableSplit()));
+	    		}
 	    		for(InputSplit subSplit : super.getSplits(context)){
 	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
 	    					(TableSplit) subSplit, new TableSplit()));
