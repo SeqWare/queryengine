@@ -465,8 +465,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
 		        	int stopDigitLength = stopPosList.get(i).length();
 		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Non-Zero padded: " + startPosList.get(i));
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Non-Zero padded: " + stopPosList.get(i));
 		    		for (int j=0; j<startDigitLengthDifference; j++){
 		    			zeroPad += "0";
 		    		}
@@ -477,8 +475,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		}
 		    		stopPosList.set(i, zeroPad + stopPosList.get(i));
 		    		zeroPad = "";
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Zero padded: " + startPosList.get(i));
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Zero padded: " + stopPosList.get(i));
 		    	}
 		    	
 //		    	if (startPos != null && stopPos != null){
@@ -597,6 +593,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
 	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+	    		
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
@@ -607,6 +604,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
                     	scan.setStopRow(stopRowByte);
+                    	setScan(scan);
+        	    		for(InputSplit subSplit : super.getSplits(context)){
+        	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+        	    					(TableSplit) subSplit, new TableSplit()));
+        	    		}
                     }
 //                    byte[] startRowByte = rowList.get(0).get(0).getBytes();
 //                    byte[] stopRowByte = rowList.get(0).get(1).getBytes();
@@ -617,15 +619,15 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 } else {
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
+                    setScan(scan);
+    	    		for(InputSplit subSplit : super.getSplits(context)){
+    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+    	    					(TableSplit) subSplit, new TableSplit()));
+    	    		}
                 }
 
 	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
-	    		setScan(scan);
 	    		
-	    		for(InputSplit subSplit : super.getSplits(context)){
-	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-	    					(TableSplit) subSplit, new TableSplit()));
-	    		}
 	    		
 	    		return splits;
     		} catch (Exception e){
