@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" ng-app="queryengineApp">
+<head>
+  <meta charset="utf-8">
+  <title>SeqWare Query Engine Web Application</title>
+  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="css/bootstrap.css"/>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#/">SeqWare QueryEngine</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="#/query">Query Variants</a></li>
+          <li><a href="#/upload">Upload Variants</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div ng-view></div>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="js/angular-file-upload-shim.min.js"></script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="js/angular-file-upload.js"></script> 
+  <script src="lib/angular/angular-route.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+  <script src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
+</body>
+</html>

@@ -43,3 +43,7 @@ dao-test.log
 
 # Mac Files
 *.DS_Store
+
+# Frontend Dependencies
+seqware-queryengine-frontend/bower_components
+seqware-queryengine-frontend/node_modules

@@ -1,0 +1,17 @@
+# SeqWare QueryEngine Web GUI
+
+This is currently a simple web GUI for the SeqWare QueryEngine. It is currently run separate 
+from the web service and allows the user to query data and upload to and from the web service.
+This was built on top of [angular-seed](https://github.com/angular/angular-seed).
+
+## How to Install
+
+* Install node.js and run 'scripts/web-server.js'
+* Head to [http://localhost:8000/app/index.html](http://localhost:8000/app/index.html)
+
+## To Do:
+
+* Integrate deployment with the web service?
+* Extend features to the remainder of the web service REST API endpoints
+* Write unit tests
+* Write integration tests
