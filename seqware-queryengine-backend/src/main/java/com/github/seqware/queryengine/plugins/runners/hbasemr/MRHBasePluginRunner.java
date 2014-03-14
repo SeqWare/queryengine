@@ -129,12 +129,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static final int DESTINATION_FEATURE_SET = 3;
     public static final int SETTINGS_MAP = 4;
     public static final int PLUGIN_CLASS = 5;
-    private static boolean START_STOP_PAIRS_EXIST = false;
-    private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
-    private static Object[] thisParameter = new Object[0];
     private static final int START_LIST = 0;
     private static final int STOP_LIST = 1;
     private static final int SEQ_LIST = 2;
+    private static boolean START_STOP_PAIRS_EXIST = false;
+    private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
+    private static Object[] thisParameter = new Object[0];
+
     
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
@@ -422,28 +423,24 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        List<String> seqList = new ArrayList<String>();
 	        
 	    	ranges = determineRangeQueryExists(parameters);
-	    	if (ranges!=null){
-		    	startList = ranges.get(START_LIST);
-		    	stopList = ranges.get(STOP_LIST);
-		    	seqList = ranges.get(SEQ_LIST);
-	    	}
 			
 			if (START_STOP_PAIRS_EXIST == true){
 				List<String> startPosList = new ArrayList<String>();
 				List<String> stopPosList = new ArrayList<String>();
 				List<String> seqIDList = new ArrayList<String>();
-	
+		    	startList = ranges.get(START_LIST);
+		    	stopList = ranges.get(STOP_LIST);
+		    	seqList = ranges.get(SEQ_LIST);
+		    	
 				String startPos = new String();
 				String stopPos = new String();
 				
-				if (!startList.isEmpty() && !stopList.isEmpty()){
-					for (int i = 1; i<startList.size(); i += 2){
-						startPosList.add(startList.get(i));
-						stopPosList.add(stopList.get(i));
-					}
-					startPos = startList.get(1);
-					stopPos = stopList.get(1);
+				for (int i = 1; i<startList.size(); i += 2){
+					startPosList.add(startList.get(i));
+					stopPosList.add(stopList.get(i));
 				}
+				startPos = startList.get(1);
+				stopPos = stopList.get(1);
 				
 				if (!seqList.isEmpty()){
 					for (int i = 1; i<seqList.size(); i += 2){
