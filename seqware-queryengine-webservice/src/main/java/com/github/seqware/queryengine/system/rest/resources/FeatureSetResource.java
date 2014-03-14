@@ -304,11 +304,11 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
   @ApiResponses(value = {
     @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
   @Consumes(MediaType.MULTIPART_FORM_DATA) 
-  //@Produces( MediaType.APPLICATION_JSON )
+  @Produces( MediaType.APPLICATION_JSON )
   public Response uploadRawVCFfile(
-          @ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
-          @ApiParam(value = "file to upload") @FormDataParam("upload") InputStream file,
-          @ApiParam(value = "file detail") @FormDataParam("upload") FormDataContentDisposition fileDisposition) {
+          //@ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
+          @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
+          @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
     SGID sgid = null;
     try {
       /*
@@ -324,7 +324,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
       IOUtils.copy(file, bw, "UTF-8");
       bw.close();
       
-      sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", featureSet, "tmp/" + fileName});
+      sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "tmp/" + fileName});
       //Delete the uploaded vcf file
       File temp = new File("tmp/" + fileName);
       temp.delete();
@@ -335,7 +335,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     
     HashMap<String,String> map = new HashMap<String, String>();
     map.put("sgid", sgid.toString());
-    return Response.ok().entity(map).build();
+    return Response.ok().header("Access-Control-Allow-Origin", "*").entity(map).build();
   }
 
   @GET
