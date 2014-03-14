@@ -394,7 +394,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			}
 	
 			//All start and stop positions are paired.
-			if (startList.size() == stopList.size() && startList.size()%2 == 0){
+			if (startList.size() == stopList.size() && startList.size()%2 == 0 && startList.size() != 0){
 				START_STOP_PAIRS_EXIST = true;
 				ranges.add(startList);
 				ranges.add(stopList);
@@ -587,6 +587,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
                 } else {
+                	Logger.getLogger(MRHBasePluginRunner.class).info("____else")
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
                 }
