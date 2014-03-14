@@ -946,6 +946,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                             filteredMap.put(e.getKey(), new ArrayList<Feature>());
                         }
                         filteredMap.get(e.getKey()).add(f);
+                        Logger.getLogger(MRHBasePluginRunner.class).info("_______filteredMap: " + filteredMap);
                     }
                 }
                 consolidatedMap = filteredMap;
