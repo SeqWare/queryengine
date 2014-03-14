@@ -497,25 +497,29 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //		    	}
 	
 		    	
-		    	//Generate the list of comparator inputs
-				Map<String, List<String>> comparatorStrings = new HashMap<String, List<String>>();
+		    	//Generate the list of comparator inputs (rows names)
+		    	//Map<i'th combination, List<start and stop row names>>
+				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
-		    	for (String seqID : seqIDs){
-		    		finalStartString = referenceString + "." + seqID + ":" + startPos;
-		    		finalStopString = referenceString + "." + seqID + ":" + stopPos;
-		    		comparatorStrings.put(seqID, 
-		    				Arrays.asList(
-		    						finalStartString,
-		    						finalStopString));
-		    	}
+				for (int i=0; i<startPosList.size(); i++){
+					for(String seqID : seqIDs){
+			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
+			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
+			    		comparatorStrings.put(i, 
+			    				Arrays.asList(
+			    						finalStartString,
+			    						finalStopString));
+					}
+				}
+
 		    	
-		    	//Put together the List of list<Filter>
+		    	//Put together the List of list<String>
 		    	List<List<String>> scanPositions = new ArrayList<List<String>>();
-		    	for (String seqID : comparatorStrings.keySet()){
-		    		finalStartString = comparatorStrings.get(seqID).get(0);
-		    		finalStopString = comparatorStrings.get(seqID).get(1);
+		    	for (int i : comparatorStrings.keySet()){
+		    		finalStartString = comparatorStrings.get(i).get(0);
+		    		finalStopString = comparatorStrings.get(i).get(1);
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
@@ -594,10 +598,16 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     //Use the multiple range input, we want the shortened scan range.
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
-                    byte[] startRowByte = rowList.get(0).get(0).getBytes();
-                    byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-                    scan.setStartRow(startRowByte);
-                    scan.setStopRow(stopRowByte);
+                    for (List<String> thisPair: rowList){
+                    	byte[] startRowByte = thisPair.get(0).getBytes();
+                    	byte[] stopRowByte = thisPair.get(1).getBytes();
+                    	scan.setStartRow(startRowByte);
+                    	scan.setStopRow(stopRowByte);
+                    }
+//                    byte[] startRowByte = rowList.get(0).get(0).getBytes();
+//                    byte[] stopRowByte = rowList.get(0).get(1).getBytes();
+//                    scan.setStartRow(startRowByte);
+//                    scan.setStopRow(stopRowByte);
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
                 } else {
