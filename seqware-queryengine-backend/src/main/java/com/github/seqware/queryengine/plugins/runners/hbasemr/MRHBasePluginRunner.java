@@ -825,7 +825,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                System.out.println("[INFO] Consolidated to  " + consolidateRow.size() + " features");
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow);
-               Logger.getLogger(MRHBasePluginRunner.class).info("**********THis is the consolidated map: " + consolidatedMap);
+               Logger.getLogger(MRHBasePluginRunner.class).info("This is the consolidated map key set " + consolidatedMap.keySet());
             }
             // figure out current row
             String rowKey = Bytes.toString(row.get());
