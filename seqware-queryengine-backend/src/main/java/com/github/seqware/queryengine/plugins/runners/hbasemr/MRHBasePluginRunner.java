@@ -600,8 +600,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
                     for (List<String> thisPair: rowList){
-                    	Logger.getLogger(MRHBasePluginRunner.class).info("___START ROW: " +  thisPair.get(0).getBytes());
-                    	Logger.getLogger(MRHBasePluginRunner.class).info("___STOP ROW: "+ thisPair.get(1).getBytes());
+                    	Logger.getLogger(MRHBasePluginRunner.class).info("___START ROW: " +  thisPair.get(0));
+                    	Logger.getLogger(MRHBasePluginRunner.class).info("___STOP ROW: "+ thisPair.get(1));
                     	byte[] startRowByte = thisPair.get(0).getBytes();
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
