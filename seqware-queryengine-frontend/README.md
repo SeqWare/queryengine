@@ -6,7 +6,15 @@ This was built on top of [angular-seed](https://github.com/angular/angular-seed)
 
 ## How to Install
 
-* Install node.js and run 'scripts/web-server.js'
+* Install node.js
+* Install dependencies with:
+
+<pre>npm install</pre>
+
+* Run the node web application server
+
+<pre>node scripts/web-server.js</pre>
+
 * Head to [http://localhost:8000/app/index.html](http://localhost:8000/app/index.html)
 
 ## To Do:
