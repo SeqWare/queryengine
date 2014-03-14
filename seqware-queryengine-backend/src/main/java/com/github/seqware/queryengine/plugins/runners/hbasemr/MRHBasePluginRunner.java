@@ -522,7 +522,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-//		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
@@ -592,7 +592,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-//	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
 	    		
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
