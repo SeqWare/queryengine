@@ -574,7 +574,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
 	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
-	    		
+	    		Logger.getLogger(MRHBasePluginRunner.class).info("______ START_STOP_PAIRS_EXIST==  : "+ START_STOP_PAIRS_EXIST);
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
