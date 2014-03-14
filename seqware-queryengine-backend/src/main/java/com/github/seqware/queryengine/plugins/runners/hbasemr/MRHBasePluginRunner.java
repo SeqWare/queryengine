@@ -522,7 +522,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
+//		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
@@ -613,12 +613,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	    					(TableSplit) subSplit, new TableSplit()));
         	    		}
                     }
-//                    byte[] startRowByte = rowList.get(0).get(0).getBytes();
-//                    byte[] stopRowByte = rowList.get(0).get(1).getBytes();
-//                    scan.setStartRow(startRowByte);
-//                    scan.setStopRow(stopRowByte);
-//                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
-//                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
                 } else {
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
@@ -629,6 +623,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	    					(TableSplit) subSplit, new TableSplit()));
     	    		}
                 }
+                
+                List<List<String>> rowList = new ArrayList<List<String>>();
+                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+              byte[] startRowByte = rowList.get(0).get(0).getBytes();
+              byte[] stopRowByte = rowList.get(0).get(1).getBytes();
+              scan.setStartRow(startRowByte);
+              scan.setStopRow(stopRowByte);
+              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
+              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
+	    		for(InputSplit subSplit : super.getSplits(context)){
+	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	    					(TableSplit) subSplit, new TableSplit()));
+	    		}
 	    		return splits;
     		} catch (Exception e){
     			e.printStackTrace();
@@ -825,7 +832,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                System.out.println("[INFO] Consolidated to  " + consolidateRow.size() + " features");
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow);
-               Logger.getLogger(MRHBasePluginRunner.class).info("This is the consolidated map key set " + consolidatedMap.keySet());
             }
             // figure out current row
             String rowKey = Bytes.toString(row.get());
@@ -937,7 +943,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 FeatureFilter filter = ((PrefilteredPlugin)mapReducePlugin).getFilter();
                 Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<FeatureSet, Collection<Feature>>();
                 for(Entry<FeatureSet, Collection<Feature>> e : consolidatedMap.entrySet()){
-                    Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here, in  entryloop now with featureset: " + e.getKey().getDisplayName().toString());
                     for(Feature f : e.getValue() ){
                         if (!filter.featurePasses(e.getKey(), f, ext_parameters)){
                             continue;
@@ -946,8 +951,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                             filteredMap.put(e.getKey(), new ArrayList<Feature>());
                         }
                         filteredMap.get(e.getKey()).add(f);
-                        Logger.getLogger(MRHBasePluginRunner.class).info("_______: " + filteredMap);
-                        Logger.getLogger(MRHBasePluginRunner.class).info("_______filteredMap: " + filteredMap);
                     }
                 }
                 consolidatedMap = filteredMap;
