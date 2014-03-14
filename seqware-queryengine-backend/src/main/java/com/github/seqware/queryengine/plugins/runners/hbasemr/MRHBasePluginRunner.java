@@ -604,6 +604,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
                     	scan.setStopRow(stopRowByte);
+                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     	setScan(scan);
         	    		for(InputSplit subSplit : super.getSplits(context)){
         	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
@@ -619,14 +620,13 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 } else {
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
+                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     setScan(scan);
     	    		for(InputSplit subSplit : super.getSplits(context)){
     	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
     	    					(TableSplit) subSplit, new TableSplit()));
     	    		}
                 }
-
-	    		scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	    		
 	    		
 	    		return splits;
