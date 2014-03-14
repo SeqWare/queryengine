@@ -587,7 +587,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
 //                    Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
                 } else {
-                	Logger.getLogger(MRHBasePluginRunner.class).info("____else")
+                	Logger.getLogger(MRHBasePluginRunner.class).info("____else");
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
                 }
