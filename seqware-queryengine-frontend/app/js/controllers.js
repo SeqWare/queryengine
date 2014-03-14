@@ -9,9 +9,7 @@ angular.module('queryengineApp.controllers', []).
     database["samples"] = 0; //Should sent a GET Request to Webservice
     $scope.database = database;
   })
-  .controller('UploadCtrl', function($scope, $upload) {//$http) {
-    //var file = $scope.myFile; 
-    $scope.status = {};
+  .controller('UploadCtrl', function($scope, $upload) {
     $scope.data = {};
     /*$scope.upload = function(file) {
       var fd = new FormData();
@@ -57,7 +55,6 @@ angular.module('queryengineApp.controllers', []).
   })
   .controller('QueryCtrl', function($scope, $http, $q) {
     $scope.master = {};
-    $scope.status = {};
     $scope.response = {};
     $scope.update = function(query) {
       $scope.master = angular.copy(query);
@@ -70,8 +67,6 @@ angular.module('queryengineApp.controllers', []).
         transformRequest: angular.identity,
       }).then(function(data, status, headers, config) {
         $scope.response = data;
-        //deferred_response.resolve(data);
-        //deferred_status.resolve(status);
       });
     };
   });
