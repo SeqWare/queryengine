@@ -937,7 +937,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 FeatureFilter filter = ((PrefilteredPlugin)mapReducePlugin).getFilter();
                 Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<FeatureSet, Collection<Feature>>();
                 for(Entry<FeatureSet, Collection<Feature>> e : consolidatedMap.entrySet()){
-                    Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here, in  entryloop now");
+                    Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here, in  entryloop now with featureset: " + e.getKey().getDisplayName().toString());
                     for(Feature f : e.getValue() ){
                         if (!filter.featurePasses(e.getKey(), f, ext_parameters)){
                             continue;
@@ -946,6 +946,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                             filteredMap.put(e.getKey(), new ArrayList<Feature>());
                         }
                         filteredMap.get(e.getKey()).add(f);
+                        Logger.getLogger(MRHBasePluginRunner.class).info("_______: " + filteredMap);
                         Logger.getLogger(MRHBasePluginRunner.class).info("_______filteredMap: " + filteredMap);
                     }
                 }
