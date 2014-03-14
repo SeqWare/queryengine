@@ -19,7 +19,9 @@ This was built on top of [angular-seed](https://github.com/angular/angular-seed)
 
 ## To Do:
 
-* Integrate deployment with the web service?
+* Integrate deployment along with the web service in Tomcat?
+* Remove visibility to the whole directory
+* Refactor code, current URLs are hard-coded.. Should centralize to a config
 * Extend features to the remainder of the web service REST API endpoints
 * Write unit tests
 * Write integration tests
