@@ -458,25 +458,43 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		}
 		    	}
 		    	
-		    	//Generate 15 digit start and end position for use in comparator.
-		    	String zeroPad = new String();
-		    	if (startPos != null && stopPos != null){
-		        	int startDigitLength = startPos.length();
+		    	//Generate 15 digit start and end position.
+		    	for (int i=0 ; i<startPosList.size(); i++){
+			    	String zeroPad = new String();
+		        	int startDigitLength = startPosList.get(i).length();
 		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
-		        	int stopDigitLength = stopPos.length();
+		        	int stopDigitLength = stopPosList.get(i).length();
 		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
-	
-		    		for (int i=0; i<startDigitLengthDifference; i++){
+		        	
+		    		for (int j=0; j<startDigitLengthDifference; j++){
 		    			zeroPad += "0";
 		    		}
-		    		startPos = zeroPad + startPos;
+		    		startPosList.set(i, zeroPad + startPosList.get(i));
 		    		zeroPad = "";
-		    		for (int i=0; i<stopDigitLengthDifference; i++){
+		    		for (int j=0; j<stopDigitLengthDifference; j++){
 		    			zeroPad += "0";
 		    		}
-		    		stopPos = zeroPad + stopPos;
+		    		stopPosList.set(i, zeroPad + stopPosList.get(i));
 		    		zeroPad = "";
 		    	}
+		    	
+//		    	if (startPos != null && stopPos != null){
+//		        	int startDigitLength = startPos.length();
+//		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
+//		        	int stopDigitLength = stopPos.length();
+//		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
+//	
+//		    		for (int i=0; i<startDigitLengthDifference; i++){
+//		    			zeroPad += "0";
+//		    		}
+//		    		startPos = zeroPad + startPos;
+//		    		zeroPad = "";
+//		    		for (int i=0; i<stopDigitLengthDifference; i++){
+//		    			zeroPad += "0";
+//		    		}
+//		    		stopPos = zeroPad + stopPos;
+//		    		zeroPad = "";
+//		    	}
 	
 		    	
 		    	//Generate the list of comparator inputs
