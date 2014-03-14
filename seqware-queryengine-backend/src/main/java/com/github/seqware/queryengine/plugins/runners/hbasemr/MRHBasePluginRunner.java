@@ -132,6 +132,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     private static boolean START_STOP_PAIRS_EXIST = false;
     private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
     private static Object[] thisParameter = new Object[0];
+    private static final int START_LIST = 0;
+    private static final int STOP_LIST = 1;
+    private static final int SEQ_LIST = 2;
     
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
@@ -393,7 +396,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 			}
 	
-			//All start and stop positions are paired.
+			//All start and stop positions are paired and there is at least one pair.
 			if (startList.size() == stopList.size() 
 					&& startList.size()%2 == 0 
 					&& startList.size() != 0){
@@ -420,15 +423,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        
 	    	ranges = determineRangeQueryExists(parameters);
 	    	if (ranges!=null){
-		    	startList = ranges.get(0);
-		    	stopList = ranges.get(1);
-		    	seqList = ranges.get(2);
+		    	startList = ranges.get(START_LIST);
+		    	stopList = ranges.get(STOP_LIST);
+		    	seqList = ranges.get(SEQ_LIST);
 	    	}
-	    	
-			//All start and stop positions are paired.
-			if (startList.size() == stopList.size() && startList.size()%2 == 0){
-				START_STOP_PAIRS_EXIST = true;
-			}
 			
 			if (START_STOP_PAIRS_EXIST == true){
 				List<String> startPosList = new ArrayList<String>();
