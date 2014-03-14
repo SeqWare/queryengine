@@ -832,7 +832,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             String rowKey = Bytes.toString(row.get());
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
-            Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here");
+ 
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
             Logger.getLogger(MRHBasePluginRunner.class.getName()).info("MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
             Logger.getLogger(MRHBasePluginRunner.class.getName()).info("extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.class.isAssignableFrom(mapReducePlugin.getClass()));;
@@ -934,10 +934,14 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
      public static Map<FeatureSet, Collection<Feature>> handlePreFilteredPlugins(Map<FeatureSet, Collection<Feature>> consolidatedMap, MapReducePlugin mapReducePlugin, Object[] ext_parameters) {
             // for PreFilteredPlugins, we can do some prefiltering before the FeatureSets and features hit the actual plugin
+            Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here"); 
             if (mapReducePlugin instanceof PrefilteredPlugin){
+                Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here, yes is instance ");
                 FeatureFilter filter = ((PrefilteredPlugin)mapReducePlugin).getFilter();
                 Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<FeatureSet, Collection<Feature>>();
+                Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here filter got");
                 for(Entry<FeatureSet, Collection<Feature>> e : consolidatedMap.entrySet()){
+                    Logger.getLogger(MRHBasePluginRunner.class).info("_______Reached here, in  entryloop now");
                     for(Feature f : e.getValue() ){
                         if (!filter.featurePasses(e.getKey(), f, ext_parameters)){
                             continue;
