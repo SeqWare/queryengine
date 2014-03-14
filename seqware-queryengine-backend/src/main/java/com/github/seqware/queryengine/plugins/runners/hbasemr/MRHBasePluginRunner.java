@@ -597,6 +597,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
+                	Logger.getLogger(MRHBasePluginRunner.class).info("____________Using the list of pairs!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
                     for (List<String> thisPair: rowList){
@@ -836,8 +837,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Long position = Long.valueOf(rowKey);
  
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
-            Logger.getLogger(MRHBasePluginRunner.class.getName()).info("MRHBasePluginRunner running : " + mapReducePlugin.getClass().getSimpleName());
-            Logger.getLogger(MRHBasePluginRunner.class.getName()).info("extends FilteredFileOutputPlugin? : " + FilteredFileOutputPlugin.class.isAssignableFrom(mapReducePlugin.getClass()));;
             mapReducePlugin.map(position, consolidatedMap, this);
         }
 
