@@ -465,7 +465,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
 		        	int stopDigitLength = stopPosList.get(i).length();
 		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
-		        	
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Non-Zero padded: " + startPosList.get(i));
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Non-Zero padded: " + stopPosList.get(i));
 		    		for (int j=0; j<startDigitLengthDifference; j++){
 		    			zeroPad += "0";
 		    		}
@@ -476,6 +477,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		}
 		    		stopPosList.set(i, zeroPad + stopPosList.get(i));
 		    		zeroPad = "";
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Zero padded: " + startPosList.get(i));
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Zero padded: " + stopPosList.get(i));
 		    	}
 		    	
 //		    	if (startPos != null && stopPos != null){
@@ -523,6 +526,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
