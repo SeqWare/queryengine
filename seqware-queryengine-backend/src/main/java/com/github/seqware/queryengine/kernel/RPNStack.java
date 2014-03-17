@@ -545,8 +545,7 @@ public class RPNStack implements Serializable {
         for (int i = 0; i < node.getChildCount(); i++) {
             abstractSyntaxTreeTraversal(node.getChild(i), arguments);
         }
-        Logger.getLogger(RPNStack.class).info("____TYPE: " + node.getType());
-        Logger.getLogger(RPNStack.class).info("____TEXT: " + node.getText());
+
         String text = node.getText();
         switch (node.getType()) {
         	
