@@ -394,7 +394,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	if (ranges != null){
         	startList = ranges.get(START_LIST);
         	stopList = ranges.get(STOP_LIST);
-        	
+        	Logger.getLogger(MRHBasePluginRunner.class).info("___startList: " + startList);
+        	Logger.getLogger(MRHBasePluginRunner.class).info("___stopList: " + stopList);
     		if (startList.size() == stopList.size() 
     				&& startList.size()%2 == 0 
     				&& startList.size() != 0){
