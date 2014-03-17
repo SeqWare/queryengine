@@ -518,7 +518,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
-				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs to be processed :" + seqIDList);
+				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs to be processed :" + seqIDList);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
@@ -615,7 +615,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 if (currentMapperName.equals("QueryVCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
-                	Logger.getLogger(MRHBasePluginRunner.class).debug("Using the custom TableInputFormat!");
+                	Logger.getLogger(MRHBasePluginRunner.class).info("Using the custom TableInputFormat!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
                     for (List<String> thisPair: rowList){
