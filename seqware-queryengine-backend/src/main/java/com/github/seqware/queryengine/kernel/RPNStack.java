@@ -554,6 +554,9 @@ public class RPNStack implements Serializable {
         }
         Logger.getLogger(RPNStack.class).info("____TYPE: " + node.getType());
         Logger.getLogger(RPNStack.class).info("____TEXT: " + node.getText());
+        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: " + checkStartStopPairingNow);
+        Logger.getLogger(RPNStack.class).info("____allStartsStopsArePaired: " + allStartsStopsArePaired);
+
         String text = node.getText();
         switch (node.getType()) {
         	
