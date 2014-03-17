@@ -25,6 +25,7 @@ public class RPNStack implements Serializable {
     private List<Object> stack;
     private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
     private static boolean checkStartStopPairingNow = false;
+    privated static boolean checkIsCompleted;
     public static boolean allStartsStopsArePaired;
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
@@ -561,12 +562,11 @@ public class RPNStack implements Serializable {
                 arguments.add(Operation.AND);
                 if (checkStartStopPairingNow = true){
                 	allStartsStopsArePaired = true;
-                	checkStartStopPairingNow = false; // need to reset this every time a boolean is called
                 }
                 break;
             case SeqWareQueryLanguageParser.OR:
                 arguments.add(Operation.OR);
-                if (checkStartStopPairingNow = true){
+                if (checkStartStopPairingNow = true && allStartsStopsArePaired != true){
                 	allStartsStopsArePaired = false;
                 }
                 break;
