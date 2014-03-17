@@ -549,6 +549,8 @@ public class RPNStack implements Serializable {
      * initially empty.
      */
     private static void abstractSyntaxTreeTraversal(Tree node, List<Object> arguments) {
+        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNowBEFORE: " + checkStartStopPairingNow);
+
         for (int i = 0; i < node.getChildCount(); i++) {
             abstractSyntaxTreeTraversal(node.getChild(i), arguments);
         }
@@ -629,12 +631,10 @@ public class RPNStack implements Serializable {
 //                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
-                	Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: I turned it off.....");
                 	checkStartStopPairingNow = false;
                 	allStartsStopsArePaired = false;
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
-                	Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: I turned it off.....");
                 	checkStartStopPairingNow = false;
                 	allStartsStopsArePaired = false;
                 } else if (text.equals("seqid")){
@@ -715,7 +715,7 @@ public class RPNStack implements Serializable {
         
         Logger.getLogger(RPNStack.class).info("____TYPE: " + node.getType());
         Logger.getLogger(RPNStack.class).info("____TEXT: " + node.getText());
-        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: " + checkStartStopPairingNow);
+        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNowAFTER: " + checkStartStopPairingNow);
         Logger.getLogger(RPNStack.class).info("____allStartsStopsArePaired: " + allStartsStopsArePaired);
     }
 }
