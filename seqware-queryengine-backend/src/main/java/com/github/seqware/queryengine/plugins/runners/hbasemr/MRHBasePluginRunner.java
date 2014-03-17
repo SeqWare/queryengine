@@ -524,6 +524,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
+				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDs);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDs){
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
