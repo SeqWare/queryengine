@@ -496,16 +496,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
 				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
+				int count = 0; //need unique key for key placeholder in comparatorStrings;
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
 				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDList);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDList){
+						count++;
 						Logger.getLogger(MRHBasePluginRunner.class).info("Current seqID_______:" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
-			    		comparatorStrings.put(i, 
+			    		comparatorStrings.put(count, 
 			    				Arrays.asList(
 			    						finalStartString,
 			    						finalStopString));
