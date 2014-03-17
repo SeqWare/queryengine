@@ -30,7 +30,7 @@ This was built on top of [angular-seed](https://github.com/angular/angular-seed)
 
 You can enable CORS in the web service by adding this filter in the target/tomcat/conf/web.xml
 
-<pre> 
+<code> 
 <filter>
   <filter-name>CorsFilter</filter-name>
   <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -59,4 +59,4 @@ You can enable CORS in the web service by adding this filter in the target/tomca
   <filter-name>CorsFilter</filter-name>
   <url-pattern>/*</url-pattern>
 </filter-mapping>
-</pre>
+</code>
