@@ -634,9 +634,11 @@ public class RPNStack implements Serializable {
                 if (text.equals("start")){
                 	startList.add("start");
                 	checkStartStopPairingNow = false;
+                	allStartsStopsArePaired = false;
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
                 	checkStartStopPairingNow = false;
+                	allStartsStopsArePaired = false;
                 } else if (text.equals("seqid")){
                 	seqIDList.add("seqid");
                 }

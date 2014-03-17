@@ -611,7 +611,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		
 	    		rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
 	    		checkRangeQueryExists(rangeQuery);
-	    		
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___START_STOP_PAIRS_EXIST? : " + currentMapperName.equals("VCFDumperPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+
                 if (!currentMapperName.equals("VCFDumperPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
                 		&& RPNStack.allStartsStopsArePaired == true){
