@@ -561,6 +561,7 @@ public class RPNStack implements Serializable {
                 arguments.add(Operation.AND);
                 if (checkStartStopPairingNow = true){
                 	allStartsStopsArePaired = true;
+                	checkStartStopPairingNow = false; // need to reset this every time a boolean is called
                 }
                 break;
             case SeqWareQueryLanguageParser.OR:
