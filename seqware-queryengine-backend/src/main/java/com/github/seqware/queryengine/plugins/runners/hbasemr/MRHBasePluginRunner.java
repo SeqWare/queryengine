@@ -362,11 +362,27 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
     /**
      * 
+     * @param ranges Is the determined Range Query
+     */
+    public static void checkRangeQueryExists(List<List<String>> ranges){
+    	List<String> startList = new ArrayList<String>();
+    	List<String> stopList = new ArrayList<String>();
+    	startList = ranges.get(START_LIST);
+    	stopList = ranges.get(STOP_LIST);
+    	
+		if (startList.size() == stopList.size() 
+				&& startList.size()%2 == 0 
+				&& startList.size() != 0){
+			START_STOP_PAIRS_EXIST = true;
+		}
+    }
+    
+    /**
+     * 
      * @param parameters This is taken from the MRHBasePluginRunner constructor
      * @return List of lists. First list is the start range lists, second list is stop range lists. Third is list of possible seqID(s).
-     * @return Switches the START_STOP_PAIRS_EXIST on for splitting the table
      */
-    public static List<List<String>> determineRangeQueryExists(Object... parameters){
+    public static List<List<String>> determineRangeQuery(Object... parameters){
     	try{
     		List<List<String>> ranges = new ArrayList<List<String>>();
     		
@@ -401,7 +417,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			if (startList.size() == stopList.size() 
 					&& startList.size()%2 == 0 
 					&& startList.size() != 0){
-				START_STOP_PAIRS_EXIST = true;
 				ranges.add(startList);
 				ranges.add(stopList);
 				ranges.add(seqList);
@@ -415,15 +430,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	}
     }
     
-    public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, Object... parameters) {
+    /**
+     * 
+     * @param inputSet This is used current to get all SeqID's in the feature set, going to replace this with more efficient solution.
+     * @param ranges The determined Range Query
+     * @return scanPositions The list of rows in the current feature set for use in QueryRegionTableInput
+     * @return null If START_STOP_PARIS_EXIST is FALSE
+     */
+    public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, List<List<String>> ranges) {
     	try {
-    		List<List<String>> ranges = new ArrayList<List<String>>();
 	        List<String> startList = new ArrayList<String>();
 	        List<String> stopList = new ArrayList<String>();
 	        List<String> seqList = new ArrayList<String>();
 	        
-	    	ranges = determineRangeQueryExists(parameters);
-			
 			if (START_STOP_PAIRS_EXIST == true){
 				List<String> startPosList = new ArrayList<String>();
 				List<String> stopPosList = new ArrayList<String>();
@@ -588,18 +607,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		try{
     			Scan scan = getScan();
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
-	    		List<List<String>> check = new ArrayList<List<String>>();
+	    		List<List<String>> rangeQuery = new ArrayList<List<String>>();
 	    		String currentMapperName = new String();
 	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-//	    		check = determineRangeQueryExists(MRHBasePluginRunner.thisParameter);
+	    		rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
+	    		checkRangeQueryExists(rangeQuery);
 	    		
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
                 	Logger.getLogger(MRHBasePluginRunner.class).info("____________Using the list of pairs!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
-                    rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+                    rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
                     for (List<String> thisPair: rowList){
                     	Logger.getLogger(MRHBasePluginRunner.class).info("___START ROW: " +  thisPair.get(0));
                     	Logger.getLogger(MRHBasePluginRunner.class).info("___STOP ROW: "+ thisPair.get(1));
@@ -618,7 +638,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 }
                 
                 List<List<String>> rowList = new ArrayList<List<String>>();
-                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, MRHBasePluginRunner.thisParameter);
+                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
               byte[] startRowByte = rowList.get(0).get(0).getBytes();
               byte[] stopRowByte = "NON_EXISTING_ROW".getBytes();
               scan.setStartRow(startRowByte);
