@@ -527,6 +527,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDs);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDs){
+						Logger.getLogger(MRHBasePluginRunner.class).info("Current seqID_______:" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
 			    		comparatorStrings.put(i, 
