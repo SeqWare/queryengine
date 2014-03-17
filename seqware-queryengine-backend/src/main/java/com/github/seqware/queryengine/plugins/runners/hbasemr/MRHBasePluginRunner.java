@@ -468,17 +468,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 					for (int i = 1; i<seqList.size(); i += 2){
 						seqIDList.add(seqList.get(i));
 					}
+				} else if (seqList.isEmpty()){
+			    	for (FeatureSet fs : inputSet){
+			    		for (Feature f : fs){
+			    			if (!seqIDList.contains(f.getSeqid())){
+			    				seqIDList.add(f.getSeqid());
+			        		}
+			    		}
+			    	}
 				}
 				
 				//TODO: Fix this, make 2 conditions.
-				List<String> seqIDs = new ArrayList<String>();
-		    	for (FeatureSet fs : inputSet){
-		    		for (Feature f : fs){
-		    			if (!seqIDs.contains(f.getSeqid())){
-		        			seqIDs.add(f.getSeqid());
-		        		}
-		    		}
-		    	}
+
 		    	
 		    	//Generate 15 digit start and end position.
 		    	for (int i=0 ; i<startPosList.size(); i++){
@@ -505,9 +506,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
-				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDs);
+				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDList);
 				for (int i=0; i<startPosList.size(); i++){
-					for(String seqID : seqIDs){
+					for(String seqID : seqIDList){
 						Logger.getLogger(MRHBasePluginRunner.class).info("Current seqID_______:" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
