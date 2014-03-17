@@ -612,7 +612,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-                if (!currentMapperName.equals("VCFDumperPlugin") && 
+                if (currentMapperName.equals("QueryVCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
                 	Logger.getLogger(MRHBasePluginRunner.class).debug("Using the custom TableInputFormat!");
@@ -631,7 +631,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	    		}
                     }
                 } else {
-                	//Table will be split as one table (in the case of VCFDumperPlugin being run, we want ALL range in this case)
+                	//Table will be split as one table, as if no custom split has been applied.
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
                     scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
