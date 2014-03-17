@@ -160,7 +160,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    add("22");
 	    add("X");
 	    add("Y");}};
-
     
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
