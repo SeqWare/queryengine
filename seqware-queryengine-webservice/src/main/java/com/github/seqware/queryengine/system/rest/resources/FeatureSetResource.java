@@ -65,340 +65,266 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import java.util.HashMap;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
+
 /**
- * FeatureSet
- * resource.
+ * FeatureSet resource.
  *
- * @author
- * dyuen
+ * @author dyuen
  */
 @Path("/featureset")
 @Api(value = "/featureset", description = "Operations about featuresets"/**
-         * ,
-         * listingPath
-         * =
-         * "/resources/featureset"
-         */
-        )
+ * ,
+ * listingPath = "/resources/featureset"
+ */
+)
 @Produces({"application/json"})
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
-  @Override
-  public final String getClassName() {
-    return "FeatureSet";
-  }
+    @Override
+    public final String getClassName() {
+        return "FeatureSet";
+    }
 
-  @Override
-  public final Class getModelClass() {
-    return FeatureSet.class;
-  }
+    @Override
+    public final Class getModelClass() {
+        return FeatureSet.class;
+    }
 
-  @Override
-  public final SeqWareIterable getElements() {
-    return SWQEFactory.getQueryInterface().getFeatureSets();
-  }
+    @Override
+    public final SeqWareIterable getElements() {
+        return SWQEFactory.getQueryInterface().getFeatureSets();
+    }
 
-  /**
-   * Create
-   * new
-   * pluginrun
-   * event
-   * to
-   * create
-   * a
-   * query,
-   * monitor
-   * the
-   * query,
-   * and
-   * return
-   * a
-   * new
-   * feature
-   * set
-   * when
-   * ready.
-   *
-   * @param
-   * sgid
-   * rowkey
-   * of
-   * featureset
-   * to
-   * operate
-   * on
-   * @param
-   * query
-   * query
-   * in
-   * our
-   * query
-   * language
-   * @param
-   * ttl
-   * time
-   * in
-   * hours
-   * for
-   * the
-   * results
-   * to
-   * live
-   * @return
-   */
-  @POST
-  @Path("/{sgid}/query")
-  @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 100)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-    @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  public Response runQuery(
-          @ApiParam(value = "rowkey that needs to be updated", required = true)
-          @PathParam("sgid") String sgid,
-          @ApiParam(value = "query", required = true)
-          @QueryParam(value = "query") String query,
-          @ApiParam(value = "ttl", required = false)
-          @QueryParam(value = "ttl") int ttl) {
-    // make this an overrideable method in the real version
-    //userData.addUser(user);
-    return Response.ok().entity("").build();
-  }
+    /**
+     * Create new pluginrun event to create a query, monitor the query, and
+     * return a new feature set when ready.
+     *
+     * @param sgid rowkey of featureset to operate on
+     * @param query query in our query language
+     * @param ttl time in hours for the results to live
+     * @return
+     */
+    @POST
+    @Path("/{sgid}/query")
+    @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 100)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    public Response runQuery(
+            @ApiParam(value = "rowkey that needs to be updated", required = true)
+            @PathParam("sgid") String sgid,
+            @ApiParam(value = "query", required = true)
+            @QueryParam(value = "query") String query,
+            @ApiParam(value = "ttl", required = false)
+            @QueryParam(value = "ttl") int ttl) {
+        // make this an overrideable method in the real version
+        //userData.addUser(user);
+        return Response.ok().entity("").build();
+    }
 
-  /*
-   * Return
-   * the
-   * features
-   * that
-   * belong
-   * to
-   * the
-   * specified
-   * feature
-   * set
-   * in
-   * VCF
-   * 
-   * FIXME: the Swagger API will not send the correct Content-Type header (text/plain) to get this resouces
-   * and it, as a result, hits the JSON resource instead.  See https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44
-   * Not sure if there's a way to make this work and I just don't know the magic syntax.  In the mean time use a
-   * tool like "Dev HTTP Client" chrome plugin which allows you to add the content type header.
-   *
-   * @param
-   * sgid
-   * rowkey
-   * of
-   * featureset
-   * to
-   * operate
-   * on
-   * @return
-   */
-  @GET
-  @Path("/{sgid}")
-  @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 70)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-    @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  @Produces(MediaType.TEXT_PLAIN)
-  public Response getVCFFeatureListing(
-          @ApiParam(value = "rowkey that needs to be updated", required = true)
-          @PathParam("sgid") String sgid) throws InvalidIDException {
-    // make this an overrideable method in the real version
-    //userData.addUser(user);
-    final FeatureSet set = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, FeatureSet.class);
-    if (set == null) {
-      throw new InvalidIDException(INVALID_ID, "ID not found");
-    } else {
+    /*
+     * Return
+     * the
+     * features
+     * that
+     * belong
+     * to
+     * the
+     * specified
+     * feature
+     * set
+     * in
+     * VCF
+     * 
+     * FIXME: the Swagger API will not send the correct Content-Type header (text/plain) to get this resouces
+     * and it, as a result, hits the JSON resource instead.  See https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44
+     * Not sure if there's a way to make this work and I just don't know the magic syntax.  In the mean time use a
+     * tool like "Dev HTTP Client" chrome plugin which allows you to add the content type header.
+     *
+     * @param
+     * sgid
+     * rowkey
+     * of
+     * featureset
+     * to
+     * operate
+     * on
+     * @return
+     */
+    @GET
+    @Path("/{sgid}")
+    @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 70)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getVCFFeatureListing(
+            @ApiParam(value = "rowkey that needs to be updated", required = true)
+            @PathParam("sgid") String sgid) throws InvalidIDException {
+        // make this an overrideable method in the real version
+        //userData.addUser(user);
+        final FeatureSet set = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, FeatureSet.class);
+        if (set == null) {
+            throw new InvalidIDException(INVALID_ID, "ID not found");
+        } else {
 
-      try {
+            try {
 
-        StreamingOutput stream = new StreamingOutput() {
-          @Override
-          public void write(OutputStream os) throws IOException, WebApplicationException {
-           
-            BufferedWriter bos = new BufferedWriter(new OutputStreamWriter(os));
-            
-            // FIXME: need a cleaner way to call the dumper code
-            VCFDumper.dumpVCFFromFeatureSetToStream(set, bos, false);
-            
-            /* Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-            //writer.write(readSet.getHeader().getTextHeader());
-            Iterator<Feature> iterator = set.getFeatures();
-            while (iterator.hasNext()) {
-              Feature f = iterator.next();
-              writer.write(f.getSeqid() + ":" + f.getStart() + "-" + f.getStop() + "\n");
+                StreamingOutput stream = new StreamingOutput() {
+                    @Override
+                    public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                        BufferedWriter bos = new BufferedWriter(new OutputStreamWriter(os));
+
+                        // FIXME: need a cleaner way to call the dumper code
+                        VCFDumper.dumpVCFFromFeatureSetToStream(set, bos, false);
+
+                        /* Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                         //writer.write(readSet.getHeader().getTextHeader());
+                         Iterator<Feature> iterator = set.getFeatures();
+                         while (iterator.hasNext()) {
+                         Feature f = iterator.next();
+                         writer.write(f.getSeqid() + ":" + f.getStart() + "-" + f.getStop() + "\n");
+                         }
+                         writer.flush();*/
+                    }
+                };
+
+                return Response.ok(stream).build();
+
+            } catch (Exception ex) {
+                Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
             }
-            writer.flush();*/
-          }
-        };
 
-        return Response.ok(stream).build();
-
-      } catch (Exception ex) {
-        Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
+        }
+        return Response.ok().entity("").build();
     }
-    return Response.ok().entity("").build();
-  }
 
-  /**
-   * Return
-   * a
-   * specific
-   * feature
-   * in
-   * JSON
-   *
-   * @param
-   * sgid
-   * rowkey
-   * of
-   * featureset
-   * to
-   * operate
-   * on
-   * @return
-   */
-  @GET
-  @Path("/{sgid}/{fsgid}")
-  @ApiOperation(value = "Get a specific feature in a featureset in JSON", notes = "This can only be done by an authenticated user.", position = 80)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-    @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response getJSONFeature(
-          @ApiParam(value = "rowkey of featureset to find feature in", required = true)
-          @PathParam("sgid") String sgid,
-          @ApiParam(value = "rowkey of feature", required = true)
-          @QueryParam(value = "sgid") String fsgid) {
+    /**
+     * Return a specific feature in JSON
+     *
+     * @param sgid rowkey of featureset to operate on
+     * @return
+     */
+    @GET
+    @Path("/{sgid}/{fsgid}")
+    @ApiOperation(value = "Get a specific feature in a featureset in JSON", notes = "This can only be done by an authenticated user.", position = 80)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getJSONFeature(
+            @ApiParam(value = "rowkey of featureset to find feature in", required = true)
+            @PathParam("sgid") String sgid,
+            @ApiParam(value = "rowkey of feature", required = true)
+            @QueryParam(value = "sgid") String fsgid) {
     // make this an overrideable method in the real version
-    //userData.addUser(user);
-    return Response.ok().entity("").build();
-  }
-
-  /**
-   * Upload
-   * a
-   * raw
-   * variant
-   * file
-   * to
-   * create
-   * a
-   * new
-   * featureset
-   *
-   * @param
-   * sgid
-   * rowkey
-   * of
-   * ontology
-   * to
-   * create
-   * @return
-   */
-  @POST
-  @Path("/upload")
-  @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
-  @ApiResponses(value = {
-    @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
-  @Consumes(MediaType.MULTIPART_FORM_DATA) 
-  @Produces( MediaType.APPLICATION_JSON )
-  public Response uploadRawVCFfile(
-          //@ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
-          @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
-          @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
-    SGID sgid = null;
-    try {
-      /*
-       * FIXME: this is a really naive approach, just write it out as a file and load using
-       * the import tool from the query engine backend. In the future this should be an asyncrhonous 
-       * process with the file uploaded to a admin configured location possibly on HDFS then 
-       * the upload should take place as a plugin, reporting back a token that the calling 
-       * user can occationally check in on.
-       */
-      
-      String fileName = fileDisposition.getName();
-      BufferedWriter bw = new BufferedWriter(new FileWriter("tmp/" + fileName));
-      IOUtils.copy(file, bw, "UTF-8");
-      bw.close();
-      
-      sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "tmp/" + fileName});
-      //Delete the uploaded vcf file
-      File temp = new File("tmp/" + fileName);
-      temp.delete();
-      //saveToFile(file, "tmp/abc");
-    } catch (IOException ex) {
-      Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
+        //userData.addUser(user);
+        return Response.ok().entity("").build();
     }
-    
-    HashMap<String,String> map = new HashMap<String, String>();
-    map.put("sgid", sgid.toString());
-    return Response.ok().entity(map).build();
-  }
 
-  @GET
-  @Override
-  @Path(value = "/{sgid}")
-  @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", response = FeatureSet.class, position = 90)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
-    @ApiResponse(code = INVALID_SET, message = "set not found")})
-  @Produces(MediaType.APPLICATION_JSON)
-  public final Response featureByIDRequest(
-          @ApiParam(value = "id of set to be fetched", required = true)
-          @PathParam(value = "sgid") String sgid) throws InvalidIDException {
-    return super.featureByIDRequest(sgid);
-  }
+    /**
+     * Upload a raw variant file to create a new featureset
+     *
+     * @param sgid rowkey of ontology to create
+     * @return
+     */
+    @POST
+    @Path("/upload")
+    @ApiOperation(value = "Create a new featureset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
+    @ApiResponses(value = {
+        @ApiResponse(code = RESOURCE_EXISTS, message = "Resource already exists")})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadRawVCFfile(
+            //@ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
+            @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
+            @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
+        SGID sgid = null;
+        try {
+            /*
+             * FIXME: this is a really naive approach, just write it out as a file and load using
+             * the import tool from the query engine backend. In the future this should be an asyncrhonous 
+             * process with the file uploaded to a admin configured location possibly on HDFS then 
+             * the upload should take place as a plugin, reporting back a token that the calling 
+             * user can occationally check in on.
+             */
 
-  @PUT
-  @Path("/{sgid}")
-  @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-    @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  @Override
-  public Response updateElement(
-          @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
-          @ApiParam(value = "Updated user object", required = true) FeatureSetFacade group) {
+            String fileName = fileDisposition.getName();
+            BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+            IOUtils.copy(file, bw, "UTF-8");
+            bw.close();
 
-    return super.updateElement(sgid, group);
+            sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName});
+            //Delete the uploaded vcf file
+            File temp = new File("/tmp/" + fileName);
+            temp.delete();
+            //saveToFile(file, "tmp/abc");
+        } catch (IOException ex) {
+            Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-  }
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("sgid", sgid.toString());
+        return Response.ok().entity(map).build();
+    }
 
-  /**
-   * Update
-   * an
-   * existing
-   * element.
-   *
-   * @param
-   * sgid
-   * @param
-   * user
-   * @return
-   */
-  @DELETE
-  @Path("/{sgid}")
-  @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 310)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-    @ApiResponse(code = INVALID_SET, message = "Element not found")})
-  @Override
-  public Response deleteElement(
-          @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
-    return super.deleteElement(sgid);
-  }
+    @GET
+    @Override
+    @Path(value = "/{sgid}")
+    @ApiOperation(value = "Find a specific element by rowkey in JSON", notes = "Add extra notes here", response = FeatureSet.class, position = 90)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid ID supplied"),
+        @ApiResponse(code = INVALID_SET, message = "set not found")})
+    @Produces(MediaType.APPLICATION_JSON)
+    public final Response featureByIDRequest(
+            @ApiParam(value = "id of set to be fetched", required = true)
+            @PathParam(value = "sgid") String sgid) throws InvalidIDException {
+        return super.featureByIDRequest(sgid);
+    }
 
-  @POST
-  @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 50000)
-  @ApiResponses(value = {
-    @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Override
-  public Response addSet(
-          @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
-    return super.addSet(set);
-  }
+    @PUT
+    @Path("/{sgid}")
+    @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Override
+    public Response updateElement(
+            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
+            @ApiParam(value = "Updated user object", required = true) FeatureSetFacade group) {
+
+        return super.updateElement(sgid, group);
+
+    }
+
+    /**
+     * Update an existing element.
+     *
+     * @param sgid
+     * @param user
+     * @return
+     */
+    @DELETE
+    @Path("/{sgid}")
+    @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 310)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+    @Override
+    public Response deleteElement(
+            @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid) {
+        return super.deleteElement(sgid);
+    }
+
+    @POST
+    @ApiOperation(value = "Create a totally new FeatureSet by JSON", notes = "This can only be done by an authenticated user.", position = 50000)
+    @ApiResponses(value = {
+        @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Override
+    public Response addSet(
+            @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
+        return super.addSet(set);
+    }
 }

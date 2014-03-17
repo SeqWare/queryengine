@@ -123,7 +123,7 @@ public class PluginResource {
             }
             reader.close();
             //Delete the temporary output file
-            File temp = new File("tmp/" + output);
+            File temp = new File("/tmp/" + output);
             temp.delete();
         } catch (IOException x) {
             System.err.format("IOException: %s%n", x);
