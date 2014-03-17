@@ -470,7 +470,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 					}
 				}
 				
-				//Fix this, make 2 conditions.
+				//TODO: Fix this, make 2 conditions.
 				List<String> seqIDs = new ArrayList<String>();
 		    	for (FeatureSet fs : inputSet){
 		    		for (Feature f : fs){
@@ -497,26 +497,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		}
 		    		stopPosList.set(i, zeroPad + stopPosList.get(i));
 		    		zeroPad = "";
-		    	}
-		    	
-//		    	if (startPos != null && stopPos != null){
-//		        	int startDigitLength = startPos.length();
-//		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
-//		        	int stopDigitLength = stopPos.length();
-//		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
-//	
-//		    		for (int i=0; i<startDigitLengthDifference; i++){
-//		    			zeroPad += "0";
-//		    		}
-//		    		startPos = zeroPad + startPos;
-//		    		zeroPad = "";
-//		    		for (int i=0; i<stopDigitLengthDifference; i++){
-//		    			zeroPad += "0";
-//		    		}
-//		    		stopPos = zeroPad + stopPos;
-//		    		zeroPad = "";
-//		    	}
-	
+		    	}	
 		    	
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
