@@ -508,14 +508,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 						seqIDList.add(seqList.get(i).replaceAll("\"", ""));
 					}
 				} else if (seqList.isEmpty()){
-//			    	for (FeatureSet fs : inputSet){
-//			    		for (Feature f : fs){
-//			    			if (!seqIDList.contains(f.getSeqid())){
-//			    				seqIDList.add(f.getSeqid());
-//			    				//TODO: Make all cases for seqids here
-//			        		}
-//			    		}
-//			    	}
 					seqIDList = allSeqIDs;
 				}
 		    	
