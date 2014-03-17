@@ -505,18 +505,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
-				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs_______:" + seqIDList);
+				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs_______:" + seqIDList);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
-						Logger.getLogger(MRHBasePluginRunner.class).info("Current seqID_______:" + seqID);
+						Logger.getLogger(MRHBasePluginRunner.class).debug("Current seqID_______:" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
 			    		comparatorStrings.put(count, 
 			    				Arrays.asList(
 			    						finalStartString,
 			    						finalStopString));
-						Logger.getLogger(MRHBasePluginRunner.class).info("Current comparatorStrings_______:" + comparatorStrings);
 					}
 				}
 
@@ -528,7 +527,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("___Final Pairing... : " + stringHolder);
+		    		Logger.getLogger(MRHBasePluginRunner.class).debug("___Final Pairing... : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
@@ -604,12 +603,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
-                	Logger.getLogger(MRHBasePluginRunner.class).info("____________Using the list of pairs!");
+                	Logger.getLogger(MRHBasePluginRunner.class).debug("____________Using the list of pairs!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
                     for (List<String> thisPair: rowList){
-                    	Logger.getLogger(MRHBasePluginRunner.class).info("___START ROW: " +  thisPair.get(0));
-                    	Logger.getLogger(MRHBasePluginRunner.class).info("___STOP ROW: "+ thisPair.get(1));
+                    	Logger.getLogger(MRHBasePluginRunner.class).debug("___START ROW: " +  thisPair.get(0));
+                    	Logger.getLogger(MRHBasePluginRunner.class).debug("___STOP ROW: "+ thisPair.get(1));
                     	byte[] startRowByte = thisPair.get(0).getBytes();
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
@@ -632,19 +631,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	    					(TableSplit) subSplit, new TableSplit()));
     	    		}
                 }
-                
-//                List<List<String>> rowList = new ArrayList<List<String>>();
-//                rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
-//              byte[] startRowByte = rowList.get(0).get(0).getBytes();
-//              byte[] stopRowByte = "NON_EXISTING_ROW".getBytes();
-//              scan.setStartRow(startRowByte);
-//              scan.setStopRow(stopRowByte);
-//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStartRow()));
-//              Logger.getLogger(MRHBasePluginRunner.class).info(currentMapperName + " _________: " + Bytes.toString(scan.getStopRow()));
-//	    		for(InputSplit subSplit : super.getSplits(context)){
-//	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-//	    					(TableSplit) subSplit, new TableSplit()));
-//	    		}
 
 	    		return splits;
     		} catch (Exception e){
