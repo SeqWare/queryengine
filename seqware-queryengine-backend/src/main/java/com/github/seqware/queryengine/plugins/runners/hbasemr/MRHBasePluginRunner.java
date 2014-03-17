@@ -534,6 +534,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			    				Arrays.asList(
 			    						finalStartString,
 			    						finalStopString));
+						Logger.getLogger(MRHBasePluginRunner.class).info("Current comparatorStrings_______:" + comparatorStrings);
 					}
 				}
 
