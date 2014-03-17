@@ -25,7 +25,7 @@ public class RPNStack implements Serializable {
     private List<Object> stack;
     private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
     private static boolean checkStartStopPairingNow = false;
-    private static boolean allStartsStopsArePaired = false;
+    public static boolean allStartsStopsArePaired = false;
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
     static List<String>	seqIDList = new ArrayList<String>();
@@ -129,19 +129,11 @@ public class RPNStack implements Serializable {
         }
         
         public List<String> getStartList(){
-        	if (allStartsStopsArePaired){
-        		return startList;	
-        	} else{
-        		return null;
-        	}
+        	return startList;	
         }
         
         public List<String> getStopList(){
-        	if (allStartsStopsArePaired){
-            	return stopList;
-        	} else {
-        		return null;
-        	}
+        	return stopList;
         }
         
         public List<String> getSeqIDList(){

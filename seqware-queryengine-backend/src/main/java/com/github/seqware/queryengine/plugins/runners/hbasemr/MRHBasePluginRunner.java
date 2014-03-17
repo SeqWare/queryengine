@@ -612,8 +612,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-                if (!currentMapperName.equals("VCFDumperPlugin") && 
-                		START_STOP_PAIRS_EXIST == true){
+                if (!currentMapperName.equals("VCFDumperPlugin")
+                		&& START_STOP_PAIRS_EXIST == true
+                		&& RPNStack.allStartsStopsArePaired == true){
                     //Use the multiple range input, we want the shortened scan range.
                 	Logger.getLogger(MRHBasePluginRunner.class).debug("Using the custom TableInputFormat!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
