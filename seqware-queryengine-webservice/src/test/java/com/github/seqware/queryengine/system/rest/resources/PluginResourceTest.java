@@ -15,6 +15,7 @@ import com.github.seqware.queryengine.model.Plugin;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 
 public class PluginResourceTest {
   
@@ -23,6 +24,15 @@ public class PluginResourceTest {
   
   @BeforeClass
   public static void setUpClass() {
+    SOFeatureImporter importer = new SOFeatureImporter();
+    String[] params = new String[6];
+    params[0] = "-i";
+    params[1] = "../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf";
+    params[2] = "-r";
+    params[3] = "hg_19";
+    params[4] = "-w";
+    params[5] = "VCFVariantImportWorker";
+    importer.main(params);
   }
   
   @AfterClass
