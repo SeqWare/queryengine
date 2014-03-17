@@ -649,10 +649,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
 //	    					(TableSplit) subSplit, new TableSplit()));
 //	    		}
-//	    		for(InputSplit subSplit : super.getSplits(context)){
-//	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-//	    					(TableSplit) subSplit, new TableSplit()));
-//	    		}
+	    		for(InputSplit subSplit : super.getSplits(context)){
+	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	    					(TableSplit) subSplit, new TableSplit()));
+	    		}
 
 	    		return splits;
     		} catch (Exception e){
