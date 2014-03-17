@@ -9,27 +9,14 @@ angular.module('queryengineApp.controllers', []).
     database["samples"] = 0; //Should sent a GET Request to Webservice
     $scope.database = database;
   })
-  .controller('UploadCtrl', function($scope, $upload) {
+  .controller('UploadCtrl', function($scope, $upload, APP_CONFIG) {
     $scope.data = {};
-    /*$scope.upload = function(file) {
-      var fd = new FormData();
-      fd.append('file', file);
-      $http({
-        method: 'POST',
-        url: 'http://10.0.20.188:8889/seqware-queryengine-webservice/api/featureset/upload', 
-        data: fd,
-        transformRequest: angular.identity, 
-        headers: {'Content-Type': undefined}
-      }).then(function(data, status, headers, config){
-        $scope.data = data || "Request failed";
-        $scope.status = status;
-      });
-    };*/
     $scope.onFileSelect = function($files) {
       for (var i = 0; i < $files.length; i++) {
         var file = $files[i];
+        var upload_url = APP_CONFIG.webservice_url + 'featureset/upload';
         $scope.upload = $upload.upload({
-          url: 'http://10.0.20.188:8889/seqware-queryengine-webservice/api/featureset/upload', //upload.php script, node.js route, or servlet url
+          url: upload_url, //upload.php script, node.js route, or servlet url
           method: 'POST',
           headers: {'Content-Type': undefined},
           // withCredentials: true,
@@ -53,17 +40,16 @@ angular.module('queryengineApp.controllers', []).
     };
 
   })
-  .controller('QueryCtrl', function($scope, $http, $q) {
+  .controller('QueryCtrl', function($scope, $http, APP_CONFIG) {
     $scope.master = {};
     $scope.response = {};
     $scope.update = function(query) {
+      var url = APP_CONFIG.webservice_url + 'featureset/';
       $scope.master = angular.copy(query);
-      //var deferred_response = $q.defer();
-      //var deferred_status = $q.defer();
       $http({
         method: 'GET', 
         withCredentials: true,
-        url: 'http://10.0.20.188:8889/seqware-queryengine-webservice/api/featureset/', 
+        url: url, 
         transformRequest: angular.identity,
       }).then(function(data, status, headers, config) {
         $scope.response = data;
