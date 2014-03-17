@@ -60,7 +60,6 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<FeatureSet, FeatureSet> mapperInterface) {
         Collection<Feature> results = new ArrayList<Feature>();
-        System.out.println("[INFO] Mapper Called... at position : " + position);
         count++;
         for (Entry<FeatureSet, Collection<Feature>> e : atoms.entrySet()) {
 //        	System.out.println("[INFO] Size of features : " + e.getValue().size());
