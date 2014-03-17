@@ -135,7 +135,31 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     private static boolean START_STOP_PAIRS_EXIST = false;
     private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
     private static Object[] thisParameter = new Object[0];
-    private static String[] allSeqIDs = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"};
+    private static List<String> allSeqIDs = new ArrayList<String>(){{
+    	add("1");
+	    add("2");
+	    add("3");
+	    add("4");
+	    add("5");
+	    add("6");
+	    add("7");
+	    add("8");
+	    add("9");
+	    add("10");
+	    add("11");
+	    add("12");
+	    add("13");
+	    add("14");
+	    add("15");
+	    add("16");
+	    add("17");
+	    add("18");
+	    add("19");
+	    add("20");
+	    add("21");
+	    add("22");
+	    add("X");
+	    add("Y");}};
 
     
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
@@ -492,9 +516,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 //			        		}
 //			    		}
 //			    	}
-					for (int i=0;i<allSeqIDs.length; i++){
-						seqIDList.add(allSeqIDs[i]);
-					}
+					seqIDList = allSeqIDs;
 				}
 		    	
 		    	//Generate the list of comparator inputs (rows names)
