@@ -480,7 +480,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				
 				if (!seqList.isEmpty()){
 					for (int i = 1; i<seqList.size(); i += 2){
-						seqIDList.add(seqList.get(i));
+						seqIDList.add(seqList.get(i).replaceAll("\"", ""));
 					}
 				} else if (seqList.isEmpty()){
 			    	for (FeatureSet fs : inputSet){
