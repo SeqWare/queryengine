@@ -662,20 +662,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	}
     }
     
-    public List<Scan> getScanList(String tableName, List<FeatureSet> inputSet, Object... parameters){
-    	List scans = new ArrayList<Scan>();
-    	Scan scan = new Scan();
-    	List<List<String>> listList = new ArrayList<List<String>>();
-    	
-    	listList = generateRegionList(inputSet, parameters);
-    	
-    	scan.setStartRow(listList.get(0).get(0).getBytes());
-    	scan.setStopRow(listList.get(0).get(1).getBytes());
-    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, tableName.getBytes());
-    	scans.add(scan);
-    	
-    	return scans;
-    }
     
     public static class PluginRunnerReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends TableReducer<KEYIN, VALUEIN, KEYOUT> implements ReducerInterface<KEYOUT, VALUEOUT> {
 
