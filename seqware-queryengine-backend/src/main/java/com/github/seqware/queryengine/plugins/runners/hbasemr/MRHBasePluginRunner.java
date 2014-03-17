@@ -503,6 +503,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		zeroPad = "";
 		    	}
 				
+		    	//Define what the seqID list will be (has the user defined specific seqID(s)?)
 				if (!seqList.isEmpty()){
 					for (int i = 1; i<seqList.size(); i += 2){
 						seqIDList.add(seqList.get(i).replaceAll("\"", ""));
@@ -518,11 +519,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				String referenceString = outputSet.getReference().getDisplayName();
 				String finalStartString = new String();
 				String finalStopString = new String();
-				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs_______:" + seqIDList);
+				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs to be processed :" + seqIDList);
 				for (int i=0; i<startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
-						Logger.getLogger(MRHBasePluginRunner.class).debug("Current seqID_______:" + seqID);
+						Logger.getLogger(MRHBasePluginRunner.class).debug("Processing seqID :" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
 			    		comparatorStrings.put(count, 
@@ -540,7 +541,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-		    		Logger.getLogger(MRHBasePluginRunner.class).debug("___Final Pairing... : " + stringHolder);
+		    		Logger.getLogger(MRHBasePluginRunner.class).debug("Pairs of start and stops : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
@@ -551,7 +552,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 			e.printStackTrace();
 			return null;
 		}
-	    	//TODO: this only calls the first list of list of filters, we need to find way to accept N amount of list of lists
     }
     
     public static FeatureSet updateAndGet(FeatureSet outputSet) {
@@ -616,12 +616,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 if (!currentMapperName.equals("VCFDumperPlugin") && 
                 		START_STOP_PAIRS_EXIST == true){
                     //Use the multiple range input, we want the shortened scan range.
-                	Logger.getLogger(MRHBasePluginRunner.class).debug("____________Using the list of pairs!");
+                	Logger.getLogger(MRHBasePluginRunner.class).debug("Using the custom TableInputFormat!");
                     List<List<String>> rowList = new ArrayList<List<String>>();
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
                     for (List<String> thisPair: rowList){
-                    	Logger.getLogger(MRHBasePluginRunner.class).debug("___START ROW: " +  thisPair.get(0));
-                    	Logger.getLogger(MRHBasePluginRunner.class).debug("___STOP ROW: "+ thisPair.get(1));
                     	byte[] startRowByte = thisPair.get(0).getBytes();
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
@@ -633,8 +631,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	    					(TableSplit) subSplit, new TableSplit()));
         	    		}
                     }
-
                 } else {
+                	//Table will be split as one table (in the case of VCFDumperPlugin being run, we want ALL range in this case)
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
                     scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
@@ -644,7 +642,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	    					(TableSplit) subSplit, new TableSplit()));
     	    		}
                 }
-
 	    		return splits;
     		} catch (Exception e){
     			e.printStackTrace();
@@ -652,7 +649,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		}
     	}
     }
-    
     
     public static class PluginRunnerReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends TableReducer<KEYIN, VALUEIN, KEYOUT> implements ReducerInterface<KEYOUT, VALUEOUT> {
 
