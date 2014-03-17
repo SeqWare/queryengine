@@ -599,7 +599,7 @@ public class RPNStack implements Serializable {
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
                 	stopList.add(text);
-                } else if (startList.size() %2 != 0 && stopList.size() % 2 != 0 
+                } else if (startList.size() %2 == 0 && stopList.size() % 2 == 0 
                 		&& startList.size() == stopList.size()){
                 	checkStartStopPairingNow = true;
                 }
