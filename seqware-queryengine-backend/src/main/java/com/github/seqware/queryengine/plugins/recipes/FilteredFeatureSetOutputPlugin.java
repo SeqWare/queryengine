@@ -69,7 +69,7 @@ public abstract class FilteredFeatureSetOutputPlugin extends MapReducePlugin<Fea
                 if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
                     f.setManager(modelManager);
                     results.add(f);
-                    System.out.println("[INFO] Added this feature!");
+                    // System.out.println("[INFO] Added this feature!");
                 } else {
 //                    System.out.println("[INFO] Skipped this feature!");
                     continue;
