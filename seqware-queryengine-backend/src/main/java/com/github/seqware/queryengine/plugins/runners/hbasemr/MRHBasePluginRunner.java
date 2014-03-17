@@ -464,23 +464,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				startPos = startList.get(1);
 				stopPos = stopList.get(1);
 				
-				if (!seqList.isEmpty()){
-					for (int i = 1; i<seqList.size(); i += 2){
-						seqIDList.add(seqList.get(i));
-					}
-				} else if (seqList.isEmpty()){
-			    	for (FeatureSet fs : inputSet){
-			    		for (Feature f : fs){
-			    			if (!seqIDList.contains(f.getSeqid())){
-			    				seqIDList.add(f.getSeqid());
-			        		}
-			    		}
-			    	}
-				}
-				
-				//TODO: Fix this, make 2 conditions.
-
-		    	
 		    	//Generate 15 digit start and end position.
 		    	for (int i=0 ; i<startPosList.size(); i++){
 			    	String zeroPad = new String();
@@ -498,7 +481,22 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		}
 		    		stopPosList.set(i, zeroPad + stopPosList.get(i));
 		    		zeroPad = "";
-		    	}	
+		    	}
+				
+				if (!seqList.isEmpty()){
+					for (int i = 1; i<seqList.size(); i += 2){
+						seqIDList.add(seqList.get(i));
+					}
+				} else if (seqList.isEmpty()){
+			    	for (FeatureSet fs : inputSet){
+			    		for (Feature f : fs){
+			    			if (!seqIDList.contains(f.getSeqid())){
+			    				seqIDList.add(f.getSeqid());
+			    				//TODO: Make all cases for seqids here
+			        		}
+			    		}
+			    	}
+				}
 		    	
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
@@ -520,7 +518,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 					}
 				}
 
-		    	
 		    	//Put together the List of list<String>
 		    	List<List<String>> scanPositions = new ArrayList<List<String>>();
 		    	for (int i : comparatorStrings.keySet()){
