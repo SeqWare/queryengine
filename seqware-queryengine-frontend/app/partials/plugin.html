@@ -1,0 +1,20 @@
+<div class="container-fluid" ng-controller="PluginCtrl">
+	<div class="row-fluid">
+		<div class="col-xs-7">
+			<h1>SeqWare Query Engine</h1>
+			<h2>Plugins:</h2>
+			<select ng-model="plugin">
+				<option></option>
+				<option ng-repeat="plugins in pluginList">{{ plugins.pluginName }}</option>
+			</select></br></br>
+			<label for="reference">Reference : </label><input class="form-control" ng-model="reference"/><br/>
+			<label for="output">Output : </label><input class="form-control" ng-model="output"/><br/>
+			<button ng-click="runPlugin()" href="#" class="btn btn-default">Run Plugin</button><br/>
+		</div>
+			
+		<div class="col-xs-5">
+			<h2>Results</h2>
+			<pre>response = {{ response | json }}</pre>
+		</div>
+	</div>
+</div>
