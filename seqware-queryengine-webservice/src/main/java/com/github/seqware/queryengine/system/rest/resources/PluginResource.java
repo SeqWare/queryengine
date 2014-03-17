@@ -104,10 +104,10 @@ public class PluginResource {
         cd[2] = "-r";
         cd[3] = reference;
         cd[4] = "-o";
-        cd[5] = "tmp/" + output;
+        cd[5] = "/tmp/" + output;
         int process = 0;
         try {
-          process = pluginRunner.runArbitraryPluginRunner(cd);
+          process = ArbitraryPluginRunner.runArbitraryPluginRunner(cd);
         } catch (Exception ex) {
           System.out.println(ex.getMessage());
           return Response.ok(ex.getMessage()).build(); //("Error running Plugin: " + ex.getMessage()).toString()
@@ -116,7 +116,7 @@ public class PluginResource {
         String status = Integer.toString(process);
         String response = "";
         Charset charset = Charset.forName("UTF-8");
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("tmp/" + output), charset)) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("/tmp/" + output), charset)) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 response = response + line + " ";
