@@ -454,15 +454,10 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    	stopList = ranges.get(STOP_LIST);
 		    	seqList = ranges.get(SEQ_LIST);
 		    	
-				String startPos = new String();
-				String stopPos = new String();
-				
 				for (int i = 1; i<startList.size(); i += 2){
 					startPosList.add(startList.get(i));
 					stopPosList.add(stopList.get(i));
 				}
-				startPos = startList.get(1);
-				stopPos = stopList.get(1);
 				
 		    	//Generate 15 digit start and end position.
 		    	for (int i=0 ; i<startPosList.size(); i++){
