@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 public class RPNStack implements Serializable {
 
     private List<Object> stack;
-    private Map<Parameter, Integer> parameters = new HashMap<Parameter, Integer>();
+    private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
     static List<String>	seqIDList = new ArrayList<String>();
@@ -318,7 +318,10 @@ public class RPNStack implements Serializable {
             } else if (argument instanceof Operation) {
                 // Do nothing.
             } else if (argument instanceof Parameter) {
-                this.parameters.put((Parameter) argument, i);
+                if (!this.parameters.containsKey((Parameter)argument)){
+                    this.parameters.put((Parameter)argument, new HashSet<Integer>());
+                }
+                this.parameters.get((Parameter) argument).add(i);
             } else {
                 throw new UnsupportedOperationException("An RPNStack can only be populated with Constant, Parameter, or Operation instances. You provided a " + argument.getClass().getName());
             }
@@ -332,7 +335,9 @@ public class RPNStack implements Serializable {
      * @param value Value of the parameter.
      */
     public void setParameter(Parameter parameter, Object value) {
-        this.stack.set(this.parameters.get(parameter), value);
+        for(Integer i : this.parameters.get(parameter)){
+            this.stack.set(i, value);
+        }
     }
 
     /**

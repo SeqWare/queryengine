@@ -15,6 +15,7 @@ import com.github.seqware.queryengine.kernel.RPNStack.TagHierarchicalOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagValuePresence;
 import com.github.seqware.queryengine.model.*;
+import static com.github.seqware.queryengine.model.test.FeatureStoreInterfaceTest.aSet;
 import com.github.seqware.queryengine.plugins.PluginInterface;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.system.importers.OBOImporter;
@@ -182,6 +183,18 @@ public class QueryInterfaceTest implements Benchmarking {
 
             this.benchmark("getFeaturesByRange(...)", future);
         }
+    }
+    
+        /**
+     * <p>testGetFeaturesByRange.</p>
+     */
+    @Test
+    public void testGetFeaturesByMultipleRanges() throws RecognitionException {
+        QueryFuture<FeatureSet> queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, aSet, RPNStack.compileQuery("seqid==\"chr16\" && (start >= 1000000 && stop <= 1000001 || start >= 1000003 && stop <= 1000004)"));
+
+        FeatureSet result = queryFuture.get();
+
+        Assert.assertTrue("Number of returned features within the given range does not match the number of features that were stored there, expected " + 2 + ", got " + result.getCount(), result.getCount() == 2);
     }
 
     /**
