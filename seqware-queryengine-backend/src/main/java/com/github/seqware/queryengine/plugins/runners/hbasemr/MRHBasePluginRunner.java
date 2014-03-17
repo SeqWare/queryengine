@@ -367,14 +367,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public static void checkRangeQueryExists(List<List<String>> ranges){
     	List<String> startList = new ArrayList<String>();
     	List<String> stopList = new ArrayList<String>();
-    	startList = ranges.get(START_LIST);
-    	stopList = ranges.get(STOP_LIST);
-    	
-		if (startList.size() == stopList.size() 
-				&& startList.size()%2 == 0 
-				&& startList.size() != 0){
-			START_STOP_PAIRS_EXIST = true;
-		}
+    	if (ranges != null){
+        	startList = ranges.get(START_LIST);
+        	stopList = ranges.get(STOP_LIST);
+        	
+    		if (startList.size() == stopList.size() 
+    				&& startList.size()%2 == 0 
+    				&& startList.size() != 0){
+    			START_STOP_PAIRS_EXIST = true;
+    		}
+    	}
+
     }
     
     /**
