@@ -629,10 +629,12 @@ public class RPNStack implements Serializable {
 //                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
+                	Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: I turned it off.....");
                 	checkStartStopPairingNow = false;
                 	allStartsStopsArePaired = false;
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
+                	Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNow: I turned it off.....");
                 	checkStartStopPairingNow = false;
                 	allStartsStopsArePaired = false;
                 } else if (text.equals("seqid")){
