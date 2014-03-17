@@ -25,7 +25,6 @@ public class RPNStack implements Serializable {
     private List<Object> stack;
     private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
     private static boolean checkStartStopPairingNow = false;
-    privated static boolean checkIsCompleted;
     public static boolean allStartsStopsArePaired;
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
