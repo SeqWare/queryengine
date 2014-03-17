@@ -135,6 +135,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     private static boolean START_STOP_PAIRS_EXIST = false;
     private static List<FeatureSet> thisInputSet = new ArrayList<FeatureSet>();
     private static Object[] thisParameter = new Object[0];
+    private static String[] allSeqIDs = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"};
 
     
     public static List<FeatureSet> convertBase64StrToFeatureSets(final String sourceSets) {
@@ -483,14 +484,17 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 						seqIDList.add(seqList.get(i).replaceAll("\"", ""));
 					}
 				} else if (seqList.isEmpty()){
-			    	for (FeatureSet fs : inputSet){
-			    		for (Feature f : fs){
-			    			if (!seqIDList.contains(f.getSeqid())){
-			    				seqIDList.add(f.getSeqid());
-			    				//TODO: Make all cases for seqids here
-			        		}
-			    		}
-			    	}
+//			    	for (FeatureSet fs : inputSet){
+//			    		for (Feature f : fs){
+//			    			if (!seqIDList.contains(f.getSeqid())){
+//			    				seqIDList.add(f.getSeqid());
+//			    				//TODO: Make all cases for seqids here
+//			        		}
+//			    		}
+//			    	}
+					for (int i=0;i<allSeqIDs.length; i++){
+						seqIDList.add(allSeqIDs[i]);
+					}
 				}
 		    	
 		    	//Generate the list of comparator inputs (rows names)
