@@ -24,10 +24,12 @@ public class RPNStack implements Serializable {
 
     private List<Object> stack;
     private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
+    private static boolean checkStartStopPairingNow = false;
+    private static boolean allStartsStopsArePaired = false;
     static List<String> startList = new ArrayList<String>();
     static List<String> stopList = new ArrayList<String>();
     static List<String>	seqIDList = new ArrayList<String>();
-
+    
     /**
      * Operations for combining query constraints.
      */
@@ -127,11 +129,19 @@ public class RPNStack implements Serializable {
         }
         
         public List<String> getStartList(){
-        	return startList;
+        	if (allStartsStopsArePaired){
+        		return startList;	
+        	} else{
+        		return null;
+        	}
         }
         
         public List<String> getStopList(){
-        	return stopList;
+        	if (allStartsStopsArePaired){
+            	return stopList;
+        	} else {
+        		return null;
+        	}
         }
         
         public List<String> getSeqIDList(){
@@ -558,9 +568,15 @@ public class RPNStack implements Serializable {
             // Boolean operators:
             case SeqWareQueryLanguageParser.AND:
                 arguments.add(Operation.AND);
+                if (checkStartStopPairingNow = true){
+                	allStartsStopsArePaired = true;
+                }
                 break;
             case SeqWareQueryLanguageParser.OR:
                 arguments.add(Operation.OR);
+                if (checkStartStopPairingNow = true){
+                	allStartsStopsArePaired = false;
+                }
                 break;
 
             // Other binary operators:
@@ -588,6 +604,9 @@ public class RPNStack implements Serializable {
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
                 	stopList.add(text);
+                } else if (startList.size() %2 != 0 && stopList.size() % 2 != 0 
+                		&& startList.size() == stopList.size()){
+                	checkStartStopPairingNow = true;
                 }
                 break;
             case SeqWareQueryLanguageParser.STRING:
@@ -619,8 +638,10 @@ public class RPNStack implements Serializable {
 //                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
+                	checkStartStopPairingNow = false;
                 } else if (text.equals("stop")){
                 	stopList.add("stop");
+                	checkStartStopPairingNow = false;
                 } else if (text.equals("seqid")){
                 	seqIDList.add("seqid");
                 }
