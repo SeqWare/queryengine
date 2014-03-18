@@ -467,7 +467,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
      */
     public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, List<List<String>> ranges) {
     	try {
-			if (START_STOP_PAIRS_EXIST == true){
+			if (START_STOP_PAIRS_EXIST == true 
+					&& ranges.get(START_LIST) != null 
+					&& ranges.get(STOP_LIST) != null){
 		        List<String> startList = new ArrayList<String>();
 		        List<String> stopList = new ArrayList<String>();
 		        List<String> seqList = new ArrayList<String>();
