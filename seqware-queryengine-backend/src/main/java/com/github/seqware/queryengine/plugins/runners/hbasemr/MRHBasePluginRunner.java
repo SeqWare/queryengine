@@ -394,8 +394,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     	if (ranges != null){
         	startList = ranges.get(START_LIST);
         	stopList = ranges.get(STOP_LIST);
-        	Logger.getLogger(MRHBasePluginRunner.class).debug("___startList: " + startList);
-        	Logger.getLogger(MRHBasePluginRunner.class).debug("___stopList: " + stopList);
+        	Logger.getLogger(MRHBasePluginRunner.class).info("___startList: " + startList);
+        	Logger.getLogger(MRHBasePluginRunner.class).info("___stopList: " + stopList);
     		if (startList.size() == stopList.size() 
     				&& startList.size()%2 == 0 
     				&& startList.size() != 0){
@@ -633,20 +633,21 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 	Logger.getLogger(MRHBasePluginRunner.class).info("Applying custom splits to the table....");
                     List<List<String>> rowList = new ArrayList<List<String>>(); 
                     rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
-                    
-                    for (List<String> thisPair : rowList){
-                    	byte[] startRowByte = thisPair.get(0).getBytes();
-                    	byte[] stopRowByte = thisPair.get(1).getBytes();
-                    	scan.setStartRow(startRowByte);
-                    	scan.setStopRow(stopRowByte);
-                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
-                    			scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
-                    	setScan(scan);
-                    	
-        	    		for(InputSplit subSplit : super.getSplits(context)){
-        	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-        	    					(TableSplit) subSplit, new TableSplit()));
-        	    		}
+                    if (rowList != null){
+	                    for (List<String> thisPair : rowList){
+	                    	byte[] startRowByte = thisPair.get(0).getBytes();
+	                    	byte[] stopRowByte = thisPair.get(1).getBytes();
+	                    	scan.setStartRow(startRowByte);
+	                    	scan.setStopRow(stopRowByte);
+	                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+	                    			scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+	                    	setScan(scan);
+	                    	
+	        	    		for(InputSplit subSplit : super.getSplits(context)){
+	        	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+	        	    					(TableSplit) subSplit, new TableSplit()));
+	        	    		}
+	                    }
                     }
                 } else {
                 	
