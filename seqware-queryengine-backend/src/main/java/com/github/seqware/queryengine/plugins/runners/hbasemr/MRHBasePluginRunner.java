@@ -651,18 +651,18 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                     }
                 } else {
                 	
-                	//Table will be split as one table, as if no custom split has been applied.
-                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying default splits to the table....");
-                    scan.setStartRow(scan.getStartRow());
-                    scan.setStopRow(scan.getStopRow());
-                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
-                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
-                    setScan(scan);
-                    
-    	    		for(InputSplit subSplit : super.getSplits(context)){
-    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-    	    					(TableSplit) subSplit, new TableSplit()));
-    	    		}
+//                	//Table will be split as one table, as if no custom split has been applied.
+//                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying default splits to the table....");
+//                    scan.setStartRow(scan.getStartRow());
+//                    scan.setStopRow(scan.getStopRow());
+//                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+//                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+//                    setScan(scan);
+//                    
+//    	    		for(InputSplit subSplit : super.getSplits(context)){
+//    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+//    	    					(TableSplit) subSplit, new TableSplit()));
+//    	    		}
                 }
 	    		return splits;
     		} catch (Exception e){
