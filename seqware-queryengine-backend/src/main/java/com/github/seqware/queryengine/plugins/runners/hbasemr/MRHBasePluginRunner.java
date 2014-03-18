@@ -396,20 +396,23 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
      * @param ranges Is the determined Range Query
      */
     public static void checkRangeQueryExists(List<List<String>> ranges){
-    	List<String> startList = new ArrayList<String>();
-    	List<String> stopList = new ArrayList<String>();
-    	if (ranges != null){
-        	startList = ranges.get(START_LIST);
-        	stopList = ranges.get(STOP_LIST);
-        	Logger.getLogger(MRHBasePluginRunner.class).debug("___startList: " + startList);
-        	Logger.getLogger(MRHBasePluginRunner.class).debug("___stopList: " + stopList);
-    		if (startList.size() == stopList.size() 
-    				&& startList.size() % 2 == 0 
-    				&& startList.size() != 0){
-    			START_STOP_PAIRS_EXIST = true;
-    		}
+    	try{
+	    	List<String> startList = new ArrayList<String>();
+	    	List<String> stopList = new ArrayList<String>();
+	    	if (ranges != null){
+	        	startList = ranges.get(START_LIST);
+	        	stopList = ranges.get(STOP_LIST);
+	        	Logger.getLogger(MRHBasePluginRunner.class).debug("___startList: " + startList);
+	        	Logger.getLogger(MRHBasePluginRunner.class).debug("___stopList: " + stopList);
+	    		if (startList.size() == stopList.size() 
+	    				&& startList.size() % 2 == 0 
+	    				&& startList.size() != 0){
+	    			START_STOP_PAIRS_EXIST = true;
+	    		}
+	    	}
+    	} catch (Exception e){
+    		e.printStackTrace();
     	}
-
     }
     
     /**
