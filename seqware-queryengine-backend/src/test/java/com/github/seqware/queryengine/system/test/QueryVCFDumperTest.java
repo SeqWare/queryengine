@@ -174,7 +174,6 @@ public class QueryVCFDumperTest {
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
-        
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("second query was incorrect, should have 10, found " + count, count == 10);
@@ -236,7 +235,7 @@ public class QueryVCFDumperTest {
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
-        Assert.assertTrue("first query was incorrect, should have 16, found " + count, count == 16);
+        Assert.assertTrue("first query was incorrect, should have 23, found " + count, count == 23);
 
         // test comparison
         //String curDir = System.getProperty("user.dir");
