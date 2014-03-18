@@ -13,8 +13,9 @@ angular.module('queryengineApp', [
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {templateUrl: 'partials/home.html', controller: 'HomeCtrl'});
   $routeProvider.when('/upload', {templateUrl: 'partials/upload.html', controller: 'UploadCtrl'});
-  $routeProvider.when('/query', {templateUrl: 'partials/query.html', controller: 'QueryCtrl'});
+  $routeProvider.when('/variants', {templateUrl: 'partials/variants.html', controller: 'VariantCtrl'});
   $routeProvider.when('/plugin', {templateUrl: 'partials/plugin.html', controller: 'PluginCtrl'});
+  $routeProvider.when('/query', {templateUrl: 'partials/query.html', controller: 'QueryCtrl'});
   $routeProvider.otherwise({redirectTo: '/'});
 }])
 /*.config(['$httpProvider', function($httpProvider) {
@@ -24,5 +25,5 @@ config(['$routeProvider', function($routeProvider) {
 ])*/;
 
 angular.module('queryengineApp').constant('APP_CONFIG', {
-  'webservice_url':'http://localhost:8889/seqware-queryengine-webservice/api/'
+  'webservice_url':'http://10.0.20.188:8889/seqware-queryengine-webservice/api/'
 });

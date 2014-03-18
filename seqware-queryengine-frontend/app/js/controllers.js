@@ -55,7 +55,7 @@ angular.module('queryengineApp.controllers', []).
     };
 
   })
-  .controller('QueryCtrl', function($scope, $http, APP_CONFIG) {
+  .controller('VariantCtrl', function($scope, $http, APP_CONFIG) {
     $scope.master = {};
     $scope.response = {};
     $scope.update = function() {
@@ -92,4 +92,23 @@ angular.module('queryengineApp.controllers', []).
         $scope.response = data.data;
       });
     }
+  })
+  .controller('QueryCtrl', function($scope, $http, APP_CONFIG) {
+    $scope.parameters = {};
+    //var queryUrl = "";
+    $scope.runQuery = function() {
+      $http({
+        method: 'POST',
+        withCredentials: true,
+        url: APP_CONFIG.webservice_url + 'query/run',
+        transformRequest: angular.identity,
+        data: $scope.query
+      }).then(function(data, status, headers, config) {
+        $scope.response = data.data;
+      //  queryUrl = "";
+      });
+    }
+    //$scope.toClipboard = function (queryUrl) {
+    //  window.prompt("Copy to clipboard:", queryUrl);
+    //}
   });
