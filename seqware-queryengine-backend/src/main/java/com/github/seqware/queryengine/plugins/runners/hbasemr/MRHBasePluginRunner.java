@@ -482,7 +482,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				int stopDigitLengthDifference;
 		    	String zeroPad = new String();
 				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
-				int count = 0; //need unique key for key placeholder in comparatorStrings;
+				int count = 0; /*need unique key placeholder for every key in comparatorStrings;*/
 				String finalStartString = new String();
 				String finalStopString = new String();
 				String referenceString = new String();
@@ -527,11 +527,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
-				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs to be processed :" + seqIDList);
+				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs to be processed :" + seqIDList);
 				for (int i = 0; i < startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
-						Logger.getLogger(MRHBasePluginRunner.class).debug("Processing seqID :" + seqID);
+						Logger.getLogger(MRHBasePluginRunner.class).info("Processing seqID :" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
 			    		comparatorStrings.put(count, 
@@ -543,8 +543,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
 		    	//Put together the List of list<String>
 		    	for (int i : comparatorStrings.keySet()){
-		    		finalStartString = comparatorStrings.get(i).get(0);
-		    		finalStopString = comparatorStrings.get(i).get(1);
+		    		finalStartString = comparatorStrings.get(i).get(0);		 /* Retrieve the start row from this pair */
+		    		finalStopString = comparatorStrings.get(i).get(1); 		/* Retrieve the stop row from this pair */
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
 		    		Logger.getLogger(MRHBasePluginRunner.class).debug("Pairs of start and stops : " + stringHolder);
