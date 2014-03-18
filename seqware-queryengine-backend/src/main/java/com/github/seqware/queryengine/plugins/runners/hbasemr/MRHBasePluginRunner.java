@@ -625,7 +625,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
-                if (!currentMapperName.equals("VCFDumperPlugin")
+                if (currentMapperName.equals("QueryVCFDumperPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
                 		&& RPNStack.allStartsStopsArePaired == true){
                 	
