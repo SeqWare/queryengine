@@ -526,11 +526,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
-				Logger.getLogger(MRHBasePluginRunner.class).info("seqIDs to be processed :" + seqIDList);
+				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs to be processed :" + seqIDList);
 				for (int i = 0; i < startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
-						Logger.getLogger(MRHBasePluginRunner.class).info("Processing seqID :" + seqID);
+						Logger.getLogger(MRHBasePluginRunner.class).debug("Processing seqID :" + seqID);
 			    		finalStartString = referenceString + "." + seqID + ":" + startPosList.get(i);
 			    		finalStopString = referenceString + "." + seqID + ":" + stopPosList.get(i);
 			    		comparatorStrings.put(count, 
@@ -547,7 +547,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		finalStopString = comparatorStrings.get(i).get(1); 		/* Retrieve the stop row from this pair */
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-		    		Logger.getLogger(MRHBasePluginRunner.class).info("Pairs of start and stops : " + stringHolder);
+		    		Logger.getLogger(MRHBasePluginRunner.class).debug("Pairs of start and stops : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
@@ -618,9 +618,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		//This will switch the START_STOP_PAIRS_EXIST to true or false
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___Running VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
                 if (!currentMapperName.equals("VCFDumperPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
