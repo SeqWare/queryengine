@@ -443,7 +443,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	
 			//All start and stop positions are paired and there is at least one pair.
 			if (startList.size() == stopList.size() 
-					&& startList.size()%2 == 0 
+					&& startList.size() % 2 == 0 
 					&& startList.size() != 0){
 				ranges.add(startList);
 				ranges.add(stopList);
@@ -467,30 +467,41 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
      */
     public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, List<List<String>> ranges) {
     	try {
-	        List<String> startList = new ArrayList<String>();
-	        List<String> stopList = new ArrayList<String>();
-	        List<String> seqList = new ArrayList<String>();
-	        
 			if (START_STOP_PAIRS_EXIST == true){
+		        List<String> startList = new ArrayList<String>();
+		        List<String> stopList = new ArrayList<String>();
+		        List<String> seqList = new ArrayList<String>();
 				List<String> startPosList = new ArrayList<String>();
 				List<String> stopPosList = new ArrayList<String>();
 				List<String> seqIDList = new ArrayList<String>();
+	    		List<String> stringHolder = new ArrayList<String>();
+				List<List<String>> scanPositions = new ArrayList<List<String>>();
+				int startDigitLength;
+				int startDigitLengthDifference;
+				int stopDigitLength;
+				int stopDigitLengthDifference;
+		    	String zeroPad = new String();
+				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
+				int count = 0; //need unique key for key placeholder in comparatorStrings;
+				String finalStartString = new String();
+				String finalStopString = new String();
+				String referenceString = new String();
+		    	
 		    	startList = ranges.get(START_LIST);
 		    	stopList = ranges.get(STOP_LIST);
 		    	seqList = ranges.get(SEQ_LIST);
 		    	
-				for (int i = 1; i<startList.size(); i += 2){
+				for (int i = 1; i < startList.size(); i += 2){
 					startPosList.add(startList.get(i));
 					stopPosList.add(stopList.get(i));
 				}
 				
 		    	//Generate 15 digit start and end position.
-		    	for (int i=0 ; i<startPosList.size(); i++){
-			    	String zeroPad = new String();
-		        	int startDigitLength = startPosList.get(i).length();
-		        	int startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
-		        	int stopDigitLength = stopPosList.get(i).length();
-		        	int stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
+		    	for (int i = 0 ; i < startPosList.size(); i++){
+		        	startDigitLength = startPosList.get(i).length();
+		        	startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
+		        	stopDigitLength = stopPosList.get(i).length();
+		        	stopDigitLengthDifference = HBaseStorage.PAD - stopDigitLength;
 		    		for (int j=0; j<startDigitLengthDifference; j++){
 		    			zeroPad += "0";
 		    		}
@@ -503,24 +514,21 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		zeroPad = "";
 		    	}
 				
-		    	//Define what the seqID list will be (has the user defined specific seqID(s)?)
+		    	//Define what the seqID list will be, has the user defined specific seqID(s)?
 				if (!seqList.isEmpty()){
-					for (int i = 1; i<seqList.size(); i += 2){
+					for (int i = 1; i < seqList.size(); i += 2){
 						seqIDList.add(seqList.get(i).replaceAll("\"", ""));
 					}
 				} else if (seqList.isEmpty()){
 					seqIDList = allSeqIDs;
 				}
 		    	
+				referenceString = outputSet.getReference().getDisplayName();
+
 		    	//Generate the list of comparator inputs (rows names)
 		    	//Map<i'th combination, List<start and stop row names>>
-				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
-				int count = 0; //need unique key for key placeholder in comparatorStrings;
-				String referenceString = outputSet.getReference().getDisplayName();
-				String finalStartString = new String();
-				String finalStopString = new String();
 				Logger.getLogger(MRHBasePluginRunner.class).debug("seqIDs to be processed :" + seqIDList);
-				for (int i=0; i<startPosList.size(); i++){
+				for (int i = 0; i < startPosList.size(); i++){
 					for(String seqID : seqIDList){
 						count++;
 						Logger.getLogger(MRHBasePluginRunner.class).debug("Processing seqID :" + seqID);
@@ -534,11 +542,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				}
 
 		    	//Put together the List of list<String>
-		    	List<List<String>> scanPositions = new ArrayList<List<String>>();
 		    	for (int i : comparatorStrings.keySet()){
 		    		finalStartString = comparatorStrings.get(i).get(0);
 		    		finalStopString = comparatorStrings.get(i).get(1);
-		    		List<String> stringHolder = new ArrayList<String>();
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
 		    		Logger.getLogger(MRHBasePluginRunner.class).debug("Pairs of start and stops : " + stringHolder);
@@ -606,41 +612,47 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     		try{
     			Scan scan = getScan();
 	    		List<InputSplit> splits = new ArrayList<InputSplit>();
-	    		List<List<String>> rangeQuery = new ArrayList<List<String>>();
-	    		String currentMapperName = new String();
-	    		currentMapperName = mapReducePlugin.getClass().getSimpleName();
+	    		List<List<String>> rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
+	    		String currentMapperName = mapReducePlugin.getClass().getSimpleName();
 	    		
-	    		rangeQuery = determineRangeQuery(MRHBasePluginRunner.thisParameter);
+	    		//This will switch the START_STOP_PAIRS_EXIST to true or false
 	    		checkRangeQueryExists(rangeQuery);
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+	    		
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
                 if (!currentMapperName.equals("VCFDumperPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
                 		&& RPNStack.allStartsStopsArePaired == true){
-                    //Use the multiple range input, we want the shortened scan range.
-                	Logger.getLogger(MRHBasePluginRunner.class).debug("Using the custom TableInputFormat!");
-                    List<List<String>> rowList = new ArrayList<List<String>>();
-                    rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
-                    for (List<String> thisPair: rowList){
+                	
+                    //Use the multiple range input to split the table, we want the shortened scan range resulting from this.
+                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying custom splits to the table....");
+                    List<List<String>> rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
+                    
+                    for (List<String> thisPair : rowList){
                     	byte[] startRowByte = thisPair.get(0).getBytes();
                     	byte[] stopRowByte = thisPair.get(1).getBytes();
                     	scan.setStartRow(startRowByte);
                     	scan.setStopRow(stopRowByte);
-                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+                    			scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     	setScan(scan);
+                    	
         	    		for(InputSplit subSplit : super.getSplits(context)){
         	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
         	    					(TableSplit) subSplit, new TableSplit()));
         	    		}
                     }
                 } else {
+                	
                 	//Table will be split as one table, as if no custom split has been applied.
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
-                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     setScan(scan);
+                    
     	    		for(InputSplit subSplit : super.getSplits(context)){
     	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
     	    					(TableSplit) subSplit, new TableSplit()));

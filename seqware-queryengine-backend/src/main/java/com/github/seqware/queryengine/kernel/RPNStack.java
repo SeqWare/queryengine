@@ -549,8 +549,6 @@ public class RPNStack implements Serializable {
      * initially empty.
      */
     private static void abstractSyntaxTreeTraversal(Tree node, List<Object> arguments) {
-        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNowBEFORE: " + checkStartStopPairingNow);
-
         for (int i = 0; i < node.getChildCount(); i++) {
             abstractSyntaxTreeTraversal(node.getChild(i), arguments);
         }
@@ -567,7 +565,8 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.OR:
                 arguments.add(Operation.OR);
-                if (checkStartStopPairingNow = true && allStartsStopsArePaired != true){
+                if (checkStartStopPairingNow = true 
+                		&& allStartsStopsArePaired != true){
                 	allStartsStopsArePaired = false;
                 }
                 break;
@@ -592,12 +591,12 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.INT:
                 arguments.add(new Constant(Integer.parseInt(text)));
-//                Logger.getLogger(RPNStack.class).info("This CONSTANT ______: " + text);
                 if (startList.size() % 2 != 0){
                 	startList.add(text);
                 } else if (stopList.size() % 2 != 0) {
                 	stopList.add(text);
-                } else if (startList.size() %2 == 0 && stopList.size() % 2 == 0 
+                } else if (startList.size() % 2 == 0 
+                		&& stopList.size() % 2 == 0 
                 		&& startList.size() == stopList.size()){
                 	checkStartStopPairingNow = true;
                 }
@@ -628,7 +627,6 @@ public class RPNStack implements Serializable {
             // Variables:
             case SeqWareQueryLanguageParser.ID:
                 arguments.add(new FeatureAttribute(text));
-//                Logger.getLogger(RPNStack.class).info("This FEATURE ATTRIBUTE _______: "  + text);
                 if (text.equals("start")){
                 	startList.add("start");
                 	checkStartStopPairingNow = false;
@@ -713,9 +711,9 @@ public class RPNStack implements Serializable {
                 break;
         }
         
-        Logger.getLogger(RPNStack.class).info("____TYPE: " + node.getType());
-        Logger.getLogger(RPNStack.class).info("____TEXT: " + node.getText());
-        Logger.getLogger(RPNStack.class).info("____checkStartStopPairingNowAFTER: " + checkStartStopPairingNow);
-        Logger.getLogger(RPNStack.class).info("____allStartsStopsArePaired: " + allStartsStopsArePaired);
+        Logger.getLogger(RPNStack.class).debug("___TYPE: " + node.getType());
+        Logger.getLogger(RPNStack.class).debug("___TEXT: " + node.getText());
+        Logger.getLogger(RPNStack.class).debug("___checkStartStopPairingNow: " + checkStartStopPairingNow);
+        Logger.getLogger(RPNStack.class).debug("___allStartsStopsArePaired: " + allStartsStopsArePaired);
     }
 }
