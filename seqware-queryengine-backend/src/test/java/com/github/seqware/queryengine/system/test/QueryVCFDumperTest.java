@@ -173,6 +173,7 @@ public class QueryVCFDumperTest {
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
+        Logger.getLogger(QueryVCFDumperTest.class).info("FeatureSet elements.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount());
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("second query was incorrect, should have 10, found " + count, count == 10);
 
