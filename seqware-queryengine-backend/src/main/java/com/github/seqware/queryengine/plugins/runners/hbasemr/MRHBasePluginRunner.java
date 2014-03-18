@@ -474,7 +474,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				List<String> startPosList = new ArrayList<String>();
 				List<String> stopPosList = new ArrayList<String>();
 				List<String> seqIDList = new ArrayList<String>();
-	    		List<String> stringHolder = new ArrayList<String>();
 				List<List<String>> scanPositions = new ArrayList<List<String>>();
 				int startDigitLength;
 				int startDigitLengthDifference;
@@ -543,6 +542,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
 		    	//Put together the List of list<String>
 		    	for (int i : comparatorStrings.keySet()){
+		    		List<String> stringHolder = new ArrayList<String>();
 		    		finalStartString = comparatorStrings.get(i).get(0);		 /* Retrieve the start row from this pair */
 		    		finalStopString = comparatorStrings.get(i).get(1); 		/* Retrieve the stop row from this pair */
 		    		stringHolder.add(finalStartString);
