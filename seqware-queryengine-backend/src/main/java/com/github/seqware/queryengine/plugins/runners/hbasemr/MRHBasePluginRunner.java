@@ -288,27 +288,15 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	
         	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + mapReducePlugin.getClass().getSimpleName());
         	
-        	if (mapReducePlugin.getClass().getSimpleName().equals("QueryVCFDumperPlugin")){
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job,
-                        true, 
-                        MRHBasePluginRunner.QueryRegionTableInput.class);
-        	} else {
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job,
-                        true);
-        	}
-
+            TableMapReduceUtil.initTableMapperJob(
+                    tableName,
+            		scan, // Scan instance to control CF and attribute selection
+                    PluginRunnerMapper.class, // mapper
+                    mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                    mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                    job,
+                    true, 
+                    MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -668,19 +656,19 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        	    		}
 	                    }
                     }
-                
-//                	//Table will be split as one table, as if no custom split has been applied.
-//                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying default splits to the table....");
-//                    scan.setStartRow(scan.getStartRow());
-//                    scan.setStopRow(scan.getStopRow());
-//                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
-//                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
-//                    setScan(scan);
-//                    
-//    	    		for(InputSplit subSplit : super.getSplits(context)){
-//    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
-//    	    					(TableSplit) subSplit, new TableSplit()));
-//    	    		}
+                } else {
+                	//Table will be split as one table, as if no custom split has been applied.
+                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying default splits to the table....");
+                    scan.setStartRow(scan.getStartRow());
+                    scan.setStopRow(scan.getStopRow());
+                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+                    setScan(scan);
+                    
+    	    		for(InputSplit subSplit : super.getSplits(context)){
+    	    			splits.add((InputSplit) ReflectionUtils.copy(context.getConfiguration(),
+    	    					(TableSplit) subSplit, new TableSplit()));
+    	    		}
                 }
 	    		return splits;
     		} catch (Exception e){
