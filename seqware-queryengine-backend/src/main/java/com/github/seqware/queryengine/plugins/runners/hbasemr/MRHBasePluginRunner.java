@@ -55,6 +55,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -69,6 +71,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import javax.naming.NamingException;
+
 import net.sourceforge.seqware.common.util.Rethrow;
 
 import org.apache.commons.codec.binary.Base64;
@@ -78,6 +82,8 @@ import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HRegionLocation;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
@@ -95,6 +101,7 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.mapreduce.TableSplit;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -649,8 +656,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        	    		}
 	                    }
                     }
-                } else {
-                	
+                
 //                	//Table will be split as one table, as if no custom split has been applied.
 //                	Logger.getLogger(MRHBasePluginRunner.class).info("Applying default splits to the table....");
 //                    scan.setStartRow(scan.getStartRow());
