@@ -235,7 +235,7 @@ public class QueryVCFDumperTest {
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
-        Assert.assertTrue("first query was incorrect, should have 23, found " + count, count == 23);
+        Assert.assertTrue("fourth query was incorrect, should have 23, found " + count, count == 23);
 
         // test comparison
         //String curDir = System.getProperty("user.dir");
