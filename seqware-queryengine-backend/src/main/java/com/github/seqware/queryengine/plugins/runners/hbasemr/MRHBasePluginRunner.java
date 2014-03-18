@@ -547,7 +547,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 		    		finalStopString = comparatorStrings.get(i).get(1); 		/* Retrieve the stop row from this pair */
 		    		stringHolder.add(finalStartString);
 		    		stringHolder.add(finalStopString);
-		    		Logger.getLogger(MRHBasePluginRunner.class).debug("Pairs of start and stops : " + stringHolder);
+		    		Logger.getLogger(MRHBasePluginRunner.class).info("Pairs of start and stops : " + stringHolder);
 		    		scanPositions.add(stringHolder);
 		    	}
 		    	return scanPositions;
