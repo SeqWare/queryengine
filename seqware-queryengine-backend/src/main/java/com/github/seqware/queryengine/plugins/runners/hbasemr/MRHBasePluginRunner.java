@@ -639,8 +639,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	                    	byte[] stopRowByte = thisPair.get(1).getBytes();
 	                    	scan.setStartRow(startRowByte);
 	                    	scan.setStopRow(stopRowByte);
-	                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
-	                    			scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+//	                    	scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+//	                    			scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
 	                    	setScan(scan);
 	                    	
 	        	    		for(InputSplit subSplit : super.getSplits(context)){
@@ -654,8 +654,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 	//Table will be split as one table, as if no custom split has been applied.
                     scan.setStartRow(scan.getStartRow());
                     scan.setStopRow(scan.getStopRow());
-                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
-                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
+//                    scan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, 
+//                    		scan.getAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME));
                     setScan(scan);
                     
     	    		for(InputSplit subSplit : super.getSplits(context)){
