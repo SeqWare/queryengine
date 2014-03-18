@@ -630,7 +630,8 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 	
                     //Use the multiple range input to split the table, we want the shortened scan range resulting from this.
                 	Logger.getLogger(MRHBasePluginRunner.class).info("Applying custom splits to the table....");
-                    List<List<String>> rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
+                    List<List<String>> rowList = new ArrayList<List<String>>(); 
+                    rowList = generateRegionList(MRHBasePluginRunner.thisInputSet, rangeQuery);
                     
                     for (List<String> thisPair : rowList){
                     	byte[] startRowByte = thisPair.get(0).getBytes();
