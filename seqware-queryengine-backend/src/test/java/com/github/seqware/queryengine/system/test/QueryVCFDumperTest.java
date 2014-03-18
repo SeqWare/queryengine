@@ -144,7 +144,6 @@ public class QueryVCFDumperTest {
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
-//        System.out.println("FeatureSet elements for First Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("first query was incorrect, should have 37, found " + count, count == 37);
@@ -176,7 +175,6 @@ public class QueryVCFDumperTest {
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
         
-//        System.out.println("FeatureSet elements for Second Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
         Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("second query was incorrect, should have 10, found " + count, count == 10);
@@ -214,5 +212,34 @@ public class QueryVCFDumperTest {
         // test comparison
         String curDir = System.getProperty("user.dir");
         SOFeatureImporterTest.matchOutputToControl(outputFile, false, new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated_dumperControl.vcf"));
+    }
+    
+    /**
+     * <p>testFourthVCFQueryDumper.</p>
+     */
+    @Test
+    public void testFourthVCFQueryDumper() {
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+
+        Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
+        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
+        long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
+        Assert.assertTrue("first query was incorrect, should have 16, found " + count, count == 16);
+
+        // test comparison
+        //String curDir = System.getProperty("user.dir");
+        //SOFeatureImporterTest.matchOutputToControl(outputFile, false, new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated_dumperControl.vcf"));
     }
 }
