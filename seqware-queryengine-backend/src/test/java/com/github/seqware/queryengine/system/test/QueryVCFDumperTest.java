@@ -144,8 +144,8 @@ public class QueryVCFDumperTest {
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
-        System.out.println("FeatureSet elements for Second Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
-//        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
+//        System.out.println("FeatureSet elements for First Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
+        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("first query was incorrect, should have 37, found " + count, count == 37);
 
@@ -176,8 +176,8 @@ public class QueryVCFDumperTest {
 
         Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
         
-        System.out.println("FeatureSet elements for Second Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
-//        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
+//        System.out.println("FeatureSet elements for Second Test.... " + SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() + " rowkey: " + originalSet.getRowKey().toString() + " " + runMain.pop().getRowKey());
+        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
         long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
         Assert.assertTrue("second query was incorrect, should have 10, found " + count, count == 10);
 
