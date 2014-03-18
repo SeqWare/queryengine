@@ -12,9 +12,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.github.seqware.queryengine.model.Plugin;
+import com.github.seqware.queryengine.model.Reference;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
+import com.github.seqware.queryengine.system.ReferenceCreator;
+import com.github.seqware.queryengine.factory.SWQEFactory;
 
 public class PluginResourceTest {
   
@@ -23,6 +27,30 @@ public class PluginResourceTest {
   
   @BeforeClass
   public static void setUpClass() {
+    try {
+      // check that the Reference does not already exist
+      Reference checkAtom = SWQEFactory.getQueryInterface().getLatestAtomByRowKey("hg_19", Reference.class);
+      if (checkAtom == null) {
+      //Create a Reference
+        ReferenceCreator referenceCreator = new ReferenceCreator();
+        String[] reference = new String[1];
+        reference[0] = "hg_19";
+        referenceCreator.main(reference);
+      }
+      //Import a Feature with the Reference
+      SOFeatureImporter importer = new SOFeatureImporter();
+      String[] params = new String[6];
+      params[0] = "-i";
+      params[1] = "../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf";
+      params[2] = "-r";
+      params[3] = "hg_19";
+      params[4] = "-w";
+      params[5] = "VCFVariantImportWorker";
+      importer.main(params);
+    }
+    catch (Exception ex) {
+      //Do nothing, Reference might already be created
+    }
   }
   
   @AfterClass
@@ -65,6 +93,26 @@ public class PluginResourceTest {
     Client client = Client.create();
     WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin");
     ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //GET plugin/{name}
+  @Test
+  public void testGetPlugin() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin/" + "com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin");
+    ClientResponse response = webResource.type("application/json").get(ClientResponse.class);
+    Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
+    client.destroy();
+  }
+  
+  //POST plugin/{name}
+  @Test
+  public void testRunPlugin() {
+    Client client = Client.create();
+    WebResource webResource = client.resource(QEWSResourceTestSuite.WEBSERVICE_URL + "plugin/" + "com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin/run?reference=hg_19&output=TestOutput");
+    ClientResponse response = webResource.type("application/json").post(ClientResponse.class);
     Assert.assertTrue("Request failed: " + response.getStatus(), response.getStatus() == 200);
     client.destroy();
   }
