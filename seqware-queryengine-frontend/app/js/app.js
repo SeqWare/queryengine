@@ -24,5 +24,5 @@ config(['$routeProvider', function($routeProvider) {
 ])*/;
 
 angular.module('queryengineApp').constant('APP_CONFIG', {
-  'webservice_url':'http://10.0.20.188:8889/seqware-queryengine-webservice/api/'
+  'webservice_url':'http://localhost:8889/seqware-queryengine-webservice/api/'
 });
