@@ -479,7 +479,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				int startDigitLengthDifference;
 				int stopDigitLength;
 				int stopDigitLengthDifference;
-		    	String zeroPad = new String();
 				Map<Integer, List<String>> comparatorStrings = new HashMap<Integer, List<String>>();
 				int count = 0; /*need unique key placeholder for every key in comparatorStrings;*/
 				String finalStartString = new String();
@@ -497,6 +496,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 				
 		    	//Generate 15 digit start and end position.
 		    	for (int i = 0 ; i < startPosList.size(); i++){
+			    	String zeroPad = new String();
 		        	startDigitLength = startPosList.get(i).length();
 		        	startDigitLengthDifference = HBaseStorage.PAD - startDigitLength;
 		        	stopDigitLength = stopPosList.get(i).length();
