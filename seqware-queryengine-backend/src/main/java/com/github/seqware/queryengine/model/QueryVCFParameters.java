@@ -8,7 +8,6 @@ public class QueryVCFParameters {
   private String featureSetId;
   private String keyValue;
   private String query;
-  private String outputFile;
   private String className;
 
   public String getFeatureSetId() {
@@ -40,15 +39,6 @@ public class QueryVCFParameters {
     this.query = query;
   }
   
-  public String getOutputFile() {
-    return outputFile;
-  }
-  
-  @XmlElement(name = "output")
-  public void setOutputFile(String outputFile) {
-    this.outputFile = outputFile;
-  }
-  
   public String getClassName() {
     return className;
   }
@@ -60,6 +50,10 @@ public class QueryVCFParameters {
   }
   
   public QueryVCFParameters() {
+    featureSetId = "";
+    keyValue = "";
+    query = "";
+    className = "";
   }
   
 }
