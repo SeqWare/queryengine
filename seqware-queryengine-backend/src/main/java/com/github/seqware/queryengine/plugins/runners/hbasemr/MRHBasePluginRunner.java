@@ -470,7 +470,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     
     /**
      * 
-     * @param inputSet This is used current to get all SeqID's in the feature set, going to replace this with more efficient solution.
+     * @param inputSet This is used current to get all SeqID's in the feature set.
      * @param ranges The determined Range Query
      * @return scanPositions The list of rows in the current feature set for use in QueryRegionTableInput
      * @return null If START_STOP_PARIS_EXIST is FALSE
