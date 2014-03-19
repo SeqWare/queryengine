@@ -4,20 +4,19 @@
 			<h1>SeqWare Query Engine</h1>
 			<h2>Query VCFs</h2>
 			<p>Fields with an asterisk(*) are required</p>
-			<label for="featureSetId">FeatureSet Id: * </label><input class="form-control" ng-model="query.featureSetId"/><br/>
-			<label for="keyValue">Key Value : </label><input class="form-control" ng-model="query.keyValue"/><br/>
-			<label for="output">Output File : </label><input class="form-control" ng-model="query.output"/><br/>
-			<label for="className">QueryDumperInterface Class : *</label><input class="form-control" ng-model="query.className"/><br/>
-			<label for="query">Query : *</label><input class="form-control" ng-model="query.query"/><br/>
-			<button ng-click="runQuery(query)" href="#" class="btn btn-default">Query</button><br/>
-			<br/><pre>Query = {{ query | json }}</pre>
+			<label for="featureSetId">FeatureSet Id: * </label><input class="form-control" ng-model="parameters.featureSetId"/><br/>
+			<label for="keyValue">Key Value : </label><input class="form-control" ng-model="parameters.keyValue"/><br/>
+			<label for="className">QueryDumperInterface Class : *</label><input class="form-control" ng-model="parameters.className"/><br/>
+			<label for="query">Query : *</label><input class="form-control" ng-model="parameters.query"/><br/>
+			<button ng-click="runQuery()" href="#" class="btn btn-default">Query</button><br/>
+			<br/><pre>Query = {{ parameters | json }}</pre>
 			<pre>Sent Query = {{ master | json }}</pre>
 		</div>
 			
 		<div class="col-xs-6">
 			<h2>Results</h2>
 			<pre>response = {{ response | json }}</pre>
-			<a href="http://10.0.20.188:8889/seqware-queryengine-webservice/api/query/seqware-distribution-1.0.7-SNAPSHOT.jar/download" class="btn btn-default">Download VCF</a><br/>
+			<a class="btn btn-default" ng-disabled="isDisabled" ng-href="{{ fileUrl }}" download="{{ outputFile }}" ng-click="disable()">Download VCF</a><br/-->
 			<!--a href="#" class="btn btn-default" ng-click="toClipboard()">Copy Query URL</a><br/-->
 		</div>
 	</div>
