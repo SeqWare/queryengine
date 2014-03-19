@@ -418,7 +418,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     /**
      * 
      * @param parameters This is taken from the MRHBasePluginRunner constructor
-     * @return List of lists. First list is the start range lists, second list is stop range lists. Third is list of possible seqID(s).
+     * @return List of lists. First list is the start range lists, second list is stop range lists, third is list of possible seqID(s).
      */
     public static List<List<String>> determineRangeQuery(Object... parameters){
     	try{
