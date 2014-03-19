@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
  * A stack of arguments and operations in Reverse Polish Notation (RPN,
  * http://en.wikipedia.org/wiki/Reverse_Polish_notation).
  *
- * @author jbaran
+ * @author jbaran, bso
  * @version $Id: $Id
  */
 public class RPNStack implements Serializable {

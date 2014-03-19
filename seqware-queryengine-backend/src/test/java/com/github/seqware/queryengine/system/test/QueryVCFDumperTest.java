@@ -27,7 +27,7 @@ import org.junit.Test;
  * System tests for importing and exporting VCF files while using a simple
  * interface to do a few queries
  *
- * @author dyuen
+ * @author dyuen, bso
  * @version $Id: $Id
  * @since 0.13.3
  */

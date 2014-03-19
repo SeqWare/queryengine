@@ -115,7 +115,7 @@ import org.apache.log4j.Logger;
  * Abstract implementation of an abstract map/reduce-based plug-in runner for a
  * HBase back-end.
  *
- * @author dyuen
+ * @author dyuen, bso
  * @version $Id: $Id
  */
 public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterface<ReturnType> {
@@ -393,7 +393,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
     /**
      * 
-     * @param ranges Is the determined Range Query
+     * @param ranges Is the determined Range Query.
      */
     public static void checkRangeQueryExists(List<List<String>> ranges){
     	try{
@@ -417,7 +417,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     
     /**
      * 
-     * @param parameters This is taken from the MRHBasePluginRunner constructor
+     * @param parameters This is taken from the MRHBasePluginRunner constructor.
      * @return List of lists. First list is the start range lists, second list is stop range lists, third is list of possible seqID(s).
      */
     public static List<List<String>> determineRangeQuery(Object... parameters){
@@ -471,9 +471,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     /**
      * 
      * @param inputSet This is used current to get all SeqID's in the feature set.
-     * @param ranges The determined Range Query
-     * @return scanPositions The list of rows in the current feature set for use in QueryRegionTableInput
-     * @return null If START_STOP_PARIS_EXIST is FALSE
+     * @param ranges The determined Range Query.
+     * @return scanPositions The list of rows in the current feature set for use in QueryRegionTableInput.
+     * @return null If START_STOP_PARIS_EXIST is FALSE.
      */
     public static List<List<String>> generateRegionList(List<FeatureSet> inputSet, List<List<String>> ranges) {
     	try {
