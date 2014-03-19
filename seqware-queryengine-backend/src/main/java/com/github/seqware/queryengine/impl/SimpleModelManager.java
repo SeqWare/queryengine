@@ -47,8 +47,8 @@ import org.apache.log4j.Logger;
  */
 public class SimpleModelManager implements CreateUpdateManager {
 
-    private Map<String, AtomStatePair> dirtySet = new HashMap<String, AtomStatePair>();
-    private BackEndInterface backend = (BackEndInterface)SWQEFactory.getQueryInterface();
+    private final Map<String, AtomStatePair> dirtySet = new HashMap<>();
+    private final BackEndInterface backend = (BackEndInterface)SWQEFactory.getQueryInterface();
 
     /**
      * <p>buildFeatureSetInternal.</p>
@@ -75,8 +75,8 @@ public class SimpleModelManager implements CreateUpdateManager {
         }
 
         // create separate working lists for objects destined for different tables
-        Map<String, List<Atom>> sortedStore = new HashMap<String, List<Atom>>();
-        Map<String, List<Atom>> sortedUpdate = new HashMap<String, List<Atom>>();
+        Map<String, List<Atom>> sortedStore = new HashMap<>();
+        Map<String, List<Atom>> sortedUpdate = new HashMap<>();
         for (Entry<String, AtomStatePair> e : workingList) {
             AtomImpl atom = (AtomImpl) e.getValue().atom;
             String cl = atom.getHBasePrefix();
@@ -129,10 +129,10 @@ public class SimpleModelManager implements CreateUpdateManager {
 
     private void createBuckets(Entry<String, List<Atom>> e) {
         if (e.getKey().startsWith(FeatureList.prefix + StorageInterface.SEPARATOR)) {
-            if (Constants.NAIVE_OVERLAPS) {
+            if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS) {
                 List<Atom> features = e.getValue();
                 // position in genome -> feature set ID -> feature list
-                Map<String, Map<SGID, FeatureList>> map = new HashMap<String, Map<SGID, FeatureList>>();
+                Map<String, Map<SGID, FeatureList>> map = new HashMap<>();
                 for (Atom a : features) {
                     Feature f = (Feature) a;
                     // ensure that we have a FeatureList available for every feature set / position covered by the feature
@@ -153,7 +153,7 @@ public class SimpleModelManager implements CreateUpdateManager {
                     }
                 }
                 // grab all FeatureLists and set them as the value
-                List<Atom> bucketList = new ArrayList<Atom>();
+                List<Atom> bucketList = new ArrayList<>();
                 for(Map<SGID, FeatureList> innerMap : map.values()){
                     bucketList.addAll(innerMap.values());
                 }
@@ -180,7 +180,7 @@ public class SimpleModelManager implements CreateUpdateManager {
                     }
                 });
                 // go through and upgrade to buckets
-                List<Atom> bucketList = new ArrayList<Atom>(features.size());
+                List<Atom> bucketList = new ArrayList<>(features.size());
                 FeatureList featureList = null;
                 String lastRowKey = "";
                 for (Atom a : features) {
@@ -215,7 +215,7 @@ public class SimpleModelManager implements CreateUpdateManager {
         if (e.getKey().startsWith(FeatureList.prefix + StorageInterface.SEPARATOR)) {
             List<Atom> bucketList = e.getValue();
             // go through and upgrade to buckets
-            List<Atom> features = new ArrayList<Atom>(bucketList.size());
+            List<Atom> features = new ArrayList<>(bucketList.size());
             for (Atom bucket : bucketList) {
                 FeatureList list = (FeatureList) bucket;
                 for (Feature f : list.getFeatures()) {
@@ -305,7 +305,7 @@ public class SimpleModelManager implements CreateUpdateManager {
         // update dirty objects
         // TODO: to deal with the possible semantics of the back-end timestamp, we need to
         // remove objects from a map before they change and then put them back afterwards
-        List<Entry<String, AtomStatePair>> workingList = new ArrayList<Entry<String, AtomStatePair>>();
+        List<Entry<String, AtomStatePair>> workingList = new ArrayList<>();
         for (Entry<String, AtomStatePair> p : dirtySet.entrySet()) {
             if (p.getValue().getState() == State.NEW_CREATION || p.getValue().getState() == State.NEW_VERSION) {
                 workingList.add(p);

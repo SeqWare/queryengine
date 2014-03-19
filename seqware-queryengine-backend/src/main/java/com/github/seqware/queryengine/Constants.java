@@ -68,8 +68,16 @@ public class Constants {
     public static final boolean TRACK_TAGSET = false;
     // this outputs all sorts of metrics about the byte sizes of lines and serialized objects to log4j
     public static final boolean OUTPUT_METRICS = false;
-    // this setting means that features will be stored at all positions instead of just where they start
-    public static final boolean NAIVE_OVERLAPS = true;
+    
+    public enum OVERLAP_STRATEGY {
+        NONE,
+        // this setting means that features will be stored at all positions instead of just where they start
+        NAIVE_OVERLAPS,
+        // create special bins at 1000 base positions that aggregate all
+        // features that span across position [x,x+1000) (inclusive, exclusive)
+        BIN_AT_1000s
+    }
+    public static final OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.NAIVE_OVERLAPS;
     
 
     /**
