@@ -95,20 +95,31 @@ angular.module('queryengineApp.controllers', []).
   })
   .controller('QueryCtrl', function($scope, $http, APP_CONFIG) {
     $scope.parameters = {};
-    //var queryUrl = "";
+    $scope.master = {};
+    $scope.isDisabled = true; // Disables/Enables download of VCF
+    //var file = undefined;
     $scope.runQuery = function() {
+      console.log(JSON.stringify($scope.parameters));
       $http({
         method: 'POST',
         withCredentials: true,
-        url: APP_CONFIG.webservice_url + 'query/run',
+        url: APP_CONFIG.webservice_url + 'featureset/run',
         transformRequest: angular.identity,
-        data: $scope.query
+        data: JSON.stringify($scope.parameters)
       }).then(function(data, status, headers, config) {
         $scope.response = data.data;
-      //  queryUrl = "";
+        $scope.master = $scope.parameters;
+        //file = new Blob([ data.data ], { type : 'text/plain' });
+        if (typeof $scope.response != "undefined") {
+          $scope.isDisabled = false;
+          $scope.fileUrl = APP_CONFIG.webservice_url + "featureset/download/" + $scope.response.UUID;
+          //$scope.fileUrl = "/tmp" + $scope.outputFile;//(window.URL || window.webkitURL).createObjectURL(file);
+        } else {
+          $scope.isDisabled = true;
+        }
       });
     }
-    //$scope.toClipboard = function (queryUrl) {
-    //  window.prompt("Copy to clipboard:", queryUrl);
-    //}
+    $scope.disable = function() {
+      $scope.isDisabled = true;
+    }
   });
