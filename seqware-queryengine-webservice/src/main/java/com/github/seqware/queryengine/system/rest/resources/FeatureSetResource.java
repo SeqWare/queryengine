@@ -70,6 +70,7 @@ import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * FeatureSet resource.
@@ -138,12 +139,12 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
    * @return
    */
     @GET
-    @Path("/{sgid}")
+    @Path("/download/{sgid}")
     @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 70)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    @Produces(MediaType.TEXT_PLAIN)
+    //@Produces(MediaType.TEXT_PLAIN)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) throws InvalidIDException {
@@ -176,7 +177,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
                     }
                 };
 
-                return Response.ok(stream).build();
+                return Response.ok(stream, "application/octet-stream").build();
 
             } catch (Exception ex) {
                 Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -227,9 +228,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
             @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         SGID sgid = null;
-        if (!fileDisposition.getName().endsWith(".vcf")) {
-          return Response.status(Status.NOT_ACCEPTABLE).build();
-        }
         try {
             /*
              * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -248,7 +246,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             //Delete the uploaded vcf file
             File temp = new File("/tmp/" + fileName);
             temp.delete();
-            //saveToFile(file, "tmp/abc");
         } catch (IOException ex) {
             Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -317,6 +314,15 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         return super.addSet(set);
     }
     
+    /**
+     * Uses the QueryVCFDumper to query VCF files based on the user's query
+     * 
+     * @param sgid
+     * @param query
+     * @param className
+     * @param keyValue
+     * @return
+     */
     @POST
     @Path(value = "/run")
     @ApiOperation(value = "Run the QueryVCFDumper", notes = "Generates a VCF file output according to the user's query")
@@ -329,7 +335,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         UUID uuid = UUID.randomUUID();
         ArrayList<String> params = new ArrayList<String>();
         
-        //if (sgid.equals("") || query.equals("")) {
         if (parameters.getFeatureSetId().equals("") || parameters.getQuery().equals("")) {
           map.put("features", "none");
           return Response.ok().entity(map).build();
@@ -339,38 +344,71 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         params.add(parameters.getFeatureSetId());
         params.add("-s");
         params.add(parameters.getQuery());
+        params.add("-k");
+        params.add("/tmp/querydumper-" + uuid.toString() + ".out");
         params.add("-o");
-        params.add("/tmp/" + uuid.toString() + ".vcf");
-        if (!parameters.getKeyValue().equals("")) {
-          params.add("-k");
-          params.add(parameters.getKeyValue());
-        }
-
-        //Run the dumper
-        QueryVCFDumper dumper = new QueryVCFDumper();
-        /*String[] params = new String[6];
-        params[0] = "-f";
-        params[1] = "cd9709eb-1844-4220-aaac-b9d1dde11d1c";
-        params[2] = "-s";
-        params[3] = "seqid==\"1\"";
-        params[4] = "-o";
-        params[5] = "/tmp/output.vcf";*/
-        String[] p = params.toArray(new String[0]);
-        dumper.runMain(p);
+        params.add("/tmp/querydumper-" + uuid.toString() + ".vcf");
         
-        map.put("UUID", uuid.toString());
+        try {
+          //Run the dumper
+          QueryVCFDumper dumper = new QueryVCFDumper();
+          /*String[] params = new String[6];
+          params[0] = "-f";
+          params[1] = "cd9709eb-1844-4220-aaac-b9d1dde11d1c";
+          params[2] = "-s";
+          params[3] = "seqid==\"1\"";*/
+          String[] p = params.toArray(new String[0]);
+          dumper.runMain(p);
+          File vcf = new File("/tmp/querydumper-" + uuid.toString() + ".vcf");
+          File kv = new File("/tmp/querydumper-" + uuid.toString() + ".out");
+          final Scanner scanner = new Scanner(kv);
+          String sgid = "";
+          while(scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            if (line.contains("Final-FeatureSetID")) {
+              sgid = line.replace("Final-FeatureSetID", "").trim();
+              break;
+            }
+          }
+          
+          map.put("sgid", sgid);
+          kv.delete();
+          vcf.delete();
+        } catch (Exception ex) {
+          return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
         
         return Response.ok().entity(map).build();
     }
     
-    @GET
-    @Path(value = "/download/{uuid}")
-    @ApiOperation(value = "Run the QueryVCFDumper", notes = "Download the generated VCF file") 
-    public Response query(
-        @ApiParam(value = "File Name", required = true)
-        @PathParam(value = "uuid") String uuid) {
-        
-        File f = new File("/tmp/" + uuid + ".vcf");
-        return Response.ok(f, "application/octet-stream").build();
-    }
+    /**
+     * Allows the user to download files which were output by the
+     * QueryVCFDumper
+     * 
+     * @param uuid
+     * @return
+     */
+//    @GET
+//    @Path(value = "/download/{uuid}")
+//    @ApiOperation(value = "Download output VCF files", notes = "Download the generated VCF file from the QueryVCFDumper") 
+//    public Response queryResults(
+//        @ApiParam(value = "File Name", required = true)
+//        @PathParam(value = "uuid") String uuid) {
+//        
+//        File f = new File("/tmp/" + uuid + ".vcf");
+//        return Response.ok(f, "application/octet-stream").build();
+//    }
+    
+//    @POST
+//    @Path(value = "/dump/{sgid}")
+//    @ApiOperation(value = "Dumps VCF files for user to download", notes = "Download the generated VCF file from the VCFDumper") 
+//    public Response dump(
+//        @ApiParam(value = "File Name", required = true)
+//        @PathParam(value = "sgid") String sgid) {
+//        
+//      
+//        return Response.ok().build();
+//        //File f = new File("/tmp/" + uuid + ".vcf");
+//        //return Response.ok(f, "application/octet-stream").build();
+//    }
 }
