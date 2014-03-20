@@ -24,10 +24,16 @@ public class FeatureList extends AtomImpl<FeatureList> {
 
     /** Constant <code>prefix="Feature"</code> */
     public final static String prefix = "Feature";
+    public final static String BIN_SUFFIX = "_bins";
     
-    private String displayName = null;
+    private final String displayName = null;
+    
+    /**
+     * Use when doing non-naive overlaps
+     */
+    private boolean aggregateBin = false;
 
-    private List<Feature> features = new ArrayList<Feature>();
+    private final List<Feature> features = new ArrayList<>();
 
     /**
      * <p>Constructor for FeatureList.</p>
@@ -36,6 +42,9 @@ public class FeatureList extends AtomImpl<FeatureList> {
         super();
     }
     
+    public FeatureList(boolean aggregate_bin){
+        this.aggregateBin = aggregate_bin;
+    }
     
     
     /**
@@ -48,13 +57,15 @@ public class FeatureList extends AtomImpl<FeatureList> {
         return features;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public Class getHBaseClass() {
         return FeatureList.class;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public String getHBasePrefix() {
         assert(this.getSGID() instanceof FSGID);
@@ -62,13 +73,15 @@ public class FeatureList extends AtomImpl<FeatureList> {
         return fsgid.getTablename();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
@@ -83,7 +96,8 @@ public class FeatureList extends AtomImpl<FeatureList> {
         return new FeatureList.Builder();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public FeatureList.Builder toBuilder() {
         FeatureList.Builder b = new FeatureList.Builder();
@@ -123,6 +137,13 @@ public class FeatureList extends AtomImpl<FeatureList> {
   public String getDisplayName() {
     return(displayName);
   }
+
+    /**
+     * @return the aggregate_bin
+     */
+    public boolean isAggregate_bin() {
+        return aggregateBin;
+    }
 
     public static class Builder extends BaseBuilder {
 

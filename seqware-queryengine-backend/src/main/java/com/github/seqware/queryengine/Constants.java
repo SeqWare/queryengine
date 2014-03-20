@@ -73,12 +73,12 @@ public class Constants {
         NONE,
         // this setting means that features will be stored at all positions instead of just where they start
         NAIVE_OVERLAPS,
-        // create special bins at 1000 base positions that aggregate all
+        // create special bins at BIN-SIZES (ex: 1000) base positions that aggregate all
         // features that span across position [x,x+1000) (inclusive, exclusive)
-        BIN_AT_1000s
+        BINNING
     }
-    public static final OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.NAIVE_OVERLAPS;
-    
+    public static final OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.BINNING;
+    public static final int BIN_SIZE = 1000;
 
     /**
      * Regular Expression for suitable rowKeys

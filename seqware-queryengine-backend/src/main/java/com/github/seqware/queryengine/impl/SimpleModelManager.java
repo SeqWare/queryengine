@@ -129,27 +129,23 @@ public class SimpleModelManager implements CreateUpdateManager {
 
     private void createBuckets(Entry<String, List<Atom>> e) {
         if (e.getKey().startsWith(FeatureList.prefix + StorageInterface.SEPARATOR)) {
-            if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS) {
+            if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS || Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.BINNING) {
+                boolean isBinning = Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.BINNING;
                 List<Atom> features = e.getValue();
-                // position in genome -> feature set ID -> feature list
+                // position (or bin position) in genome -> feature set ID -> feature list
                 Map<String, Map<SGID, FeatureList>> map = new HashMap<>();
                 for (Atom a : features) {
                     Feature f = (Feature) a;
-                    // ensure that we have a FeatureList available for every feature set / position covered by the feature
+                    // ensure that we have a FeatureList available for every feature set / position (or bin position) covered by the feature
                     for (long i = f.getStart(); i < f.getStop(); i++) {
                         String position = f.getSeqid() + i;
-                        if (!map.containsKey(position)) {
-                            map.put(position, new HashMap<SGID, FeatureList>());
-                        }
                         SGID featureSetID = ((FSGID) f.getSGID()).getFeatureSetID();
-                        if (!map.get(position).containsKey(featureSetID)) {
-                            FeatureList featureList = new FeatureList();
-                            featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) f.getSGID(), f.getSeqid(), i), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
-                            map.get(position).put(featureSetID, featureList);
+                        addToMap(map, position, featureSetID, f, i, false);
+                        if (isBinning && SWQEFactory.getStorage() instanceof HBaseStorage){
+                            long binPosition =  (i/Constants.BIN_SIZE)*Constants.BIN_SIZE;
+                            position = f.getSeqid() +"_bin_"+ binPosition;
+                            addToMap(map, position, featureSetID, f, binPosition, true);
                         }
-                        FeatureList featureList = map.get(position).get(featureSetID);
-                        // need to assign feature a new SGID, so the multiple locations don't get confusing
-                        featureList.add(f);
                     }
                 }
                 // grab all FeatureLists and set them as the value
@@ -159,7 +155,7 @@ public class SimpleModelManager implements CreateUpdateManager {
                 }
                 e.setValue(bucketList);
             } else {
-
+                assert(Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.NONE);
 
                 // sort Features and place them within buckets
                 List<Atom> features = e.getValue();
@@ -211,6 +207,29 @@ public class SimpleModelManager implements CreateUpdateManager {
         }
     }
 
+    /**
+     * Add a new feature list to the map and add to it a feature
+     * @param map
+     * @param position a string used to distinguish between buckets
+     * @param featureSetID
+     * @param feature
+     * @param i a position that will be used to determine the rowkey of the bin
+     * @param binning create aggregation bins
+     */
+    private void addToMap(Map<String, Map<SGID, FeatureList>> map, String uniqueString, SGID featureSetID, Feature feature, long position, boolean binning) {
+        if (!map.containsKey(uniqueString)) {
+            map.put(uniqueString, new HashMap<SGID, FeatureList>());
+        }
+        if (!map.get(uniqueString).containsKey(featureSetID)) {
+            FeatureList featureList = new FeatureList(binning);
+            featureList.impersonate(new FSGID(featureList.getSGID(), (FSGID) feature.getSGID(), feature.getSeqid(), position), Constants.TRACK_VERSIONING ? featureList.getPrecedingSGID() : null);
+            map.get(uniqueString).put(featureSetID, featureList);
+        }
+        FeatureList featureList = map.get(uniqueString).get(featureSetID);
+        // need to assign feature a new SGID, so the multiple locations don't get confusing
+        featureList.add(feature);
+    }
+
     private void removeBuckets(Entry<String, List<Atom>> e) {
         if (e.getKey().startsWith(FeatureList.prefix + StorageInterface.SEPARATOR)) {
             List<Atom> bucketList = e.getValue();
@@ -218,6 +237,10 @@ public class SimpleModelManager implements CreateUpdateManager {
             List<Atom> features = new ArrayList<>(bucketList.size());
             for (Atom bucket : bucketList) {
                 FeatureList list = (FeatureList) bucket;
+                if (list.isAggregate_bin()){
+                    // ignore bins
+                    continue;
+                }
                 for (Feature f : list.getFeatures()) {
                     features.add(f);
                 }
