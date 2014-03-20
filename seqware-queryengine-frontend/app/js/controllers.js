@@ -12,13 +12,7 @@ angular.module('queryengineApp.controllers', []).
         url: APP_CONFIG.webservice_url + 'featureset/', 
         transformRequest: angular.identity,
     }).then(function(data, status, headers, config) {
-      var variantCount = 0;
-      for (var i = 0; i < data.data.length; i++) {
-        if (data.data[i].sgid) {
-          variantCount++;
-        }
-      };
-      database["variants"] = variantCount;
+      database["variants"] = data.data.length;
     });
     
     database["samples"] = 0; //Should sent a GET Request to Webservice
@@ -57,18 +51,56 @@ angular.module('queryengineApp.controllers', []).
   })
   .controller('VariantCtrl', function($scope, $http, APP_CONFIG) {
     $scope.master = {};
-    $scope.response = {};
-    $scope.update = function() {
-      var url = APP_CONFIG.webservice_url + 'featureset/';
-      $http({
-        method: 'GET', 
-        withCredentials: true,
-        url: url, 
-        transformRequest: angular.identity
-      }).then(function(data, status, headers, config) {
-        $scope.response = data;
-      });
-    };
+    $scope.responses = {};
+    var url = APP_CONFIG.webservice_url + 'featureset/';
+    $http({
+      method: 'GET', 
+      withCredentials: true,
+      url: url, 
+      transformRequest: angular.identity
+    }).then(function(data, status, headers, config) {
+      $scope.responses = data.data;
+    });
+    $scope.fileUrl = APP_CONFIG.webservice_url + "featureset/download/";
+  })
+  .controller('ReadCtrl', function($scope, $http, APP_CONFIG) {
+    $scope.master = {};
+    $scope.responses = {};
+    var url = APP_CONFIG.webservice_url + 'readset/';
+    $http({
+      method: 'GET', 
+      withCredentials: true,
+      url: url, 
+      transformRequest: angular.identity
+    }).then(function(data, status, headers, config) {
+      $scope.responses = data.data;
+    });
+  })
+  .controller('ReferenceCtrl', function($scope, $http, APP_CONFIG) {
+    $scope.master = {};
+    $scope.responses = {};
+    var url = APP_CONFIG.webservice_url + 'reference/';
+    $http({
+      method: 'GET', 
+      withCredentials: true,
+      url: url, 
+      transformRequest: angular.identity
+    }).then(function(data, status, headers, config) {
+      $scope.responses = data.data;
+    });
+  })
+  .controller('ReferenceSetCtrl', function($scope, $http, APP_CONFIG) {
+    $scope.master = {};
+    $scope.responses = {};
+    var url = APP_CONFIG.webservice_url + 'referenceset/';
+    $http({
+      method: 'GET', 
+      withCredentials: true,
+      url: url, 
+      transformRequest: angular.identity
+    }).then(function(data, status, headers, config) {
+      $scope.responses = data.data;
+    });
   })
   .controller('PluginCtrl', function($scope, $http, APP_CONFIG) {
     $scope.pluginList = {};
@@ -109,11 +141,9 @@ angular.module('queryengineApp.controllers', []).
       }).then(function(data, status, headers, config) {
         $scope.response = data.data;
         $scope.master = $scope.parameters;
-        //file = new Blob([ data.data ], { type : 'text/plain' });
         if (typeof $scope.response != "undefined") {
           $scope.isDisabled = false;
-          $scope.fileUrl = APP_CONFIG.webservice_url + "featureset/download/" + $scope.response.UUID;
-          //$scope.fileUrl = "/tmp" + $scope.outputFile;//(window.URL || window.webkitURL).createObjectURL(file);
+          $scope.fileUrl = APP_CONFIG.webservice_url + "featureset/download/" + $scope.response.sgid;
         } else {
           $scope.isDisabled = true;
         }
