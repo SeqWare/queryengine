@@ -1,25 +1,25 @@
-<div class="container-fluid" ng-controller="VariantCtrl">
+<div class="container-fluid" ng-controller="ReadCtrl">
 	<div class="row-fluid">
 		<div class="col-xs-12">
 			<h1>SeqWare Query Engine</h1>
 			<ul class="nav nav-tabs">
 				<li><a href="#/references">References</a></li>
 				<li><a href="#/referencesets">Reference Sets</a></li>
-				<li class="active"><a href="#/variants">Variants</a></li>
-				<li><a href="#/reads">Reads</a></li>
+				<li><a href="#/variants">Variants</a></li>
+				<li class="active"><a href="#/reads">Reads</a></li>
 			</ul>
-			<h2>Feature Sets</h2>
-			<p>(List all the FeatureSets in the database)</p>
+			<h2>Read Sets</h2>
+			<p>(List all the Readsets in the database)</p>
 			<div class="table-responsive">
 				<table class="table table-condensed">
 					<thead>
 					<tr class="head">
-						<th>#</th><th>sgid</th><th>Display Name</th><th>Timestamp</th><th></th>
+						<th>#</th><th>sgid</th><th>Display Name</th><th>Timestamp</th>
 					</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="response in responses">
-							<td>{{$index + 1}}</td><td>{{response.sgid}}</td><td>{{response.displayName}}</td><td>{{response.timestamp}}</td><td><a class="btn btn-default" ng-href="{{ fileUrl + response.sgid }}" download="{{ response.sgid }}.vcf">Download VCF</a></td>
+							<td>{{$index + 1}}</td><td>{{response.sgid}}</td><td>{{response.displayName}}</td><td>{{response.timestamp}}</td>
 						</tr>
 					</tbody>
 				</table>
