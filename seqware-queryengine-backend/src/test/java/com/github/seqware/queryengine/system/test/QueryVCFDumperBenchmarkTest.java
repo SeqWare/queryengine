@@ -48,12 +48,14 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String SINGLE_RANGE_QUERY = "";
 	private static final String MULTI_RANGE_QUERY = "";
-	private static final String DOWNLOAD_DIR = "/home/seqware/download_data";
+	private static final String DOWNLOAD_DIR = "/home/seqware";
 	
 	@BeforeClass
 	public void setUpTest(){
+		//TODO: specify config
+        this.config = HBaseConfiguration.create();
+        
 		//TODO: Download File
-		
         String[] vcfs = new String[]{
                 "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
             };
@@ -128,7 +130,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	public Map<String, HTable> retriveFeatureTableMap(){
 		try{
-	        this.config = HBaseConfiguration.create();
 	        HBaseAdmin hba = new HBaseAdmin(config);
 	        
 	        HTableDescriptor[] listTables = hba.listTables(HBaseStorage.TEST_TABLE_PREFIX + "[.]Feature[.].*");
