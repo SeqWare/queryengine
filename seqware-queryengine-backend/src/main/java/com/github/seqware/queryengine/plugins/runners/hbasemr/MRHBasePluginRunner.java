@@ -299,6 +299,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                         job,
                         true, 
                         MRHBasePluginRunner.QueryRegionTableInput.class);
+                System.out.println("You are using QueryVCFDumper.");
         	} else {
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
