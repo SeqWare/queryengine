@@ -430,6 +430,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        		rpnStack = (RPNStack) o;
 	        		break;
 	        	} 
+                System.out.println("Parameter class: " + o.getClass().getSimpleName());
 	        }
 	        
 	        FeatureAttribute thisFeature = null;
