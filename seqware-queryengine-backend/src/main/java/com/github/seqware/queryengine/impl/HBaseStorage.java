@@ -826,6 +826,9 @@ public class HBaseStorage extends StorageInterface {
                 Set<Feature> set = new HashSet<>();
                 Collection<Feature> existingFeatures = e.getValue();
                 List<Feature> additionalFeatures = list.getFeatures();
+                for(Feature foundFeature : additionalFeatures){
+                    Logger.getLogger(HBaseStorage.class.getName()).warn("Found feature (" + foundFeature.getStart()+","+foundFeature.getStop()+")"+ " at "+ binPosition + " " + foundFeature.getDisplayName());
+                }
                 set.addAll(existingFeatures);
                 set.addAll(additionalFeatures);
                 e.setValue(set);

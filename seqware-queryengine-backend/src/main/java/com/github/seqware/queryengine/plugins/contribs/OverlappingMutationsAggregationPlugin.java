@@ -36,13 +36,13 @@ import org.apache.hadoop.io.Text;
  */
 public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlugin {
 
-    private Text text = new Text();
-    private Text textKey = new Text();
+    private final Text text = new Text();
+    private final Text textKey = new Text();
     
     @Override
     public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
         // identify mutuations that are actually at this position
-        Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
+        Set<Feature> featuresAtCurrentLocation = new HashSet<>();
         for (FeatureSet fs : atoms.keySet()) {
             for (Feature f : atoms.get(fs)) {
                 if (f.getStart() == position) {
@@ -82,7 +82,7 @@ public class OverlappingMutationsAggregationPlugin extends FilteredFileOutputPlu
     @Override
     public void reduce(Text key, Iterable<Text> values, ReducerInterface<Text, Text> reducerInterface) {
         // values 
-        Set<Text> seenSet = new HashSet<Text>();
+        Set<Text> seenSet = new HashSet<>();
         String newFeatStr = "";
         boolean first = true;
         for (Text val : values) {

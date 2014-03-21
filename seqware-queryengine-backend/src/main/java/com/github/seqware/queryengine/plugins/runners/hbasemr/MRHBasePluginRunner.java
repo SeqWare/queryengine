@@ -509,12 +509,12 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             for(FeatureSet sSet : sourceSets){
                 sourceSetIDs.add(sSet.getSGID());
             }
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+" featuresets");
+            Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Dealing with "+sourceSetIDs.size()+" featuresets");
             Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
             Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
                Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(e.getValue());
-               Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
+               Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
@@ -525,7 +525,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             
             // grab binned features if applicable
             if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.BINNING) {
-                Logger.getLogger(FeatureSetCountPlugin.class.getName()).warn("Checking binning with "+sourceSetIDs.size()+" featuresets");
+                Logger.getLogger(MRHBasePluginRunner.class.getName()).warn("Checking binning with "+sourceSetIDs.size()+" featuresets");
                 // grab an arbitrary feature set in order to determine tablename
                 FeatureSet get = sourceSets.get(0);
                 assert (get instanceof LazyFeatureSet);
@@ -533,7 +533,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 String tableName = lfSet.getTablename();
                 StorageInterface storage = SWQEFactory.getStorage();
                 if (storage instanceof HBaseStorage) {
-                    Logger.getLogger(FeatureSetCountPlugin.class.getName()).warn("Looking for bins in table "+ tableName);
+                    Logger.getLogger(MRHBasePluginRunner.class.getName()).warn("Looking for bins in table "+ tableName);
                     ((HBaseStorage) storage).grabBinnedFeatures(Bytes.toString(row.get()), tableName, SWQEFactory.getSerialization(), consolidatedMap);
                 }
             }
