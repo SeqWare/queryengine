@@ -431,7 +431,6 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	        		rpnStack = (RPNStack) o;
 	        		break;
 	        	} 
-                System.out.println("Parameter class: " + o.getClass().getSimpleName());
 	        }
 	        
 	        FeatureAttribute thisFeature = null;
@@ -633,9 +632,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		//This will switch the START_STOP_PAIRS_EXIST to true or false
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
-            	Logger.getLogger(MRHBasePluginRunner.class).info("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
+            	Logger.getLogger(MRHBasePluginRunner.class).deubg("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
                 if (currentMapperName.equals("FeaturesByAttributesPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
