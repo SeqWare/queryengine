@@ -170,11 +170,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
                 throw new RuntimeException(ex);
             }
         }
-        for (File f : filesToReturnGZCompressed){
+        for (File thisGZCompressedFile : filesToReturnGZCompressed){
         	try{
-	        	File absOutPath = new File(f.getAbsolutePath());
-	        	gzDecompressor(f.getAbsolutePath(), absOutPath);
-	        	filesToReturnGZUnCompressed.add(absOutPath);
+	        	File thisGZUncompressedFile = new File(thisGZCompressedFile.getAbsolutePath());
+	        	gzDecompressor(thisGZCompressedFile, thisGZUncompressedFile);
+	        	filesToReturnGZUnCompressed.add(thisGZUncompressedFile);
         	} catch (Exception e){
         		e.printStackTrace();
         	}
@@ -205,12 +205,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     	}
     }
     
-    private static void gzDecompressor(String filePathGZ, File absOutPath) throws IOException{
-  	  File inputGZFile = 
-  			  new File(filePathGZ);
-  	  String filename = inputGZFile
+    private static void gzDecompressor(File filePathGZ, File thisGZUncompressedFile) throws IOException{
+  	  String filename = filePathGZ
   				.getName()
-  				.substring(0, inputGZFile.getName().indexOf("."));
+  				.substring(0, filePathGZ.getName().indexOf("."));
   	  byte[] buf = 
   			  new byte[1024];
         int len;
@@ -228,7 +226,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
        }
         outstream.close();
         ginstream.close();
-        absOutPath = new File(outFilename);
+        thisGZUncompressedFile = new File(outFilename);
         
 //  	  return outFilename;
     }
