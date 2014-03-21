@@ -289,28 +289,15 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	
         	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + mapReducePlugin.getClass().getSimpleName());
         	
-        	if (QueryVCFDumper.QUERYVCFDUMPER_RUN = true){
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job,
-                        true, 
-                        MRHBasePluginRunner.QueryRegionTableInput.class);
-                System.out.println("You are using QueryVCFDumper.");
-        	} else {
-                TableMapReduceUtil.initTableMapperJob(
-                        tableName,
-                		scan, // Scan instance to control CF and attribute selection
-                        PluginRunnerMapper.class, // mapper
-                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                        job,
-                        true);
-        	}
-
+            TableMapReduceUtil.initTableMapperJob(
+                    tableName,
+            		scan, // Scan instance to control CF and attribute selection
+                    PluginRunnerMapper.class, // mapper
+                    mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                    mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                    job,
+                    true, 
+                    MRHBasePluginRunner.QueryRegionTableInput.class);
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
@@ -646,9 +633,9 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		//This will switch the START_STOP_PAIRS_EXIST to true or false
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
-            	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
-            	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
+            	Logger.getLogger(MRHBasePluginRunner.class).info("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
                 if (currentMapperName.equals("FeaturesByAttributesPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
