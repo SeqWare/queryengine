@@ -17,14 +17,19 @@ import org.apache.log4j.Logger;
  * A stack of arguments and operations in Reverse Polish Notation (RPN,
  * http://en.wikipedia.org/wiki/Reverse_Polish_notation).
  *
- * @author jbaran
+ * @author jbaran, bso
  * @version $Id: $Id
  */
 public class RPNStack implements Serializable {
 
     private List<Object> stack;
     private final Map<Parameter, Set<Integer>> parameters = new HashMap<>();
-
+    private static boolean checkStartStopPairingNow;
+    public static boolean allStartsStopsArePaired;
+    static List<String> startList = new ArrayList<String>();
+    static List<String> stopList = new ArrayList<String>();
+    static List<String>	seqIDList = new ArrayList<String>();
+    
     /**
      * Operations for combining query constraints.
      */
@@ -121,6 +126,18 @@ public class RPNStack implements Serializable {
 
         public FeatureAttribute(String name) {
             super(name);
+        }
+        
+        public List<String> getStartList(){
+        	return startList;	
+        }
+        
+        public List<String> getStopList(){
+        	return stopList;
+        }
+        
+        public List<String> getSeqIDList(){
+        	return seqIDList;
         }
     }
 
@@ -538,12 +555,20 @@ public class RPNStack implements Serializable {
 
         String text = node.getText();
         switch (node.getType()) {
+        	
             // Boolean operators:
             case SeqWareQueryLanguageParser.AND:
                 arguments.add(Operation.AND);
+                if (checkStartStopPairingNow = true){
+                	allStartsStopsArePaired = true;
+                }
                 break;
             case SeqWareQueryLanguageParser.OR:
                 arguments.add(Operation.OR);
+                if (checkStartStopPairingNow = true 
+                		&& allStartsStopsArePaired != true){
+                	allStartsStopsArePaired = false;
+                }
                 break;
 
             // Other binary operators:
@@ -566,9 +591,21 @@ public class RPNStack implements Serializable {
                 break;
             case SeqWareQueryLanguageParser.INT:
                 arguments.add(new Constant(Integer.parseInt(text)));
+                if (startList.size() % 2 != 0){
+                	startList.add(text);
+                } else if (stopList.size() % 2 != 0) {
+                	stopList.add(text);
+                } else if (startList.size() % 2 == 0 
+                		&& stopList.size() % 2 == 0 
+                		&& startList.size() == stopList.size()){
+                	checkStartStopPairingNow = true;
+                }
                 break;
             case SeqWareQueryLanguageParser.STRING:
                 arguments.add(new Constant(text.replaceFirst("^\"", "").replaceFirst("\"$", "")));
+                if (seqIDList.size() % 2 != 0){
+                	seqIDList.add(text);
+                }
                 break;
              case SeqWareQueryLanguageParser.NULL:
                 arguments.add(null);
@@ -590,6 +627,17 @@ public class RPNStack implements Serializable {
             // Variables:
             case SeqWareQueryLanguageParser.ID:
                 arguments.add(new FeatureAttribute(text));
+                if (text.equals("start")){
+                	startList.add("start");
+                	checkStartStopPairingNow = false;
+                	allStartsStopsArePaired = false;
+                } else if (text.equals("stop")){
+                	stopList.add("stop");
+                	checkStartStopPairingNow = false;
+                	allStartsStopsArePaired = false;
+                } else if (text.equals("seqid")){
+                	seqIDList.add("seqid");
+                }
                 break;
 
             case SeqWareQueryLanguageParser.NAMED_FUNCTION: {
@@ -662,5 +710,10 @@ public class RPNStack implements Serializable {
             default:
                 break;
         }
+        
+        Logger.getLogger(RPNStack.class).debug("___TYPE: " + node.getType());
+        Logger.getLogger(RPNStack.class).debug("___TEXT: " + node.getText());
+        Logger.getLogger(RPNStack.class).debug("___checkStartStopPairingNow: " + checkStartStopPairingNow);
+        Logger.getLogger(RPNStack.class).debug("___allStartsStopsArePaired: " + allStartsStopsArePaired);
     }
 }
