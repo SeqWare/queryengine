@@ -6,13 +6,14 @@ This was built on top of [angular-seed](https://github.com/angular/angular-seed)
 
 ## How to Install
 
-* Install node.js
-* Install dependencies with:
+* Install node.js (in Ubuntu, this can be done with apt-get install node)
+* Install npm (in Ubuntu, this can be done with apt-get install npm)
+* Head to the seqware-queryengine-frontend directory and install dependencies with the command:
 
 <pre>npm install</pre>
 
-* Change the URL to the appropriate Web Service API in app.js
-* Run the node web application server
+* Change the URL to the appropriate Web Service API path in seqware-queryengine-frontend/app/js/app.js
+* Run the node web application server using the command:
 
 <pre>node scripts/web-server.js</pre>
 
@@ -20,15 +21,14 @@ This was built on top of [angular-seed](https://github.com/angular/angular-seed)
 
 ## To Do:
 
-* Integrate deployment along with the web service in Tomcat?
+* Integrate deployment along with the web service in Tomcat
 * Remove visibility to the whole directory
-* Extend features to the remainder of the web service REST API endpoints
 * Write unit tests
 * Write integration tests
 
-## Note: You may have to enable CORS in the web service
+## Note: You may have to enable CORS in the web service application server
 
-You can enable CORS in the web service by adding this filter in the target/tomcat/conf/web.xml
+You can enable CORS in the web service by adding this filter in the file at seqware-queryengine-webservice/target/tomcat/conf/web.xml
 
 ```xml 
 <filter>
