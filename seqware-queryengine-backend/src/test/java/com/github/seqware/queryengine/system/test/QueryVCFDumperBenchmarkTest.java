@@ -48,20 +48,21 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String SINGLE_RANGE_QUERY = "";
 	private static final String MULTI_RANGE_QUERY = "";
+	private static final String DOWNLOAD_DIR = "/home/seqware/download_data";
 	
 	@BeforeClass
 	public void setUpTest(){
 		//TODO: Download File
 		
         String[] vcfs = new String[]{
-                "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized.20101123.indels.low_coverage.sites.vcf.gz",
+                "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
             };
         testingFiles = download(vcfs);
         
-		tableMap = retriveFeatureTableMap();
-		for (Entry<String,HTable> e : tableMap.entrySet()){
-			System.out.println(e.getKey());
-		}
+//		tableMap = retriveFeatureTableMap();
+//		for (Entry<String,HTable> e : tableMap.entrySet()){
+//			System.out.println(e.getKey());
+//		}
 	}
 	
 	@Test
@@ -71,7 +72,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setNaiveConstant(false);
 		
 		//TODO: Add timer
-		importToBackend(testingFiles);
+//		importToBackend(testingFiles);
 		
 		//TESTS
 		resetAllTables();
@@ -79,10 +80,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setNaiveConstant(true);
 		
 		//TODO: Add timer
-		importToBackend(testingFiles);
+//		importToBackend(testingFiles);
 		
 		//TESTS
-		resetAllTables();
+//		resetAllTables();
 	}
 	
 	@Test
@@ -92,7 +93,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setNaiveConstant(false);
 
 		//TODO: Add timer
-		importToBackend(testingFiles);
+//		importToBackend(testingFiles);
 		
 		//TESTS
 		resetAllTables();
@@ -100,10 +101,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setNaiveConstant(true);
 		
 		//TODO: Add timer
-		importToBackend(testingFiles);
+//		importToBackend(testingFiles);
 		
 		//TESTS
-		resetAllTables();
+//		resetAllTables();
 	}
 	
 	public void setNaiveConstant(boolean b){
@@ -144,7 +145,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		}
 	}
 	
-    private static void downloadFile(String file, File downloadDir, List<File> filesToReturn) throws IOException, MalformedURLException, URISyntaxException {
+    private static void downloadFile(String file, File downloadDir, List<File> filesToReturnGZCompressed) throws IOException, MalformedURLException, URISyntaxException {
         URL newURL = new URL(file);
         String name = newURL.toString().substring(newURL.toString().lastIndexOf("/"));
         File targetFile = new File(downloadDir, name);
@@ -152,24 +153,33 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
             System.out.println("Downloading " + newURL.getFile() + " to " + targetFile.getAbsolutePath());
             FileUtils.copyURLToFile(newURL, targetFile);
         }     
-        filesToReturn.add(targetFile);
+        filesToReturnGZCompressed.add(targetFile);
     }
     
     private static List<File> download(String[] files) {
-        List<File> filesToReturn = new ArrayList<File>();
+        List<File> filesToReturnGZCompressed = new ArrayList<File>();
+        List<File> filesToReturnGZUnCompressed = new ArrayList<File>();
         // always use the same directory so we do not re-download on repeated runs
-        File downloadDir = new File("/home/seqware/download_data");
+        File downloadDir = new File(DOWNLOAD_DIR);
         for (String file : files) {
             try {
-                downloadFile(file, downloadDir, filesToReturn);
-                
+                downloadFile(file, downloadDir, filesToReturnGZCompressed);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         }
-        return filesToReturn;
+        for (File f : filesToReturnGZCompressed){
+        	try{
+	        	File absOutPath = new File(f.getAbsolutePath());
+	        	gzDecompressor(f.getAbsolutePath(), absOutPath);
+	        	filesToReturnGZUnCompressed.add(absOutPath);
+        	} catch (Exception e){
+        		e.printStackTrace();
+        	}
+        }
+        return filesToReturnGZUnCompressed;
     }
 	
     private void importToBackend(List<File> files){
@@ -195,7 +205,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     	}
     }
     
-    private void gzDecompressor(String filePathGZ, File filesToReturn) throws IOException{
+    private static void gzDecompressor(String filePathGZ, File absOutPath) throws IOException{
   	  File inputGZFile = 
   			  new File(filePathGZ);
   	  String filename = inputGZFile
@@ -204,7 +214,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
   	  byte[] buf = 
   			  new byte[1024];
         int len;
-  	  String outFilename = "src/main/resources/" + filename + ".vcf";
+  	  String outFilename = DOWNLOAD_DIR + filename + ".vcf";
   	  FileInputStream instream = 
   			  new FileInputStream(filePathGZ);
         GZIPInputStream ginstream = 
@@ -218,6 +228,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
        }
         outstream.close();
         ginstream.close();
+        absOutPath = new File(outFilename);
         
 //  	  return outFilename;
     }
