@@ -634,7 +634,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
-            	Logger.getLogger(MRHBasePluginRunner.class).deubg("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
                 if (currentMapperName.equals("FeaturesByAttributesPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
