@@ -525,7 +525,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             
             // grab binned features if applicable
             if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.BINNING) {
-                Logger.getLogger(MRHBasePluginRunner.class.getName()).warn("Checking binning with "+sourceSetIDs.size()+" featuresets");
+                Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Checking binning with "+sourceSetIDs.size()+" featuresets");
                 // grab an arbitrary feature set in order to determine tablename
                 FeatureSet get = sourceSets.get(0);
                 assert (get instanceof LazyFeatureSet);
@@ -533,7 +533,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                 String tableName = lfSet.getTablename();
                 StorageInterface storage = SWQEFactory.getStorage();
                 if (storage instanceof HBaseStorage) {
-                    Logger.getLogger(MRHBasePluginRunner.class.getName()).warn("Looking for bins in table "+ tableName);
+                    Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Looking for bins in table "+ tableName);
                     ((HBaseStorage) storage).grabBinnedFeatures(Bytes.toString(row.get()), tableName, SWQEFactory.getSerialization(), consolidatedMap);
                 }
             }
