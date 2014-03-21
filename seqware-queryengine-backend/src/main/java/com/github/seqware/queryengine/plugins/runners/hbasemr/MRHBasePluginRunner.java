@@ -45,6 +45,7 @@ import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
 
 import static com.github.seqware.queryengine.util.FSGID.PositionSeparator;
 
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

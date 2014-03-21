@@ -38,7 +38,8 @@ public class QueryVCFDumper extends Importer {
     public static final char QUERY_PARAM_STRING = 's';
     /** Constant <code>OUTPUTFILE_PARAM='o'</code> */
     public static final char OUTPUTFILE_PARAM = 'o';
-
+    /** Constant <code>QUERYVCFDUMPER_RUN</code>*/
+    public static boolean QUERYVCFDUMPER_RUN = false;
     /**
      * Command-line interface
      *
@@ -194,7 +195,9 @@ public class QueryVCFDumper extends Importer {
         }
         try {
             RPNStack compiledQuery = RPNStack.compileQuery(query);
+            QUERYVCFDUMPER_RUN = true;
             QueryFuture<FeatureSet> queryFuture = SWQEFactory.getQueryInterface().getFeaturesByAttributes(1, stack.peek(), compiledQuery);
+            QUERYVCFDUMPER_RUN = false;
             FeatureSet resultingSet = queryFuture.get();
             stack.push(resultingSet);
         } catch (RecognitionException ex) {
