@@ -219,6 +219,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         outstream.close();
         ginstream.close();
         
-  	  return outFilename;
+//  	  return outFilename;
     }
 }
