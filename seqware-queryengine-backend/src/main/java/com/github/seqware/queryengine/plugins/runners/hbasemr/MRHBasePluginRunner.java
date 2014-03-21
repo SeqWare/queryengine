@@ -45,6 +45,7 @@ import com.github.seqware.queryengine.plugins.PrefilteredPlugin;
 
 import static com.github.seqware.queryengine.util.FSGID.PositionSeparator;
 
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
 import com.github.seqware.queryengine.util.SGID;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -288,15 +289,27 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	
         	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + mapReducePlugin.getClass().getSimpleName());
         	
-            TableMapReduceUtil.initTableMapperJob(
-                    tableName,
-            		scan, // Scan instance to control CF and attribute selection
-                    PluginRunnerMapper.class, // mapper
-                    mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
-                    mapReducePlugin.getMapOutputValueClass(), // mapper output value
-                    job,
-                    true, 
-                    MRHBasePluginRunner.QueryRegionTableInput.class);
+        	if (QueryVCFDumper.QUERYVCFDUMPER_RUN = true){
+                TableMapReduceUtil.initTableMapperJob(
+                        tableName,
+                		scan, // Scan instance to control CF and attribute selection
+                        PluginRunnerMapper.class, // mapper
+                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                        job,
+                        true, 
+                        MRHBasePluginRunner.QueryRegionTableInput.class);
+        	} else {
+                TableMapReduceUtil.initTableMapperJob(
+                        tableName,
+                		scan, // Scan instance to control CF and attribute selection
+                        PluginRunnerMapper.class, // mapper
+                        mapReducePlugin.getMapOutputKeyClass(), // mapper output key 
+                        mapReducePlugin.getMapOutputValueClass(), // mapper output value
+                        job,
+                        true);
+        	}
+
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
 
             if (mapReducePlugin.getOutputClass() != null) {
