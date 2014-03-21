@@ -631,11 +631,11 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 	    		//This will switch the START_STOP_PAIRS_EXIST to true or false
 	    		checkRangeQueryExists(rangeQuery);
 	    		
-            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running VCFDumperPlugin? : " + currentMapperName.equals("VCFDumperPlugin"));
+            	Logger.getLogger(MRHBasePluginRunner.class).debug("___Running FeaturesByAttributesPlugin? : " + currentMapperName.equals("FeaturesByAttributesPlugin"));
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___START_STOP_PAIRS_EXIST? : " + START_STOP_PAIRS_EXIST);
             	Logger.getLogger(MRHBasePluginRunner.class).debug("___RPNStack.allStartsStopsArePaired? : " + RPNStack.allStartsStopsArePaired);
 
-                if (currentMapperName.equals("QueryVCFDumperPlugin")
+                if (currentMapperName.equals("FeaturesByAttributesPlugin")
                 		&& START_STOP_PAIRS_EXIST == true
                 		&& RPNStack.allStartsStopsArePaired == true){
                 	
