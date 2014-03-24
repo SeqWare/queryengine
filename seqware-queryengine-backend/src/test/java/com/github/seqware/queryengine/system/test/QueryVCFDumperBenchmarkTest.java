@@ -58,9 +58,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private static File outputFile;
 
 	@BeforeClass
-	public void setUpTest(){
-		//TODO: specify config
-        this.config = HBaseConfiguration.create();
+	public static void setUpTest(){
         
 		//TODO: Download File
         String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/shapeit2_phased_haplotypes/ALL.chr22.SHAPEIT2_integrated_phase1_v3.20101123.snps_indels_svs.genotypes.all.vcf.gz";
@@ -149,6 +147,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	public void resetAllTables(){
+		//TODO: specify config
+        this.config = HBaseConfiguration.create();
 		try{
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
