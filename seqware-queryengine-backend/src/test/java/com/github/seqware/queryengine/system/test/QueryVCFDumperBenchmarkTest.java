@@ -54,7 +54,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String SINGLE_RANGE_QUERY = "";
 	private static final String MULTI_RANGE_QUERY = "";
-	private static final String DOWNLOAD_DIR = "/home/seqware";
+	private static final String DOWNLOAD_DIR = "/home/seqware/";
     private static File outputFile;
 
 	@BeforeClass
@@ -238,7 +238,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private static File gzDecompressor(File filePathGZ) throws IOException{
   	  String filename = filePathGZ
   				.getName()
-  				.substring(0, filePathGZ.getName().indexOf("."));
+  				.substring(0, filePathGZ.getName().lastIndexOf("."));
   	  byte[] buf = 
   			  new byte[1024];
       int len;
