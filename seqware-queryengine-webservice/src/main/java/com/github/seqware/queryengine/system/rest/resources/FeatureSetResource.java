@@ -83,7 +83,7 @@ import java.util.Scanner;
  * listingPath = "/resources/featureset"
  */
 )
-//@Produces({"application/json"})
+@Produces({"application/json"})
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
@@ -144,7 +144,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    //@Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) throws InvalidIDException {
@@ -308,6 +308,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({"application/json"})
     @Override
     public Response addSet(
             @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
