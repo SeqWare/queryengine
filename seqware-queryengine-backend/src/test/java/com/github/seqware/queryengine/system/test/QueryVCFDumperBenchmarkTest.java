@@ -95,7 +95,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
-		System.out.println("Minutes to import: " + diff);
+		System.out.println("Minutes to import: " + diff + "\n");
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
@@ -103,7 +103,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
+        System.out.println("Minutes to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
@@ -111,7 +111,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
+        System.out.println("Minutes to run Queries for BINNING: " + diff + "\n");
 //		resetAllTables();
 	}
 	
@@ -125,7 +125,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
-		System.out.println("Minutes to import: " + diff);
+		System.out.println("Minutes to import: " + diff + "\n");
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
@@ -133,7 +133,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
+        System.out.println("Minutes to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
@@ -141,7 +141,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
+        System.out.println("Minutes to run Queries for BINNING: " + diff + "\n");
 //		resetAllTables();
 	}
 	
@@ -331,9 +331,30 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     }
 
     private void runQueries(){
+    	long start, stop, diff;
+    	
+		start = new Date().getTime();
     	testFirstQuery();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to run First Query: " + diff);
+
+		start = new Date().getTime();
     	testSecondQuery();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to run Second Query: " + diff);
+        
+		start = new Date().getTime();
     	testThirdQuery();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to run Third Query: " + diff);
+        
+		start = new Date().getTime();
     	testFourthQuery();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to run Fourth Query: " + diff);
     }
 }
