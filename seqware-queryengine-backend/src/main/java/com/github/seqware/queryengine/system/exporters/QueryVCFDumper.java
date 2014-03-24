@@ -38,6 +38,7 @@ public class QueryVCFDumper extends Importer {
     public static final char QUERY_PARAM_STRING = 's';
     /** Constant <code>OUTPUTFILE_PARAM='o'</code> */
     public static final char OUTPUTFILE_PARAM = 'o';
+    /** Constant <code>QUERYVCFDUMPER_RUN</code> */
     public static boolean QUERYVCFDUMPER_RUN = false;
     /**
      * Command-line interface
