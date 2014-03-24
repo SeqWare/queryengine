@@ -290,7 +290,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         	
         	Logger.getLogger(MRHBasePluginRunner.class).info("MRHBasePluginRunner recognizes current mapper class as...: " + mapReducePlugin.getClass().getSimpleName());
         	
-        	if (Constants.MULTIPLE_SCAN_RANGES == true){
+        	if (Constants.MULTIPLE_SCAN_RANGES == true && QueryVCFDumper.QUERYVCFDUMPER_RUN == true){
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
                 		scan, // Scan instance to control CF and attribute selection
@@ -300,7 +300,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                         job,
                         true, 
                         MRHBasePluginRunner.QueryRegionTableInput.class);
-        	} else if (Constants.MULTIPLE_SCAN_RANGES == false){
+        	} else if (Constants.MULTIPLE_SCAN_RANGES == false || QueryVCFDumper.QUERYVCFDUMPER_RUN == false){
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
                 		scan, // Scan instance to control CF and attribute selection
