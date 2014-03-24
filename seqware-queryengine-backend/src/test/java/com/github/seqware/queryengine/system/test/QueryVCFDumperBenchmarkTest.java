@@ -89,7 +89,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		long stop;
 		System.out.println("File location: " + testingFiles.get(0).getAbsolutePath());
 		start = new Date().getTime();
-//		importToBackend(testingFiles);
+		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
 		System.out.println("Minutes to import: " + diff);
