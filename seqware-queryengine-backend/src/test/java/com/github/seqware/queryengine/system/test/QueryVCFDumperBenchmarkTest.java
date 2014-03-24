@@ -243,7 +243,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
   			  new byte[1024];
       int len;
       File thisGZUncompressedFile;
-  	  String outFilename = DOWNLOAD_DIR + filename + ".vcf";
+  	  String outFilename = DOWNLOAD_DIR + filename;
   	  FileInputStream instream = 
   			  new FileInputStream(filePathGZ);
         GZIPInputStream ginstream = 
