@@ -235,13 +235,14 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     	}
     }
     
-    private static File gzDecompressor(File filePathGZ,) throws IOException{
+    private static File gzDecompressor(File filePathGZ) throws IOException{
   	  String filename = filePathGZ
   				.getName()
   				.substring(0, filePathGZ.getName().indexOf("."));
   	  byte[] buf = 
   			  new byte[1024];
-        int len;
+      int len;
+      File thisGZUncompressedFile;
   	  String outFilename = DOWNLOAD_DIR + filename + ".vcf";
   	  FileInputStream instream = 
   			  new FileInputStream(filePathGZ);
