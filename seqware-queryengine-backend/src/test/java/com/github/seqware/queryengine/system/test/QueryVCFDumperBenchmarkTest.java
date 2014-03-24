@@ -111,9 +111,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	public void setNaiveConstant(boolean b){
 		if (b == true){
-			Constants.NAIVE_OVERLAPS = true;
+//			Constants.NAIVE_OVERLAPS = true;
 		} else if (b == false){
-			Constants.NAIVE_OVERLAPS = false;
+//			Constants.NAIVE_OVERLAPS = false;
 		}
 	}
 	
