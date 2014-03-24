@@ -33,6 +33,7 @@ import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.Constants.OVERLAP_STRATEGY;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
+import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.system.ReferenceCreator;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
@@ -46,41 +47,48 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private final String JAR_NAME = "seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar";
 	private static String randomRef = null;
     private static Reference reference = null;
-	private static HashMap<Reference,SGID> originalSet = null;
+	private static SGID originalSet = null;
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String SINGLE_RANGE_QUERY = "";
 	private static final String MULTI_RANGE_QUERY = "";
 	private static final String DOWNLOAD_DIR = "/home/seqware";
 	
-	@BeforeClass
+//	@BeforeClass
 	public void setUpTest(){
 		//TODO: specify config
         this.config = HBaseConfiguration.create();
         
 		//TODO: Download File
+        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
         String[] vcfs = new String[]{
                 "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
             };
-        testingFiles = download(vcfs);
+        testingFiles = download(vcf);
         
 //		tableMap = retriveFeatureTableMap();
 //		for (Entry<String,HTable> e : tableMap.entrySet()){
 //			System.out.println(e.getKey());
 //		}
+        //use this to retrieve fs id
+//        FeatureSet fs = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class);
+//        fs.getSGID().getRowKey(); 
 	}
 	
-	@Test
+//	@Test
 	public void testSingleScan(){
 		Constants.MULTIPLE_SCAN_RANGES = false;
+		long start;
+		long stop;
 		//TODO: Write range test for true, false Overlaps
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-		long start = new Date().getTime();
+		start = new Date().getTime();
 //		importToBackend(testingFiles);
+		stop = new Date().getTime();
+		float diff = ((stop - start) / 1000) / 60;
+		System.out.println("Minutes to import: " + diff);
+		
 		//TESTS
-        long stop = new Date().getTime();
-        float diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		start = new Date().getTime();
@@ -92,18 +100,21 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		resetAllTables();
 	}
 	
-	@Test
+//	@Test
 	public void testMultiScan(){
 		Constants.MULTIPLE_SCAN_RANGES = true;
+		long start;
+		long stop;
 		//TODO: Write range test for true, false Overlaps
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-		long start = new Date().getTime();
+		start = new Date().getTime();
 //		importToBackend(testingFiles);
+		stop = new Date().getTime();
+		float diff = ((stop - start) / 1000) / 60;
+		System.out.println("Minutes to import: " + diff);
+		
 		//TESTS
-        long stop = new Date().getTime();
-        float diff = ((stop - start) / 1000) / 60;
-        System.out.println("Minutes to query: " + diff);
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		start = new Date().getTime();
@@ -159,19 +170,17 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         filesToReturnGZCompressed.add(targetFile);
     }
     
-    private static List<File> download(String[] files) {
+    private static List<File> download(String file) {
         List<File> filesToReturnGZCompressed = new ArrayList<File>();
         List<File> filesToReturnGZUnCompressed = new ArrayList<File>();
         // always use the same directory so we do not re-download on repeated runs
         File downloadDir = new File(DOWNLOAD_DIR);
-        for (String file : files) {
-            try {
-                downloadFile(file, downloadDir, filesToReturnGZCompressed);
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+        try {
+            downloadFile(file, downloadDir, filesToReturnGZCompressed);
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
         for (File thisGZCompressedFile : filesToReturnGZCompressed){
         	try{
@@ -185,9 +194,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         return filesToReturnGZUnCompressed;
     }
 	
-    private void importToBackend(List<File> files){
+    private void importToBackend(List<File> file){
     	try{
-	    	for (File f : files){
+    			//Use first file only for now
+    			File f = file.get(0);
 	    		Assert.assertTrue("Cannot read VCF file for test", f.exists() && f.canRead());
 	            List<String> argList = new ArrayList<String>();
 	            randomRef = "Random_ref_" + new BigInteger(20, new SecureRandom()).toString(32);
@@ -198,11 +208,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	                    "-i", f.getAbsolutePath(),
 	                    "-r", reference.getSGID().getRowKey()}));
 	            
-	            originalSet.put(reference,
-	            		(SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]))));
-	            
+	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
 	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
-	    	}
     	} catch (Exception e){
     		e.printStackTrace();
     	}
