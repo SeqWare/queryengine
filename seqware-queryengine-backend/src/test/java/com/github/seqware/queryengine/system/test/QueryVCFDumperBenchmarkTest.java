@@ -89,8 +89,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		long start;
 		long stop;
-		System.out.println("File location: " + testingFiles.get(0).getAbsolutePath());
 		start = new Date().getTime();
+		System.out.println("Importing " + testingFiles.get(0).getName() + " to database.");
 		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
