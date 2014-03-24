@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -219,20 +220,30 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
     private void importToBackend(List<File> file){
     	try{
-    			//Use first file only for now
+//    			//Use first file only for now
     			File f = file.get(0);
-	    		Assert.assertTrue("Cannot read VCF file for test", f.exists() && f.canRead());
-	            List<String> argList = new ArrayList<String>();
-	            randomRef = "Random_ref_" + new BigInteger(20, new SecureRandom()).toString(32);
-	            SGID refID = ReferenceCreator.mainMethod(new String[]{randomRef});
-	            reference = SWQEFactory.getQueryInterface().getAtomBySGID(Reference.class, refID);
-	            
-	            argList.addAll(Arrays.asList(new String[]{"-w", "VCFVariantImportWorker",
-	                    "-i", f.getAbsolutePath(),
-	                    "-r", reference.getSGID().getRowKey()}));
-	            
-	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
-	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
+//	    		Assert.assertTrue("Cannot read VCF file for test", f.exists() && f.canRead());
+//	            List<String> argList = new ArrayList<String>();
+//	            randomRef = "Random_ref_" + new BigInteger(20, new SecureRandom()).toString(32);
+//	            SGID refID = ReferenceCreator.mainMethod(new String[]{randomRef});
+//	            reference = SWQEFactory.getQueryInterface().getAtomBySGID(Reference.class, refID);
+//	            
+//	            argList.addAll(Arrays.asList(new String[]{"-w", "VCFVariantImportWorker",
+//	                    "-i", f.getAbsolutePath(),
+//	                    "-r", reference.getSGID().getRowKey()}));
+//	            
+//	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
+//	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
+    			Process proc = Runtime.getRuntime().exec("java -cp"
+    					+ " /home/seqware/gitroot/queryengine/seqware-distribution/target/seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar"
+    					+ " com.github.seqware.queryengine.system.importers.SOFeatureImporter"
+    					+ " -w VCFVariantImportWorker"
+    					+ " -i " + f.getAbsolutePath()
+    					+ " -r " + reference.getSGID().getRowKey());
+    			InputStream in = proc.getInputStream();
+    			InputStream err = proc.getErrorStream();
+    			
+    			
     	} catch (Exception e){
     		e.printStackTrace();
     	}
