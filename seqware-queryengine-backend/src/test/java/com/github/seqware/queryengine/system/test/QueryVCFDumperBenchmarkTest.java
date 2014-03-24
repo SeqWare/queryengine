@@ -155,6 +155,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
 			hba.deleteTables("b.*");
+			hba.stopRegionServer("worker1:60030");
+			hba.stopRegionServer("worker2:60030");
 			hba.close();
 		} catch (Exception e){
 			e.printStackTrace();
