@@ -228,7 +228,7 @@ public class QueryVCFDumperTest {
 
         List<String> argList = new ArrayList<String>();
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
-                    "-k", keyValueFile.getAbsolutePath(), "-s", "seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000",
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)",
                     "-o", outputFile.getAbsolutePath()}));
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
 
