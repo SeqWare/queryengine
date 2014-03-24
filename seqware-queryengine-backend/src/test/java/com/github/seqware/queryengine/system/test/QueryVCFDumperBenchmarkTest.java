@@ -204,6 +204,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         	try{
 	        	File thisGZUncompressedFile = new File(thisGZCompressedFile.getAbsolutePath());
 	        	gzDecompressor(thisGZCompressedFile, thisGZUncompressedFile);
+	        	System.out.println("CompressedFile: " + thisGZCompressedFile.getAbsolutePath());
+	        	System.out.println("DECompressedFile: " + thisGZUncompressedFile.getAbsolutePath());
 	        	filesToReturnGZUnCompressed.add(thisGZUncompressedFile);
         	} catch (Exception e){
         		e.printStackTrace();
