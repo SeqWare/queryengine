@@ -3,6 +3,7 @@ package com.github.seqware.queryengine.model;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.model.impl.MoleculeImpl;
 import com.github.seqware.queryengine.model.interfaces.BaseBuilder;
+import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,14 +14,18 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.util.CloseableIterator;
-
+import com.github.seqware.queryengine.model.impl.AbstractMolSet;
+import com.github.seqware.queryengine.model.interfaces.MolSetInterface;
+import java.util.Collection;
+import java.util.Iterator;
 /**
  * A ReadSet object that allows access to reads from a BAM/SAM file.
  *
  * @author boconnor
  * @version $Id: $Id
  */
-public class ReadSet extends MoleculeImpl<ReadSet> {
+
+public class ReadSet extends MoleculeImpl<ReadSet> implements MolSetInterface<ReadSet, Read>, ReadSetFacade {
 
   /**
    * Constant
@@ -225,9 +230,60 @@ public class ReadSet extends MoleculeImpl<ReadSet> {
     return(readSetName);
   }
 
+  @Override
+  public void rebuild() {
+    
+  }
+  
+  @Override
+  public ReadSet remove(Read read) {
+    return this;
+  }
+  
+  @Override
+  public ReadSet add(Read read) {
+    return this;
+  }
+  
+  @Override
+  public ReadSet add(Read... reads) {
+    return this;
+  }
+  
+  @Override
+  public ReadSet add(Collection<Read> elements) {
+    return this;
+  }
+  
+  @Override
+  public long getCount() {
+    return 0;
+  }
+  @Override
+  public Iterator<Read> iterator() {
+    Iterator<Read> it = new Iterator<Read>() {
+      private int currentIndex = 0;
+      @Override
+      public boolean hasNext() {
+          return false;
+      }
+
+      @Override
+      public Read next() {
+          return Read.newBuilder().build();
+      }
+
+      @Override
+      public void remove() {
+          // TODO Auto-generated method stub
+      }
+    };
+    return it;
+  }
+  
   public static class Builder extends BaseBuilder {
 
-    private ReadSet readset = new ReadSet();
+    public ReadSet readset = new ReadSet();
 
     public ReadSet.Builder setReadSetName(String readSetName) {
       readset.readSetName = readSetName;

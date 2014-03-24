@@ -153,7 +153,7 @@ public class FSGID extends SGID implements KryoSerializable {
         this.tombstone = tombstone;
     }
 
-    private String padZeros(long input, int totalPlaces) {
+    public static String padZeros(long input, int totalPlaces) {
         String strInput = Long.valueOf(input).toString();
         if (strInput.length() > totalPlaces) {
             throw new RuntimeException("Integer " + input + " is larger than total places of " + totalPlaces + " so padding this string failed.");

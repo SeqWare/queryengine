@@ -16,6 +16,7 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
+import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
@@ -33,18 +34,22 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.BAMFileWriter;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
-
+import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
 /**
  * Readset resource.
  *
@@ -53,8 +58,8 @@ import net.sf.samtools.util.CloseableIterator;
 @Path("/readset")
 @Api(value = "/readset", description = "Operations about readsets"/*, listingPath="/resources/readset"*/)
 @Produces({"application/json"})
-public class ReadSetResource extends GenericElementResource<ReadSet> {
-
+public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
+  
   @Override
   public final String getClassName() {
     return "ReadSet";
@@ -181,6 +186,32 @@ public class ReadSetResource extends GenericElementResource<ReadSet> {
       }
     }
     return (null);
+  }
+  
+  @PUT
+  @Path("/{sgid}")
+  @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+    @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  @Override
+  public Response updateElement(
+          @ApiParam(value = "rowkey that need to be deleted", required = true) @PathParam("sgid") String sgid,
+          @ApiParam(value = "Updated user object", required = true) ReadSetFacade group) {
+
+    return super.updateElement(sgid, group);
+
+  }
+  
+  @POST
+  @ApiOperation(value = "Create a totally new ReadSet by JSON", notes = "This can only be done by an authenticated user.", position = 50000)
+  @ApiResponses(value = {
+    @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Override
+  public Response addSet(
+          @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) ReadSetFacade set) {
+    return super.addSet(set);
   }
   
 }

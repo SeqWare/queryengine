@@ -35,7 +35,7 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
     /**
      * Associated reference.
      */
-    private LazyReference<Reference> reference = new LazyReference<Reference>(Reference.class);
+    private final LazyReference<Reference> reference = new LazyReference<>(Reference.class);
     /**
      * User defined description of this feature set, can be used to store pragma
      * information for a set of features.
@@ -55,13 +55,15 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
      * {@inheritDoc}
      *
      * Get the reference for this featureSet
+     * @return 
      */
     @Override
     public Reference getReference() {
         return this.reference.get();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param feature */
     @Override
     public FeatureSet add(Feature feature) {
         upgradeFeatureSGID(feature);
@@ -128,7 +130,8 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
         return this;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param feature */
     @Override
     public FeatureSet remove(Feature feature) {
         entombFeatureSGID(feature);
@@ -138,7 +141,8 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
         return this;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param features */
     @Override
     public FeatureSet add(Collection<Feature> features) {
         for (Feature f : features) {
@@ -150,7 +154,8 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
         return this;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public Iterator<Feature> getFeatures() {
         return new ConsolidatedFeatureIterator();
@@ -208,7 +213,7 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
                     rowKey = nextL.getSGID().getRowKey();
                 }
                 // ensure that row keys are ascending
-                if (!Constants.NAIVE_OVERLAPS){
+                if (Constants.OVERLAP_MODE  == Constants.OVERLAP_STRATEGY.NONE){
                     assert (nextL.getSGID().getRowKey().compareTo(rowKey) >= 0);
                 }
                 if (!rowKey.equals(nextL.getSGID().getRowKey())) {
@@ -238,11 +243,11 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
         /**
          * iterates through one row's worth of FeatureLists at a time
          */
-        private BatchedRowFeatureListsIterator iterator;
+        private final BatchedRowFeatureListsIterator iterator;
         /**
          * caches available features
          */
-        private List<Feature> featureCache = new ArrayList<Feature>();
+        private final List<Feature> featureCache = new ArrayList<>();
 
         public ConsolidatedFeatureIterator() {
             this.iterator = new BatchedRowFeatureListsIterator();
@@ -343,26 +348,30 @@ public class LazyFeatureSet extends FeatureSet implements LazyMolSet<FeatureSet,
         return b;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     @XmlElement(name="description")
     public String getDescription() {
         return description;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public SGID getReferenceID() {
         return this.reference.getSGID();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public Class getHBaseClass() {
         return FeatureSet.class;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @return  */
     @Override
     public String getHBasePrefix() {
         return FeatureSet.prefix;
