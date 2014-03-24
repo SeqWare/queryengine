@@ -152,6 +152,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		//TODO: specify config
         this.config = HBaseConfiguration.create();
 		try{
+			System.out.println("Closing tables and region servers.");
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
 			hba.deleteTables("b.*");
