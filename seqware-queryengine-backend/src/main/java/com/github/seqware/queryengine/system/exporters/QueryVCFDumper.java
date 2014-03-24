@@ -38,12 +38,14 @@ public class QueryVCFDumper extends Importer {
     public static final char QUERY_PARAM_STRING = 's';
     /** Constant <code>OUTPUTFILE_PARAM='o'</code> */
     public static final char OUTPUTFILE_PARAM = 'o';
+    public static boolean QUERYVCFDUMPER_RUN = false;
     /**
      * Command-line interface
      *
      * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
+    	QUERYVCFDUMPER_RUN = true;
         Stack<SGID> mainMethod = QueryVCFDumper.runMain(args);
         if (mainMethod == null || mainMethod.size() == 0) {
             System.exit(FeatureImporter.EXIT_CODE_INVALID_FILE);
