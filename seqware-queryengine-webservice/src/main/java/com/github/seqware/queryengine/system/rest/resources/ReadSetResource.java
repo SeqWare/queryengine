@@ -20,6 +20,7 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
+import com.github.seqware.queryengine.system.importers.ReadImporter;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -212,6 +213,42 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
   public Response addSet(
           @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) ReadSetFacade set) {
     return super.addSet(set);
+  }
+  
+  @POST
+  @Path("/upload")
+  @ApiOperation(value = "Create a new readset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response uploadRawSAMfile(
+          @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
+          @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
+      SGID sgid = null;
+      try {
+          /*
+           * FIXME: this is a really naive approach, just write it out as a file and load using
+           * the import tool from the query engine backend. In the future this should be an asyncrhonous 
+           * process with the file uploaded to a admin configured location possibly on HDFS then 
+           * the upload should take place as a plugin, reporting back a token that the calling 
+           * user can occationally check in on.
+           */
+
+          String fileName = fileDisposition.getName();
+          BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+          IOUtils.copy(file, bw, "UTF-8");
+          bw.close();
+
+          sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName});
+          //Delete the uploaded vcf file
+          File temp = new File("/tmp/" + fileName);
+          temp.delete();
+      } catch (IOException ex) {
+          Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+      }
+
+      HashMap<String, String> map = new HashMap<String, String>();
+      map.put("sgid", sgid.toString());
+      return Response.ok().entity(map).build();
   }
   
 }

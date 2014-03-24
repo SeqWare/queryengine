@@ -14,22 +14,34 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 
 /**
- * Reads represent a GVF (which is a more generic version of a VCF). See
- * http://genomebiology.com/2010/11/8/R88 or better
- * http://www.sequenceontology.org/resources/gvf.html#quick_gvf_examples
- *
- * We will want to tag reads and version reads, however we probably do not
- * want ACL reads on a Read level since there will be many many reads
- *
- * Immutable (but tags are not)
- *
- * @author dyuen
- * @author jbaran
- * @version $Id: $Id
+ * Reads need to be worked on. This is an incomplete 'filler' class
+ * that is used such that the ReadSets are properly working.
  */
 public class Read extends AtomImpl<Read> {
-
+    
+    private final static String[] reservedAttributeNames = new String[] { "qname", "flag", "rname", "pos", "mapq", "cigar", "rnext", "pnext", "tlen", "seq", "qual" };
+    
+    private String qname;
+    private boolean flag;
+    private String rname;
+    private int pos;
+    private int mapq;
+    private String cigar;
+    private String rnext;
+    private int pnext;
+    private String seq;
+    private String qual;
+    
     public enum AdditionalAttributeType { STRING, FLOAT, DOUBLE, LONG, INTEGER };
+    
+    static {
+        // Array has to be sorted, so that it is possible to use a binary search on it:
+        Arrays.sort(reservedAttributeNames);
+    }
+    
+    /**
+     * Additional attributes can be freely added via a map.
+     */
     private HashMap<String, AdditionalAttributeType> additionalAttributes = null;
 
     private Read() {
@@ -54,7 +66,45 @@ public class Read extends AtomImpl<Read> {
     public String getDisplayName() {
       return "read";
     }
+    public String getQname() {
+        return qname;
+    }
     
+    public boolean getFlag() {
+        return flag;
+    }
+    
+    public String getRname() {
+        return rname;
+    }
+    
+    public int getPos() {
+        return pos;
+    }
+    
+    public int getMapq() {
+        return mapq;
+    }
+    
+    public String getCigar() {
+        return cigar;
+    }
+    
+    public String getRnext() {
+        return rnext;
+    }
+    
+    public int getPnext() {
+        return pnext;
+    }
+    
+    public String getSeq() {
+        return seq;
+    }
+    
+    public String getQual() {
+        return qual;
+    }
     /**
      * Sets an additional attribute not covered by GVF. It is not permitted to have an additional
      * attribute with the same name as the instance variables (case insensitive).
