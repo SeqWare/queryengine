@@ -57,7 +57,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static final String DOWNLOAD_DIR = "/home/seqware";
     private static File outputFile;
 
-//	@BeforeClass
+	@BeforeClass
 	public void setUpTest(){
 		//TODO: specify config
         this.config = HBaseConfiguration.create();
@@ -84,12 +84,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //        fs.getSGID().getRowKey(); 
 	}
 	
-//	@Test
+	@Test
 	public void testSingleScan(){
 		Constants.MULTIPLE_SCAN_RANGES = false;
 		long start;
 		long stop;
-		
+		System.out.println("File location: " + testingFiles.get(0).getAbsolutePath());
 		start = new Date().getTime();
 //		importToBackend(testingFiles);
 		stop = new Date().getTime();
