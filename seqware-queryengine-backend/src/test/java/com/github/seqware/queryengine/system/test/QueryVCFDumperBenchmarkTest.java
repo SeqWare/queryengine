@@ -84,7 +84,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	@Test
 	public void testSingleScan(){
-		Constants.MULTIPLE_SCAN_RANGES = false;
+		resetAllTables();
+
+		Constants.MULTIPLE_SCAN_RANGES = true;
 		long start;
 		long stop;
 		System.out.println("File location: " + testingFiles.get(0).getAbsolutePath());
