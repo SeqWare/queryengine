@@ -210,6 +210,7 @@ public class QueryInterfaceTest implements Benchmarking {
         // check that Features are present match
         FeatureSet result = future.get();
         for (Feature f : result) {
+        	System.out.println("TYPE: " + f.getType().toString());
             Assert.assertTrue(f.getType().equals("type1"));
         }
         int count = (int) result.getCount();
