@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import com.github.seqware.queryengine.Benchmarking;
 import com.github.seqware.queryengine.Constants;
+import com.github.seqware.queryengine.Constants.OVERLAP_STRATEGY;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Reference;
@@ -68,7 +69,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	@Test
-	public void testSingleRange(){
+	public void testSingleScan(){
+		Constants.MULTIPLE_SCAN_RANGES = false;
 		//TODO: Write range test for true, false Overlaps
 
 		setNaiveConstant(false);
@@ -89,7 +91,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	@Test
-	public void testMultiRange(){
+	public void testMultiScan(){
+		Constants.MULTIPLE_SCAN_RANGES = true;
 		//TODO: Write range test for true, false Overlaps
 		
 		setNaiveConstant(false);
@@ -109,12 +112,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //		resetAllTables();
 	}
 	
-	public void setNaiveConstant(boolean b){
-		if (b == true){
-//			Constants.NAIVE_OVERLAPS = true;
-		} else if (b == false){
-//			Constants.NAIVE_OVERLAPS = false;
-		}
+	public void setOverlapStratagy(OVERLAP_STRATEGY strategy){
+		Constants.OVERLAP_MODE = strategy;
 	}
 	
 	public void resetAllTables(){
