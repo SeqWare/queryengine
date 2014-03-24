@@ -11,6 +11,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,21 +73,22 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void testSingleScan(){
 		Constants.MULTIPLE_SCAN_RANGES = false;
 		//TODO: Write range test for true, false Overlaps
-
-		setNaiveConstant(false);
 		
-		//TODO: Add timer
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+		long start = new Date().getTime();
 //		importToBackend(testingFiles);
-		
 		//TESTS
-		resetAllTables();
+        long stop = new Date().getTime();
+        float diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
 		
-		setNaiveConstant(true);
-		
-		//TODO: Add timer
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		start = new Date().getTime();
 //		importToBackend(testingFiles);
-		
 		//TESTS
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
 //		resetAllTables();
 	}
 	
@@ -95,24 +97,25 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		//TODO: Write range test for true, false Overlaps
 		
-		setNaiveConstant(false);
-
-		//TODO: Add timer
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+		long start = new Date().getTime();
 //		importToBackend(testingFiles);
-		
 		//TESTS
-		resetAllTables();
+        long stop = new Date().getTime();
+        float diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
 		
-		setNaiveConstant(true);
-		
-		//TODO: Add timer
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		start = new Date().getTime();
 //		importToBackend(testingFiles);
-		
 		//TESTS
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
 //		resetAllTables();
 	}
 	
-	public void setOverlapStratagy(OVERLAP_STRATEGY strategy){
+	public void setOverlapStrategy(OVERLAP_STRATEGY strategy){
 		Constants.OVERLAP_MODE = strategy;
 	}
 	
