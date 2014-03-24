@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
@@ -24,6 +25,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,6 +38,7 @@ import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.system.ReferenceCreator;
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 import com.github.seqware.queryengine.util.SGID;
 
@@ -52,7 +55,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static final String SINGLE_RANGE_QUERY = "";
 	private static final String MULTI_RANGE_QUERY = "";
 	private static final String DOWNLOAD_DIR = "/home/seqware";
-	
+    private static File outputFile;
+
 //	@BeforeClass
 	public void setUpTest(){
 		//TODO: specify config
@@ -64,7 +68,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
                 "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
             };
         testingFiles = download(vcf);
-        
+        outputFile = null;
+        try {
+            outputFile = File.createTempFile("output", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
 //		tableMap = retriveFeatureTableMap();
 //		for (Entry<String,HTable> e : tableMap.entrySet()){
 //			System.out.println(e.getKey());
@@ -79,21 +89,25 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = false;
 		long start;
 		long stop;
-		//TODO: Write range test for true, false Overlaps
 		
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 		start = new Date().getTime();
 //		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
 		System.out.println("Minutes to import: " + diff);
 		
-		//TESTS
-		
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+
 		start = new Date().getTime();
-//		importToBackend(testingFiles);
-		//TESTS
+//		runQueries();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
+        
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		
+		start = new Date().getTime();
+//		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: " + diff);
@@ -105,21 +119,25 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		long start;
 		long stop;
-		//TODO: Write range test for true, false Overlaps
 		
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 		start = new Date().getTime();
 //		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
 		System.out.println("Minutes to import: " + diff);
 		
-		//TESTS
-		
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+
 		start = new Date().getTime();
-//		importToBackend(testingFiles);
-		//TESTS
+//		runQueries();
+        stop = new Date().getTime();
+        diff = ((stop - start) / 1000) / 60;
+        System.out.println("Minutes to query: " + diff);
+        
+		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		
+		start = new Date().getTime();
+//		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to query: " + diff);
@@ -239,5 +257,76 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         thisGZUncompressedFile = new File(outFilename);
         
 //  	  return outFilename;
+    }
+
+    private void testFirstQuery(){
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+    }
+    
+    private void testSecondQuery(){
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+    }
+    
+    private void testThirdQuery(){
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+    }
+    
+    private void testFourthQuery(){
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+    }
+
+    private void runQueries(){
+    	testFirstQuery();
+    	testSecondQuery();
+    	testThirdQuery();
+    	testFourthQuery();
     }
 }
