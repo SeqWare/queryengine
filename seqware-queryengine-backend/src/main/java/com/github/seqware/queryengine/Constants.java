@@ -80,7 +80,7 @@ public class Constants {
     public static OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.BINNING;
     public static final int BIN_SIZE = 1000;
     // this will shorten the time taken to carry out range queries via multiple scan ranges
-    public static boolean MULTIPLE_SCAN_RANGES = false;
+    public static boolean MULTIPLE_SCAN_RANGES = true;
     /**
      * Regular Expression for suitable rowKeys
      */
