@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -15,7 +14,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
@@ -23,9 +21,7 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,8 +31,6 @@ import com.github.seqware.queryengine.Benchmarking;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.Constants.OVERLAP_STRATEGY;
 import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.impl.HBaseStorage;
-import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.Reference;
 import com.github.seqware.queryengine.system.ReferenceCreator;
 import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
@@ -46,7 +40,6 @@ import com.github.seqware.queryengine.util.SGID;
 public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
     private Configuration config;
-	private Map<String, HTable> tableMap = new HashMap<String, HTable>();
 	private static String randomRef = null;
     private static Reference reference = null;
 	private static SGID originalSet = null;
@@ -79,9 +72,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		
 		//TODO: Download File
         String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
-        String[] vcfs = new String[]{
-                "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
-            };
         testingFiles = download(vcf);
 //        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
         outputFile = null;
