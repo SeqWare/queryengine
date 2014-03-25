@@ -75,7 +75,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     
 
 	@BeforeClass
-	public void setUpTest(){
+	public static void setUpTest(){
 		
 		//TODO: Download File
         String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
@@ -91,14 +91,18 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
             Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
             Assert.fail("Could not create output for test");
         }
-        
+	}
+	
+	@Test
+	public void prepareTablesAndImport(){
+		resetAllTables();
+		
 		start = new Date().getTime();
 		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		diff = ((stop - start) / 1000);
 		importTiming = diff;
 	}
-	
 	@Test
 	public void testSingleScan(){
 		
