@@ -47,3 +47,5 @@ dao-test.log
 # Frontend Dependencies
 seqware-queryengine-frontend/bower_components
 seqware-queryengine-frontend/node_modules
+build.log
+it.log
