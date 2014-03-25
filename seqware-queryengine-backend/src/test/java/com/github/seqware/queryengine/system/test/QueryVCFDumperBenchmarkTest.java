@@ -69,78 +69,94 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
 	@BeforeClass
 	public static void setUpTest(){
-		
-		//TODO: Download File
-        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
-        testingFiles = download(vcf);
-//        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
-        outputFile = null;
-        try {
-            outputFile = File.createTempFile("output", "txt");
-        } catch (IOException ex) {
-            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
-            Assert.fail("Could not create output for test");
-        }
+		try{
+			//TODO: Download File
+	        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
+	        testingFiles = download(vcf);
+	//        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
+	        outputFile = null;
+	        try {
+	            outputFile = File.createTempFile("output", "txt");
+	        } catch (IOException ex) {
+	            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+	            Assert.fail("Could not create output for test");
+	        }
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void prepareTablesAndImport(){
-		resetAllTables();
-		
-		start = new Date().getTime();
-		importToBackend(testingFiles);
-		stop = new Date().getTime();
-		diff = ((stop - start) / 1000);
-		importTiming = diff;
+		try{
+			resetAllTables();
+			start = new Date().getTime();
+			importToBackend(testingFiles);
+			stop = new Date().getTime();
+			diff = ((stop - start) / 1000);
+			importTiming = diff;
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void testSingleScan(){
-		
-		Constants.MULTIPLE_SCAN_RANGES = false;
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
-
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
-
-		runQueryTimings = runQueries();
-        
-        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
-        
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
-
-		runQueryTimings = runQueries();
-        
-        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+		try{
+			Constants.MULTIPLE_SCAN_RANGES = false;
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+	
+			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
+	
+			runQueryTimings = runQueries();
+	        
+	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+	        
+			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+	        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+	
+			runQueryTimings = runQueries();
+	        
+	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void testMultiScan(){
-		
-		Constants.MULTIPLE_SCAN_RANGES = true;
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
-		
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
-
-		runQueryTimings = runQueries();
-        
-        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
-        
-		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
-		
-		runQueryTimings = runQueries();
-        
-        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+		try{
+			Constants.MULTIPLE_SCAN_RANGES = true;
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			
+			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
+	
+			runQueryTimings = runQueries();
+	        
+	        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+	        
+			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+			
+			runQueryTimings = runQueries();
+	        
+	        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void testGenerateReport(){
-		generateReport();
-		resetAllTables();
-		System.out.println("Done!");
+		try{
+			generateReport();
+			resetAllTables();
+			System.out.println("Done!");
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void setOverlapStrategy(OVERLAP_STRATEGY strategy){
