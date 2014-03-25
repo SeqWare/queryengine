@@ -77,7 +77,7 @@ public class Constants {
         // features that span across position [x,x+1000) (inclusive, exclusive)
         BINNING
     }
-    public static final OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.NAIVE_OVERLAPS;
+    public static final OVERLAP_STRATEGY OVERLAP_MODE = OVERLAP_STRATEGY.BINNING;
     public static final int BIN_SIZE = 1000;
 
     /**
