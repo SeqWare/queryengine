@@ -107,7 +107,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	@Test
 	public void testSingleScan(){
 		
-		Constants.MULTIPLE_SCAN_RANGES = true;
+		Constants.MULTIPLE_SCAN_RANGES = false;
 
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
