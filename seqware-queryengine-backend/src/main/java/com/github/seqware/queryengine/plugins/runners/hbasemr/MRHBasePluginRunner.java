@@ -87,6 +87,7 @@ import org.apache.log4j.Logger;
  *
  * @author dyuen
  * @version $Id: $Id
+ * @param <ReturnType>
  */
 public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterface<ReturnType> {
 
@@ -111,7 +112,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         byte[] data = (byte[]) Base64.decodeBase64(sourceSets);
         ByteBuffer buf = ByteBuffer.wrap(data);
         int numSets = buf.getInt();
-        List<FeatureSet> sSets = new ArrayList<FeatureSet>();
+        List<FeatureSet> sSets = new ArrayList<>();
         for(int i = 0; i < numSets ; i++){
             // get size of blob
             int bSize = buf.getInt();
@@ -144,7 +145,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
     public MRHBasePluginRunner(MapReducePlugin mapReducePlugin, Reference reference, List<FeatureSet> inputSet, Object... parameters) {
         // handle null inputSet
         if (inputSet == null){
-            inputSet = new ArrayList<FeatureSet>();
+            inputSet = new ArrayList<>();
         }
         // we should either have a reference or more than one input set
         assert(reference != null || inputSet.size() > 0);
@@ -246,13 +247,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             TableMapReduceUtil.addDependencyJars(conf, MRHBasePluginRunner.class, MRHBasePluginRunner.PluginRunnerMapper.class, MRHBasePluginRunner.PluginRunnerReducer.class);
             // submit the job, but do not block
             job.submit();
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
-        } catch (IOException ex) {
+        } catch (URISyntaxException | InterruptedException | ClassNotFoundException | IOException ex) {
             Logger.getLogger(MRHBasePluginRunner.class.getName()).fatal(null, ex);
         }
     }
@@ -290,13 +285,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
 
 
             }
-        } catch (IOException ex) {
-            Logger.getLogger(MRHBasePluginRunner.class
-                    .getName()).error(null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(MRHBasePluginRunner.class
-                    .getName()).error(null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | InterruptedException | ClassNotFoundException ex) {
             Logger.getLogger(MRHBasePluginRunner.class
                     .getName()).error(null, ex);
         }
@@ -385,9 +374,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         public void write(KEYOUT keyout, VALUEOUT valueout) {
             try {
                 context.write(keyout, valueout);
-            } catch (IOException ex) {
-                Logger.getLogger(MRHBasePluginRunner.class.getName()).error(null, ex);
-            } catch (InterruptedException ex) {
+            } catch (    IOException | InterruptedException ex) {
                 Logger.getLogger(MRHBasePluginRunner.class.getName()).error(null, ex);
             }
         }
@@ -438,9 +425,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Class plugin = MRHBasePluginRunner.transferConfiguration(context, this);
             try {
                 mapReducePlugin = (MapReducePlugin) plugin.newInstance();
-            } catch (InstantiationException ex) {
-                Rethrow.rethrow(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (    InstantiationException | IllegalAccessException ex) {
                 Rethrow.rethrow(ex);
             }
             mapReducePlugin.reduceInit();
@@ -501,9 +486,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         public void write(KEYOUT keyout, VALUEOUT valueout) {
             try {
                 context.write(keyout, valueout);
-            } catch (IOException ex) {
-                Logger.getLogger(MRHBasePluginRunner.class.getName()).error(null, ex);
-            } catch (InterruptedException ex) {
+            } catch (    IOException | InterruptedException ex) {
                 Logger.getLogger(MRHBasePluginRunner.class.getName()).error(null, ex);
             }
         }
@@ -522,16 +505,16 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
         @Override
         protected void map(ImmutableBytesWritable row, Result values, Mapper.Context context) throws IOException, InterruptedException {
             this.context = context;
-            List<SGID> sourceSetIDs = new ArrayList<SGID>();
+            List<SGID> sourceSetIDs = new ArrayList<>();
             for(FeatureSet sSet : sourceSets){
                 sourceSetIDs.add(sSet.getSGID());
             }
-            Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Dealing with "+sourceSetIDs.size()+"featuresets");
+            Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Dealing with "+sourceSetIDs.size()+" featuresets");
             Map<SGID, List<FeatureList>> grabFeatureListsGivenRow = HBaseStorage.grabFeatureListsGivenRow(values, sourceSetIDs, SWQEFactory.getSerialization());
             Map<FeatureSet, Collection<Feature>> consolidatedMap = new HashMap<FeatureSet, Collection<Feature>>();
             for(Entry<SGID, List<FeatureList>> e : grabFeatureListsGivenRow.entrySet()){
                Collection<Feature> consolidateRow = SimplePersistentBackEnd.consolidateRow(e.getValue());
-               Logger.getLogger(FeatureSetCountPlugin.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
+               Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Consolidated to  " + consolidateRow.size() + " features");
                // try to get grab featureset given SGID
                consolidatedMap.put(sgid2featureset.getUnchecked(e.getKey()), consolidateRow); 
             }
@@ -539,6 +522,21 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             String rowKey = Bytes.toString(row.get());
             rowKey = rowKey.substring(rowKey.indexOf(PositionSeparator)+1);
             Long position = Long.valueOf(rowKey);
+            
+            // grab binned features if applicable
+            if (Constants.OVERLAP_MODE == Constants.OVERLAP_STRATEGY.BINNING) {
+                Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Checking binning with "+sourceSetIDs.size()+" featuresets");
+                // grab an arbitrary feature set in order to determine tablename
+                FeatureSet get = sourceSets.get(0);
+                assert (get instanceof LazyFeatureSet);
+                LazyFeatureSet lfSet = (LazyFeatureSet) get;
+                String tableName = lfSet.getTablename();
+                StorageInterface storage = SWQEFactory.getStorage();
+                if (storage instanceof HBaseStorage) {
+                    Logger.getLogger(MRHBasePluginRunner.class.getName()).trace("Looking for bins in table "+ tableName);
+                    ((HBaseStorage) storage).grabBinnedFeatures(Bytes.toString(row.get()), tableName, SWQEFactory.getSerialization(), consolidatedMap);
+                }
+            }
             
             consolidatedMap = handlePreFilteredPlugins(consolidatedMap, mapReducePlugin, ext_parameters);
             mapReducePlugin.map(position, consolidatedMap, this);
@@ -569,9 +567,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             Class plugin = MRHBasePluginRunner.transferConfiguration(context, this);
             try {
                 mapReducePlugin = (MapReducePlugin) plugin.newInstance();
-            } catch (InstantiationException ex) {
-                Rethrow.rethrow(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (    InstantiationException | IllegalAccessException ex) {
                 Rethrow.rethrow(ex);
             }
         }
@@ -641,7 +637,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
             // for PreFilteredPlugins, we can do some prefiltering before the FeatureSets and features hit the actual plugin
             if (mapReducePlugin instanceof PrefilteredPlugin){
                 FeatureFilter filter = ((PrefilteredPlugin)mapReducePlugin).getFilter();
-                Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<FeatureSet, Collection<Feature>>();
+                Map<FeatureSet, Collection<Feature>> filteredMap = new HashMap<>();
                 for(Entry<FeatureSet, Collection<Feature>> e : consolidatedMap.entrySet()){
                     for(Feature f : e.getValue() ){
                         if (!filter.featurePasses(e.getKey(), f, ext_parameters)){

@@ -17,6 +17,7 @@
 package com.github.seqware.queryengine.plugins.contribs;
 
 import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.impl.HBaseStorage;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.plugins.runners.MapperInterface;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.hadoop.io.Text;
+import org.apache.log4j.Logger;
 
 /**
  * This plug-in implements exporting using Map/Reduce, to prove that there can be naively imported 
@@ -45,11 +47,11 @@ public class NaiveProofPlugin extends FilteredFileOutputPlugin{
     @Override
 	public void map(long position, Map<FeatureSet, Collection<Feature>> atoms, MapperInterface<Text, Text> mapperInterface) {
     	Set<Feature> featuresAtCurrentLocation = new HashSet<Feature>();
-    	System.out.println("[INFO] Mapping.........");
+        Logger.getLogger(NaiveProofPlugin.class.getName()).info("Mapping.........");
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
 				if ((f.getStart() < position && f.getStop() > position) || (f.getStart() == position)){
-					System.out.println("[INFO] Adding feature for mapping at valid position: " +  f.getDisplayName());
+                                        Logger.getLogger(NaiveProofPlugin.class.getName()).info("Adding feature for mapping at valid position: " +  f.getDisplayName());
 					featuresAtCurrentLocation.add(f);
 				}
 			}
@@ -57,16 +59,16 @@ public class NaiveProofPlugin extends FilteredFileOutputPlugin{
 		
 		for (FeatureSet fs : atoms.keySet()){
 			for (Feature f : atoms.get(fs)){
-				System.out.println("[INFO] Size of added features...: "+  featuresAtCurrentLocation.size());
+				Logger.getLogger(NaiveProofPlugin.class.getName()).info("Size of added features...: "+  featuresAtCurrentLocation.size());
 				for (Feature positionFeature : featuresAtCurrentLocation){
-					System.out.println("[INFO] In the loop.. getting start pos: " +positionFeature.getStart());
+					Logger.getLogger(NaiveProofPlugin.class.getName()).info("In the loop.. getting start pos: " +positionFeature.getStart());
 					String indelRange = convertToIndelRange(positionFeature.getStart(), positionFeature.getStop());
-					System.out.println("[INFO] indelRange...(VALUE): " + indelRange);
+					Logger.getLogger(NaiveProofPlugin.class.getName()).info("indelRange...(VALUE): " + indelRange);
 					String indelStart = convertLongToString(position);
-					System.out.println("[INFO] indelStart...(KEY): " + indelStart);
+					Logger.getLogger(NaiveProofPlugin.class.getName()).info("indelStart...(KEY): " + indelStart);
 					text.set(indelRange);
 					textKey.set(indelStart);
-					System.out.println("[INFO] Running mapperInterface");
+					Logger.getLogger(NaiveProofPlugin.class.getName()).info("Running mapperInterface");
 					mapperInterface.write(textKey, text);
 				}
 			}
@@ -75,7 +77,7 @@ public class NaiveProofPlugin extends FilteredFileOutputPlugin{
 	}
 	@Override
 	public void reduce(Text reduceKey, Iterable<Text> reduceValues, ReducerInterface<Text, Text> reducerInterface) {
-		System.out.println("[INFO] Reducing.......");
+		Logger.getLogger(NaiveProofPlugin.class.getName()).info("Reducing.......");
 		Set<Text> seenSet = new HashSet<Text>();
 		String newFeatStr = "";
 		for (Text val : reduceValues){
@@ -87,10 +89,10 @@ public class NaiveProofPlugin extends FilteredFileOutputPlugin{
 			for (String curr : fsArr){
 				newFeatStr += curr + "; ";
 			}
-			System.out.println("[INFO] REDUCED: "+ newFeatStr);
+			Logger.getLogger(NaiveProofPlugin.class.getName()).info("REDUCED: "+ newFeatStr);
 		}
 		text.set("\n" + reduceKey.toString() + "\t" + newFeatStr);
-		System.out.println("[INFO] Running reducerInterface");
+		Logger.getLogger(NaiveProofPlugin.class.getName()).info("Running reducerInterface");
 		reducerInterface.write(text,null);
 		
 	}

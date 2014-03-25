@@ -26,6 +26,7 @@ import com.github.seqware.queryengine.model.FeatureSet;
 import com.github.seqware.queryengine.model.impl.AtomImpl;
 import com.github.seqware.queryengine.model.impl.FeatureList;
 import com.github.seqware.queryengine.model.impl.lazy.LazyFeatureSet;
+import com.github.seqware.queryengine.plugins.plugins.FeatureSetCountPlugin;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.util.FSGID;
 import com.github.seqware.queryengine.util.SGID;
@@ -239,9 +240,15 @@ public class HBaseStorage extends StorageInterface {
                 Put p = new Put(Bytes.toBytes(obj.getSGID().getRowKey().toString()), obj.getSGID().getBackendTimestamp().getTime());
                 // Serialize:
                 if (obj instanceof FeatureList) {
-                    FSGID fsgid = (FSGID) obj.getSGID();
-                    p.add(TEST_FAMILY_INBYTES, Bytes.toBytes(fsgid.getFeatureSetID().getUuid().toString()), featureBytes);
-                    Logger.getLogger(HBaseStorage.class.getName()).trace("Put on (FeatureList of size " + ((FeatureList) obj).getFeatures().size() + ") " + obj.toString() + " at " + obj.getSGID().toString());
+                    FeatureList fList = (FeatureList)obj;
+                    FSGID fsgid = (FSGID) fList.getSGID();
+                    String featureSetUUID = fsgid.getFeatureSetID().getUuid().toString();
+                    if (fList.isAggregate_bin()){
+                        featureSetUUID = featureSetUUID + FeatureList.BIN_SUFFIX;
+                        Logger.getLogger(HBaseStorage.class.getName()).debug("Adding a bin of size "+fList.getFeatures().size()+" at " + obj.getSGID().getRowKey().toString());
+                    }
+                    p.add(TEST_FAMILY_INBYTES, Bytes.toBytes(featureSetUUID), featureBytes);
+                    Logger.getLogger(HBaseStorage.class.getName()).trace("Put on (FeatureList of size " + fList.getFeatures().size() + ") " + fList.toString() + " at " + fList.getSGID().toString());
                 } else {
                     p.add(TEST_FAMILY_INBYTES, TEST_QUALIFIER_INBYTES, featureBytes);
                     Logger.getLogger(HBaseStorage.class.getName()).trace("Put on " + obj.toString() + " at " + obj.getSGID().toString());
@@ -777,10 +784,63 @@ public class HBaseStorage extends StorageInterface {
     }
     
     /**
+     *
+     * @param rowKey
+     * @param tableName
+     * @param serializer
+     * @param resultMap
+     * @throws java.io.IOException
+     */
+    public void grabBinnedFeatures(String rowKey, String tableName, SerializationInterface serializer, Map<FeatureSet, Collection<Feature>> resultMap) throws IOException {
+        String referenceAndChromosome = rowKey.substring(0, rowKey.indexOf(FSGID.PositionSeparator));
+        String positionString = rowKey.substring(rowKey.indexOf(FSGID.PositionSeparator) + 1);
+        Long position = Long.valueOf(positionString);
+        String binPosition = FSGID.padZeros((position / Constants.BIN_SIZE) * Constants.BIN_SIZE, HBaseStorage.PAD);
+        
+        
+        HTable table = tableMap.get(tableName);
+        if (table == null) {
+            establishTableConnection(tableName);
+            table = tableMap.get(tableName);
+        }
+        Logger.getLogger(HBaseStorage.class.getName()).warn("Looking for bins at " + rowKey + " -> "+ binPosition);
+
+        if (resultMap.keySet().size() > 0) {
+            for (Entry<FeatureSet, Collection<Feature>> e : resultMap.entrySet()) {
+                byte[] qualifier = Bytes.toBytes(e.getKey().getSGID().getUuid().toString() + FeatureList.BIN_SUFFIX);
+                // map is time -> data
+                Get g = new Get(Bytes.toBytes(referenceAndChromosome + FSGID.PositionSeparator + binPosition));
+                Result result = table.get(g);
+                KeyValue columnLatest = result.getColumnLatest(TEST_FAMILY_INBYTES, qualifier);
+                if (columnLatest == null) {
+                    // column not present in this row
+                    continue;
+                }
+                FeatureList list = serializer.deserialize(columnLatest.getValue(), FeatureList.class);
+                if (list == null) {
+                    //TODO: investigate this
+                    continue;
+                }
+                Logger.getLogger(HBaseStorage.class.getName()).warn("Found " + list.getFeatures().size() + " features in bins using sourceIDs");
+                // need to use a set because a feature will appear on its own and in a bin
+                Set<Feature> set = new HashSet<>();
+                Collection<Feature> existingFeatures = e.getValue();
+                List<Feature> additionalFeatures = list.getFeatures();
+//                for(Feature foundFeature : additionalFeatures){
+//                    Logger.getLogger(HBaseStorage.class.getName()).warn("Found feature (" + foundFeature.getStart()+","+foundFeature.getStop()+")"+ " at "+ binPosition + " " + foundFeature.getDisplayName());
+//                }
+                set.addAll(existingFeatures);
+                set.addAll(additionalFeatures);
+                e.setValue(set);
+            }
+        }
+    }
+    
+    /**
      * <p>grabFeatureListsGivenRow.</p>
      *
      * @param result a {@link org.apache.hadoop.hbase.client.Result} object.
-     * @param featureSetID a {@link com.github.seqware.queryengine.util.SGID} object.
+     * @param featureSetIDs a {@link com.github.seqware.queryengine.util.SGID} object.
      * @param serializer a {@link com.github.seqware.queryengine.impl.SerializationInterface} object.
      * @return a {@link java.util.List} object.
      */
