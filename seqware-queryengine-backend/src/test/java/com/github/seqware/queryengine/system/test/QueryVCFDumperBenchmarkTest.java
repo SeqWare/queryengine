@@ -153,6 +153,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		int i;
 		System.out.println("\n");
 		System.out.println("Import timing: " + String.valueOf(importTiming));
+		System.out.println("\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE");
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
