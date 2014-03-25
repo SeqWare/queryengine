@@ -198,24 +198,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		}
 	}
 	
-	public Map<String, HTable> retriveFeatureTableMap(){
-		try{
-	        HBaseAdmin hba = new HBaseAdmin(config);
-	        
-	        HTableDescriptor[] listTables = hba.listTables(HBaseStorage.TEST_TABLE_PREFIX + "[.]Feature[.].*");
-	        
-	        for (HTableDescriptor des : listTables){
-	        	tableMap.put(des.getNameAsString(), 
-	        			new HTable(config, des.getNameAsString()));
-	        }
-	        hba.close();
-	        return tableMap;
-		} catch (Exception e){
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
     private static void downloadFile(String file, File downloadDir, List<File> filesToReturnGZCompressed) throws IOException, MalformedURLException, URISyntaxException {
         URL newURL = new URL(file);
         String name = newURL.toString().substring(newURL.toString().lastIndexOf("/"));
