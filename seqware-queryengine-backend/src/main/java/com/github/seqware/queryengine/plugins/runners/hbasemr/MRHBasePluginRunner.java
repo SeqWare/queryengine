@@ -300,7 +300,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                         job,
                         true, 
                         MRHBasePluginRunner.QueryRegionTableInput.class);
-        	} else {
+        	} else if (Constants.MULTIPLE_SCAN_RANGES == false || QueryVCFDumper.QUERYVCFDUMPER_RUN == false){
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
                 		scan, // Scan instance to control CF and attribute selection
