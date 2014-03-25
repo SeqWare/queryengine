@@ -69,13 +69,15 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<Float> runQueryTimings = new ArrayList<Float>();
 	private static HashMap<String, List<Float>> allSingleScanQueryTimings = new HashMap<String,List<Float>>();
 	private static HashMap<String, List<Float>> allMultiScanQueryTimings = new HashMap<String,List<Float>>();
+	private static Float importTiming;
 	
     private static File outputFile;
     
 
 	@BeforeClass
 	public static void setUpTest(){
-        
+		resetAllTables();
+		
 		//TODO: Download File
         String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
         String[] vcfs = new String[]{
@@ -95,14 +97,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		diff = ((stop - start) / 1000);
-		System.out.println("Seconds to import: " + diff + "\n");
+		importTiming = diff;
 	}
 	
 	@Test
 	public void testSingleScan(){
 		
-		resetAllTables();
-
 		Constants.MULTIPLE_SCAN_RANGES = false;
 
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
@@ -148,6 +148,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	public void generateReport(){
 		int i;
+		System.out.println("Import timing: " + String.valueOf(importTiming));
 		System.out.println("MULTIPLE SCAN RANGES = FALSE");
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
@@ -171,7 +172,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		}
 	}
 	
-	public void resetAllTables(){
+	public static void resetAllTables(){
 		//TODO: specify config
         this.config = HBaseConfiguration.create();
 		try{
@@ -300,10 +301,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         }
 
         List<String> argList = new ArrayList<String>();
-        System.out.println("featureSetID.... : " + originalSet.getRowKey().toString());
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
                     "-k", keyValueFile.getAbsolutePath(), "-s", FIRST_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
+        
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
     
