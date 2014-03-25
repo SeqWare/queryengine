@@ -182,8 +182,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		try{
 			System.out.println("Closing tables.");
 			HBaseAdmin hba = new HBaseAdmin(config);
-			hba.disableTables("b.*");
-			hba.deleteTables("b.*");
+			if (hba.listTables().length != 0){
+				hba.disableTables("b.*");
+				hba.deleteTables("b.*");
+			}
 			hba.close();
 		} catch (Exception e){
 			e.printStackTrace();
