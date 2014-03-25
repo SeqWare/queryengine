@@ -130,7 +130,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		long start;
 		long stop;
-				
+		float diff;		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
 		start = new Date().getTime();
@@ -337,8 +337,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     }
 
     private void runQueries(){
-    	long start, stop, diff;
-    	
+    	long start, stop;
+    	float diff;
 		start = new Date().getTime();
     	testFirstQuery();
         stop = new Date().getTime();
