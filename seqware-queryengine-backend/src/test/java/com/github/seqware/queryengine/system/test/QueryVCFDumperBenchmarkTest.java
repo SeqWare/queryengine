@@ -110,16 +110,16 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = false;
 		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => NAIVE_OVERLAPS");
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
 
 		runQueryTimings = runQueries();
         
         allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
         
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => BINNING");
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-		
+        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+
 		runQueryTimings = runQueries();
         
         allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
@@ -131,15 +131,15 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 		
-		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => NAIVE_OVERLAPS");
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
+		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
 
 		runQueryTimings = runQueries();
         
         allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
         
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => BINNING");
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+		Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
 		
 		runQueryTimings = runQueries();
         
