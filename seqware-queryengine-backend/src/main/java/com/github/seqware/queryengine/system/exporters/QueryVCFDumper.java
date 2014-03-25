@@ -38,6 +38,10 @@ public class QueryVCFDumper extends Importer {
     public static final char QUERY_PARAM_STRING = 's';
     /** Constant <code>OUTPUTFILE_PARAM='o'</code> */
     public static final char OUTPUTFILE_PARAM = 'o';
+
+    //This is a switch that will turn on whenever this class is run.
+    //It's only use should be to choose if a defined TableInputFormat should be used in MRHBasePluginRunner
+    //For multiple scan ranges.
     /** Constant <code>QUERYVCFDUMPER_RUN</code> */
     public static boolean QUERYVCFDUMPER_RUN = false;
     /**
