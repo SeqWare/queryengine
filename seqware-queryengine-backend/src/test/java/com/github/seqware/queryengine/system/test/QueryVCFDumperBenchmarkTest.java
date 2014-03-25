@@ -87,7 +87,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	@Test
-	public void prepareTablesAndImport(){
+	public void testPrepareTablesAndImport(){
 		try{
 			resetAllTables();
 			start = new Date().getTime();
