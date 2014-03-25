@@ -46,17 +46,17 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String DOWNLOAD_DIR = "/home/seqware/";
 	private static final String FIRST_QUERY = 
-			"start>=61800882 && stop <=81800882";
-//			"seqid==\"21\" ";
+//			"start>=61800882 && stop <=81800882";
+			"seqid==\"21\" ";
 	private static final String SECOND_QUERY = 
-			"start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")";
-//			"seqid==\"21\" && start >= 20000000 && stop <= 30000000";			
+//			"start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")";
+			"seqid==\"21\" && start >= 20000000 && stop <= 30000000";			
 	private static final String THIRD_QUERY = 
-			"start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082";
-//			"seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000";
+//			"start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082";
+			"seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000";
 	private static final String FOURTH_QUERY = 
-			"(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
-//			"seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
+//			"(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
+			"seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
 	private static long start, stop;
 	private static float diff;
 	private static List<Float> runQueryTimings = new ArrayList<Float>();
@@ -71,8 +71,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public static void setUpTest(){
 		try{
 	        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
-	        testingFiles = download(vcf);
-	//        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
+//	        testingFiles = download(vcf);
+	        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
 	        outputFile = null;
 	        try {
 	            outputFile = File.createTempFile("output", "txt");
@@ -86,62 +86,55 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	@Test
-	public void testPrepareTablesAndImport(){
+	public void testBinning(){
 		try{
 			resetAllTables();
+			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
+	        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+
 			start = new Date().getTime();
 			importToBackend(testingFiles);
 			stop = new Date().getTime();
 			diff = ((stop - start) / 1000);
 			importTiming = diff;
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testSingleScan(){
-		try{
+			
 			Constants.MULTIPLE_SCAN_RANGES = false;
 			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
-	
-			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
-	
 			runQueryTimings = runQueries();
-	        
-	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
-	        
-			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-	        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
-	
-			runQueryTimings = runQueries();
-	        
 	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+	        
+			Constants.MULTIPLE_SCAN_RANGES = true;
+			runQueryTimings = runQueries();
+			allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
-	public void testMultiScan(){
+	public void testNaiveOverlaps(){
 		try{
-			Constants.MULTIPLE_SCAN_RANGES = true;
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
-			
+			resetAllTables();
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
-	
-			runQueryTimings = runQueries();
-	        
-	        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
-	        
-			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+
+			start = new Date().getTime();
+			importToBackend(testingFiles);
+			stop = new Date().getTime();
+			diff = ((stop - start) / 1000);
+			importTiming = diff;
 			
+			Constants.MULTIPLE_SCAN_RANGES = false;
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
+	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 	        
-	        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+			Constants.MULTIPLE_SCAN_RANGES = true;
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			runQueryTimings = runQueries();
+	        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
