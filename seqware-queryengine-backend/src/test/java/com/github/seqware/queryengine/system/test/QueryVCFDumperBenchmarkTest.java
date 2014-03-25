@@ -46,17 +46,27 @@ import com.github.seqware.queryengine.util.SGID;
 public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
     private Configuration config;
-	private HTable table;
 	private Map<String, HTable> tableMap = new HashMap<String, HTable>();
-	private final String JAR_NAME = "seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar";
 	private static String randomRef = null;
     private static Reference reference = null;
 	private static SGID originalSet = null;
 	private static List<File> testingFiles = new ArrayList<File>();
-	private static final String SINGLE_RANGE_QUERY = "";
-	private static final String MULTI_RANGE_QUERY = "";
 	private static final String DOWNLOAD_DIR = "/home/seqware/";
+	private static final String FIRST_QUERY = 
+//			"start>=61800882 && stop <=81800882";
+			"seqid==\"21\" ";
+	private static final String SECOND_QUERY = 
+//			"start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")";
+			"seqid==\"21\" && start >= 20000000 && stop <= 30000000";			
+	private static final String THIRD_QUERY = 
+//			"start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082";
+			"seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000";
+	private static final String FOURTH_QUERY = 
+//			"(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
+			"seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
+
     private static File outputFile;
+    
 
 	@BeforeClass
 	public static void setUpTest(){
@@ -92,7 +102,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		long start;
 		long stop;
 		start = new Date().getTime();
-		System.out.println("Importing " + testingFiles.get(0).getName() + " to database.");
 		importToBackend(testingFiles);
 		stop = new Date().getTime();
 		float diff = ((stop - start) / 1000) / 60;
@@ -101,7 +110,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
 		start = new Date().getTime();
-//		runQueries();
+		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
@@ -109,29 +118,23 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
 		start = new Date().getTime();
-//		runQueries();
+		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to run Queries for BINNING: " + diff + "\n");
 //		resetAllTables();
 	}
 	
-//	@Test
+	@Test
 	public void testMultiScan(){
 		Constants.MULTIPLE_SCAN_RANGES = true;
 		long start;
 		long stop;
-		
-		start = new Date().getTime();
-//		importToBackend(testingFiles);
-		stop = new Date().getTime();
-		float diff = ((stop - start) / 1000) / 60;
-		System.out.println("Minutes to import: " + diff + "\n");
-		
+				
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
 		start = new Date().getTime();
-//		runQueries();
+		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
@@ -139,7 +142,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
 		start = new Date().getTime();
-//		runQueries();
+		runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) / 60;
         System.out.println("Minutes to run Queries for BINNING: " + diff + "\n");
@@ -233,6 +236,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	                    "-i", f.getAbsolutePath(),
 	                    "-r", reference.getSGID().getRowKey()}));
 	            
+	    		System.out.println("Importing " + testingFiles.get(0).getName() + " to database with reference: " + reference);
+	            
 	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
 	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
     	} catch (Exception e){
@@ -278,7 +283,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
         List<String> argList = new ArrayList<String>();
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
-                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882",
+                    "-k", keyValueFile.getAbsolutePath(), "-s", FIRST_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
@@ -294,7 +299,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
         List<String> argList = new ArrayList<String>();
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
-                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")",
+                    "-k", keyValueFile.getAbsolutePath(), "-s", SECOND_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
@@ -310,7 +315,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
         List<String> argList = new ArrayList<String>();
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
-                    "-k", keyValueFile.getAbsolutePath(), "-s", "start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082",
+                    "-k", keyValueFile.getAbsolutePath(), "-s", THIRD_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
@@ -326,7 +331,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
         List<String> argList = new ArrayList<String>();
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
-                    "-k", keyValueFile.getAbsolutePath(), "-s", "(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")",
+                    "-k", keyValueFile.getAbsolutePath(), "-s", FOURTH_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
