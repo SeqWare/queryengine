@@ -64,7 +64,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static final String FOURTH_QUERY = 
 //			"(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
 			"seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
-
+	private static long start, stop;
+	private static float diff;
+	private static List<Float> runQueryTimings = new ArrayList<Float>();
+	private static HashMap<String, List<Float>> allSingleScanQueryTimings = new HashMap<String,List<Float>>();
+	private static HashMap<String, List<Float>> allMultiScanQueryTimings = new HashMap<String,List<Float>>();
+	
     private static File outputFile;
     
 
@@ -85,6 +90,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
             Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
             Assert.fail("Could not create output for test");
         }
+        
+		start = new Date().getTime();
+		importToBackend(testingFiles);
+		stop = new Date().getTime();
+		diff = ((stop - start) / 1000);
+		System.out.println("Seconds to import: " + diff + "\n");
+		
 //		tableMap = retriveFeatureTableMap();
 //		for (Entry<String,HTable> e : tableMap.entrySet()){
 //			System.out.println(e.getKey());
@@ -96,57 +108,55 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	@Test
 	public void testSingleScan(){
+		
 		resetAllTables();
 
 		Constants.MULTIPLE_SCAN_RANGES = true;
-		long start;
-		long stop;
-		start = new Date().getTime();
-		importToBackend(testingFiles);
-		stop = new Date().getTime();
-		float diff = ((stop - start) / 1000) ;
-		System.out.println("Seconds to import: " + diff + "\n");
-		
+
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
 		start = new Date().getTime();
-		runQueries();
+		runQueryTimings = runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
+        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+        
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
 		start = new Date().getTime();
-		runQueries();
+		runQueryTimings = runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Queries for BINNING: " + diff + "\n");
-//		resetAllTables();
+        
+        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	}
 	
 	@Test
 	public void testMultiScan(){
 		Constants.MULTIPLE_SCAN_RANGES = true;
-		long start;
-		long stop;
-		float diff;		
+		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
 		start = new Date().getTime();
-		runQueries();
+		runQueryTimings = runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
+        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+        
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
 		start = new Date().getTime();
-		runQueries();
+		runQueryTimings = runQueries();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Queries for BINNING: " + diff + "\n");
-//		resetAllTables();
+        
+        allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	}
 	
 	public void setOverlapStrategy(OVERLAP_STRATEGY strategy){
@@ -222,7 +232,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         return filesToReturnGZUnCompressed;
     }
 	
-    private void importToBackend(List<File> file){
+    private static void importToBackend(List<File> file){
     	try{
 //    			//Use first file only for now
     			File f = file.get(0);
@@ -336,31 +346,39 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
     }
 
-    private void runQueries(){
+    private List<Float> runQueries(){
     	long start, stop;
     	float diff;
+    	List<Float> runQueryTimings = new ArrayList<Float>();
+    	
 		start = new Date().getTime();
     	testFirstQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run First Query: " + diff);
-
+        runQueryTimings.add(diff);
+        
 		start = new Date().getTime();
     	testSecondQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Second Query: " + diff);
+        runQueryTimings.add(diff);
         
 		start = new Date().getTime();
     	testThirdQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Third Query: " + diff);
+        runQueryTimings.add(diff);
         
 		start = new Date().getTime();
     	testFourthQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         System.out.println("Seconds to run Fourth Query: " + diff);
+        runQueryTimings.add(diff);
+        
+        return runQueryTimings;
     }
 }
