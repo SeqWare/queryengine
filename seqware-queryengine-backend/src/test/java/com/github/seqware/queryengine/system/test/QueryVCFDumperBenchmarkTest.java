@@ -96,14 +96,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		stop = new Date().getTime();
 		diff = ((stop - start) / 1000);
 		System.out.println("Seconds to import: " + diff + "\n");
-		
-//		tableMap = retriveFeatureTableMap();
-//		for (Entry<String,HTable> e : tableMap.entrySet()){
-//			System.out.println(e.getKey());
-//		}
-        //use this to retrieve fs id
-//        FeatureSet fs = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class);
-//        fs.getSGID().getRowKey(); 
 	}
 	
 	@Test
@@ -115,21 +107,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
-		start = new Date().getTime();
 		runQueryTimings = runQueries();
-        stop = new Date().getTime();
-        diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
         allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
         
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
-		start = new Date().getTime();
 		runQueryTimings = runQueries();
-        stop = new Date().getTime();
-        diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Queries for BINNING: " + diff + "\n");
         
         allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	}
@@ -140,21 +124,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
-		start = new Date().getTime();
 		runQueryTimings = runQueries();
-        stop = new Date().getTime();
-        diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Queries for NAIVE_OVERLAPS: " + diff + "\n");
         
         allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
         
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 		
-		start = new Date().getTime();
 		runQueryTimings = runQueries();
-        stop = new Date().getTime();
-        diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Queries for BINNING: " + diff + "\n");
         
         allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	}
