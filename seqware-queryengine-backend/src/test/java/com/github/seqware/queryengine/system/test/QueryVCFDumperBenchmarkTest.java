@@ -152,26 +152,27 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void generateReport(){
 		int i;
 		System.out.println("Import timing: " + String.valueOf(importTiming));
+		System.out.println("\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE");
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
-			System.out.println("Using " + e.getValue() + ": ");
+			System.out.println("Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s");
 			}
-			System.out.println("/n");
+			System.out.println("\n");
 		}
 		
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
-			System.out.println("Using " + e.getValue() + ": ");
+			System.out.println("Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s");
 			}
-			System.out.println("/n");
+			System.out.println("\n");
 		}
 	}
 	
