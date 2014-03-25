@@ -75,8 +75,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     
 
 	@BeforeClass
-	public static void setUpTest(){
-		resetAllTables();
+	public void setUpTest(){
 		
 		//TODO: Download File
         String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
@@ -172,7 +171,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		}
 	}
 	
-	public static void resetAllTables(){
+	public void resetAllTables(){
 		//TODO: specify config
         this.config = HBaseConfiguration.create();
 		try{
