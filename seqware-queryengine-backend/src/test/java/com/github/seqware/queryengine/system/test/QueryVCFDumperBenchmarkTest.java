@@ -103,6 +103,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		diff = ((stop - start) / 1000);
 		importTiming = diff;
 	}
+	
 	@Test
 	public void testSingleScan(){
 		
