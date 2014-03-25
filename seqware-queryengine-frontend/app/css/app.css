@@ -5,10 +5,19 @@ body {
 }
 h1 {
   text-align: center;
+  padding: 20px;
 }
 
 div.home {
   text-align: center;
+}
+
+div.block {
+  vertical-align: middle;
+  height: 150px;
+  display: inline-block;
+  border: 1px solid black;
+  text-decoration: none;
 }
 
 .menu {

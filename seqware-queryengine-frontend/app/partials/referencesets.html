@@ -1,0 +1,33 @@
+<div class="container-fluid" ng-controller="ReferenceCtrl">
+	<div class="row-fluid">
+		<div class="col-xs-12">
+			<h1>SeqWare Query Engine</h1>
+			<ul class="nav nav-tabs">
+				<li><a href="#/references">References</a></li>
+				<li class="active"><a href="#/referencesets">Reference Sets</a></li>
+				<li><a href="#/variants">Variants</a></li>
+				<li><a href="#/reads">Reads</a></li>
+			</ul>
+			<h2>Reference Sets</h2>
+			<p>(List all the Reference Sets in the database)</p>
+			<div class="table-responsive">
+				<table class="table table-condensed">
+					<thead>
+					<tr class="head">
+						<th>#</th><th>sgid</th><th>Display Name</th><th>Timestamp</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="response in responses">
+							<td>{{$index + 1}}</td><td>{{response.sgid}}</td><td>{{response.displayName}}</td><td>{{response.timestamp}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!--a href="#" class="btn btn-default">Download VCF</a><br/>
+		<a href="#" class="btn btn-default">Inject into Galaxy</a><br/>
+		<a href="#" class="btn btn-default">Inject into USCS</a><br/>
+		<a href="#" class="btn btn-default">Copy Query URL</a><br/-->
+	</div>
+</div>
