@@ -88,7 +88,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	@Test
 	public void testBinning(){
 		try{
-			resetAllTables();
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
 	        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
 
@@ -115,7 +114,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	@Test
 	public void testNaiveOverlaps(){
 		try{
-			resetAllTables();
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
 
@@ -159,7 +157,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		int i;
 		System.out.println("\n");
 		System.out.println("Import timing: " + String.valueOf(importTiming) + "\n");
-		System.out.println("MULTIPLE SCAN RANGES = " + Constants.MULTIPLE_SCAN_RANGES);
+		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
 			System.out.println("  Using " + e.getKey() + ": ");
@@ -171,7 +169,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		}
 		
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
-		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
+		for (Entry<String, List<Float>> e : allMultiScanQueryTimings.entrySet()){
 			i=0;
 			System.out.println("  Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
