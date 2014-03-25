@@ -57,7 +57,7 @@ public class SOFeatureImporter extends Importer {
     public static final char SECONDARY_INDEX_PARAM = 'x';
     
     /** Constant <code>BATCH_SIZE=100000</code> */
-    public static final int BATCH_SIZE = 100000;
+    public static final int BATCH_SIZE = 50000;
 
     /**
      * Command-line interface
