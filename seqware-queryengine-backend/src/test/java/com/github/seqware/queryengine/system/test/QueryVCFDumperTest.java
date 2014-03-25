@@ -10,12 +10,14 @@ import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
 import com.github.seqware.queryengine.system.importers.OBOImporter;
 import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
 import com.github.seqware.queryengine.util.SGID;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -25,7 +27,7 @@ import org.junit.Test;
  * System tests for importing and exporting VCF files while using a simple
  * interface to do a few queries
  *
- * @author dyuen
+ * @author dyuen, bso
  * @version $Id: $Id
  * @since 0.13.3
  */
@@ -209,5 +211,34 @@ public class QueryVCFDumperTest {
         // test comparison
         String curDir = System.getProperty("user.dir");
         SOFeatureImporterTest.matchOutputToControl(outputFile, false, new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated_dumperControl.vcf"));
+    }
+    
+    /**
+     * <p>testFourthVCFQueryDumper.</p>
+     */
+    @Test
+    public void testFourthVCFQueryDumper() {
+        File keyValueFile = null;
+        try {
+            keyValueFile = File.createTempFile("keyValue", "txt");
+        } catch (IOException ex) {
+            Logger.getLogger(QueryVCFDumperTest.class.getName()).fatal(null, ex);
+            Assert.fail("Could not create output for test");
+        }
+
+        List<String> argList = new ArrayList<String>();
+        argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
+                    "-k", keyValueFile.getAbsolutePath(), "-s", "seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)",
+                    "-o", outputFile.getAbsolutePath()}));
+        Stack<SGID> runMain = QueryVCFDumper.runMain(argList.toArray(new String[argList.size()]));
+
+        Assert.assertTrue("should have 1 resulting feature set, had " + runMain.size(), runMain.size() == 2);
+        Assert.assertTrue("starting feature set was incorrect", SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount() == 173);
+        long count = SWQEFactory.getQueryInterface().getLatestAtomBySGID(runMain.pop(), FeatureSet.class).getCount();
+        Assert.assertTrue("fourth query was incorrect, should have 17, found " + count, count == 17);
+
+        // test comparison
+        //String curDir = System.getProperty("user.dir");
+        //SOFeatureImporterTest.matchOutputToControl(outputFile, false, new File(curDir + "/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated_dumperControl.vcf"));
     }
 }
