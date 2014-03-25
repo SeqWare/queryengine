@@ -103,7 +103,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		
 		resetAllTables();
 
-		Constants.MULTIPLE_SCAN_RANGES = true;
+		Constants.MULTIPLE_SCAN_RANGES = false;
 
 		setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
 
@@ -138,7 +138,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	@Test
 	public void testGenerateReport(){
 		generateReport();
-		System.out.println("Resetting tables....");
 		resetAllTables();
 		System.out.println("Done!");
 	}
@@ -255,7 +254,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	                    "-i", f.getAbsolutePath(),
 	                    "-r", reference.getSGID().getRowKey()}));
 	            
-	    		System.out.println("Importing " + testingFiles.get(0).getName() + " to database with reference: " + reference);
+	    		System.out.println("Importing " + testingFiles.get(0).getName() + " to database.");
 	            
 	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
 	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
@@ -301,6 +300,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         }
 
         List<String> argList = new ArrayList<String>();
+        System.out.println("featureSetID.... : " + originalSet.getRowKey().toString());
         argList.addAll(Arrays.asList(new String[]{"-f", originalSet.getRowKey(),
                     "-k", keyValueFile.getAbsolutePath(), "-s", FIRST_QUERY,
                     "-o", outputFile.getAbsolutePath()}));
@@ -356,36 +356,30 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     }
 
     private List<Float> runQueries(){
-    	long start, stop;
-    	float diff;
     	List<Float> runQueryTimings = new ArrayList<Float>();
     	
 		start = new Date().getTime();
     	testFirstQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run First Query: " + diff);
         runQueryTimings.add(diff);
         
 		start = new Date().getTime();
     	testSecondQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Second Query: " + diff);
         runQueryTimings.add(diff);
         
 		start = new Date().getTime();
     	testThirdQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Third Query: " + diff);
         runQueryTimings.add(diff);
         
 		start = new Date().getTime();
     	testFourthQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
-        System.out.println("Seconds to run Fourth Query: " + diff);
         runQueryTimings.add(diff);
         
         return runQueryTimings;
