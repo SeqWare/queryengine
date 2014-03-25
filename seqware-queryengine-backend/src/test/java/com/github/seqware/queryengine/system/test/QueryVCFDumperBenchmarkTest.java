@@ -190,7 +190,6 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	}
 	
 	public void resetAllTables(){
-		//TODO: specify config
         this.config = HBaseConfiguration.create();
 		try{
 			System.out.println("Closing tables.");
@@ -231,7 +230,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	        	File thisGZUncompressedFile = new File("");
 	        	thisGZUncompressedFile = gzDecompressor(thisGZCompressedFile);
 	        	System.out.println("CompressedFile: " + thisGZCompressedFile.getAbsolutePath());
-	        	System.out.println("DECompressedFile: " + thisGZUncompressedFile.getAbsolutePath());
+	        	System.out.println("DeCompressedFile: " + thisGZUncompressedFile.getAbsolutePath());
 	        	filesToReturnGZUnCompressed.add(thisGZUncompressedFile);
         	} catch (Exception e){
         		e.printStackTrace();
@@ -242,7 +241,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
     private static void importToBackend(List<File> file){
     	try{
-//    			//Use first file only for now
+    			//Use first file only for now
     			File f = file.get(0);
 	    		Assert.assertTrue("Cannot read VCF file for test", f.exists() && f.canRead());
 	            List<String> argList = new ArrayList<String>();
