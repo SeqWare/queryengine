@@ -135,8 +135,41 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	}
 	
+	@Test
+	public void testGenerateReport(){
+		generateReport();
+		System.out.println("Resetting tables....");
+		resetAllTables();
+		System.out.println("Done!");
+	}
+	
 	public void setOverlapStrategy(OVERLAP_STRATEGY strategy){
 		Constants.OVERLAP_MODE = strategy;
+	}
+	
+	public void generateReport(){
+		int i;
+		System.out.println("MULTIPLE SCAN RANGES = FALSE");
+		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
+			i=0;
+			System.out.println("Using " + e.getValue() + ": ");
+			for (Float f : e.getValue()){
+				i++;
+				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s");
+			}
+			System.out.println("/n");
+		}
+		
+		System.out.println("MULTIPLE SCAN RANGES = TRUE");
+		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
+			i=0;
+			System.out.println("Using " + e.getValue() + ": ");
+			for (Float f : e.getValue()){
+				i++;
+				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s");
+			}
+			System.out.println("/n");
+		}
 	}
 	
 	public void resetAllTables(){
