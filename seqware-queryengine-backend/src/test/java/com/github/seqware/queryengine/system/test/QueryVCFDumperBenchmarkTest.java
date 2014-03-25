@@ -62,7 +62,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static List<Float> runQueryTimings = new ArrayList<Float>();
 	private static HashMap<String, List<Float>> allSingleScanQueryTimings = new HashMap<String,List<Float>>();
 	private static HashMap<String, List<Float>> allMultiScanQueryTimings = new HashMap<String,List<Float>>();
-	private static Float importTiming;
+	private static Float importTimingBinning;
+	private static Float importTimingNaiveOverlaps;
 	
     private static File outputFile;
     
@@ -95,7 +96,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importToBackend(testingFiles);
 			stop = new Date().getTime();
 			diff = ((stop - start) / 1000);
-			importTiming = diff;
+			importTimingBinning = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
 			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
@@ -103,6 +104,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	        allSingleScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
+			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
 			allMultiScanQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 			
@@ -121,7 +123,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importToBackend(testingFiles);
 			stop = new Date().getTime();
 			diff = ((stop - start) / 1000);
-			importTiming = diff;
+			importTimingNaiveOverlaps = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
 			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
@@ -156,7 +158,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void generateReport(){
 		int i;
 		System.out.println("\n");
-		System.out.println("Import timing: " + String.valueOf(importTiming) + "\n");
+		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "\n");
+		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps) + "\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
 		for (Entry<String, List<Float>> e : allSingleScanQueryTimings.entrySet()){
 			i=0;
