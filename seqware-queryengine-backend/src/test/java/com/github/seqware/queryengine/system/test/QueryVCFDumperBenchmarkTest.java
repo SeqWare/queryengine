@@ -66,7 +66,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         String[] vcfs = new String[]{
                 "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz"
             };
-        testingFiles = download(vcf);
+//        testingFiles = download(vcf);
+        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
         outputFile = null;
         try {
             outputFile = File.createTempFile("output", "txt");
