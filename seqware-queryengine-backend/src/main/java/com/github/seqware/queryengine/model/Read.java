@@ -14,8 +14,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 
 /**
- * Reads need to be worked on. This is an incomplete 'filler' class
- * that is used such that the ReadSets are properly working.
+ * Reads represent a SAM/BAM file. See the specification at
+ * http://samtools.sourceforge.net/SAM1.pdf 
+ * 
+ * This implementation is currently created from the Feature class
+ * and some items may be improper for a Read.
+ * 
+ * Tags are not yet implemented for Reads and ReadSets
+ * @author jho
  */
 public class Read extends AtomImpl<Read> {
     
@@ -110,11 +116,12 @@ public class Read extends AtomImpl<Read> {
     public String getQual() {
         return qual;
     }
+    
     /**
-     * Sets an additional attribute not covered by GVF. It is not permitted to have an additional
+     * Sets an additional attribute not covered by the class. It is not permitted to have an additional
      * attribute with the same name as the instance variables (case insensitive).
      *
-     * @param name Attribute name, which cannot be a GVF attribute (start, stop, pragma, etc).
+     * @param name Attribute name, which cannot be an attribute (start, stop, pragma, etc).
      * @param value Value of the variable to be set.
      */
     public void setAdditionalAttribute(String name, AdditionalAttributeType value) {
@@ -150,7 +157,7 @@ public class Read extends AtomImpl<Read> {
     }
 
     /**
-     * Generic implementation for retrieving the value of a GVF or additional attribute.
+     * Generic implementation for retrieving the value of a SAM or additional attribute.
      *
      * @param name Name of the attribute to be retrieved, which can be either "start", "stop", etc, or an additional attribute name.
      * @return The value of the attribute, or null if the attribute is not present in this read.

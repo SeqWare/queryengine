@@ -22,6 +22,7 @@ import java.util.Iterator;
  * A ReadSet object that allows access to reads from a BAM/SAM file.
  *
  * @author boconnor
+ * @author jho
  * @version $Id: $Id
  */
 

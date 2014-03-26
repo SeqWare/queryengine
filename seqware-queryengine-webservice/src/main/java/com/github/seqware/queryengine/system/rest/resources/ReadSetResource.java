@@ -65,6 +65,7 @@ import java.util.UUID;
  * Readset resource.
  *
  * @author boconnor
+ * @author jho
  */
 @Path("/readset")
 @Api(value = "/readset", description = "Operations about readsets"/*, listingPath="/resources/readset"*/)

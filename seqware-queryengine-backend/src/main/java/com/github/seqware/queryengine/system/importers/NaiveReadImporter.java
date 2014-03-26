@@ -18,10 +18,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
 /**
- * Importer using a new interface to the parameters in order to support SO
- * importing and the specification of a tag set and reference to attach to.
+ * A Naive Read Importer which was created using the FeatureImporter
+ * as a skeleton. This allows uploads of SAM/BAM files into the
+ * data store. Currently does not implement the use of Tags and TagSets
  *
- * @author dyuen
+ * @author jho
  * @version $Id: $Id
  */
 public class NaiveReadImporter extends Importer {

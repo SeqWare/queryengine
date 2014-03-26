@@ -76,6 +76,7 @@ import java.util.Scanner;
  * FeatureSet resource.
  *
  * @author dyuen
+ * @author jho
  */
 @Path("/featureset")
 @Api(value = "/featureset", description = "Operations about featuresets"/**
@@ -83,7 +84,8 @@ import java.util.Scanner;
  * listingPath = "/resources/featureset"
  */
 )
-//@Produces({"application/json"})
+//Removed annotation as it is interfering with file downloads
+//@Produces({"application/json"}) 
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
@@ -128,12 +130,8 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 //        return Response.ok().entity("").build();
 //    }
 
-  /*
-   * Return the features that belong to the specified feature set in VCF FIXME: the Swagger API will
-   * not send the correct Content-Type header (text/plain) to get this resouces and it, as a result,
-   * hits the JSON resource instead. See
-   * https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44 Not sure if there's a way to make
-   * this work and I just don't know the magic syntax. In the mean time use a tool like
+  /**
+   * Return the features that belong to the specified feature set in VCF 
    * "Dev HTTP Client" chrome plugin which allows you to add the content type header.
    * @param sgid rowkey of featureset to operate on
    * @return
@@ -144,7 +142,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    //@Produces(MediaType.TEXT_PLAIN)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) throws InvalidIDException {
@@ -319,8 +316,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      * 
      * @param sgid
      * @param query
-     * @param className
-     * @param keyValue
      * @return
      */
     @POST
@@ -379,36 +374,5 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         }
         
         return Response.ok().entity(map).build();
-    }
-    
-    /**
-     * Allows the user to download files which were output by the
-     * QueryVCFDumper
-     * 
-     * @param uuid
-     * @return
-     */
-//    @GET
-//    @Path(value = "/download/{uuid}")
-//    @ApiOperation(value = "Download output VCF files", notes = "Download the generated VCF file from the QueryVCFDumper") 
-//    public Response queryResults(
-//        @ApiParam(value = "File Name", required = true)
-//        @PathParam(value = "uuid") String uuid) {
-//        
-//        File f = new File("/tmp/" + uuid + ".vcf");
-//        return Response.ok(f, "application/octet-stream").build();
-//    }
-    
-//    @POST
-//    @Path(value = "/dump/{sgid}")
-//    @ApiOperation(value = "Dumps VCF files for user to download", notes = "Download the generated VCF file from the VCFDumper") 
-//    public Response dump(
-//        @ApiParam(value = "File Name", required = true)
-//        @PathParam(value = "sgid") String sgid) {
-//        
-//      
-//        return Response.ok().build();
-//        //File f = new File("/tmp/" + uuid + ".vcf");
-//        //return Response.ok(f, "application/octet-stream").build();
-//    }
+    }   
 }
