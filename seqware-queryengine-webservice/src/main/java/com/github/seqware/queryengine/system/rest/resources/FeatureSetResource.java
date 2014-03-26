@@ -20,8 +20,10 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.Feature;
 import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryVCFParameters;
 import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
 import com.github.seqware.queryengine.system.exporters.VCFDumper;
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
 import com.github.seqware.queryengine.system.importers.FeatureImporter;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
@@ -55,6 +57,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
@@ -65,6 +68,9 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import java.util.HashMap;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.File;
+import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * FeatureSet resource.
@@ -95,69 +101,50 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         return SWQEFactory.getQueryInterface().getFeatureSets();
     }
 
-    /**
-     * Create new pluginrun event to create a query, monitor the query, and
-     * return a new feature set when ready.
-     *
-     * @param sgid rowkey of featureset to operate on
-     * @param query query in our query language
-     * @param ttl time in hours for the results to live
-     * @return
-     */
-    @POST
-    @Path("/{sgid}/query")
-    @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 100)
-    @ApiResponses(value = {
-        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
-        @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    public Response runQuery(
-            @ApiParam(value = "rowkey that needs to be updated", required = true)
-            @PathParam("sgid") String sgid,
-            @ApiParam(value = "query", required = true)
-            @QueryParam(value = "query") String query,
-            @ApiParam(value = "ttl", required = false)
-            @QueryParam(value = "ttl") int ttl) {
-        // make this an overrideable method in the real version
-        //userData.addUser(user);
-        return Response.ok().entity("").build();
-    }
+//    /**
+//     * Create new pluginrun event to create a query, monitor the query, and
+//     * return a new feature set when ready.
+//     *
+//     * @param sgid rowkey of featureset to operate on
+//     * @param query query in our query language
+//     * @param ttl time in hours for the results to live
+//     * @return
+//     */
+//    @POST
+//    @Path("/{sgid}/query")
+//    @ApiOperation(value = "Create new pluginrun event to monitor query", notes = "This can only be done by an authenticated user.", position = 100)
+//    @ApiResponses(value = {
+//        @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+//        @ApiResponse(code = INVALID_SET, message = "Element not found")})
+//    public Response runQuery(
+//            @ApiParam(value = "rowkey that needs to be updated", required = true)
+//            @PathParam("sgid") String sgid,
+//            @ApiParam(value = "query", required = true)
+//            @QueryParam(value = "query") String query,
+//            @ApiParam(value = "ttl", required = false)
+//            @QueryParam(value = "ttl") int ttl) {
+//        // make this an overrideable method in the real version
+//        //userData.addUser(user);
+//        return Response.ok().entity("").build();
+//    }
 
-    /*
-     * Return
-     * the
-     * features
-     * that
-     * belong
-     * to
-     * the
-     * specified
-     * feature
-     * set
-     * in
-     * VCF
-     * 
-     * FIXME: the Swagger API will not send the correct Content-Type header (text/plain) to get this resouces
-     * and it, as a result, hits the JSON resource instead.  See https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44
-     * Not sure if there's a way to make this work and I just don't know the magic syntax.  In the mean time use a
-     * tool like "Dev HTTP Client" chrome plugin which allows you to add the content type header.
-     *
-     * @param
-     * sgid
-     * rowkey
-     * of
-     * featureset
-     * to
-     * operate
-     * on
-     * @return
-     */
+  /*
+   * Return the features that belong to the specified feature set in VCF FIXME: the Swagger API will
+   * not send the correct Content-Type header (text/plain) to get this resouces and it, as a result,
+   * hits the JSON resource instead. See
+   * https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44 Not sure if there's a way to make
+   * this work and I just don't know the magic syntax. In the mean time use a tool like
+   * "Dev HTTP Client" chrome plugin which allows you to add the content type header.
+   * @param sgid rowkey of featureset to operate on
+   * @return
+   */
     @GET
-    @Path("/{sgid}")
+    @Path("/download/{sgid}")
     @ApiOperation(value = "List features in a featureset in VCF", notes = "This can only be done by an authenticated user.", position = 70)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) throws InvalidIDException {
@@ -190,7 +177,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
                     }
                 };
 
-                return Response.ok(stream).build();
+                return Response.ok(stream, "application/octet-stream").build();
 
             } catch (Exception ex) {
                 Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -259,7 +246,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             //Delete the uploaded vcf file
             File temp = new File("/tmp/" + fileName);
             temp.delete();
-            //saveToFile(file, "tmp/abc");
         } catch (IOException ex) {
             Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -322,9 +308,108 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({"application/json"})
     @Override
     public Response addSet(
             @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
         return super.addSet(set);
     }
+    
+    /**
+     * Uses the QueryVCFDumper to query VCF files based on the user's query
+     * 
+     * @param sgid
+     * @param query
+     * @param className
+     * @param keyValue
+     * @return
+     */
+    @POST
+    @Path(value = "/run")
+    @ApiOperation(value = "Run the QueryVCFDumper", notes = "Generates a VCF file output according to the user's query")
+    @Consumes({"application/json"})
+    @Produces({"application/json"})
+    public Response query(
+        @ApiParam(value = "parameters", required = true) QueryVCFParameters parameters) {
+      
+        HashMap<String, String> map = new HashMap<String, String>();
+        UUID uuid = UUID.randomUUID();
+        ArrayList<String> params = new ArrayList<String>();
+        
+        if (parameters.getFeatureSetId().equals("") || parameters.getQuery().equals("")) {
+          map.put("features", "none");
+          return Response.ok().entity(map).build();
+        }
+        
+        params.add("-f");
+        params.add(parameters.getFeatureSetId());
+        params.add("-s");
+        params.add(parameters.getQuery());
+        params.add("-k");
+        params.add("/tmp/querydumper-" + uuid.toString() + ".out");
+        params.add("-o");
+        params.add("/tmp/querydumper-" + uuid.toString() + ".vcf");
+        
+        try {
+          //Run the dumper
+          QueryVCFDumper dumper = new QueryVCFDumper();
+          /*String[] params = new String[6];
+          params[0] = "-f";
+          params[1] = "cd9709eb-1844-4220-aaac-b9d1dde11d1c";
+          params[2] = "-s";
+          params[3] = "seqid==\"1\"";*/
+          String[] p = params.toArray(new String[0]);
+          dumper.runMain(p);
+          File vcf = new File("/tmp/querydumper-" + uuid.toString() + ".vcf");
+          File kv = new File("/tmp/querydumper-" + uuid.toString() + ".out");
+          final Scanner scanner = new Scanner(kv);
+          String sgid = "";
+          while(scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            if (line.contains("Final-FeatureSetID")) {
+              sgid = line.replace("Final-FeatureSetID", "").trim();
+              break;
+            }
+          }
+          
+          map.put("sgid", sgid);
+          kv.delete();
+          vcf.delete();
+        } catch (Exception ex) {
+          return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        
+        return Response.ok().entity(map).build();
+    }
+    
+    /**
+     * Allows the user to download files which were output by the
+     * QueryVCFDumper
+     * 
+     * @param uuid
+     * @return
+     */
+//    @GET
+//    @Path(value = "/download/{uuid}")
+//    @ApiOperation(value = "Download output VCF files", notes = "Download the generated VCF file from the QueryVCFDumper") 
+//    public Response queryResults(
+//        @ApiParam(value = "File Name", required = true)
+//        @PathParam(value = "uuid") String uuid) {
+//        
+//        File f = new File("/tmp/" + uuid + ".vcf");
+//        return Response.ok(f, "application/octet-stream").build();
+//    }
+    
+//    @POST
+//    @Path(value = "/dump/{sgid}")
+//    @ApiOperation(value = "Dumps VCF files for user to download", notes = "Download the generated VCF file from the VCFDumper") 
+//    public Response dump(
+//        @ApiParam(value = "File Name", required = true)
+//        @PathParam(value = "sgid") String sgid) {
+//        
+//      
+//        return Response.ok().build();
+//        //File f = new File("/tmp/" + uuid + ".vcf");
+//        //return Response.ok(f, "application/octet-stream").build();
+//    }
 }

@@ -1,34 +1,21 @@
 <div class="container-fluid" ng-controller="QueryCtrl">
 	<div class="row-fluid">
-		<div class="col-xs-7">
+		<div class="col-xs-6">
 			<h1>SeqWare Query Engine</h1>
-
-			<h2>Query Variants</h2>
-			<!--form>
-				<label for="study">Study: </label><input class="form-control" ng-model="query.study"/><br/>
-				<label for="tumorTag">Tumor/Normal : </label><input class="form-control" ng-model="query.tumorTag"/><br/>
-				<label for="sample">Sample Name : </label><input class="form-control" ng-model="query.sample"/><br/>
-				<label for="experiment">Experimental Design : </label><input class="form-control" ng-model="query.experiment"/><br/>
-				<label for="workflow">Workflow : </label><input class="form-control" ng-model="query.workflow"/><br/>
-				<label for="workflowVer">Workflow Version : </label><input class="form-control" ng-model="query.workflowVer"/><br/>
-				<label for="runDateAfter">Run Date After : </label><input class="form-control" ng-model="query.runDateAfter"/><br/>
-				<label for="runDateBefore">Run Date Before : </label><input class="form-control" ng-model="query.runDateBefore"/><br/>
-				<label for="vcfFile">Key/Value Query : </label><input class="form-control" ng-model="query.kvQuery"/><br/>
-				<button ng-click="update(query)" href="#" class="btn btn-default">Submit</button><br/>
-			</form-->
-			<p>(List all the FeatureSets in the database)</p>
-			<button ng-click="update(query)" href="#" class="btn btn-default">Query</button><br/>
-			<br/><pre>form = {{ query | json }}</pre>
-			<pre>master = {{ master | json }}</pre>
+			<h2>Query VCFs</h2>
+			<p>Fields with an asterisk(*) are required</p>
+			<label for="featureSetId">FeatureSet Id: * </label><input class="form-control" ng-model="parameters.featureSetId"/><br/>
+			<label for="query">Query : *</label><input class="form-control" ng-model="parameters.query"/><br/>
+			<button ng-click="runQuery()" href="#" class="btn btn-default">Query</button><br/>
+			<br/><pre>Query JSON = {{ parameters | json }}</pre>
+			<pre>Previous Query = {{ master | json }}</pre>
 		</div>
 			
-		<div class="col-xs-5">
+		<div class="col-xs-6">
 			<h2>Results</h2>
 			<pre>response = {{ response | json }}</pre>
-			<!--a href="#" class="btn btn-default">Download VCF</a><br/>
-			<a href="#" class="btn btn-default">Inject into Galaxy</a><br/>
-			<a href="#" class="btn btn-default">Inject into USCS</a><br/>
-			<a href="#" class="btn btn-default">Copy Query URL</a><br/-->
+			<a class="btn btn-default" ng-disabled="isDisabled" ng-href="{{ fileUrl }}" download="{{ response.sgid }}.vcf" ng-click="disable()">Download VCF</a><br/-->
+			<!--a href="#" class="btn btn-default" ng-click="toClipboard()">Copy Query URL</a><br/-->
 		</div>
 	</div>
 </div>

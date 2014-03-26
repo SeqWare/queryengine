@@ -19,7 +19,9 @@ public class PluginList {
     Reflections reflections = new Reflections("com.github.seqware.queryengine.plugins");
     Set<Class<? extends FilteredFileOutputPlugin>> subTypes = reflections.getSubTypesOf(FilteredFileOutputPlugin.class);
     for (Class c: subTypes) {
-      list.add(c.getName());
+      if (!list.contains(c.getName())){
+        list.add(c.getName());
+      }
     }
   }
 }
