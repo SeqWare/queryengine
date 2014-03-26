@@ -28,6 +28,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,6 +52,12 @@ import net.sf.samtools.BAMFileWriter;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
+import com.sun.jersey.multipart.FormDataParam;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import java.util.HashMap;
+import com.github.seqware.queryengine.util.SGID;
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 /**
  * Readset resource.
  *

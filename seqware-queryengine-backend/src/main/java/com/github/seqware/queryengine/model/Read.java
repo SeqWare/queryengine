@@ -22,13 +22,14 @@ public class Read extends AtomImpl<Read> {
     private final static String[] reservedAttributeNames = new String[] { "qname", "flag", "rname", "pos", "mapq", "cigar", "rnext", "pnext", "tlen", "seq", "qual" };
     
     private String qname;
-    private boolean flag;
+    private int flag;
     private String rname;
     private int pos;
     private int mapq;
     private String cigar;
     private String rnext;
     private int pnext;
+    private int tlen;
     private String seq;
     private String qual;
     
@@ -70,7 +71,7 @@ public class Read extends AtomImpl<Read> {
         return qname;
     }
     
-    public boolean getFlag() {
+    public int getFlag() {
         return flag;
     }
     
@@ -96,6 +97,10 @@ public class Read extends AtomImpl<Read> {
     
     public int getPnext() {
         return pnext;
+    }
+    
+    public int getTlen() {
+        return tlen;
     }
     
     public String getSeq() {
@@ -152,7 +157,30 @@ public class Read extends AtomImpl<Read> {
      */
     public Object getAttribute(String name) {
         String nameLowerCase = name.toLowerCase();
-        return this.getAdditionalAttribute(name);
+        if (nameLowerCase.equals("qname"))
+            return this.getQname();
+        else if (nameLowerCase.equals("flag"))
+            return this.getFlag();
+        else if (nameLowerCase.equals("rname"))
+            return this.getRname();
+        else if (nameLowerCase.equals("pos"))
+            return this.getPos();
+        else if (nameLowerCase.equals("mapq"))
+            return this.getMapq();
+        else if (nameLowerCase.equals("cigar"))
+            return this.getCigar();
+        else if (nameLowerCase.equals("rnext"))
+            return this.getRnext();
+        else if (nameLowerCase.equals("pnext"))
+            return this.getPnext();
+        else if (nameLowerCase.equals("tlen"))
+            return this.getTlen();
+        else if (nameLowerCase.equals("seq"))
+            return this.getSeq();
+        else if (nameLowerCase.equals("qual"))
+            return this.getQual();
+        else
+            return this.getAdditionalAttribute(name);
     }
 
     /** {@inheritDoc} */
@@ -193,7 +221,7 @@ public class Read extends AtomImpl<Read> {
             return this;
         }
   
-        public Read.Builder setFlag(boolean flag) {
+        public Read.Builder setFlag(int flag) {
             read.flag = flag;
             return this;
         }

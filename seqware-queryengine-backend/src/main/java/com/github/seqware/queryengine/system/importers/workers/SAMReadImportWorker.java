@@ -5,12 +5,12 @@ import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.impl.HBaseStorage;
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.Read;
+import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.model.Tag;
 import com.github.seqware.queryengine.model.TagSet;
-import com.github.seqware.queryengine.system.importers.FeatureImporter;
-import com.github.seqware.queryengine.system.importers.SOFeatureImporter;
+import com.github.seqware.queryengine.system.importers.ReadImporter;
+import com.github.seqware.queryengine.system.importers.NaiveReadImporter;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.*;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.log4j.Logger;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecordIterator;
+import net.sf.samtools.SAMRecord;
 
 public class SAMReadImportWorker extends ImportWorker {
   /** Constant <code>SECONDARY_INDEX="sIndex.out"</code> */
@@ -50,35 +51,49 @@ public class SAMReadImportWorker extends ImportWorker {
     public void run() {
         ReadSet rSet = SWQEFactory.getQueryInterface().getAtomBySGID(ReadSet.class, this.readSetID);
         this.modelManager = SWQEFactory.getModelManager();
-        modelManager.persist(fSet);
-
+        modelManager.persist(rSet);
+        File f = new File(input);
         SAMFileReader inputStream;
         try {
         //Attempting to guess the file format
           if (compressed) {
-              inputStream = handleCompressedInput(input);
+              inputStream = new SAMFileReader(f);
+              //inputStream = handleCompressedInput(input);
           } else {
-              inputStream = new SAMFileReader(input);
+              inputStream = new SAMFileReader(f);
           }
           SAMRecord r;
           Read.Builder rBuilder = modelManager.buildRead();
-          
+          SAMRecordIterator iterator = inputStream.iterator();
           int count = 0;
-          while ((r = inputStream.iterator().next()) != null) {
+          while ((r = iterator.next()) != null) {
             count++;
             if (count % this.getBatch_size() == 0) {
               modelManager.flush();
               modelManager.clear();
               modelManager.persist(rSet);
             }
-
-                //set attributes to rBuilder
-
+            
+            //set attributes to rBuilder from SAMRecord
+            rBuilder.setQname(r.getReadName());
+            rBuilder.setFlag(r.getFlags());
+            rBuilder.setRname(r.getReferenceName());
+            rBuilder.setPos(r.getAlignmentStart());
+            rBuilder.setMapq(r.getMappingQuality());
+            rBuilder.setCigar(r.getCigarString());
+            rBuilder.setRnext(r.getMateReferenceName());
+            rBuilder.setPnext(r.getMateAlignmentStart());
+            rBuilder.setSeq(r.getReadString());
+            rBuilder.setQual(r.getBaseQualityString());
+            Read build = rBuilder.build();
+            rSet.add(build);
+            
+            rBuilder = modelManager.buildRead();
           }
       } catch (Exception e) {
-            Logger.getLogger(VCFVariantImportWorker.class.getName()).fatal("Exception thrown with file: " + input, e);
+            Logger.getLogger(SAMReadImportWorker.class.getName()).fatal("Exception thrown with file: " + input, e);
             //e.printStackTrace();
-            throw new RuntimeException("Error in VCRVariantImportWorker");
+            throw new RuntimeException("Error in SAMReadImportWorker");
         } finally {
             // new, this is needed to have the model manager write results to the DB in one big batch
             modelManager.close();

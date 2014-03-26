@@ -101,7 +101,7 @@ public class ReadImporter {
                 ImportWorker worker = (ImportWorker) processorClass.newInstance();
                 worker.setWorkerName("PileupWorker" + index);
                 worker.setInput(input);
-                worker.setFeatureSetID(readSet.getSGID());
+                worker.setReadSetID(readSet.getSGID());
                 worker.setBatch_size(batch_size);
                 worker.setKeyIndex(secondaryIndex);
       
