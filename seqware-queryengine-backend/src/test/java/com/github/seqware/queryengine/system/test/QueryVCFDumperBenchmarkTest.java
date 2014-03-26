@@ -45,18 +45,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static SGID originalSet = null;
 	private static List<File> testingFiles = new ArrayList<File>();
 	private static final String DOWNLOAD_DIR = "/home/seqware/";
-	private static final String FIRST_QUERY = 
-			"start>=61800882 && stop <=81800882";
-//			"seqid==\"21\" ";
-	private static final String SECOND_QUERY = 
-			"start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")";
-//			"seqid==\"21\" && start >= 20000000 && stop <= 30000000";			
-	private static final String THIRD_QUERY = 
-			"start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082";
-//			"seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000";
-	private static final String FOURTH_QUERY = 
-			"(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
-//			"seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
+	private static String FIRST_QUERY; 
+	private static String SECOND_QUERY; 
+	private static String THIRD_QUERY; 
+	private static String FOURTH_QUERY; 
 	private static long start, stop;
 	private static float diff;
 	private static List<Float> runQueryTimings = new ArrayList<Float>();
@@ -64,15 +56,28 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static HashMap<String, List<Float>> allMultiScanRangeQueryTimings = new HashMap<String,List<Float>>();
 	private static Float importTimingBinning;
 	private static Float importTimingNaiveOverlaps;
-	
     private static File outputFile;
+    
+	/**Set this to true if you wish to use smaller files, else it will default to the large file**/
+	private static boolean QUICK_TEST = false;
 
 	@BeforeClass
 	public static void setUpTest(){
 		try{
-	        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
-	        testingFiles = download(vcf);
-//	        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
+			if (QUICK_TEST == false){
+		        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
+		        testingFiles = download(vcf);
+		        FIRST_QUERY = "start>=61800882 && stop <=81800882";
+		        SECOND_QUERY = "start>=61800882 && stop <=81800882 && (seqid==\"X\" || seqid==\"19\")";
+		        THIRD_QUERY = "start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082";
+		        FOURTH_QUERY = "(start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082) && (seqid==\"X\" || seqid==\"19\")";
+			} else if (QUICK_TEST == true){
+		        testingFiles.add(new File("/home/seqware/gitroot/queryengine/seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/consequences_annotated.vcf"));
+		        FIRST_QUERY = "seqid==\"21\" ";
+		        SECOND_QUERY = "seqid==\"21\" && start >= 20000000 && stop <= 30000000";
+		        THIRD_QUERY = "seqid==\"21\" && start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000";
+		        FOURTH_QUERY = "seqid==\"21\" && (start >= 20000000 && stop <= 30000000 || start >=40000000 && stop <=40200000)";
+			}
 	        outputFile = null;
 	        try {
 	            outputFile = File.createTempFile("output", "txt");
