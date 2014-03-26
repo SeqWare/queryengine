@@ -65,7 +65,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public static void setUpTest(){
 		try{
 			if (QUICK_TEST == false){
-				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf";
+				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
 //		        String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
 		        testingFiles = download(vcf);
 		        FIRST_QUERY = "start>=61800882 && stop <=81800882";
