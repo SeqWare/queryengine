@@ -89,7 +89,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void testBinning(){
 		try{
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-	        System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+	        System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString() + "\n");
 
 			start = new Date().getTime();
 			importToBackend(testingFiles);
@@ -98,12 +98,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importTimingBinning = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 			allMultiScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 			
@@ -116,7 +116,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void testNaiveOverlaps(){
 		try{
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-			System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
+			System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString() + "\n");
 
 			start = new Date().getTime();
 			importToBackend(testingFiles);
@@ -125,12 +125,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importTimingNaiveOverlaps = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 	        allMultiScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 			
@@ -185,7 +185,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void resetAllTables(){
         this.config = HBaseConfiguration.create();
 		try{
-			System.out.println("Closing tables.");
+			System.out.println("Closing tables....");
 			HBaseAdmin hba = new HBaseAdmin(config);
 			hba.disableTables("b.*");
 			hba.deleteTables("b.*");
@@ -222,8 +222,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
         	try{
 	        	File thisGZUncompressedFile = new File("");
 	        	thisGZUncompressedFile = gzDecompressor(thisGZCompressedFile);
-	        	System.out.println("CompressedFile: " + thisGZCompressedFile.getAbsolutePath());
-	        	System.out.println("DeCompressedFile: " + thisGZUncompressedFile.getAbsolutePath());
+	        	Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("CompressedFile: " + thisGZCompressedFile.getAbsolutePath());
+	        	Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("DeCompressedFile: " + thisGZUncompressedFile.getAbsolutePath());
+	        	System.out.println("Done!\n");
 	        	filesToReturnGZUnCompressed.add(thisGZUncompressedFile);
         	} catch (Exception e){
         		e.printStackTrace();
@@ -246,7 +247,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	                    "-i", f.getAbsolutePath(),
 	                    "-r", reference.getSGID().getRowKey()}));
 	            
-	    		System.out.println("Importing " + testingFiles.get(0).getName() + " to database.");
+	    		System.out.println("Importing " + testingFiles.get(0).getName() + " to database.\n");
 	            
 	            originalSet = SOFeatureImporter.runMain(argList.toArray(new String[argList.size()]));
 	            Assert.assertTrue("Could not import VCF for test", originalSet != null);
@@ -350,28 +351,28 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private List<Float> runQueries(){
     	List<Float> runQueryTimings = new ArrayList<Float>();
     	
-    	System.out.println("Running first query....");
+    	System.out.println("Running first query....\n");
 		start = new Date().getTime();
     	testFirstQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        System.out.println("Running second query....");
+        System.out.println("Running second query....\n");
 		start = new Date().getTime();
     	testSecondQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        System.out.println("Running third query....");
+        System.out.println("Running third query....\n");
 		start = new Date().getTime();
     	testThirdQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        System.out.println("Running fourth query....");
+        System.out.println("Running fourth query....\n");
 		start = new Date().getTime();
     	testFourthQuery();
         stop = new Date().getTime();
