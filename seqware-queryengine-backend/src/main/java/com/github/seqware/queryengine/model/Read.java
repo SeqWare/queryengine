@@ -187,6 +187,56 @@ public class Read extends AtomImpl<Read> {
     public static class Builder extends BaseBuilder {
 
         private Read read = new Read();
+        
+        public Read.Builder setQname(String qname) {
+            read.qname = qname;
+            return this;
+        }
+  
+        public Read.Builder setFlag(boolean flag) {
+            read.flag = flag;
+            return this;
+        }
+  
+        public Read.Builder setRname(String rname) {
+            read.rname = rname;
+            return this;
+        }
+  
+        public Read.Builder setPos(int pos) {
+            read.pos = pos;
+            return this;
+        }
+  
+        public Read.Builder setMapq(int mapq) {
+            read.mapq = mapq;
+            return this;
+        }
+  
+        public Read.Builder setCigar(String cigar) {
+            read.cigar = cigar;
+            return this;
+        }
+  
+        public Read.Builder setRnext(String rnext) {
+            read.rnext = rnext;
+            return this;
+        }
+  
+        public Read.Builder setPnext(int pnext) {
+            read.pnext = pnext;
+            return this;
+        }
+  
+        public Read.Builder setSeq(String seq) {
+            read.seq = seq;
+            return this;
+        }
+        
+        public Read.Builder setQual(String qual) {
+          read.qual = qual;
+          return this;
+        }
 
         @Override
         public Read build() {

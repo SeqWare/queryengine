@@ -18,7 +18,6 @@ import java.util.concurrent.Future;
 import net.sourceforge.seqware.common.util.Log;
 import org.apache.log4j.Logger;
 
-
 /**
  * A copy of the FeatureImporter, attempting to work for ReadSets
  * @author jho
@@ -66,7 +65,7 @@ public class ReadImporter {
    * @param secondaryIndex a {@link java.lang.String} object.
    */
   protected static SGID performImport(int threadCount, List<String> inputFiles, String workerModule, boolean compressed, 
-          File outputFile, int batch_size, SGID existingReadSet, String secondaryIndex) {
+        File outputFile, int batch_size, SGID existingReadSet, String secondaryIndex) {
         // objects to access the mutation datastore
         CreateUpdateManager modelManager = SWQEFactory.getModelManager();
         // create a centralized ReadSet
@@ -78,40 +77,12 @@ public class ReadImporter {
             Logger.getLogger(ReadImporter.class.getName()).info("Appending to existing ReadSet: " + readSet.getSGID().getRowKey());
         }
   
-//        TagSet adHocSet;
-//        if (Constants.TRACK_TAGSET) {
-//      
-//            // process ad hoc set if given, create a new one if there is not
-//            if (adhocTagSetID != null) {
-//                adHocSet = SWQEFactory.getQueryInterface().getLatestAtomBySGID(adhocTagSetID, TagSet.class);
-//            } else {
-//                adHocSet = modelManager.buildTagSet().setName("ad hoc tag set for ReadSet " + readSet.getSGID().getRowKey()).build();
-//            }
-//        }
-        // we don't really need the central model manager past this point 
         modelManager.close();
       
         ExecutorService pool = Executors.newFixedThreadPool(threadCount);
         // a pointer to this object (for thread coordination)
       
         try {
-      
-      //      // settings
-      //      SeqWareSettings settings = new SeqWareSettings();
-      //      settings.setStoreType("berkeleydb-mismatch-store");
-      //      settings.setFilePath(dbDir);
-      //      settings.setCacheSize(cacheSize);
-      //      settings.setCreateMismatchDB(create);
-      //      settings.setCreateConsequenceAnnotationDB(create);
-      //      settings.setCreateDbSNPAnnotationDB(create);
-      //      settings.setCreateCoverageDB(create);
-      //      settings.setMaxLockers(locks);
-      //      settings.setMaxLockObjects(locks);
-      //      settings.setMaxLocks(locks);
-      
-            // store object
-            // store = factory.getStore(settings);
-      
             List<Future<?>> futures = new ArrayList<Future<?>>(inputFiles.size());
       
       
@@ -126,10 +97,9 @@ public class ReadImporter {
       
                 // make a worker and launch it
                 Class processorClass = Class.forName("com.github.seqware.queryengine.system.importers.workers." + workerModule);
+                
                 ImportWorker worker = (ImportWorker) processorClass.newInstance();
                 worker.setWorkerName("PileupWorker" + index);
-      //              worker.setPmi(pmi);
-      //              worker.setStore(modelManager);
                 worker.setInput(input);
                 worker.setFeatureSetID(readSet.getSGID());
                 worker.setBatch_size(batch_size);
@@ -204,24 +174,7 @@ public class ReadImporter {
         if ("true".equals(args[2])) {
             compressed = true;
         }
-    
-//        String referenceID = args[3];
-//        SGID referenceSGID = null;
-//    
-//        for (Reference reference : SWQEFactory.getQueryInterface().getReferences()) {
-//            if (reference.getName().equals(referenceID)) {
-//                referenceSGID = reference.getSGID();
-//                break;
-//            }
-//        }
-//        // see if this referenceID already exists
-//        if (referenceSGID == null) {
-//            CreateUpdateManager modelManager = SWQEFactory.getModelManager();
-//            Reference ref = modelManager.buildReference().setName(referenceID).build();
-//            referenceSGID = ref.getSGID();
-//            modelManager.flush();
-//        }
-//    
+ 
         ArrayList<String> inputFiles = new ArrayList<String>();
         inputFiles.addAll(Arrays.asList(args[3].split(",")));
     

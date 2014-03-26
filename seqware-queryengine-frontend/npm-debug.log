@@ -1,0 +1,121 @@
+info it worked if it ends with ok
+verbose cli [ 'node', '/usr/bin/npm', 'install' ]
+info using npm@1.1.4
+info using node@v0.6.12
+verbose config file /home/seqware/.npmrc
+verbose config file /usr/etc/npmrc
+verbose config file /usr/share/npm/npmrc
+verbose caching /home/seqware/gitroot/seqware/seqware-queryengine-frontend/package.json
+verbose loadDefaults seqware-queryengine-frontend@0.0.1
+verbose readDependencies: using package.json deps
+verbose where, deps [ '/home/seqware/gitroot/seqware/seqware-queryengine-frontend',
+verbose where, deps   [ 'phantomjs',
+verbose where, deps     'karma',
+verbose where, deps     'karma-junit-reporter',
+verbose where, deps     'karma-jasmine',
+verbose where, deps     'protractor' ] ]
+verbose from cache /home/seqware/gitroot/seqware/seqware-queryengine-frontend/package.json
+info preinstall seqware-queryengine-frontend@0.0.1
+verbose from cache /home/seqware/gitroot/seqware/seqware-queryengine-frontend/package.json
+verbose readDependencies: using package.json deps
+verbose cache add [ 'phantomjs@~1.9', null ]
+silly cache add: name, spec, args [ undefined, 'phantomjs@~1.9', [ 'phantomjs@~1.9', null ] ]
+verbose parsed url { pathname: 'phantomjs@~1.9',
+verbose parsed url   path: 'phantomjs@~1.9',
+verbose parsed url   href: 'phantomjs@~1.9' }
+silly cache add: name, spec, args [ 'phantomjs', '~1.9', [ 'phantomjs', '~1.9' ] ]
+verbose parsed url { pathname: '~1.9', path: '~1.9', href: '~1.9' }
+verbose addNamed [ 'phantomjs', '~1.9' ]
+verbose addNamed [ null, '>=1.9.0- <1.10.0-' ]
+silly name, range, hasData [ 'phantomjs', '>=1.9.0- <1.10.0-', false ]
+verbose raw, before any munging phantomjs
+verbose url resolving [ 'https://registry.npmjs.org/', './phantomjs' ]
+verbose url resolved https://registry.npmjs.org/phantomjs
+http GET https://registry.npmjs.org/phantomjs
+verbose cache add [ 'karma@~0.10', null ]
+silly cache add: name, spec, args [ undefined, 'karma@~0.10', [ 'karma@~0.10', null ] ]
+verbose parsed url { pathname: 'karma@~0.10',
+verbose parsed url   path: 'karma@~0.10',
+verbose parsed url   href: 'karma@~0.10' }
+silly cache add: name, spec, args [ 'karma', '~0.10', [ 'karma', '~0.10' ] ]
+verbose parsed url { pathname: '~0.10', path: '~0.10', href: '~0.10' }
+verbose addNamed [ 'karma', '~0.10' ]
+verbose addNamed [ null, '>=0.10.0- <0.11.0-' ]
+silly name, range, hasData [ 'karma', '>=0.10.0- <0.11.0-', false ]
+verbose cache add [ 'karma-junit-reporter@~0.1', null ]
+silly cache add: name, spec, args [ undefined,
+silly cache add: name, spec, args   'karma-junit-reporter@~0.1',
+silly cache add: name, spec, args   [ 'karma-junit-reporter@~0.1', null ] ]
+verbose parsed url { pathname: 'karma-junit-reporter@~0.1',
+verbose parsed url   path: 'karma-junit-reporter@~0.1',
+verbose parsed url   href: 'karma-junit-reporter@~0.1' }
+silly cache add: name, spec, args [ 'karma-junit-reporter',
+silly cache add: name, spec, args   '~0.1',
+silly cache add: name, spec, args   [ 'karma-junit-reporter', '~0.1' ] ]
+verbose parsed url { pathname: '~0.1', path: '~0.1', href: '~0.1' }
+verbose addNamed [ 'karma-junit-reporter', '~0.1' ]
+verbose addNamed [ null, '>=0.1.0- <0.2.0-' ]
+silly name, range, hasData [ 'karma-junit-reporter', '>=0.1.0- <0.2.0-', false ]
+verbose cache add [ 'karma-jasmine@~0.1', null ]
+silly cache add: name, spec, args [ undefined,
+silly cache add: name, spec, args   'karma-jasmine@~0.1',
+silly cache add: name, spec, args   [ 'karma-jasmine@~0.1', null ] ]
+verbose parsed url { pathname: 'karma-jasmine@~0.1',
+verbose parsed url   path: 'karma-jasmine@~0.1',
+verbose parsed url   href: 'karma-jasmine@~0.1' }
+silly cache add: name, spec, args [ 'karma-jasmine', '~0.1', [ 'karma-jasmine', '~0.1' ] ]
+verbose parsed url { pathname: '~0.1', path: '~0.1', href: '~0.1' }
+verbose addNamed [ 'karma-jasmine', '~0.1' ]
+verbose addNamed [ null, '>=0.1.0- <0.2.0-' ]
+silly name, range, hasData [ 'karma-jasmine', '>=0.1.0- <0.2.0-', false ]
+verbose cache add [ 'protractor@~0.17.0', null ]
+silly cache add: name, spec, args [ undefined,
+silly cache add: name, spec, args   'protractor@~0.17.0',
+silly cache add: name, spec, args   [ 'protractor@~0.17.0', null ] ]
+verbose parsed url { pathname: 'protractor@~0.17.0',
+verbose parsed url   path: 'protractor@~0.17.0',
+verbose parsed url   href: 'protractor@~0.17.0' }
+silly cache add: name, spec, args [ 'protractor', '~0.17.0', [ 'protractor', '~0.17.0' ] ]
+verbose parsed url { pathname: '~0.17.0', path: '~0.17.0', href: '~0.17.0' }
+verbose addNamed [ 'protractor', '~0.17.0' ]
+verbose addNamed [ null, '>=0.17.0- <0.18.0-' ]
+silly name, range, hasData [ 'protractor', '>=0.17.0- <0.18.0-', false ]
+verbose raw, before any munging karma
+verbose url resolving [ 'https://registry.npmjs.org/', './karma' ]
+verbose url resolved https://registry.npmjs.org/karma
+http GET https://registry.npmjs.org/karma
+verbose raw, before any munging karma-junit-reporter
+verbose url resolving [ 'https://registry.npmjs.org/', './karma-junit-reporter' ]
+verbose url resolved https://registry.npmjs.org/karma-junit-reporter
+http GET https://registry.npmjs.org/karma-junit-reporter
+verbose raw, before any munging karma-jasmine
+verbose url resolving [ 'https://registry.npmjs.org/', './karma-jasmine' ]
+verbose url resolved https://registry.npmjs.org/karma-jasmine
+http GET https://registry.npmjs.org/karma-jasmine
+verbose raw, before any munging protractor
+verbose url resolving [ 'https://registry.npmjs.org/', './protractor' ]
+verbose url resolved https://registry.npmjs.org/protractor
+http GET https://registry.npmjs.org/protractor
+ERR! Error: failed to fetch from registry: protractor
+ERR!     at /usr/share/npm/lib/utils/npm-registry-client/get.js:139:12
+ERR!     at cb (/usr/share/npm/lib/utils/npm-registry-client/request.js:31:9)
+ERR!     at Request._callback (/usr/share/npm/lib/utils/npm-registry-client/request.js:136:18)
+ERR!     at Request.callback (/usr/lib/nodejs/request/main.js:119:22)
+ERR!     at Request.<anonymous> (/usr/lib/nodejs/request/main.js:212:58)
+ERR!     at Request.emit (events.js:88:20)
+ERR!     at ClientRequest.<anonymous> (/usr/lib/nodejs/request/main.js:412:12)
+ERR!     at ClientRequest.emit (events.js:67:17)
+ERR!     at HTTPParser.onIncoming (http.js:1261:11)
+ERR!     at HTTPParser.onHeadersComplete (http.js:102:31)
+ERR! You may report this log at:
+ERR!     <http://bugs.debian.org/npm>
+ERR! or use
+ERR!     reportbug --attach /home/seqware/gitroot/seqware/seqware-queryengine-frontend/npm-debug.log npm
+ERR! 
+ERR! System Linux 3.2.0-45-virtual
+ERR! command "node" "/usr/bin/npm" "install"
+ERR! cwd /home/seqware/gitroot/seqware/seqware-queryengine-frontend
+ERR! node -v v0.6.12
+ERR! npm -v 1.1.4
+ERR! message failed to fetch from registry: protractor
+verbose exit [ 1, true ]
