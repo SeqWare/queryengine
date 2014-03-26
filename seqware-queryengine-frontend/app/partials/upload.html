@@ -16,9 +16,15 @@
 			<input type="file" ng-file-select="onFileSelect($files)" ><br/>
 			<!--input type="file" file-model="myFile" -->
 			<pre>
-				Response = {{ data }}
+				Variant Upload Response = {{ variantResponse }}
 			</pre>
 
+			<h2>Add New Reads</h2>
+			<label for="samFile">SAM or BAM File : </label>
+			<input type="file" ng-file-select="onSAMFileSelect($files)" ><br/>
+			<pre>
+				Read Upload Response = {{ readResponse }}
+			</pre>
 		</div>
 	</div>
 </div>
