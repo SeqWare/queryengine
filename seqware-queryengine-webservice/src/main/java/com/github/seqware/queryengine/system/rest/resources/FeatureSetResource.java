@@ -84,12 +84,8 @@ import java.util.Scanner;
  * listingPath = "/resources/featureset"
  */
 )
-<<<<<<< HEAD
 //Removed annotation as it is interfering with file downloads
 //@Produces({"application/json"}) 
-=======
-@Produces({"application/json"})
->>>>>>> develop
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
