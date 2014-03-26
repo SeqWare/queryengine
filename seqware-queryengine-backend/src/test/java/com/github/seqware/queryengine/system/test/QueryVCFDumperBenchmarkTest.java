@@ -89,7 +89,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void testBinning(){
 		try{
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.BINNING);
-	        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
+	        System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.BINNING.toString());
 
 			start = new Date().getTime();
 			importToBackend(testingFiles);
@@ -98,12 +98,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importTimingBinning = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
 			allMultiScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 			
@@ -116,7 +116,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	public void testNaiveOverlaps(){
 		try{
 			setOverlapStrategy(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS);
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
+			System.out.println("Setting OVERLAP_STRATEGY => " + Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString());
 
 			start = new Date().getTime();
 			importToBackend(testingFiles);
@@ -125,12 +125,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			importTimingNaiveOverlaps = diff;
 			
 			Constants.MULTIPLE_SCAN_RANGES = false;
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
-			Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
+			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES);
 			runQueryTimings = runQueries();
 	        allMultiScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 			
@@ -350,28 +350,28 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private List<Float> runQueries(){
     	List<Float> runQueryTimings = new ArrayList<Float>();
     	
-    	Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Running first query....");
+    	System.out.println("Running first query....");
 		start = new Date().getTime();
     	testFirstQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Running second query....");
+        System.out.println("Running second query....");
 		start = new Date().getTime();
     	testSecondQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Running third query....");
+        System.out.println("Running third query....");
 		start = new Date().getTime();
     	testThirdQuery();
         stop = new Date().getTime();
         diff = ((stop - start) / 1000) ;
         runQueryTimings.add(diff);
         
-        Logger.getLogger(QueryVCFDumperBenchmarkTest.class).info("Running fourth query....");
+        System.out.println("Running fourth query....");
 		start = new Date().getTime();
     	testFourthQuery();
         stop = new Date().getTime();
