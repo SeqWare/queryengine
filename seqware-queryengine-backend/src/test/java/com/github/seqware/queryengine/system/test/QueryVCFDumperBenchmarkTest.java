@@ -58,7 +58,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	private static Float importTimingNaiveOverlaps;
     private static File outputFile;
     
-	/**Set this to true if you wish to use smaller files, else it will default to the large file**/
+	/**Set this to true if you wish to use the smaller file (faster test) or larger file (longer test)**/
 	private static boolean QUICK_TEST = true;
 
 	@BeforeClass
