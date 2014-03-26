@@ -58,6 +58,9 @@ import java.util.HashMap;
 import com.github.seqware.queryengine.util.SGID;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 /**
  * Readset resource.
  *
@@ -231,6 +234,7 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
           @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
           @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
       SGID sgid = null;
+      String uuid = UUID.randomUUID().toString(); 
       try {
           /*
            * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -239,15 +243,16 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
            * the upload should take place as a plugin, reporting back a token that the calling 
            * user can occationally check in on.
            */
-
           String fileName = fileDisposition.getName();
-          BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
-          IOUtils.copy(file, bw, "UTF-8");
-          bw.close();
+          OutputStream output = new FileOutputStream("/tmp/" + fileName + uuid);
+          //BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+          IOUtils.copy(file, output);
+          //bw.close();
+          output.close();
 
-          sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName});
+          sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName + uuid});
           //Delete the uploaded vcf file
-          File temp = new File("/tmp/" + fileName);
+          File temp = new File("/tmp/" + fileName + uuid);
           temp.delete();
       } catch (IOException ex) {
           Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
