@@ -59,7 +59,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private static File outputFile;
     
 	/**Set this to true if you wish to use smaller files, else it will default to the large file**/
-	private static boolean QUICK_TEST = false;
+	private static boolean QUICK_TEST = true;
 
 	@BeforeClass
 	public static void setUpTest(){
