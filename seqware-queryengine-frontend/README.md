@@ -2,7 +2,7 @@
 
 This is currently a simple web GUI for the SeqWare QueryEngine. It is currently run separate 
 from the web service and allows the user to query data and upload to and from the web service.
-This was built on top of [angular-seed](https://github.com/angular/angular-seed).
+This was built on top of [angular-seed](https://github.com/angular/angular-seed) and currently being tested with node v0.10.26 and npm 1.4.3.
 
 ## How to Install
 

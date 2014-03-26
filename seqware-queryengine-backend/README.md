@@ -154,7 +154,7 @@ The above emits the results back into HBase.  To print the results to stdout:
 
 Note: The Imported data can contain indels or snv, or a combination of both. Naive import still works properly regardless.
 
-#####Import data:
+####Import data:
 
 After provisioning from the branch MRPluginLayerTest:
 ````
@@ -173,7 +173,7 @@ Naive import of the indel containing feature from smallTestOverlap.vcf in the te
 java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
 ````
 
-#####Accessing imported Data:
+####Accessing imported Data:
 
 At this point you can open up Hbase shell and list the imported data by running :
 
@@ -189,7 +189,7 @@ There should be 4 rows of data stored in HBase as it was a 3 base deletion that 
 1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
 ````
 
-#####Using the ArbitraryPluginRunner:
+####Using the ArbitraryPluginRunner:
 
 ````
 seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
@@ -210,3 +210,53 @@ However, the plugin written below works (this is the plugin used to verify that 
 ````
 com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin
 ````
+
+This will output each position of the genome (as a key) stored in the backend with their respective indel/snv start and stop ranges (as the value) which are stored in the backend (naively).
+
+####Using the new Single range query:
+
+A new feature implemented is that now given a single start and stop position in the query, the HBase scanner instance will not scan through the entire database. It will only scan through the specified range.
+
+Let us start by importing a slightly larger vcf file into the database.
+
+**Create a new reference:**
+
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_20
+````
+
+**Import the data into a new table:**
+
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
+````
+
+**Note:** take note of the FeatureSet ID that this data was written to. Here are some ways to retreive them:
+
+1. It should be displayed after running the above as:
+
+    ````
+    FeatureSet written with an ID of:
+    *your_featureset_ID_*
+    ````
+
+2. You can check by scanning the featureset table in the hbase shell:
+
+    ````
+    seqware@master:~/gitroot/seqware/seqware-distribution/target$ hbase shell
+    hbase(main):013:0> list
+    hbase(main):013:0> scan 'batman.hbaseTestTable_v2.Feature.hg_20'
+    ````
+    In the column+cell column displayed:
+    ````
+    column=d:*your_featureset_ID*,
+    ````
+
+**Running the range query:**
+
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"
+````
+
+The exporter "QueryVCFDumper" being run here will only scan the positions in the database for this featureset table within specified range, instead of running through the entire database.
+

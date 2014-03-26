@@ -39,12 +39,18 @@ public class QueryVCFDumper extends Importer {
     /** Constant <code>OUTPUTFILE_PARAM='o'</code> */
     public static final char OUTPUTFILE_PARAM = 'o';
 
+    //This is a switch that will turn on whenever this class is run.
+    //It's only use should be to choose if a defined TableInputFormat should be used in MRHBasePluginRunner
+    //For multiple scan ranges.
+    /** Constant <code>QUERYVCFDUMPER_RUN</code> */
+    public static boolean QUERYVCFDUMPER_RUN = false;
     /**
      * Command-line interface
      *
      * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
+    	QUERYVCFDUMPER_RUN = true;
         Stack<SGID> mainMethod = QueryVCFDumper.runMain(args);
         if (mainMethod == null || mainMethod.size() == 0) {
             System.exit(FeatureImporter.EXIT_CODE_INVALID_FILE);

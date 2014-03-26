@@ -84,8 +84,12 @@ import java.util.Scanner;
  * listingPath = "/resources/featureset"
  */
 )
+<<<<<<< HEAD
 //Removed annotation as it is interfering with file downloads
 //@Produces({"application/json"}) 
+=======
+@Produces({"application/json"})
+>>>>>>> develop
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
@@ -305,6 +309,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({"application/json"})
     @Override
     public Response addSet(
             @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {

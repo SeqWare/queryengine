@@ -1,5 +1,6 @@
 package com.github.seqware.queryengine.model.test;
 
+import com.esotericsoftware.minlog.Log;
 import com.github.seqware.queryengine.Benchmarking;
 import com.github.seqware.queryengine.Constants;
 import com.github.seqware.queryengine.factory.CreateUpdateManager;
@@ -15,8 +16,8 @@ import com.github.seqware.queryengine.kernel.RPNStack.TagHierarchicalOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagOccurrence;
 import com.github.seqware.queryengine.kernel.RPNStack.TagValuePresence;
 import com.github.seqware.queryengine.model.*;
-import static com.github.seqware.queryengine.model.test.FeatureStoreInterfaceTest.aSet;
 import com.github.seqware.queryengine.plugins.PluginInterface;
+import com.github.seqware.queryengine.plugins.contribs.OverlappingMutationsAggregationPlugin;
 import com.github.seqware.queryengine.plugins.plugins.FeaturesByAttributesPlugin;
 import com.github.seqware.queryengine.system.importers.OBOImporter;
 import com.github.seqware.queryengine.util.SGID;
@@ -187,6 +188,7 @@ public class QueryInterfaceTest implements Benchmarking {
     
         /**
      * <p>testGetFeaturesByRange.</p>
+     * @throws org.antlr.runtime.RecognitionException
      */
     @Test
     public void testGetFeaturesByMultipleRanges() throws RecognitionException {
@@ -239,7 +241,7 @@ public class QueryInterfaceTest implements Benchmarking {
         int count = (int) result.getCount();
         Assert.assertTrue("Query results wrong, expected 1 and found " + count, count == 1);
     }
-
+    
     /**
      * <p>complexQueryTest.</p>
      */
