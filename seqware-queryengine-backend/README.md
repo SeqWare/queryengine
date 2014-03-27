@@ -288,26 +288,26 @@ After this, we must increase the heap size of each worker regionserver node to 1
 
 1. ssh into worker1
 
-````
-cd target/worker1
-vagrant ssh
-ubuntu@worker1:~$ cd /etc/hbase/conf
-ubuntu@worker1:/etc/hbase/conf$ sudo vim hbase-env.sh
+    ````
+    cd target/worker1
+    vagrant ssh
+    ubuntu@worker1:~$ cd /etc/hbase/conf
+    ubuntu@worker1:/etc/hbase/conf$ sudo vim hbase-env.sh
 
-change the line "# export HBASE_HEAPSIZE=1000" --> "export HBASE_HEAPSIZE=12000"
+    change the line "# export HBASE_HEAPSIZE=1000" --> "export HBASE_HEAPSIZE=12000"
 
-ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
-````
+    ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
+    ````
 
 2. ssh into worker2, repeat the above
 
 3. ssh into master
 
-````
-cd target/master
-vagrant ssh
-ubuntu@master:~$ sudo service hbase-regionserver stop
-````
+    ````
+    cd target/master
+    vagrant ssh
+    ubuntu@master:~$ sudo service hbase-regionserver stop
+    ````
 
 <strong>Note:</strong> You MUST restart the region servers for worker1 and worker2 before running the benchmark. This is required to free up enough Heap space for use.
 
