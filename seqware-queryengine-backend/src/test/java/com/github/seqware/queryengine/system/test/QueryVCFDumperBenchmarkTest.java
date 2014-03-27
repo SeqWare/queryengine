@@ -174,8 +174,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		float multiTotal= 0;
 		float total = 0;
 		System.out.println("\n");
-		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "\n");
-		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps) + "\n");
+		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "s" + "(" + importTimingBinning/60 + "min)" + "\n");
+		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps)+ "s" + "(" + importTimingNaiveOverlaps/60 + "min)" + "\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
 		for (Entry<String, List<Float>> e : allSingleScanRangeQueryTimings.entrySet()){
 			i=0;
