@@ -213,7 +213,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadRawVCFfile(
-            @ApiParam(value = "Compressed file?") @FormDataParam("compressed") boolean compressed,
+            //@ApiParam(value = "Compressed file?") @FormDataParam("compressed") boolean compressed,
             @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
             @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         SGID sgid = null;
@@ -232,11 +232,11 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
             //BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
             IOUtils.copy(file, output);
             output.close();
-            if (compressed) {
-              sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "true", "UpladedFeature", "/tmp/" + fileName + uuid});
-            } else {
-              sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName + uuid}); 
-            }
+            //if (compressed) {
+            //  sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "true", "UpladedFeature", "/tmp/" + fileName + uuid});
+            //} else {
+            sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName + uuid}); 
+            //}
             
             //Delete the uploaded vcf file
             File temp = new File("/tmp/" + fileName + uuid);

@@ -29,7 +29,7 @@ angular.module('queryengineApp.controllers', []).
           method: 'POST',
           headers: {'Content-Type': undefined},
           // withCredentials: true,
-          data: {compressed: $scope.isCompressed, myObj: $scope.myModelObj},
+          data: {myObj: $scope.myModelObj},
           file: file
           // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
           /* set file formData name for 'Content-Desposition' header. Default: 'file' */
@@ -43,6 +43,7 @@ angular.module('queryengineApp.controllers', []).
           console.log(data);
         }).error(function(data, status, headers, config) {
           $scope.variantResponse = "An error has occurred. Status: " + status;
+          console.log($scope.isCompressed);
         });
         //.then(success, error, progress); 
       }
