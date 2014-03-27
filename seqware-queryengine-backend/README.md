@@ -296,7 +296,7 @@ ubuntu@master:~$ sudo service hbase-regionserver stop
 
 **Running the benchmark:**
 
-We are now ready to run the benchmarking test. Clone the queryengine repo from github, then run the following after you are in the queryengine diretory:
+We are now ready to run the benchmarking test. Clone the queryengine repo from github, then run the following after you are in the queryengine directory:
 
 ````
 mvn clean install -Dtest=QueryVCFDumperBenchmarkTest test
