@@ -59,7 +59,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private static File outputFile;
     
 	/**Set this to true if you wish to use the smaller file (faster test) or larger file (longer test)**/
-	private static boolean QUICK_TEST = false;
+	private static boolean QUICK_TEST = true;
 
 	@BeforeClass
 	public static void setUpTest(){
@@ -169,6 +169,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	public void generateReport(){
 		int i;
+		float singleTotal = 0;
+		float multiTotal= 0;
+		float total = 0;
 		System.out.println("\n");
 		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "\n");
 		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps) + "\n");
@@ -179,7 +182,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				singleTotal =+ f;
 			}
+			System.out.println("  Time to complete this set: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
 			System.out.println("\n");
 		}
 		
@@ -190,9 +195,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				multiTotal =+ f;
 			}
+			System.out.println("  Time to complete this set: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
 			System.out.println("\n");
 		}
+		total = singleTotal + multiTotal;
+		System.out.println("  **Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
 	}
 	
 	public void resetAllTables(){
