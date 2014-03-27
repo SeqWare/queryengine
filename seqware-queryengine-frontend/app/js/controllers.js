@@ -29,7 +29,7 @@ angular.module('queryengineApp.controllers', []).
           method: 'POST',
           headers: {'Content-Type': undefined},
           // withCredentials: true,
-          data: {myObj: $scope.myModelObj},
+          data: {compressed: $scope.isCompressed, myObj: $scope.myModelObj},
           file: file
           // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
           /* set file formData name for 'Content-Desposition' header. Default: 'file' */

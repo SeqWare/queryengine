@@ -16,37 +16,22 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.github.seqware.queryengine.factory.CreateUpdateManager;
-import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.QueryVCFParameters;
-import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
-import com.github.seqware.queryengine.system.exporters.VCFDumper;
-import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
-import com.github.seqware.queryengine.system.importers.FeatureImporter;
-import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
-import com.github.seqware.queryengine.util.SeqWareIterable;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -57,20 +42,27 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
-import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
-import com.sun.jersey.multipart.FormDataParam;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import java.util.HashMap;
+
+import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryVCFParameters;
+import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
+import com.github.seqware.queryengine.system.exporters.VCFDumper;
+import com.github.seqware.queryengine.system.importers.FeatureImporter;
+import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SGID;
-import java.io.File;
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.Scanner;
+import com.github.seqware.queryengine.util.SeqWareIterable;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
  * FeatureSet resource.
@@ -221,10 +213,11 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadRawVCFfile(
-            //@ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
+            @ApiParam(value = "Compressed file?") @FormDataParam("compressed") boolean compressed,
             @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
             @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         SGID sgid = null;
+        String uuid = UUID.randomUUID().toString(); 
         try {
             /*
              * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -235,13 +228,18 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
              */
 
             String fileName = fileDisposition.getName();
-            BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
-            IOUtils.copy(file, bw, "UTF-8");
-            bw.close();
-
-            sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName});
+            OutputStream output = new FileOutputStream("/tmp/" + fileName + uuid);
+            //BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+            IOUtils.copy(file, output);
+            output.close();
+            if (compressed) {
+              sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "true", "UpladedFeature", "/tmp/" + fileName + uuid});
+            } else {
+              sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName + uuid}); 
+            }
+            
             //Delete the uploaded vcf file
-            File temp = new File("/tmp/" + fileName);
+            File temp = new File("/tmp/" + fileName + uuid);
             temp.delete();
         } catch (IOException ex) {
             Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);

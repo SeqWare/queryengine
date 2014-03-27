@@ -11,9 +11,11 @@
 			<label for="workflow">Workflow : </label><input class="form-control" ng-model="workflow"/><br/>
 			<label for="workflowVer">Workflow Version : </label><input class="form-control" ng-model="workflowVer"/><br/>
 			<label for="runDate">Run Date : </label><input class="form-control" ng-model="runDate"/><br/-->
+			Compressed? <input type="checkbox" ng-model="isCompressed" /><br />
+			<label for="vcfFile">VCF File : </label>			
+			<input type="file" ng-file-select="onFileSelect($files)" >
+			<br/>
 
-			<label for="vcfFile">VCF File : </label>
-			<input type="file" ng-file-select="onFileSelect($files)" ><br/>
 			<!--input type="file" file-model="myFile" -->
 			<pre>
 				Variant Upload Response = {{ variantResponse }}
