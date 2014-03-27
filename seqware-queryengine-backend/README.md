@@ -153,59 +153,59 @@ Note: The Imported data can contain indels or snv, or a combination of both. Nai
 ####Import data:
 
 After provisioning from the branch MRPluginLayerTest:
-    ````
-    cd ~/gitroot/seqware
-    mvn clean install
-    cd seqware-distribution/target
-    ````
+````
+cd ~/gitroot/seqware
+mvn clean install
+cd seqware-distribution/target
+````
 
 Create a reference in the HBase backend
-    ````
-    java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
-    ````
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19
+````
 
 Naive import of the indel containing feature from smallTestOverlap.vcf in the test resources to the HBase Backend
-    ````
-    java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
-    ````
+````
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/smallTestOverlap.vcf -r hg_19 -w VCFVariantImportWorker
+````
 
 ####Accessing imported Data:
 
 At this point you can open up Hbase shell and list the imported data by running :
 
-    ````
-    hbase shell
-    list
-    scan 'batman.hbaseTestTable_v2.Feature.hg_19'
-    ````
+````
+hbase shell
+list
+scan 'batman.hbaseTestTable_v2.Feature.hg_19'
+````
 There should be 4 rows of data stored in HBase as it was a 3 base deletion that was specified in the smallTestOverlap.vcf:
 
-    ````
-    #CHROM  POS ID  REF ALT QUAL    FILTER  INFO
-    1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
-    ````
+````
+#CHROM  POS ID  REF ALT QUAL    FILTER  INFO
+1   13  rs58108140  GTAC    G   5477.80 PASS    LC_VQSR2b
+````
 
 ####Using the ArbitraryPluginRunner:
 
-    ````
-    seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
-    usage: ArbitraryPluginRunner
-     -o <outputFile>    (required) output file
-     -p <pluginClass>   (required) the plugin to be run, full package path
-     -r <reference>     (required) the reference ID of the FeatureSet to run
-                        plugin on
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner
+usage: ArbitraryPluginRunner
+ -o <outputFile>    (required) output file
+ -p <pluginClass>   (required) the plugin to be run, full package path
+ -r <reference>     (required) the reference ID of the FeatureSet to run
+                    plugin on
 
-    seqware@master:~/gitroot/seqware/seqware-distribution/target$ 
-    java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
-    ````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ 
+java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.ArbitraryPluginRunner -r hg_19 -p YOUR_CUSTOM_PLUGIN -o OUT_PUT_PARAMETERS
+````
 
 In this case you may try to use this runner to run any plugin under com.github.seqware.queryengine.plugins.contribs as they all seem to run without breaking it, albeit not returning information in the txt output. 
 
 However, the plugin written below works (this is the plugin used to verify that the map reduce of naive overlaps is working as expected).
 
-    ````
-    com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin
-    ````
+````
+com.github.seqware.queryengine.plugins.contribs.NaiveProofPlugin
+````
 
 This will output each position of the genome (as a key) stored in the backend with their respective indel/snv start and stop ranges (as the value) which are stored in the backend (naively).
 
@@ -217,15 +217,15 @@ Let us start by importing a slightly larger vcf file into the database.
 
 **Create a new reference:**
 
-    ````
-    seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_20
-    ````
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_20
+````
 
 **Import the data into a new table:**
 
-    ````
-    seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
-    ````
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ../../seqware-queryengine-backend/src/test/resources/com/github/seqware/queryengine/system/FeatureImporter/test.vcf -r hg_20 -w VCFVariantImportWorker
+````
 
 **Note:** take note of the FeatureSet ID that this data was written to. Here are some ways to retreive them:
 
@@ -250,9 +250,9 @@ Let us start by importing a slightly larger vcf file into the database.
 
 **Running the range query:**
 
-    ````
-    seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"
-    ````
+````
+seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.QueryVCFDumper -f *your_featureset_ID* -o rangedQueryOutput.txt -s "start >= 10582 && stop <= 52143"
+````
 
 The exporter "QueryVCFDumper" being run here will only scan the positions in the database for this featureset table within specified range, instead of running through the entire database.
 
@@ -264,23 +264,23 @@ This benchmarking test is to compare the query performance between using single-
 
 Single range query: 
 
-    ````
-    "start>=61800882 && stop <=81800882"
-    ````
+````
+"start>=61800882 && stop <=81800882"
+````
 
 Multi range query:
 
-    ````
-    "start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082"
-    ````
+````
+"start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082"
+````
 
 **Provisioning:**
 
 First you must provision a 3-node cluster, use the following template to setup:
 
-    ````
-    vagrant_cluster_launch.seqware.install.sge_cluster.json.template
-    ````
+````
+vagrant_cluster_launch.seqware.install.sge_cluster.json.template
+````
 
 **Tweaking configs:**
 
@@ -315,9 +315,9 @@ After this, we must increase the heap size of each worker regionserver node to 1
 
 We are now ready to run the benchmarking test. Clone the queryengine repo from github, then run the following after you are in the queryengine directory:
 
-    ````
-    mvn clean install -Dtest=QueryVCFDumperBenchmarkTest test
-    ````
+````
+mvn clean install -Dtest=QueryVCFDumperBenchmarkTest test
+````
 
 The benchmarking will take approximately 8-10 hours to run.
 
