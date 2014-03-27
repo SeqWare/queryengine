@@ -187,11 +187,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			}
 			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
 			singleTotal += thisSet;
+			thisSet = 0;
 		}
 		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "\t (" + singleTotal/60 + "min)");
 		System.out.println("\n");
 		
-		thisSet = 0;
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
 		for (Entry<String, List<Float>> e : allMultiScanRangeQueryTimings.entrySet()){
 			i=0;
@@ -203,6 +203,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			}
 			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
 			multiTotal += thisSet;
+			thisSet = 0;
 		}
 		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "\t (" + multiTotal/60 + "min)");
 		System.out.println("\n");
