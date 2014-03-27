@@ -260,13 +260,17 @@ The exporter "QueryVCFDumper" being run here will only scan the positions in the
 
 This benchmarking test is to compare the query performance between using single-scanner (query the entire table) and multi-scanner (query specific sections of the entire table). Overlap strategies of both Binning and Naive Overlaps will be tested in each of these scanner strategies. 
 
+**Provisioning:**
+
 First you must provision a 3-node cluster, use the following template to setup:
 
 ````
 vagrant_cluster_launch.seqware.install.sge_cluster.json.template
 ````
 
-After this, we must manually increase the heap size of each worker regionserver node to 12000 mb, and turn off the regionserver for master.
+**Tweaking configs:**
+
+After this, we must increase the heap size of each worker regionserver node to 12000 mb, and turn off the regionserver for master.
 
 1. ssh into worker1
 
@@ -287,6 +291,8 @@ ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
 ````
 seqware@master:~$ sudo service hbase-regionserver stop
 ````
+
+**Running the benchmark:**
 
 We are now ready to run the benchmarking test. Clone the queryengine repo from github, then run the following after you are in the queryengine diretory:
 
