@@ -19,6 +19,7 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/reads', {templateUrl: 'partials/reads.html', controller: 'ReadCtrl'});
   $routeProvider.when('/references', {templateUrl: 'partials/references.html', controller: 'ReferenceCtrl'});
   $routeProvider.when('/referencesets', {templateUrl: 'partials/referencesets.html', controller: 'ReferenceSetCtrl'});
+  $routeProvider.when('/datasets', {templateUrl: 'partials/datasets.html', controller: null});
   $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
