@@ -251,17 +251,53 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
           //bw.close();
           output.close();
 
-          sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName + uuid});
+          //sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName + uuid});
+          CreateUpdateManager man = SWQEFactory.getModelManager();
+          ReadSet.Builder rsb = man.buildReadSet();
+          rsb.setReadSetPath("/tmp/" + fileName + uuid);
+          //rsb.setReadSetName(uuid);
+          ReadSet newReadSet = rsb.build();
+          man.close();
+          //sgid = fileName + uuid;
+              
+              
           //Delete the uploaded vcf file
-          File temp = new File("/tmp/" + fileName + uuid);
-          temp.delete();
+          //File temp = new File("/tmp/" + fileName + uuid);
+          //temp.delete();
+          HashMap<String, String> map = new HashMap<String, String>();
+          //map.put("sgid", sgid.toString());
+          //map.put("ReadSetPath", "/tmp/" + fileName + uuid);
+          return Response.ok().entity(newReadSet).build();
       } catch (IOException ex) {
           Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+          return null;
       }
+  }
+  
+  @GET
+  @Path("/download/{sgid}")
+  @ApiOperation(value = "Download the requested SAM or BAM file", notes = "This can only be done by an authenticated user.", position = 70)
+  @ApiResponses(value = {
+      @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+      @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  public Response getSAMReadSet(
+          @ApiParam(value = "rowkey", required = true)
+          @PathParam("sgid") String sgid) throws InvalidIDException {
+      final ReadSet set = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
+      if (set == null) {
+          throw new InvalidIDException(INVALID_ID, "ID not found");
+      } else {
 
-      HashMap<String, String> map = new HashMap<String, String>();
-      map.put("sgid", sgid.toString());
-      return Response.ok().entity(map).build();
+          try {
+              File sam = new File(set.getReadSetPath());
+              return Response.ok(sam, "application/octet-stream").build();
+
+          } catch (Exception ex) {
+              Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+          }
+
+      }
+      return Response.ok().entity("").build();
   }
   
 }
