@@ -182,7 +182,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
-				singleTotal =+ f;
+				singleTotal += f;
 			}
 			System.out.println("  Time to complete this set: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
 			System.out.println("\n");
@@ -195,7 +195,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
-				multiTotal =+ f;
+				multiTotal += f;
 			}
 			System.out.println("  Time to complete this set: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
 			System.out.println("\n");
