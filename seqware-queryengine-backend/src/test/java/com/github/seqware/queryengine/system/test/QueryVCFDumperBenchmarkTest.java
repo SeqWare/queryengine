@@ -169,6 +169,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 	
 	public void generateReport(){
 		int i;
+		float thisSet = 0;
 		float singleTotal = 0;
 		float multiTotal= 0;
 		float total = 0;
@@ -182,12 +183,15 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
-				singleTotal += f;
+				thisSet += f;
 			}
-			System.out.println("  Time to complete this set: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			singleTotal += thisSet;
 			System.out.println("\n");
 		}
+		System.out.println("  Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
 		
+		thisSet = 0;
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
 		for (Entry<String, List<Float>> e : allMultiScanRangeQueryTimings.entrySet()){
 			i=0;
@@ -195,11 +199,14 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			for (Float f : e.getValue()){
 				i++;
 				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
-				multiTotal += f;
+				thisSet += f;
 			}
-			System.out.println("  Time to complete this set: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
+			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			multiTotal += thisSet;
 			System.out.println("\n");
 		}
+		System.out.println("  Time to complete MULTIPLE SCAN RANGES = TRUE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+		
 		total = singleTotal + multiTotal;
 		System.out.println("  **Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
 	}
