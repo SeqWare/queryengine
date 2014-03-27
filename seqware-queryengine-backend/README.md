@@ -256,3 +256,35 @@ seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-d
 
 The exporter "QueryVCFDumper" being run here will only scan the positions in the database for this featureset table within specified range, instead of running through the entire database.
 
+####Using the QueryVCFBenchmarking test:
+
+This benchmarking test is to compare the query performance between using single-scanner (query the entire table) and multi-scanner (query specific sections of the entire table). Overlap strategies of both Binning and Naive Overlaps will be tested in each of these scanner strategies. 
+
+First you must provision a 3-node cluster, use the following template to setup:
+
+````
+vagrant_cluster_launch.seqware.install.sge_cluster.json.template
+````
+
+After this, we must manually increase the heap size of each worker regionserver node to 12000 mb, and turn off the regionserver for master.
+
+1. ssh into worker1
+
+````
+cd target/worker1
+vagrant ssh
+ubuntu@worker1:~$ cd /etc/hbase/conf
+ubuntu@worker1:/etc/hbase/conf$ sudo vim hbase-env.sh
+
+change the line "# export HBASE_HEAPSIZE=1000" --> "export HBASE_HEAPSIZE=12000"
+
+ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
+````
+2. ssh into worker2, repeat the above
+
+3. ssh into master
+
+````
+seqware@master:~$ sudo service hbase-regionserver stop
+````
+
