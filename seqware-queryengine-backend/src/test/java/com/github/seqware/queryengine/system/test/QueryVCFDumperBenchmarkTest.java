@@ -187,9 +187,9 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			}
 			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
 			singleTotal += thisSet;
-			System.out.println("\n");
 		}
 		System.out.println("  Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+		System.out.println("\n");
 		
 		thisSet = 0;
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
@@ -203,12 +203,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			}
 			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
 			multiTotal += thisSet;
-			System.out.println("\n");
 		}
 		System.out.println("  Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
+		System.out.println("\n");
 		
 		total = singleTotal + multiTotal;
 		System.out.println("  **Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
+		System.out.println("\n");
 	}
 	
 	public void resetAllTables(){
