@@ -179,36 +179,36 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
 		for (Entry<String, List<Float>> e : allSingleScanRangeQueryTimings.entrySet()){
 			i=0;
-			System.out.println("  Using " + e.getKey() + ": ");
+			System.out.println("\t" + "Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
-				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
 				thisSet += f;
 			}
-			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
 			singleTotal += thisSet;
 		}
-		System.out.println("  Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
 		System.out.println("\n");
 		
 		thisSet = 0;
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
 		for (Entry<String, List<Float>> e : allMultiScanRangeQueryTimings.entrySet()){
 			i=0;
-			System.out.println("  Using " + e.getKey() + ": ");
+			System.out.println("\t" + "Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
-				System.out.println("    Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
 				thisSet += f;
 			}
-			System.out.println("  Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
 			multiTotal += thisSet;
 		}
-		System.out.println("  Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
+		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
 		System.out.println("\n");
 		
 		total = singleTotal + multiTotal;
-		System.out.println("  **Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
+		System.out.println("\t" + "**Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
 		System.out.println("\n");
 	}
 	
