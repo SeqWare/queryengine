@@ -205,7 +205,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			multiTotal += thisSet;
 			System.out.println("\n");
 		}
-		System.out.println("  Time to complete MULTIPLE SCAN RANGES = TRUE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+		System.out.println("  Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
 		
 		total = singleTotal + multiTotal;
 		System.out.println("  **Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
