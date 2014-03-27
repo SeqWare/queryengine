@@ -298,6 +298,7 @@ change the line "# export HBASE_HEAPSIZE=1000" --> "export HBASE_HEAPSIZE=12000"
 
 ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
 ````
+
 2. ssh into worker2, repeat the above
 
 3. ssh into master
