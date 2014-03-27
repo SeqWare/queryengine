@@ -174,21 +174,21 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		float multiTotal= 0;
 		float total = 0;
 		System.out.println("\n");
-		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "s" + "(" + importTimingBinning/60 + "min)" + "\n");
-		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps)+ "s" + "(" + importTimingNaiveOverlaps/60 + "min)" + "\n");
+		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "s" + "\t (" + importTimingBinning/60 + "min)" + "\n");
+		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps)+ "s" + "\t (" + importTimingNaiveOverlaps/60 + "min)" + "\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
 		for (Entry<String, List<Float>> e : allSingleScanRangeQueryTimings.entrySet()){
 			i=0;
 			System.out.println("\t" + "Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
-				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "\t (" + f/60 + "min)");
 				thisSet += f;
 			}
-			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
 			singleTotal += thisSet;
 		}
-		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "(" + singleTotal/60 + "min)");
+		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "\t (" + singleTotal/60 + "min)");
 		System.out.println("\n");
 		
 		thisSet = 0;
@@ -198,17 +198,17 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			System.out.println("\t" + "Using " + e.getKey() + ": ");
 			for (Float f : e.getValue()){
 				i++;
-				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "(" + f/60 + "min)");
+				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "\t (" + f/60 + "min)");
 				thisSet += f;
 			}
-			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "(" + thisSet/60 + "min)");
+			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
 			multiTotal += thisSet;
 		}
-		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "(" + multiTotal/60 + "min)");
+		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = TRUE: " + multiTotal + "s" + "\t (" + multiTotal/60 + "min)");
 		System.out.println("\n");
 		
 		total = singleTotal + multiTotal;
-		System.out.println("\t" + "**Time to complete all tests: " + total + "s" + "(" + total/60 + "min)");
+		System.out.println("\t" + "**Time to complete all tests: " + total + "s" + "\t (" + total/60 + "min)");
 		System.out.println("\n");
 	}
 	
