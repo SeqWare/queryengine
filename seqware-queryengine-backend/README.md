@@ -256,9 +256,9 @@ seqware@master:~/gitroot/seqware/seqware-distribution/target$ java -cp seqware-d
 
 The exporter "QueryVCFDumper" being run here will only scan the positions in the database for this featureset table within specified range, instead of running through the entire database.
 
-####Using the QueryVCFBenchmarking (multi + single range queries) test:
+####Benchmarking the performance of multi + single range queries:
 
-This benchmarking test is to compare the query performance between using single-scanner (query the entire table) and multi-scanner (query specific sections of the entire table). Overlap strategies of both Binning and Naive Overlaps will be tested in each of these scanner strategies using both multi and single range queries. 
+This benchmarking test is to compare the query performance between using single-scanner (query the entire table) and multi-scanner (query specific sections of the entire table). Overlap strategies of both Binning and Naive Overlaps will be tested in each of these scanner strategies, each of these using both multi and single range queries. 
 
 **Example range queries**:
 
