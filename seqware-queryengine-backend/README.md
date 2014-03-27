@@ -260,7 +260,7 @@ The exporter "QueryVCFDumper" being run here will only scan the positions in the
 
 This benchmarking test is to compare the query performance between using single-scanner (query the entire table) and multi-scanner (query specific sections of the entire table). Overlap strategies of both Binning and Naive Overlaps will be tested in each of these scanner strategies using both multi and single range queries. 
 
-***Example range queries***:
+**Example range queries**:
 
 Single range : 
 
