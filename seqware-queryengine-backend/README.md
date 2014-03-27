@@ -262,13 +262,13 @@ This benchmarking test is to compare the query performance between using single-
 
 **Example range queries**:
 
-Single range : 
+Single range query: 
 
 ````
 "start>=61800882 && stop <=81800882"
 ````
 
-Multi range :
+Multi range query:
 
 ````
 "start>=61800882 && stop <=81800882 || start >= 6180882 && stop <= 9180082"
@@ -307,6 +307,8 @@ cd target/master
 vagrant ssh
 ubuntu@master:~$ sudo service hbase-regionserver stop
 ````
+
+<strong>Note:</strong> You MUST restart the region servers for worker1 and worker2 before running the benchmark. This is required to free up enough Heap space for use.
 
 **Running the benchmark:**
 
