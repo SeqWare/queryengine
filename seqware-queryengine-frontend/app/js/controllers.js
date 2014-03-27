@@ -14,6 +14,15 @@ angular.module('queryengineApp.controllers', []).
     }).then(function(data, status, headers, config) {
       database["variants"] = data.data.length;
     });
+
+    $http({
+        method: 'GET', 
+        withCredentials: true,
+        url: APP_CONFIG.webservice_url + 'readset/', 
+        transformRequest: angular.identity,
+    }).then(function(data, status, headers, config) {
+      database["reads"] = data.data.length;
+    });
     
     database["samples"] = 0; //Should sent a GET Request to Webservice
     $scope.database = database;

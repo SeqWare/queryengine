@@ -14,12 +14,12 @@
 				<table class="table table-condensed">
 					<thead>
 					<tr class="head">
-						<th>#</th><th>sgid</th><th>Display Name</th><th>Timestamp</th><th></th>
+						<th>Download</th><th>#</th><th>sgid</th><th>Display Name</th><th>Timestamp</th>
 					</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="response in responses">
-							<td>{{$index + 1}}</td><td>{{response.sgid}}</td><td>{{response.displayName}}</td><td>{{response.timestamp}}</td><td><a class="btn btn-default" ng-href="{{ fileUrl + response.sgid }}" download="{{ response.sgid }}">Download BAM/SAM</a></td>
+							<td><a class="btn btn-default" ng-href="{{ fileUrl + response.sgid }}" download="{{ response.sgid }}">Download BAM/SAM</a></td><td>{{$index + 1}}</td><td>{{response.sgid}}</td><td>{{response.displayName}}</td><td>{{response.timestamp}}</td>
 						</tr>
 					</tbody>
 				</table>
