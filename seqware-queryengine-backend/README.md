@@ -289,7 +289,9 @@ ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
 3. ssh into master
 
 ````
-seqware@master:~$ sudo service hbase-regionserver stop
+cd target/master
+vagrant ssh
+ubuntu@master:~$ sudo service hbase-regionserver stop
 ````
 
 **Running the benchmark:**
