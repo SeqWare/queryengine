@@ -21,6 +21,8 @@ import org.apache.commons.io.LineIterator;
  * A Naive Read Importer which was created using the FeatureImporter
  * as a skeleton. This allows uploads of SAM/BAM files into the
  * data store. Currently does not implement the use of Tags and TagSets
+ * 
+ * Currently not completely implemented.
  *
  * @author jho
  * @version $Id: $Id

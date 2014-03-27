@@ -22,6 +22,8 @@ import org.apache.log4j.Logger;
  * A copy of the FeatureImporter, attempting to work for ReadSets
  * @author jho
  *
+ * Currently not completely implemented.
+ *
  */
 public class ReadImporter {
   /**
