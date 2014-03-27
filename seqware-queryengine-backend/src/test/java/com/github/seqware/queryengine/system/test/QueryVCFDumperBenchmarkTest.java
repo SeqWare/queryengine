@@ -210,6 +210,12 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		
 		total = singleTotal + multiTotal;
 		System.out.println("\t" + "**Time to complete all tests: " + total + "s" + "\t (" + total/60 + "min)");
+		System.out.println("");
+		System.out.println("Queries used:");
+		System.out.println("\t" + "Test #1: " + FIRST_QUERY);
+		System.out.println("\t" + "Test #2: " + SECOND_QUERY);
+		System.out.println("\t" + "Test #3: " + THIRD_QUERY);
+		System.out.println("\t" + "Test #4: " + FOURTH_QUERY);
 		System.out.println("\n");
 	}
 	
