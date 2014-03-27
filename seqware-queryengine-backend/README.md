@@ -288,3 +288,11 @@ ubuntu@worker1:/etc/hbase/conf$ sudo service hbase-regionserver restart
 seqware@master:~$ sudo service hbase-regionserver stop
 ````
 
+We are now ready to run the benchmarking test. Clone the queryengine repo from github, then run the following after you are in the queryengine diretory:
+
+````
+mvn clean install -Dtest=QueryVCFDumperBenchmarkTest test
+````
+
+The benchmarking will take approximately 8-10 hours to run.
+
