@@ -101,6 +101,7 @@ angular.module('queryengineApp.controllers', []).
     }).then(function(data, status, headers, config) {
       $scope.responses = data.data;
     });
+    $scope.fileUrl = APP_CONFIG.webservice_url + "readset/download/";
   })
   .controller('ReferenceCtrl', function($scope, $http, APP_CONFIG) {
     $scope.master = {};
