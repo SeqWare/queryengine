@@ -132,10 +132,6 @@ Dump a feature set to elastic search compatible JSON file:
 
     java -Xmx1024m -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json
 
-Import a SAM/BAM file:
-
-	java -Xmx1024m -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.NaiveReadImporter -i ~/YourSAMorBAMFile.bam -o keyValueBAM.out -w SAMReadImportWorker
-
 ## In testing
 
 Run a count of all variants across all FeatureSets. Variants are identified with the tuple [chromosome, position, referenceBase, calledBase].
