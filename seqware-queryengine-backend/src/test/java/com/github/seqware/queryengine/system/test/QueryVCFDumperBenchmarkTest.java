@@ -59,7 +59,7 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
     private static File outputFile;
     
 	/**Set this to true if you wish to use the smaller file (faster test) or larger file (longer test)**/
-	private static boolean QUICK_TEST = true;
+	private static boolean QUICK_TEST = false;
 
 	@BeforeClass
 	public static void setUpTest(){
@@ -67,13 +67,13 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			if (QUICK_TEST == false){
 				
 				/**This file contains 500,000 lines**/
-				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites500000Lines.vcf.gz";
+//				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites500000Lines.vcf.gz";
 				
 				/**This file contains 1,000,000 lines**/
 				//String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites1MillionLines.vcf.gz";
 				
 				/**This file contains 2,000,000 lines**/
-				//String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
+				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
 				
 				/**This file contains 4,000,000 lines**/
 		        //String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
@@ -114,8 +114,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingBinning = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+			Constants.MULTIPLE_SCAN_RANGES = true;
+			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
 			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
@@ -143,8 +143,8 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingNaiveOverlaps = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+			Constants.MULTIPLE_SCAN_RANGES = true;
+			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
 			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
 			runQueryTimings = runQueries();
 	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
