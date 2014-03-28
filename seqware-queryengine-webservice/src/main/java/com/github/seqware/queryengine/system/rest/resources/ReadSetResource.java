@@ -20,7 +20,6 @@ import com.github.seqware.queryengine.factory.CreateUpdateManager;
 import com.github.seqware.queryengine.factory.SWQEFactory;
 import com.github.seqware.queryengine.model.ReadSet;
 import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
-import com.github.seqware.queryengine.system.importers.ReadImporter;
 import com.github.seqware.queryengine.util.SeqWareIterable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

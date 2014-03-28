@@ -77,7 +77,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  */
 )
 //Removed annotation as it is interfering with file downloads
-//@Produces({"application/json"}) 
+@Produces(MediaType.APPLICATION_JSON) 
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
@@ -266,6 +266,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @PUT
     @Path("/{sgid}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
@@ -288,6 +289,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @DELETE
     @Path("/{sgid}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 310)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
@@ -303,7 +305,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces({"application/json"})
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response addSet(
             @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
@@ -320,8 +322,8 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @POST
     @Path(value = "/run")
     @ApiOperation(value = "Run the QueryVCFDumper", notes = "Generates a VCF file output according to the user's query")
-    @Consumes({"application/json"})
-    @Produces({"application/json"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response query(
         @ApiParam(value = "parameters", required = true) QueryVCFParameters parameters) {
       
