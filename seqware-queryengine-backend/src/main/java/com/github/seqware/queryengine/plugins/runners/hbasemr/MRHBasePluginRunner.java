@@ -300,6 +300,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                         job,
                         true, 
                         MRHBasePluginRunner.QueryRegionTableInput.class);
+                System.out.println("using Multi scan ranges!");
         	} else if (Constants.MULTIPLE_SCAN_RANGES == false || QueryVCFDumper.QUERYVCFDUMPER_RUN == false){
                 TableMapReduceUtil.initTableMapperJob(
                         tableName,
@@ -309,6 +310,7 @@ public final class MRHBasePluginRunner<ReturnType> implements PluginRunnerInterf
                         mapReducePlugin.getMapOutputValueClass(), // mapper output value
                         job,
                         true);
+                System.out.println("using single scan range!");
         	}
 
             TableMapReduceUtil.initTableReducerJob(tableName, PluginRunnerReducer.class, job);
