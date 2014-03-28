@@ -70,10 +70,10 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 //				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites500000Lines.vcf.gz";
 				
 				/**This file contains 1,000,000 lines**/
-				//String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites1MillionLines.vcf.gz";
+				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites1MillionLines.vcf.gz";
 				
 				/**This file contains 2,000,000 lines**/
-				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
+//				String vcf = "https://dl.dropboxusercontent.com/u/3238966/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
 				
 				/**This file contains 4,000,000 lines**/
 		        //String vcf = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/consensus_call_sets/indels/ALL.wgs.VQSR_V2_GLs_polarized_biallelic.20101123.indels.sites.vcf.gz";
