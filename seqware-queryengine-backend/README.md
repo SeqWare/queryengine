@@ -118,32 +118,32 @@ However, some basic commands to get you started follow (replace UUID's with UUID
 
 Create a reference: 
 
-    java -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19 keyValue_ref.out
+    java -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.ReferenceCreator hg_19 keyValue_ref.out
 
 Import a VCF file:
 
-    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
+    java -Xmx1024m -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.importers.SOFeatureImporter -i ~/VariantAnnotation_0.10.4_LS1155.annotated.vcf -o keyValueVCF.out -r hg_19  -w VCFVariantImportWorker -b 5000
     
 Dump a feature set to VCF file:
 
-    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.VCFDumper 91583362-9d4d-4040-bc36-e2b457ed883e test_out.vcf
+    java -Xmx1024m -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.VCFDumper 91583362-9d4d-4040-bc36-e2b457ed883e test_out.vcf
 
 Dump a feature set to elastic search compatible JSON file:
 
-    java -Xmx1024m -classpath seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json
+    java -Xmx1024m -classpath seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar com.github.seqware.queryengine.system.exporters.JSONDumper 3063ff4e-c206-4099-b99d-2fa5f0526ba7 test_out.json
 
 ## In testing
 
 Run a count of all variants across all FeatureSets. Variants are identified with the tuple [chromosome, position, referenceBase, calledBase].
 Ensure there first exists a destination table/family for the results, e.g., `create 'variant_aggregates', {NAME=>'hg19', VERSIONS=>1}`.
 
-    java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreq \
+    java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar  demo.VariantFreq \
     ns.hbaseTestTable_v2.Feature d \
     variant_aggregates hg19 counts
 
 The above emits the results back into HBase.  To print the results to stdout:
 
-    java -cp seqware-distribution-1.0.4-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
+    java -cp seqware-distribution-1.0.7-SNAPSHOT-qe-full.jar  demo.VariantFreqPrinter \
     variant_aggregates hg19 counts
 
 ##Lifecycle of importing data and running an Arbitrary Plugin on it.

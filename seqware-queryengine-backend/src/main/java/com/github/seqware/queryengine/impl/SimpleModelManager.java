@@ -451,6 +451,17 @@ public class SimpleModelManager implements CreateUpdateManager {
         assert (aSet != null);
         return aSet;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Read.Builder buildRead() {
+        Read.Builder aSet = null;
+        if (backend instanceof SimplePersistentBackEnd) {
+            aSet = Read.newBuilder().setManager(this);
+        }
+        assert (aSet != null);
+        return aSet;
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -35,6 +35,7 @@ public class ImportWorker implements Runnable {
     protected boolean includeCoverage = false;
     protected int binSize = 0;
     protected SGID featureSetID = null;
+    protected SGID readSetID = null;
     protected List<SGID> tagSetIDs = null;
     protected SGID adhoctagset = null;
     protected int batch_size = SOFeatureImporter.BATCH_SIZE;
@@ -329,6 +330,24 @@ public class ImportWorker implements Runnable {
      */
     public void setFeatureSetID(SGID featureSetID) {
         this.featureSetID = featureSetID;
+    }
+    
+    /**
+     * <p>Getter for the field <code>readSetID</code>.</p>
+     *
+     * @return a {@link com.github.seqware.queryengine.util.SGID} object.
+     */
+    public SGID getReadSetID() {
+        return readSetID;
+    }
+
+    /**
+     * <p>Setter for the field <code>readSetID</code>.</p>
+     *
+     * @param featureSetID a {@link com.github.seqware.queryengine.util.SGID} object.
+     */
+    public void setReadSetID(SGID readSetID) {
+        this.readSetID = readSetID;
     }
 
     /**

@@ -14,22 +14,41 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 
 /**
- * Reads represent a GVF (which is a more generic version of a VCF). See
- * http://genomebiology.com/2010/11/8/R88 or better
- * http://www.sequenceontology.org/resources/gvf.html#quick_gvf_examples
- *
- * We will want to tag reads and version reads, however we probably do not
- * want ACL reads on a Read level since there will be many many reads
- *
- * Immutable (but tags are not)
- *
- * @author dyuen
- * @author jbaran
- * @version $Id: $Id
+ * Reads represent a SAM/BAM file. See the specification at
+ * http://samtools.sourceforge.net/SAM1.pdf 
+ * 
+ * This implementation is currently created from the Feature class
+ * and some items may be improper for a Read.
+ * 
+ * Tags are not yet implemented for Reads and ReadSets
+ * @author jho
  */
 public class Read extends AtomImpl<Read> {
-
+    
+    private final static String[] reservedAttributeNames = new String[] { "qname", "flag", "rname", "pos", "mapq", "cigar", "rnext", "pnext", "tlen", "seq", "qual" };
+    
+    private String qname;
+    private int flag;
+    private String rname;
+    private int pos;
+    private int mapq;
+    private String cigar;
+    private String rnext;
+    private int pnext;
+    private int tlen;
+    private String seq;
+    private String qual;
+    
     public enum AdditionalAttributeType { STRING, FLOAT, DOUBLE, LONG, INTEGER };
+    
+    static {
+        // Array has to be sorted, so that it is possible to use a binary search on it:
+        Arrays.sort(reservedAttributeNames);
+    }
+    
+    /**
+     * Additional attributes can be freely added via a map.
+     */
     private HashMap<String, AdditionalAttributeType> additionalAttributes = null;
 
     private Read() {
@@ -54,12 +73,55 @@ public class Read extends AtomImpl<Read> {
     public String getDisplayName() {
       return "read";
     }
+    public String getQname() {
+        return qname;
+    }
+    
+    public int getFlag() {
+        return flag;
+    }
+    
+    public String getRname() {
+        return rname;
+    }
+    
+    public int getPos() {
+        return pos;
+    }
+    
+    public int getMapq() {
+        return mapq;
+    }
+    
+    public String getCigar() {
+        return cigar;
+    }
+    
+    public String getRnext() {
+        return rnext;
+    }
+    
+    public int getPnext() {
+        return pnext;
+    }
+    
+    public int getTlen() {
+        return tlen;
+    }
+    
+    public String getSeq() {
+        return seq;
+    }
+    
+    public String getQual() {
+        return qual;
+    }
     
     /**
-     * Sets an additional attribute not covered by GVF. It is not permitted to have an additional
+     * Sets an additional attribute not covered by the class. It is not permitted to have an additional
      * attribute with the same name as the instance variables (case insensitive).
      *
-     * @param name Attribute name, which cannot be a GVF attribute (start, stop, pragma, etc).
+     * @param name Attribute name, which cannot be an attribute (start, stop, pragma, etc).
      * @param value Value of the variable to be set.
      */
     public void setAdditionalAttribute(String name, AdditionalAttributeType value) {
@@ -95,14 +157,37 @@ public class Read extends AtomImpl<Read> {
     }
 
     /**
-     * Generic implementation for retrieving the value of a GVF or additional attribute.
+     * Generic implementation for retrieving the value of a SAM or additional attribute.
      *
      * @param name Name of the attribute to be retrieved, which can be either "start", "stop", etc, or an additional attribute name.
      * @return The value of the attribute, or null if the attribute is not present in this read.
      */
     public Object getAttribute(String name) {
         String nameLowerCase = name.toLowerCase();
-        return this.getAdditionalAttribute(name);
+        if (nameLowerCase.equals("qname"))
+            return this.getQname();
+        else if (nameLowerCase.equals("flag"))
+            return this.getFlag();
+        else if (nameLowerCase.equals("rname"))
+            return this.getRname();
+        else if (nameLowerCase.equals("pos"))
+            return this.getPos();
+        else if (nameLowerCase.equals("mapq"))
+            return this.getMapq();
+        else if (nameLowerCase.equals("cigar"))
+            return this.getCigar();
+        else if (nameLowerCase.equals("rnext"))
+            return this.getRnext();
+        else if (nameLowerCase.equals("pnext"))
+            return this.getPnext();
+        else if (nameLowerCase.equals("tlen"))
+            return this.getTlen();
+        else if (nameLowerCase.equals("seq"))
+            return this.getSeq();
+        else if (nameLowerCase.equals("qual"))
+            return this.getQual();
+        else
+            return this.getAdditionalAttribute(name);
     }
 
     /** {@inheritDoc} */
@@ -137,6 +222,56 @@ public class Read extends AtomImpl<Read> {
     public static class Builder extends BaseBuilder {
 
         private Read read = new Read();
+        
+        public Read.Builder setQname(String qname) {
+            read.qname = qname;
+            return this;
+        }
+  
+        public Read.Builder setFlag(int flag) {
+            read.flag = flag;
+            return this;
+        }
+  
+        public Read.Builder setRname(String rname) {
+            read.rname = rname;
+            return this;
+        }
+  
+        public Read.Builder setPos(int pos) {
+            read.pos = pos;
+            return this;
+        }
+  
+        public Read.Builder setMapq(int mapq) {
+            read.mapq = mapq;
+            return this;
+        }
+  
+        public Read.Builder setCigar(String cigar) {
+            read.cigar = cigar;
+            return this;
+        }
+  
+        public Read.Builder setRnext(String rnext) {
+            read.rnext = rnext;
+            return this;
+        }
+  
+        public Read.Builder setPnext(int pnext) {
+            read.pnext = pnext;
+            return this;
+        }
+  
+        public Read.Builder setSeq(String seq) {
+            read.seq = seq;
+            return this;
+        }
+        
+        public Read.Builder setQual(String qual) {
+          read.qual = qual;
+          return this;
+        }
 
         @Override
         public Read build() {

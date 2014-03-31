@@ -1,8 +1,8 @@
 {
-  "name": "angularjs-seed",
+  "name": "seqware-queryengine-frontend",
   "version": "0.0.1",
-  "description": "A starter project for AngularJS",
-  "repository": "https://github.com/angular/angular-seed",
+  "description": "SeqWare QueryEngine's frontend application",
+  "repository": "https://github.com/SeqWare/queryengine",
   "devDependencies": {
     "phantomjs" : "~1.9",
     "karma" : "~0.10",

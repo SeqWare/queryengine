@@ -14,6 +14,15 @@ angular.module('queryengineApp.controllers', []).
     }).then(function(data, status, headers, config) {
       database["variants"] = data.data.length;
     });
+
+    $http({
+        method: 'GET', 
+        withCredentials: true,
+        url: APP_CONFIG.webservice_url + 'readset/', 
+        transformRequest: angular.identity,
+    }).then(function(data, status, headers, config) {
+      database["reads"] = data.data.length;
+    });
     
     database["samples"] = 0; //Should sent a GET Request to Webservice
     $scope.database = database;
@@ -39,10 +48,36 @@ angular.module('queryengineApp.controllers', []).
         }).progress(function(evt) {
           console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
         }).success(function(data, status, headers, config) {
-          $scope.data = data;
+          $scope.variantResponse = data;
           console.log(data);
+        }).error(function(data, status, headers, config) {
+          $scope.variantResponse = "An error has occurred. Status: " + status;
+          console.log($scope.isCompressed);
         });
-        //.error(...)
+        //.then(success, error, progress); 
+      }
+    // $scope.upload = $upload.upload({...}) alternative way of uploading, sends the the file content directly with the same content-type of the file. Could be used to upload files to CouchDB, imgur, etc... for HTML5 FileReader browsers. 
+    };
+
+    $scope.onSAMFileSelect = function($files) {
+      for (var i = 0; i < $files.length; i++) {
+        var file = $files[i];
+        var upload_url = APP_CONFIG.webservice_url + 'readset/upload';
+        $scope.upload = $upload.upload({
+          url: upload_url, //upload.php script, node.js route, or servlet url
+          method: 'POST',
+          headers: {'Content-Type': undefined},
+          // withCredentials: true,
+          data: {myObj: $scope.myModelObj},
+          file: file
+        }).progress(function(evt) {
+          console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+        }).success(function(data, status, headers, config) {
+          $scope.readResponse = data;
+          console.log(data);
+        }).error(function(data, status, headers, config) {
+          $scope.variantResponse = "An error has occurred. Status: " + status;
+        });
         //.then(success, error, progress); 
       }
     // $scope.upload = $upload.upload({...}) alternative way of uploading, sends the the file content directly with the same content-type of the file. Could be used to upload files to CouchDB, imgur, etc... for HTML5 FileReader browsers. 
@@ -75,6 +110,7 @@ angular.module('queryengineApp.controllers', []).
     }).then(function(data, status, headers, config) {
       $scope.responses = data.data;
     });
+    $scope.fileUrl = APP_CONFIG.webservice_url + "readset/download/";
   })
   .controller('ReferenceCtrl', function($scope, $http, APP_CONFIG) {
     $scope.master = {};

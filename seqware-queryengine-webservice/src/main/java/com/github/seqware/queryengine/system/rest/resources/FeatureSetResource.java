@@ -16,37 +16,22 @@
  */
 package com.github.seqware.queryengine.system.rest.resources;
 
-import com.github.seqware.queryengine.factory.CreateUpdateManager;
-import com.github.seqware.queryengine.factory.SWQEFactory;
-import com.github.seqware.queryengine.model.Feature;
-import com.github.seqware.queryengine.model.FeatureSet;
-import com.github.seqware.queryengine.model.QueryVCFParameters;
-import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
-import com.github.seqware.queryengine.system.exporters.VCFDumper;
-import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
-import com.github.seqware.queryengine.system.importers.FeatureImporter;
-import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_ID;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_INPUT;
-import static com.github.seqware.queryengine.system.rest.resources.GenericElementResource.INVALID_SET;
-import com.github.seqware.queryengine.util.SeqWareIterable;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -57,25 +42,33 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
-import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
-import com.sun.jersey.multipart.FormDataParam;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import java.util.HashMap;
+
+import com.github.seqware.queryengine.factory.SWQEFactory;
+import com.github.seqware.queryengine.model.FeatureSet;
+import com.github.seqware.queryengine.model.QueryVCFParameters;
+import com.github.seqware.queryengine.model.restModels.FeatureSetFacade;
+import com.github.seqware.queryengine.system.exporters.QueryVCFDumper;
+import com.github.seqware.queryengine.system.exporters.VCFDumper;
+import com.github.seqware.queryengine.system.importers.FeatureImporter;
+import com.github.seqware.queryengine.system.rest.exception.InvalidIDException;
 import com.github.seqware.queryengine.util.SGID;
-import java.io.File;
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.Scanner;
+import com.github.seqware.queryengine.util.SeqWareIterable;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
  * FeatureSet resource.
  *
  * @author dyuen
+ * @author jho
  */
 @Path("/featureset")
 @Api(value = "/featureset", description = "Operations about featuresets"/**
@@ -83,7 +76,8 @@ import java.util.Scanner;
  * listingPath = "/resources/featureset"
  */
 )
-@Produces({"application/json"})
+//Removed annotation as it is interfering with file downloads
+@Produces(MediaType.APPLICATION_JSON) 
 public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @Override
@@ -128,12 +122,8 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 //        return Response.ok().entity("").build();
 //    }
 
-  /*
-   * Return the features that belong to the specified feature set in VCF FIXME: the Swagger API will
-   * not send the correct Content-Type header (text/plain) to get this resouces and it, as a result,
-   * hits the JSON resource instead. See
-   * https://github.com/ryankennedy/swagger-jaxrs-doclet/issues/44 Not sure if there's a way to make
-   * this work and I just don't know the magic syntax. In the mean time use a tool like
+  /**
+   * Return the features that belong to the specified feature set in VCF 
    * "Dev HTTP Client" chrome plugin which allows you to add the content type header.
    * @param sgid rowkey of featureset to operate on
    * @return
@@ -144,7 +134,6 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
         @ApiResponse(code = INVALID_SET, message = "Element not found")})
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getVCFFeatureListing(
             @ApiParam(value = "rowkey that needs to be updated", required = true)
             @PathParam("sgid") String sgid) throws InvalidIDException {
@@ -224,10 +213,11 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadRawVCFfile(
-            //@ApiParam(value = "Name of featureset to create") @FormDataParam("name") String featureSet,
+            //@ApiParam(value = "Compressed file?") @FormDataParam("compressed") boolean compressed,
             @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
             @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         SGID sgid = null;
+        String uuid = UUID.randomUUID().toString(); 
         try {
             /*
              * FIXME: this is a really naive approach, just write it out as a file and load using
@@ -238,13 +228,18 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
              */
 
             String fileName = fileDisposition.getName();
-            BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
-            IOUtils.copy(file, bw, "UTF-8");
-            bw.close();
-
-            sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName});
+            OutputStream output = new FileOutputStream("/tmp/" + fileName + uuid);
+            //BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+            IOUtils.copy(file, output);
+            output.close();
+            //if (compressed) {
+            //  sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "true", "UpladedFeature", "/tmp/" + fileName + uuid});
+            //} else {
+            sgid = FeatureImporter.naiveRun(new String[]{"VCFVariantImportWorker", "1", "false", "UpladedFeature", "/tmp/" + fileName + uuid}); 
+            //}
+            
             //Delete the uploaded vcf file
-            File temp = new File("/tmp/" + fileName);
+            File temp = new File("/tmp/" + fileName + uuid);
             temp.delete();
         } catch (IOException ex) {
             Logger.getLogger(FeatureSetResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,6 +266,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
 
     @PUT
     @Path("/{sgid}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Update an existing element", notes = "This can only be done by an authenticated user.", position = 230)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
@@ -293,6 +289,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      */
     @DELETE
     @Path("/{sgid}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Delete an existing FeatureSet", notes = "This can only be done by an authenticated user.", position = 310)
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
@@ -308,7 +305,7 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
     @ApiResponses(value = {
         @ApiResponse(code = INVALID_INPUT, message = "Invalid input")})
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces({"application/json"})
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response addSet(
             @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) FeatureSetFacade set) {
@@ -320,15 +317,13 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
      * 
      * @param sgid
      * @param query
-     * @param className
-     * @param keyValue
      * @return
      */
     @POST
     @Path(value = "/run")
     @ApiOperation(value = "Run the QueryVCFDumper", notes = "Generates a VCF file output according to the user's query")
-    @Consumes({"application/json"})
-    @Produces({"application/json"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response query(
         @ApiParam(value = "parameters", required = true) QueryVCFParameters parameters) {
       
@@ -380,36 +375,5 @@ public class FeatureSetResource extends GenericSetResource<FeatureSetFacade> {
         }
         
         return Response.ok().entity(map).build();
-    }
-    
-    /**
-     * Allows the user to download files which were output by the
-     * QueryVCFDumper
-     * 
-     * @param uuid
-     * @return
-     */
-//    @GET
-//    @Path(value = "/download/{uuid}")
-//    @ApiOperation(value = "Download output VCF files", notes = "Download the generated VCF file from the QueryVCFDumper") 
-//    public Response queryResults(
-//        @ApiParam(value = "File Name", required = true)
-//        @PathParam(value = "uuid") String uuid) {
-//        
-//        File f = new File("/tmp/" + uuid + ".vcf");
-//        return Response.ok(f, "application/octet-stream").build();
-//    }
-    
-//    @POST
-//    @Path(value = "/dump/{sgid}")
-//    @ApiOperation(value = "Dumps VCF files for user to download", notes = "Download the generated VCF file from the VCFDumper") 
-//    public Response dump(
-//        @ApiParam(value = "File Name", required = true)
-//        @PathParam(value = "sgid") String sgid) {
-//        
-//      
-//        return Response.ok().build();
-//        //File f = new File("/tmp/" + uuid + ".vcf");
-//        //return Response.ok(f, "application/octet-stream").build();
-//    }
+    }   
 }

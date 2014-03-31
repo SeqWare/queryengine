@@ -27,6 +27,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,10 +51,20 @@ import net.sf.samtools.BAMFileWriter;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 import com.github.seqware.queryengine.model.restModels.ReadSetFacade;
+import com.sun.jersey.multipart.FormDataParam;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import java.util.HashMap;
+import com.github.seqware.queryengine.util.SGID;
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 /**
  * Readset resource.
  *
  * @author boconnor
+ * @author jho
  */
 @Path("/readset")
 @Api(value = "/readset", description = "Operations about readsets"/*, listingPath="/resources/readset"*/)
@@ -212,6 +223,80 @@ public class ReadSetResource extends GenericSetResource<ReadSetFacade> {
   public Response addSet(
           @ApiParam(value = "ReferenceSet that needs to be added to the store", required = true) ReadSetFacade set) {
     return super.addSet(set);
+  }
+  
+  @POST
+  @Path("/upload")
+  @ApiOperation(value = "Create a new readset with a raw data file", notes = "This can only be done by an authenticated user.", position = 110)
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response uploadRawSAMfile(
+          @ApiParam(value = "file to upload") @FormDataParam("file") InputStream file,
+          @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDisposition) {
+      SGID sgid = null;
+      String uuid = UUID.randomUUID().toString(); 
+      try {
+          /*
+           * FIXME: this is a really naive approach, just write it out as a file and load using
+           * the import tool from the query engine backend. In the future this should be an asyncrhonous 
+           * process with the file uploaded to a admin configured location possibly on HDFS then 
+           * the upload should take place as a plugin, reporting back a token that the calling 
+           * user can occationally check in on.
+           */
+          String fileName = fileDisposition.getName();
+          OutputStream output = new FileOutputStream("/tmp/" + fileName + uuid);
+          //BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/" + fileName));
+          IOUtils.copy(file, output);
+          //bw.close();
+          output.close();
+
+          //sgid = ReadImporter.naiveRun(new String[]{"SAMReadImportWorker", "1", "false", "/tmp/" + fileName + uuid});
+          CreateUpdateManager man = SWQEFactory.getModelManager();
+          ReadSet.Builder rsb = man.buildReadSet();
+          rsb.setReadSetPath("/tmp/" + fileName + uuid);
+          //rsb.setReadSetName(uuid);
+          ReadSet newReadSet = rsb.build();
+          man.close();
+          //sgid = fileName + uuid;
+              
+              
+          //Delete the uploaded vcf file
+          //File temp = new File("/tmp/" + fileName + uuid);
+          //temp.delete();
+          HashMap<String, String> map = new HashMap<String, String>();
+          //map.put("sgid", sgid.toString());
+          //map.put("ReadSetPath", "/tmp/" + fileName + uuid);
+          return Response.ok().entity(newReadSet).build();
+      } catch (IOException ex) {
+          Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+          return null;
+      }
+  }
+  
+  @GET
+  @Path("/download/{sgid}")
+  @ApiOperation(value = "Download the requested SAM or BAM file", notes = "This can only be done by an authenticated user.", position = 70)
+  @ApiResponses(value = {
+      @ApiResponse(code = INVALID_ID, message = "Invalid element supplied"),
+      @ApiResponse(code = INVALID_SET, message = "Element not found")})
+  public Response getSAMReadSet(
+          @ApiParam(value = "rowkey", required = true)
+          @PathParam("sgid") String sgid) throws InvalidIDException {
+      final ReadSet set = SWQEFactory.getQueryInterface().getLatestAtomByRowKey(sgid, ReadSet.class);
+      if (set == null) {
+          throw new InvalidIDException(INVALID_ID, "ID not found");
+      } else {
+
+          try {
+              File sam = new File(set.getReadSetPath());
+              return Response.ok(sam, "application/octet-stream").build();
+
+          } catch (Exception ex) {
+              Logger.getLogger(ReadSetResource.class.getName()).log(Level.SEVERE, null, ex);
+          }
+
+      }
+      return Response.ok().entity("").build();
   }
   
 }

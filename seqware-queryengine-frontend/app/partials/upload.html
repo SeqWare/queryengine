@@ -4,21 +4,23 @@
 		<div class="span6">
 			<h1>SeqWare Query Engine</h1>
 			<h2>Add New Variants</h2>
-			<!--label for="study">Study: </label><input class="form-control" ng-model="study"/><br/>
-			<label for="tumorTag">Tumor/Normal : </label><input class="form-control" ng-model="tumorTag"/><br/>
-			<label for="sample">Sample Name : </label><input class="form-control" ng-model="sample"/><br/>
-			<label for="experiment">Experimental Design : </label><input class="form-control" ng-model="experiment"/><br/>
-			<label for="workflow">Workflow : </label><input class="form-control" ng-model="workflow"/><br/>
-			<label for="workflowVer">Workflow Version : </label><input class="form-control" ng-model="workflowVer"/><br/>
-			<label for="runDate">Run Date : </label><input class="form-control" ng-model="runDate"/><br/-->
+			<!--
+			Compressed? <input type="checkbox" ng-model="isCompressed" /><br /> -->
+			<label for="vcfFile">VCF File : </label>			
+			<input type="file" ng-file-select="onFileSelect($files)" >
+			<br/>
 
-			<label for="vcfFile">VCF File : </label>
-			<input type="file" ng-file-select="onFileSelect($files)" ><br/>
 			<!--input type="file" file-model="myFile" -->
 			<pre>
-				Response = {{ data }}
+				Variant Upload Response = {{ variantResponse }}
 			</pre>
 
+			<h2>Add New Reads</h2>
+			<label for="samFile">SAM or BAM File : </label>
+			<input type="file" ng-file-select="onSAMFileSelect($files)" ><br/>
+			<pre>
+				Read Upload Response = {{ readResponse }}
+			</pre>
 		</div>
 	</div>
 </div>
