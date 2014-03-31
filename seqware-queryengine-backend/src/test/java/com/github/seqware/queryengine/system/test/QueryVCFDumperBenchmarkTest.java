@@ -114,11 +114,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingBinning = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
-			runQueryTimings = runQueries();
-	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+//			Constants.MULTIPLE_SCAN_RANGES = false;
+//			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+//			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
+//			runQueryTimings = runQueries();
+//	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
 			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
@@ -143,11 +143,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingNaiveOverlaps = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
-			runQueryTimings = runQueries();
-	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+//			Constants.MULTIPLE_SCAN_RANGES = false;
+//			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+//			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
+//			runQueryTimings = runQueries();
+//	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
 			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
