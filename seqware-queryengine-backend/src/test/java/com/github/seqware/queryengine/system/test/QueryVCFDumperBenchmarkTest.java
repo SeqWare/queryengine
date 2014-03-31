@@ -114,11 +114,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingBinning = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
-			runQueryTimings = runQueries();
-	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
+//			Constants.MULTIPLE_SCAN_RANGES = false;
+//			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+//			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
+//			runQueryTimings = runQueries();
+//	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.BINNING.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
 			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
@@ -144,11 +144,11 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 			diff = ((stop - start) / 1000);
 			importTimingNaiveOverlaps = diff;
 			
-			Constants.MULTIPLE_SCAN_RANGES = false;
-			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
-			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
-			runQueryTimings = runQueries();
-	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
+//			Constants.MULTIPLE_SCAN_RANGES = false;
+//			QueryVCFDumper.QUERYVCFDUMPER_RUN = false;
+//			System.out.println("Setting MULTIPLE_SCAN_RANGES => " + Constants.MULTIPLE_SCAN_RANGES + "\n");
+//			runQueryTimings = runQueries();
+//	        allSingleScanRangeQueryTimings.put(Constants.OVERLAP_STRATEGY.NAIVE_OVERLAPS.toString(), runQueryTimings);
 	        
 			Constants.MULTIPLE_SCAN_RANGES = true;
 			QueryVCFDumper.QUERYVCFDUMPER_RUN = true;
@@ -186,20 +186,20 @@ public class QueryVCFDumperBenchmarkTest implements Benchmarking{
 		System.out.println("Import timing for Binning: " + String.valueOf(importTimingBinning) + "s" + "\t (" + importTimingBinning/60 + "min)" + "\n");
 		System.out.println("Import timing for Naive Overlaps: " + String.valueOf(importTimingNaiveOverlaps)+ "s" + "\t (" + importTimingNaiveOverlaps/60 + "min)" + "\n");
 		System.out.println("MULTIPLE SCAN RANGES = FALSE" );
-		for (Entry<String, List<Float>> e : allSingleScanRangeQueryTimings.entrySet()){
-			i=0;
-			System.out.println("\t" + "Using " + e.getKey() + ": ");
-			for (Float f : e.getValue()){
-				i++;
-				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "\t (" + f/60 + "min)");
-				thisSet += f;
-			}
-			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
-			singleTotal += thisSet;
-			thisSet = 0;
-		}
-		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "\t (" + singleTotal/60 + "min)");
-		System.out.println("\n");
+//		for (Entry<String, List<Float>> e : allSingleScanRangeQueryTimings.entrySet()){
+//			i=0;
+//			System.out.println("\t" + "Using " + e.getKey() + ": ");
+//			for (Float f : e.getValue()){
+//				i++;
+//				System.out.println("\t" + "\t" + "Time to complete Test #" + String.valueOf(i) + ": " + f + "s" + "\t (" + f/60 + "min)");
+//				thisSet += f;
+//			}
+//			System.out.println("\t" + "Time to complete this set: " + thisSet + "s" + "\t (" + thisSet/60 + "min)");
+//			singleTotal += thisSet;
+//			thisSet = 0;
+//		}
+//		System.out.println("\t" + "Time to complete MULTIPLE SCAN RANGES = FALSE: " + singleTotal + "s" + "\t (" + singleTotal/60 + "min)");
+//		System.out.println("\n");
 		
 		System.out.println("MULTIPLE SCAN RANGES = TRUE");
 		for (Entry<String, List<Float>> e : allMultiScanRangeQueryTimings.entrySet()){
